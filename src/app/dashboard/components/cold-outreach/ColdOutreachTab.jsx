@@ -1,32 +1,42 @@
-import React, { useState, useEffect } from "react";
-import { Mail, Zap, AlertTriangle, Building2, MapPin, Briefcase, ChevronRight } from "lucide-react";
+import React, { useState, useEffect, useCallback } from "react";
+import { Mail, Zap, AlertTriangle, Building2, MapPin, Briefcase, ChevronRight, ChevronLeft, User } from "lucide-react";
 import { api } from "@/lib/api";
 import { toast } from "sonner";
 
 const ColdOutreachTab = () => {
-  const [demoCompanies, setDemoCompanies] = useState([]);
+  const [companies, setCompanies] = useState([]);
+  const [pagination, setPagination] = useState(null);
+  const [page, setPage] = useState(1);
   const [selectedCompany, setSelectedCompany] = useState(null);
   const [isTestLoading, setIsTestLoading] = useState(false);
   const [hasResumes, setHasResumes] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [paginating, setPaginating] = useState(false);
+
+  const fetchCompanies = useCallback(async (pageNum) => {
+    try {
+      const response = await api.get('/api/cold-outreach/companies', {
+        params: { page: pageNum, limit: 10 },
+      });
+      if (response.data) {
+        setCompanies(response.data.companies || []);
+        setPagination(response.data.pagination || null);
+      }
+    } catch (error) {
+      console.warn('Error fetching companies:', error.message);
+    }
+  }, []);
 
   // Load data on component mount
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
       try {
-        const [resumesResponse, companiesResponse] = await Promise.all([
-          api.get('/api/resumes').catch(() => ({ data: [] })),
-          api.get('/api/cold-outreach/demo-companies').catch(() => ({ data: [] }))
-        ]);
-
+        const resumesResponse = await api.get('/api/resumes').catch(() => ({ data: [] }));
         if (resumesResponse.data && resumesResponse.data.length > 0) {
           setHasResumes(true);
         }
-
-        if (companiesResponse.data && companiesResponse.data.length > 0) {
-          setDemoCompanies(companiesResponse.data);
-        }
+        await fetchCompanies(1);
       } catch (error) {
         console.warn('Error fetching data:', error.message);
       } finally {
@@ -34,11 +44,19 @@ const ColdOutreachTab = () => {
       }
     };
     fetchData();
-  }, []);
+  }, [fetchCompanies]);
+
+  const handlePageChange = async (newPage) => {
+    setPage(newPage);
+    setPaginating(true);
+    await fetchCompanies(newPage);
+    setPaginating(false);
+  };
 
   const handleRunTestPipeline = async (company) => {
-    if (!company) {
-      toast.error('Please select a company');
+    const contact = company.contacts?.[0];
+    if (!contact?.email) {
+      toast.error('No contact email available for this company');
       return;
     }
 
@@ -52,12 +70,12 @@ const ColdOutreachTab = () => {
     
     try {
       await api.post('/api/cold-outreach/test-pipeline', {
-        hrEmail: company.email,
+        hrEmail: contact.email,
         companyName: company.name,
         domain: company.industry || "Technology",
         location: company.location || "Remote",
-        teamSize: company.size === "startup" ? "1-10" : company.size === "small" ? "11-50" : "51-200",
-        companyStage: company.size === "startup" ? "Seed" : "Series A",
+        teamSize: "11-50",
+        companyStage: "Series A",
       });
 
       toast.success(`Pipeline triggered successfully! An email will be sent to ${company.name} shortly.`);
@@ -84,9 +102,14 @@ const ColdOutreachTab = () => {
         <div>
           <h1 className="text-2xl sm:text-3xl font-bold mb-1 mt-10">Cold Outreach Pipeline</h1>
           <p className="text-white text-sm sm:text-base">
-            Select a targeted company and launch a personalized outreach campaign.
+            Companies matched to your resume&apos;s industry profile. Select one to launch personalized outreach.
           </p>
         </div>
+        {pagination && (
+          <span className="text-sm text-gray-400 mt-2 sm:mt-0">
+            {pagination.total} companies found
+          </span>
+        )}
       </div>
 
       <div className="mt-6 mb-10 bg-white/10 backdrop-blur-md rounded-2xl shadow-xl p-6 border border-white/10">
@@ -117,75 +140,160 @@ const ColdOutreachTab = () => {
             </div>
           )}
 
-          <div className="flex flex-col gap-4">
-            {demoCompanies.length > 0 ? (
-              demoCompanies.map((company) => (
-                <div 
-                  key={company.id}
-                  className="flex flex-col md:flex-row items-start md:items-center justify-between p-5 rounded-xl border border-white/10 bg-white/10 hover:bg-white/15 hover:border-white/25 transition-all duration-300 group"
-                >
-                  <div className="flex items-start gap-4 mb-4 md:mb-0">
-                    <div className="w-12 h-12 bg-white/20 border border-white/10 rounded-xl flex items-center justify-center flex-shrink-0 shadow-inner">
-                      <span className="text-lg font-bold text-white/80">{company.name.charAt(0)}</span>
-                    </div>
-                    
-                    <div>
-                      <h3 className="text-lg font-bold text-white mb-1 group-hover:text-purple-300 transition-colors">{company.name}</h3>
-                      <div className="flex flex-wrap items-center gap-3 md:gap-4 text-sm text-gray-400">
-                        <div className="flex items-center gap-1.5">
-                          <Briefcase size={14} className="text-purple-400/70" />
-                          <span>{company.industry || 'Technology'}</span>
-                        </div>
-                        <div className="hidden md:block w-1 h-1 rounded-full bg-gray-600"></div>
-                        <div className="flex items-center gap-1.5">
-                          <MapPin size={14} className="text-green-400/70" />
-                          <span>{company.location || 'Remote'}</span>
-                        </div>
-                        <div className="hidden md:block w-1 h-1 rounded-full bg-gray-600"></div>
-                        <div className="flex items-center gap-1.5">
-                          <span className="px-2 py-0.5 rounded-full bg-blue-500/10 text-blue-400 text-xs border border-blue-500/20">
-                            {company.size === 'startup' ? 'Startup' : company.size === 'small' ? 'Small Biz' : company.size === 'medium' ? 'Mid-Market' : 'Enterprise'}
-                          </span>
+          <div className={`flex flex-col gap-4 transition-opacity duration-200 ${paginating ? 'opacity-50 pointer-events-none' : 'opacity-100'}`}>
+            {companies.length > 0 ? (
+              companies.map((company) => {
+                const contact = company.contacts?.[0];
+                const contactName = contact
+                  ? [contact.first_name, contact.last_name].filter(Boolean).join(' ')
+                  : null;
+
+                return (
+                  <div 
+                    key={company.id}
+                    className="flex flex-col md:flex-row items-start md:items-center justify-between p-5 rounded-xl border border-white/10 bg-white/10 hover:bg-white/15 hover:border-white/25 transition-all duration-300 group"
+                  >
+                    <div className="flex items-start gap-4 mb-4 md:mb-0">
+                      <div className="w-12 h-12 bg-white/20 border border-white/10 rounded-xl flex items-center justify-center flex-shrink-0 shadow-inner">
+                        <span className="text-lg font-bold text-white/80">{company.name.charAt(0)}</span>
+                      </div>
+                      
+                      <div>
+                        <h3 className="text-lg font-bold text-white mb-1 group-hover:text-purple-300 transition-colors">{company.name}</h3>
+                        <div className="flex flex-wrap items-center gap-3 md:gap-4 text-sm text-gray-400">
+                          {company.industry && (
+                            <div className="flex items-center gap-1.5">
+                              <Briefcase size={14} className="text-purple-400/70" />
+                              <span>{company.industry}</span>
+                            </div>
+                          )}
+                          {company.location && (
+                            <>
+                              <div className="hidden md:block w-1 h-1 rounded-full bg-gray-600"></div>
+                              <div className="flex items-center gap-1.5">
+                                <MapPin size={14} className="text-green-400/70" />
+                                <span>{company.location}</span>
+                              </div>
+                            </>
+                          )}
+                          {contactName && (
+                            <>
+                              <div className="hidden md:block w-1 h-1 rounded-full bg-gray-600"></div>
+                              <div className="flex items-center gap-1.5">
+                                <User size={14} className="text-blue-400/70" />
+                                <span>{contactName}{contact?.title ? ` · ${contact.title}` : ''}</span>
+                              </div>
+                            </>
+                          )}
+                          {contact?.email && (
+                            <>
+                              <div className="hidden md:block w-1 h-1 rounded-full bg-gray-600"></div>
+                              <div className="flex items-center gap-1.5">
+                                <Mail size={14} className="text-yellow-400/70" />
+                                <span className="truncate max-w-[200px]">{contact.email}</span>
+                              </div>
+                            </>
+                          )}
                         </div>
                       </div>
                     </div>
-                  </div>
 
-                  <button
-                    onClick={() => handleRunTestPipeline(company)}
-                    disabled={isTestLoading || !hasResumes}
-                    className={`flex items-center justify-center gap-2 px-6 py-2.5 rounded-lg font-semibold shadow-md transition-all duration-300 w-full md:w-auto ${
-                      isTestLoading && selectedCompany?.id === company.id
-                        ? 'bg-purple-600/50 cursor-not-allowed border border-purple-500/30 text-white/70' 
-                        : !hasResumes || isTestLoading
-                        ? 'bg-gray-800 text-gray-500 cursor-not-allowed border border-gray-700'
-                        : 'bg-white/10 hover:bg-purple-600 border border-white/10 hover:border-purple-500 text-white hover:shadow-lg hover:shadow-purple-500/20'
-                    }`}
-                  >
-                    {isTestLoading && selectedCompany?.id === company.id ? (
-                      <>
-                        <div className="w-4 h-4 border-2 border-white/50 border-t-white rounded-full animate-spin"></div>
-                        Processing...
-                      </>
-                    ) : (
-                      <>
-                        <Zap size={16} className={(!hasResumes || isTestLoading) ? "text-gray-500" : "text-yellow-400"} />
-                        Run Outreach
-                      </>
-                    )}
-                  </button>
-                </div>
-              ))
+                    <button
+                      onClick={() => handleRunTestPipeline(company)}
+                      disabled={isTestLoading || !hasResumes || !contact?.email}
+                      className={`flex items-center justify-center gap-2 px-6 py-2.5 rounded-lg font-semibold shadow-md transition-all duration-300 w-full md:w-auto ${
+                        isTestLoading && selectedCompany?.id === company.id
+                          ? 'bg-purple-600/50 cursor-not-allowed border border-purple-500/30 text-white/70' 
+                          : !hasResumes || isTestLoading || !contact?.email
+                          ? 'bg-gray-800 text-gray-500 cursor-not-allowed border border-gray-700'
+                          : 'bg-white/10 hover:bg-purple-600 border border-white/10 hover:border-purple-500 text-white hover:shadow-lg hover:shadow-purple-500/20'
+                      }`}
+                    >
+                      {isTestLoading && selectedCompany?.id === company.id ? (
+                        <>
+                          <div className="w-4 h-4 border-2 border-white/50 border-t-white rounded-full animate-spin"></div>
+                          Processing...
+                        </>
+                      ) : (
+                        <>
+                          <Zap size={16} className={(!hasResumes || isTestLoading || !contact?.email) ? "text-gray-500" : "text-yellow-400"} />
+                          Run Outreach
+                        </>
+                      )}
+                    </button>
+                  </div>
+                );
+              })
             ) : (
               <div className="p-10 text-center border border-dashed border-white/20 rounded-xl bg-white/10">
                 <div className="mx-auto w-12 h-12 bg-white/5 rounded-full flex items-center justify-center mb-3">
                   <Building2 size={24} className="text-gray-500" />
                 </div>
                 <h3 className="text-lg font-semibold text-gray-300 mb-1">No Companies Found</h3>
-                <p className="text-sm text-gray-500">There are no targeted companies available at the moment.</p>
+                <p className="text-sm text-gray-500">No companies match your resume&apos;s industry profile yet.</p>
               </div>
             )}
           </div>
+
+          {/* Pagination */}
+          {pagination && pagination.totalPages > 1 && (
+            <div className="flex items-center justify-between pt-6 border-t border-white/10">
+              <button
+                onClick={() => handlePageChange(page - 1)}
+                disabled={!pagination.hasPrevPage}
+                className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
+                  pagination.hasPrevPage
+                    ? 'bg-white/10 hover:bg-white/20 text-white border border-white/10 hover:border-white/25'
+                    : 'bg-white/5 text-gray-600 cursor-not-allowed border border-white/5'
+                }`}
+              >
+                <ChevronLeft size={16} />
+                Previous
+              </button>
+
+              <div className="flex items-center gap-2">
+                {Array.from({ length: pagination.totalPages }, (_, i) => i + 1)
+                  .filter(p => p === 1 || p === pagination.totalPages || Math.abs(p - page) <= 1)
+                  .reduce((acc, p, idx, arr) => {
+                    if (idx > 0 && p - arr[idx - 1] > 1) {
+                      acc.push('...');
+                    }
+                    acc.push(p);
+                    return acc;
+                  }, [])
+                  .map((item, idx) =>
+                    item === '...' ? (
+                      <span key={`ellipsis-${idx}`} className="text-gray-500 px-1">…</span>
+                    ) : (
+                      <button
+                        key={item}
+                        onClick={() => handlePageChange(item)}
+                        className={`w-9 h-9 rounded-lg text-sm font-medium transition-all duration-200 ${
+                          page === item
+                            ? 'bg-purple-600 text-white border border-purple-500'
+                            : 'bg-white/10 hover:bg-white/20 text-gray-300 border border-white/10'
+                        }`}
+                      >
+                        {item}
+                      </button>
+                    )
+                  )}
+              </div>
+
+              <button
+                onClick={() => handlePageChange(page + 1)}
+                disabled={!pagination.hasNextPage}
+                className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
+                  pagination.hasNextPage
+                    ? 'bg-white/10 hover:bg-white/20 text-white border border-white/10 hover:border-white/25'
+                    : 'bg-white/5 text-gray-600 cursor-not-allowed border border-white/5'
+                }`}
+              >
+                Next
+                <ChevronRight size={16} />
+              </button>
+            </div>
+          )}
         </div>
       </div>
     </div>
