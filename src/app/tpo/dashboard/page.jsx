@@ -11,7 +11,7 @@ import TPOMentorshipPanel from "@/component/tpo/TPOMentorshipPanel";
 import { api } from "@/lib/api";
 
 export default function TPODashboard() {
-  const { isAuthenticated, loading } = useAuth();
+  const { user, isAuthenticated, loading } = useAuth();
   const router = useRouter();
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [stats, setStats] = useState(null);
@@ -44,18 +44,19 @@ export default function TPODashboard() {
     );
   }
 
-  // Mock TPO user — replace with real auth later
   const tpoUser = {
-    name: "Prof. Anita Sharma",
-    college: "BITS Pilani — Pilani Campus",
+    name: user?.name || user?.display_name || "TPO Admin",
+    college: user?.institute_name || "Outmail Partner",
     role: "Placement Officer",
-    avatar: null,
+    avatar: user?.profile_picture || null,
   };
+
+  const firstName = tpoUser.name.split(" ")[0] || "Admin";
 
   return (
     <div className="min-h-screen bg-gray-50 flex">
       {/* Sidebar */}
-      <TPOSidebar isOpen={sidebarOpen} onToggle={() => setSidebarOpen(!sidebarOpen)} />
+      <TPOSidebar isOpen={sidebarOpen} onToggle={() => setSidebarOpen(!sidebarOpen)} user={tpoUser} />
 
       {/* Main Content */}
       <div
@@ -76,10 +77,10 @@ export default function TPODashboard() {
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div>
               <h1 className="text-2xl font-bold text-gray-900">
-                Welcome back, {tpoUser.name.split(" ")[1]} 
+                Welcome back, {firstName} 
               </h1>
               <p className="text-gray-500 text-sm mt-1">
-                {tpoUser.college} &nbsp;·&nbsp; Batch 2025–26 &nbsp;·&nbsp; Last updated: Today, 9:42 AM
+                {tpoUser.college} &nbsp;·&nbsp; Batch 2025–26 &nbsp;·&nbsp; Last updated: Today
               </p>
             </div>
             <div className="flex gap-3">

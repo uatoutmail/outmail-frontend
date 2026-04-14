@@ -1,39 +1,47 @@
 "use client";
+import { useState, useEffect } from "react";
 import TPOPageShell from "@/component/tpo/TPOPageShell";
 import { ResponsiveLine } from "@nivo/line";
 import { ResponsiveBar } from "@nivo/bar";
 import { ResponsivePie } from "@nivo/pie";
 import { Download, TrendingUp } from "lucide-react";
-
-const engagementTrend = [
-  { id:"Active Students", color:"#7C3AED", data:[{x:"Aug",y:120},{x:"Sep",y:148},{x:"Oct",y:178},{x:"Nov",y:210},{x:"Dec",y:198},{x:"Jan",y:234},{x:"Feb",y:262},{x:"Mar",y:280}] },
-  { id:"Interviews",      color:"#10B981", data:[{x:"Aug",y:8  },{x:"Sep",y:14 },{x:"Oct",y:22 },{x:"Nov",y:38 },{x:"Dec",y:44 },{x:"Jan",y:58 },{x:"Feb",y:68 },{x:"Mar",y:76 }] },
-];
-
-const weeklyEmailData = [
-  {week:"W1 Jan",sent:820 },{week:"W2 Jan",sent:940 },{week:"W3 Jan",sent:1020},{week:"W4 Jan",sent:880 },
-  {week:"W1 Feb",sent:1140},{week:"W2 Feb",sent:1260},{week:"W3 Feb",sent:1080},{week:"W4 Feb",sent:1310},
-  {week:"W1 Mar",sent:1420},{week:"W2 Mar",sent:1360},
-];
-
-const branchFunnel = [
-  { id:"CS",       value:134, color:"#7C3AED" },
-  { id:"ECE",      value:62,  color:"#6D28D9" },
-  { id:"Mech",     value:41,  color:"#8B5CF6" },
-  { id:"EEE",      value:38,  color:"#A78BFA" },
-  { id:"BioTech",  value:24,  color:"#C4B5FD" },
-  { id:"Civil",    value:13,  color:"#DDD6FE" },
-];
-
-const leaderboard = [
-  { name:"Karan Verma",  score:97, delta:"+2", emails:134, interviews:4 },
-  { name:"Arjun Mehta",  score:94, delta:"+1", emails:142, interviews:3 },
-  { name:"Vikram Rao",   score:91, delta:"—",  emails:128, interviews:3 },
-  { name:"Dev Patel",    score:85, delta:"+3", emails:109, interviews:2 },
-  { name:"Priya Nair",   score:88, delta:"-1", emails:118, interviews:2 },
-];
+import { api } from "@/lib/api";
 
 export default function AnalyticsPage() {
+  const [data, setData] = useState({
+    engagementTrend: [],
+    weeklyEmailData: [],
+    branchFunnel: [],
+    leaderboard: []
+  });
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchAnalytics = async () => {
+      try {
+        const res = await api.get("/api/admin/analytics");
+        setData(res.data);
+      } catch (err) {
+        console.error("Failed to fetch analytics", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchAnalytics();
+  }, []);
+
+  if (loading) {
+    return (
+      <TPOPageShell title="Analytics" subtitle="Deep-dive metrics on student engagement, outreach performance, and placement readiness">
+        <div className="flex justify-center items-center h-64 text-gray-500">
+          Loading analytics...
+        </div>
+      </TPOPageShell>
+    );
+  }
+
+  const { engagementTrend, weeklyEmailData, branchFunnel, leaderboard } = data;
+
   return (
     <TPOPageShell title="Analytics" subtitle="Deep-dive metrics on student engagement, outreach performance, and placement readiness">
 
@@ -54,21 +62,25 @@ export default function AnalyticsPage() {
         </div>
         <p className="text-xs text-gray-400 mb-4">Active students on platform vs. total interviews secured</p>
         <div className="h-64">
-          <ResponsiveLine
-            data={engagementTrend}
-            margin={{top:10,right:20,bottom:50,left:50}}
-            axisBottom={{tickSize:0,tickPadding:10}}
-            axisLeft={{tickSize:0,tickPadding:8,tickValues:5}}
-            colors={d=>d.color}
-            curve="monotoneX"
-            enablePoints
-            pointSize={7}
-            pointBorderWidth={2}
-            pointBorderColor={{from:"serieColor"}}
-            enableGridX={false}
-            theme={{textColor:"#6B7280",fontSize:11,grid:{line:{stroke:"#F3F4F6"}}}}
-            legends={[{anchor:"bottom",direction:"row",translateY:46,itemWidth:140,itemHeight:14,itemTextColor:"#6B7280",symbolSize:8,symbolShape:"circle"}]}
-          />
+          {engagementTrend && engagementTrend.length > 0 ? (
+            <ResponsiveLine
+              data={engagementTrend}
+              margin={{top:10,right:20,bottom:50,left:50}}
+              axisBottom={{tickSize:0,tickPadding:10}}
+              axisLeft={{tickSize:0,tickPadding:8,tickValues:5}}
+              colors={d=>d.color}
+              curve="monotoneX"
+              enablePoints
+              pointSize={7}
+              pointBorderWidth={2}
+              pointBorderColor={{from:"serieColor"}}
+              enableGridX={false}
+              theme={{textColor:"#6B7280",fontSize:11,grid:{line:{stroke:"#F3F4F6"}}}}
+              legends={[{anchor:"bottom",direction:"row",translateY:46,itemWidth:140,itemHeight:14,itemTextColor:"#6B7280",symbolSize:8,symbolShape:"circle"}]}
+            />
+          ) : (
+            <div className="h-full flex items-center justify-center text-sm text-gray-400">No data available</div>
+          )}
         </div>
       </div>
 
@@ -79,20 +91,24 @@ export default function AnalyticsPage() {
           <h3 className="text-sm font-semibold text-gray-900 mb-1">Weekly Email Volume (Jan – Mar 2026)</h3>
           <p className="text-xs text-gray-400 mb-4">Total cold emails sent by your cohort per week</p>
           <div className="h-56">
-            <ResponsiveBar
-              data={weeklyEmailData}
-              keys={["sent"]}
-              indexBy="week"
-              margin={{top:10,right:10,bottom:50,left:45}}
-              padding={0.3}
-              colors="#8B5CF6"
-              borderRadius={4}
-              axisBottom={{tickSize:0,tickPadding:8,tickRotation:-30}}
-              axisLeft={{tickSize:0,tickPadding:8,tickValues:4}}
-              enableGridX={false}
-              enableLabel={false}
-              theme={{textColor:"#6B7280",fontSize:10,grid:{line:{stroke:"#F3F4F6"}}}}
-            />
+            {weeklyEmailData && weeklyEmailData.length > 0 ? (
+              <ResponsiveBar
+                data={weeklyEmailData}
+                keys={["sent"]}
+                indexBy="week"
+                margin={{top:10,right:10,bottom:50,left:45}}
+                padding={0.3}
+                colors="#8B5CF6"
+                borderRadius={4}
+                axisBottom={{tickSize:0,tickPadding:8,tickRotation:-30}}
+                axisLeft={{tickSize:0,tickPadding:8,tickValues:4}}
+                enableGridX={false}
+                enableLabel={false}
+                theme={{textColor:"#6B7280",fontSize:10,grid:{line:{stroke:"#F3F4F6"}}}}
+              />
+            ) : (
+              <div className="h-full flex items-center justify-center text-sm text-gray-400">No data available</div>
+            )}
           </div>
         </div>
 
@@ -101,20 +117,24 @@ export default function AnalyticsPage() {
           <h3 className="text-sm font-semibold text-gray-900 mb-1">Active Students by Branch</h3>
           <p className="text-xs text-gray-400 mb-2">Which branches are most engaged with off-campus outreach</p>
           <div className="h-44">
-            <ResponsivePie
-              data={branchFunnel}
-              colors={d=>d.data.color}
-              margin={{top:5,right:5,bottom:5,left:5}}
-              innerRadius={0.5}
-              padAngle={2}
-              cornerRadius={3}
-              enableArcLabels={false}
-              enableArcLinkLabels={false}
-              theme={{textColor:"#6B7280",fontSize:11}}
-            />
+            {branchFunnel && branchFunnel.length > 0 ? (
+              <ResponsivePie
+                data={branchFunnel}
+                colors={d=>d.data.color}
+                margin={{top:5,right:5,bottom:5,left:5}}
+                innerRadius={0.5}
+                padAngle={2}
+                cornerRadius={3}
+                enableArcLabels={false}
+                enableArcLinkLabels={false}
+                theme={{textColor:"#6B7280",fontSize:11}}
+              />
+            ) : (
+              <div className="h-full flex items-center justify-center text-sm text-gray-400">No data available</div>
+            )}
           </div>
           <div className="grid grid-cols-3 gap-1 mt-2">
-            {branchFunnel.map(b=>(
+            {branchFunnel?.map(b=>(
               <div key={b.id} className="flex items-center gap-1.5">
                 <span className="w-2.5 h-2.5 rounded-full flex-shrink-0" style={{background:b.color}}/>
                 <span className="text-xs text-gray-600">{b.id} <span className="font-semibold">{b.value}</span></span>
@@ -131,7 +151,7 @@ export default function AnalyticsPage() {
           <p className="text-xs text-gray-400 mt-0.5">Top 5 students ranked by composite Outmail Engagement Score</p>
         </div>
         <div className="divide-y divide-gray-50">
-          {leaderboard.map((s,i)=>(
+          {leaderboard?.map((s,i)=>(
             <div key={s.name} className="px-6 py-4 flex items-center gap-5">
               <span className={`text-lg font-black w-6 text-center ${i===0?"text-yellow-400":i===1?"text-gray-400":i===2?"text-orange-400":"text-gray-200"}`}>
                 {i+1}
@@ -151,6 +171,9 @@ export default function AnalyticsPage() {
               </div>
             </div>
           ))}
+          {(!leaderboard || leaderboard.length === 0) && (
+            <div className="px-6 py-4 text-center text-sm text-gray-500">No leaderboard data available</div>
+          )}
         </div>
       </div>
     </TPOPageShell>

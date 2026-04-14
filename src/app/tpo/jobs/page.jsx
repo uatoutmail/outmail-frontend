@@ -1,30 +1,9 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import TPOPageShell from "@/component/tpo/TPOPageShell";
 import { ResponsiveBar } from "@nivo/bar";
 import { BriefcaseBusiness, TrendingUp, Building2, Zap, Search } from "lucide-react";
-
-const sectorBreakdown = [
-  { sector:"SWE",      openings:1240 },
-  { sector:"Product",  openings:840  },
-  { sector:"Data/ML",  openings:720  },
-  { sector:"Finance",  openings:480  },
-  { sector:"Consulting",openings:320 },
-  { sector:"DevOps",   openings:280  },
-];
-
-const ALL_JOBS = [
-  { company:"Google",      role:"SWE – New Grad",             sector:"SWE",      score:96, students:34, urgency:"Hot",     posted:"2 days ago"  },
-  { company:"Razorpay",    role:"Product Manager – Fintech",  sector:"Product",  score:91, students:28, urgency:"Hot",     posted:"3 days ago"  },
-  { company:"Microsoft",   role:"Data Scientist",              sector:"Data/ML",  score:89, students:31, urgency:"High",    posted:"5 days ago"  },
-  { company:"Meesho",      role:"Backend Engineer",            sector:"SWE",      score:87, students:22, urgency:"High",    posted:"6 days ago"  },
-  { company:"CRED",        role:"Frontend Engineer",           sector:"SWE",      score:84, students:19, urgency:"High",    posted:"1 week ago"  },
-  { company:"Zepto",       role:"Growth Associate",            sector:"Consulting",score:79, students:14, urgency:"Medium", posted:"1 week ago"  },
-  { company:"Goldman Sachs",role:"Analyst – Quant",            sector:"Finance",  score:82, students:11, urgency:"Medium",  posted:"10 days ago" },
-  { company:"Groww",       role:"ML Engineer",                 sector:"Data/ML",  score:76, students:16, urgency:"Medium",  posted:"12 days ago" },
-  { company:"Atlassian",   role:"SRE – DevOps",                sector:"DevOps",   score:72, students:9,  urgency:"Normal",  posted:"2 weeks ago" },
-  { company:"Zerodha",     role:"Quant Analyst",               sector:"Finance",  score:68, students:7,  urgency:"Normal",  posted:"2 weeks ago" },
-];
+import { api } from "@/lib/api";
 
 const urgencyBadge = {
   "Hot":    "bg-red-100 text-red-600",
@@ -36,12 +15,38 @@ const urgencyBadge = {
 export default function JobsPage() {
   const [search, setSearch] = useState("");
   const [sector, setSector] = useState("all");
+  const [data, setData] = useState({ sectorBreakdown: [], ALL_JOBS: [] });
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchJobs = async () => {
+      try {
+        const res = await api.get("/api/admin/jobs");
+        setData(res.data);
+      } catch (err) {
+        console.error("Failed to fetch jobs data", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchJobs();
+  }, []);
+
+  const { sectorBreakdown, ALL_JOBS } = data;
 
   const sectors = ["all", ...Array.from(new Set(ALL_JOBS.map(j=>j.sector)))];
   const filtered = ALL_JOBS.filter(j=>
     (sector==="all"||j.sector===sector) &&
     (j.company.toLowerCase().includes(search.toLowerCase())||j.role.toLowerCase().includes(search.toLowerCase()))
   );
+
+  if (loading) {
+    return (
+      <TPOPageShell title="Job Intelligence" subtitle="Live job openings tracked by your students, ranked by Outmail Priority Score">
+        <div className="flex justify-center items-center h-64 text-gray-500">Loading jobs data...</div>
+      </TPOPageShell>
+    );
+  }
 
   return (
     <TPOPageShell title="Job Intelligence" subtitle="Live job openings tracked by your students, ranked by Outmail Priority Score">
@@ -54,7 +59,7 @@ export default function JobsPage() {
           { icon:Building2,         label:"Unique Companies",         value:"312",   sub:"With active hiring",     color:"green"  },
           { icon:Zap,               label:"Hot Opportunities",        value:"48",    sub:"Score ≥ 90 this week",   color:"orange" },
         ].map(({icon:Icon,label,value,sub,color})=>(
-          <div key={label} className="bg-white rounded-xl border border-gray-200 p-5 shadow-sm">
+          <div key={label} className={`bg-white rounded-xl border border-gray-200 p-5 shadow-sm`}>
             <div className={`inline-flex p-2.5 rounded-lg bg-${color}-50 mb-3`}>
               <Icon size={16} className={`text-${color}-600`}/>
             </div>
@@ -71,23 +76,27 @@ export default function JobsPage() {
           <h3 className="text-sm font-semibold text-gray-900 mb-1">Job Openings by Sector</h3>
           <p className="text-xs text-gray-400 mb-4">Where your students are focusing</p>
           <div className="h-52">
-            <ResponsiveBar
-              data={sectorBreakdown}
-              keys={["openings"]}
-              indexBy="sector"
-              layout="horizontal"
-              margin={{top:5,right:20,bottom:20,left:70}}
-              padding={0.3}
-              colors={["#7C3AED","#6D28D9","#8B5CF6","#A78BFA","#C4B5FD","#DDD6FE"]}
-              colorBy="indexValue"
-              borderRadius={4}
-              axisLeft={{tickSize:0,tickPadding:8}}
-              axisBottom={{tickSize:0,tickPadding:6,tickValues:4}}
-              enableGridX
-              enableGridY={false}
-              enableLabel={false}
-              theme={{textColor:"#6B7280",fontSize:11,grid:{line:{stroke:"#F3F4F6"}}}}
-            />
+            {sectorBreakdown && sectorBreakdown.length > 0 ? (
+              <ResponsiveBar
+                data={sectorBreakdown}
+                keys={["openings"]}
+                indexBy="sector"
+                layout="horizontal"
+                margin={{top:5,right:20,bottom:20,left:70}}
+                padding={0.3}
+                colors={["#7C3AED","#6D28D9","#8B5CF6","#A78BFA","#C4B5FD","#DDD6FE"]}
+                colorBy="indexValue"
+                borderRadius={4}
+                axisLeft={{tickSize:0,tickPadding:8}}
+                axisBottom={{tickSize:0,tickPadding:6,tickValues:4}}
+                enableGridX
+                enableGridY={false}
+                enableLabel={false}
+                theme={{textColor:"#6B7280",fontSize:11,grid:{line:{stroke:"#F3F4F6"}}}}
+              />
+            ) : (
+              <div className="h-full flex items-center justify-center text-sm text-gray-400">No data available</div>
+            )}
           </div>
         </div>
 
@@ -155,10 +164,15 @@ export default function JobsPage() {
                     </div>
                   </td>
                   <td className="px-5 py-3 text-gray-600">{j.students} students</td>
-                  <td className="px-5 py-3"><span className={`text-xs font-medium px-2.5 py-0.5 rounded-full ${urgencyBadge[j.urgency]}`}>{j.urgency}</span></td>
+                  <td className="px-5 py-3"><span className={`text-xs font-medium px-2.5 py-0.5 rounded-full ${urgencyBadge[j.urgency] || urgencyBadge["Normal"]}`}>{j.urgency}</span></td>
                   <td className="px-5 py-3 text-gray-400 text-xs">{j.posted}</td>
                 </tr>
               ))}
+              {filtered.length === 0 && (
+                <tr>
+                  <td colSpan={7} className="px-5 py-4 text-center text-sm text-gray-400">No jobs found</td>
+                </tr>
+              )}
             </tbody>
           </table>
         </div>

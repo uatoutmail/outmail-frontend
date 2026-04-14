@@ -1,7 +1,8 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import TPOPageShell from "@/component/tpo/TPOPageShell";
 import { Building2, Bell, Users, CreditCard, Shield, ChevronDown, Plus, Trash2, Check, AlertTriangle } from "lucide-react";
+import { api } from "@/lib/api";
 
 const Toggle = ({ checked, onChange }) => (
   <button
@@ -32,8 +33,8 @@ const Field = ({ label, hint, children }) => (
   </div>
 );
 
-const Input = ({ ...props }) => (
-  <input {...props} className="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 text-gray-800 focus:outline-none focus:ring-2 focus:ring-purple-400 focus:border-purple-400 bg-white placeholder-gray-300" />
+const Input = ({ value, onChange, placeholder }) => (
+  <input value={value} onChange={onChange} placeholder={placeholder} className="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 text-gray-800 focus:outline-none focus:ring-2 focus:ring-purple-400 focus:border-purple-400 bg-white placeholder-gray-300" />
 );
 
 const SaveBtn = () => (
@@ -44,13 +45,16 @@ const SaveBtn = () => (
   </div>
 );
 
-const teamMembers = [
-  { name: "Prof. Anita Sharma",  email: "anita.sharma@bitspilani.ac.in",  role: "Admin",       avatar: "AS" },
-  { name: "Mr. Ramesh Yadav",    email: "ramesh.yadav@bitspilani.ac.in",  role: "Co-TPO",      avatar: "RY" },
-  { name: "Ms. Priya Mehta",     email: "priya.mehta@bitspilani.ac.in",   role: "Co-TPO",      avatar: "PM" },
-];
-
 export default function SettingsPage() {
+  const [adminUser, setAdminUser] = useState(null);
+  const [loading, setLoading] = useState(true);
+  
+  // Form states
+  const [instName, setInstName] = useState("");
+  const [batchYear, setBatchYear] = useState("2025");
+  const [location, setLocation] = useState("");
+  const [email, setEmail] = useState("");
+
   const [notifs, setNotifs] = useState({
     weeklyReport:   true,
     studentActivity:true,
@@ -58,9 +62,44 @@ export default function SettingsPage() {
     mentorUpdates:  false,
     platformUpdates:true,
   });
-  const [members, setMembers] = useState(teamMembers);
+  const [members, setMembers] = useState([]);
   const [newEmail, setNewEmail] = useState("");
   const [danger, setDanger] = useState(false);
+
+  useEffect(() => {
+    const fetchSettings = async () => {
+      try {
+        const res = await api.get("/api/admin/settings");
+        if (res.data.user) {
+          const user = res.data.user;
+          setAdminUser(user);
+          setInstName(user.institution?.name || user.institute_name || "Institution Name");
+          setLocation(user.institution?.location || user.location || "City, State");
+          setEmail(user.email || "");
+          
+          setMembers([{
+            name: user.display_name || "Admin",
+            email: user.email,
+            role: "Admin",
+            avatar: (user.display_name || "A")[0].toUpperCase()
+          }]);
+        }
+      } catch (err) {
+        console.error("Failed to fetch admin settings", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchSettings();
+  }, []);
+
+  if (loading) {
+    return (
+      <TPOPageShell title="Settings" subtitle="Manage your institution profile, team, and notification preferences">
+        <div className="flex justify-center items-center h-64 text-gray-500">Loading settings...</div>
+      </TPOPageShell>
+    );
+  }
 
   return (
     <TPOPageShell title="Settings" subtitle="Manage your institution profile, team, and notification preferences">
@@ -70,22 +109,26 @@ export default function SettingsPage() {
         <Section icon={Building2} title="Institution Profile">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
             <Field label="Institution Name">
-              <Input defaultValue="BITS Pilani — Pilani Campus" />
+              <Input value={instName} onChange={e => setInstName(e.target.value)} />
             </Field>
             <Field label="Batch Year">
-              <Input defaultValue="2025" />
+              <Input value={batchYear} onChange={e => setBatchYear(e.target.value)} />
             </Field>
             <Field label="City / Location">
-              <Input defaultValue="Pilani, Rajasthan" />
+              <Input value={location} onChange={e => setLocation(e.target.value)} />
             </Field>
             <Field label="Primary Contact Email">
-              <Input defaultValue="tpo@bitspilani.ac.in" />
+              <Input value={email} onChange={e => setEmail(e.target.value)} />
             </Field>
           </div>
           <Field label="Institution Logo" hint="Upload a PNG or SVG — max 500 KB. Shown in reports and student emails.">
             <div className="flex items-center gap-4">
-              <div className="h-14 w-14 rounded-xl bg-purple-100 border-2 border-dashed border-purple-300 flex items-center justify-center text-purple-600 font-bold text-lg">
-                B
+              <div className="h-14 w-14 rounded-xl bg-purple-100 border-2 border-dashed border-purple-300 flex items-center justify-center text-purple-600 font-bold text-lg overflow-hidden">
+                {adminUser?.profile_picture ? (
+                  <img src={adminUser.profile_picture} alt="logo" className="w-full h-full object-cover" />
+                ) : (
+                  (instName || "I")[0].toUpperCase()
+                )}
               </div>
               <button className="text-xs font-semibold text-purple-600 border border-purple-200 px-4 py-2 rounded-lg hover:bg-purple-50 transition">
                 Upload Logo
@@ -142,7 +185,7 @@ export default function SettingsPage() {
           <div className="flex items-center gap-3 pt-2">
             <Input placeholder="colleague@college.ac.in" value={newEmail} onChange={e => setNewEmail(e.target.value)} />
             <button
-              onClick={() => { if (newEmail) { setMembers(ms => [...ms, { name: newEmail, email: newEmail, role: "Co-TPO", avatar: newEmail[0].toUpperCase() }]); setNewEmail(""); }}}
+              onClick={() => { if (newEmail) { setMembers(ms => [...ms, { name: newEmail.split("@")[0], email: newEmail, role: "Co-TPO", avatar: newEmail[0].toUpperCase() }]); setNewEmail(""); }}}
               className="flex-shrink-0 flex items-center gap-1.5 bg-purple-600 text-white text-xs font-semibold px-4 py-2 rounded-lg hover:bg-purple-700 transition"
             >
               <Plus size={12}/> Invite

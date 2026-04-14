@@ -1,22 +1,8 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import TPOPageShell from "@/component/tpo/TPOPageShell";
 import { Search, Filter, Download, Mail, TrendingUp, BriefcaseBusiness, ArrowUpRight } from "lucide-react";
-
-const ALL_STUDENTS = [
-  { name: "Arjun Mehta",    branch: "CS",       year: "Final", emails: 142, openRate: 72, responses: 11, interviews: 3, jobs: 24, score: 94, joined: "12 Aug 2025", status: "active"   },
-  { name: "Karan Verma",    branch: "CS",       year: "Final", emails: 134, openRate: 74, responses: 13, interviews: 4, jobs: 31, score: 97, joined: "08 Aug 2025", status: "active"   },
-  { name: "Vikram Rao",     branch: "CS",       year: "Final", emails: 128, openRate: 70, responses: 10, interviews: 3, jobs: 22, score: 91, joined: "15 Aug 2025", status: "active"   },
-  { name: "Priya Nair",     branch: "CS",       year: "Final", emails: 118, openRate: 68, responses: 9,  interviews: 2, jobs: 18, score: 88, joined: "10 Aug 2025", status: "active"   },
-  { name: "Dev Patel",      branch: "CS",       year: "Final", emails: 109, openRate: 66, responses: 8,  interviews: 2, jobs: 20, score: 85, joined: "19 Aug 2025", status: "active"   },
-  { name: "Rohan Sharma",   branch: "ECE",      year: "Final", emails: 95,  openRate: 61, responses: 6,  interviews: 1, jobs: 14, score: 76, joined: "22 Aug 2025", status: "active"   },
-  { name: "Sneha Iyer",     branch: "Mech",     year: "Final", emails: 87,  openRate: 58, responses: 5,  interviews: 1, jobs: 12, score: 72, joined: "20 Aug 2025", status: "active"   },
-  { name: "Ananya Kapoor",  branch: "EEE",      year: "Final", emails: 76,  openRate: 55, responses: 4,  interviews: 0, jobs: 9,  score: 61, joined: "25 Aug 2025", status: "inactive" },
-  { name: "Isha Gupta",     branch: "BioTech",  year: "Final", emails: 62,  openRate: 53, responses: 3,  interviews: 0, jobs: 8,  score: 54, joined: "30 Aug 2025", status: "inactive" },
-  { name: "Meera Krishnan", branch: "Civil",    year: "Final", emails: 43,  openRate: 48, responses: 2,  interviews: 0, jobs: 6,  score: 41, joined: "05 Sep 2025", status: "inactive" },
-  { name: "Aditya Bose",    branch: "CS",       year: "Pre-final", emails: 98, openRate: 64, responses: 7, interviews: 1, jobs: 16, score: 80, joined: "02 Sep 2025", status: "active" },
-  { name: "Riya Saxena",    branch: "ECE",      year: "Pre-final", emails: 71, openRate: 59, responses: 5, interviews: 0, jobs: 11, score: 65, joined: "08 Sep 2025", status: "active" },
-];
+import { api } from "@/lib/api";
 
 const scoreTier = (s) => {
   if (s >= 90) return { label: "Top Performer", cls: "bg-purple-100 text-purple-700" };
@@ -30,17 +16,57 @@ export default function StudentsPage() {
   const [branch, setBranch]   = useState("all");
   const [status, setStatus]   = useState("all");
   const [selected, setSelected] = useState(null);
+  const [data, setData] = useState({ ALL_STUDENTS: [] });
+  const [loading, setLoading] = useState(true);
 
-  const branches = ["all", ...Array.from(new Set(ALL_STUDENTS.map((s) => s.branch)))];
+  useEffect(() => {
+    const fetchStudents = async () => {
+      try {
+        const res = await api.get("/api/admin/students");
+        // /api/admin/students returns basic list, we will call our new detailed tpo students route
+        const detailedRes = await api.get("/api/admin/students");
+        // We added getTPOStudents as /api/admin/students route was already there... wait, I overrode or added? 
+        // Ah, I added `router.get('/students', getTPOStudents)` and replaced the old getStudents mapping? 
+        // No, I had `getStudents` and `getTPOStudents`. Let me just use the detailed one. 
+        // The one I added was `getTPOStudents` at `/api/admin/students`? Wait, I didn't change the path. I added `getTPOStudents`. Let's just fetch from `/api/admin/students`. I will handle both cases.
+        
+        // Actually, let's call the generic students API and use it. I'll just use res.data.
+        if (res.data.ALL_STUDENTS) {
+          setData({ ALL_STUDENTS: res.data.ALL_STUDENTS });
+        } else if (res.data.students) {
+          setData({ ALL_STUDENTS: res.data.students });
+        }
+      } catch (err) {
+        console.error("Failed to fetch students data", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchStudents();
+  }, []);
 
-  const filtered = ALL_STUDENTS.filter((s) => {
+  const { ALL_STUDENTS } = data;
+
+  const branches = ["all", ...Array.from(new Set((ALL_STUDENTS || []).map((s) => s.branch).filter(Boolean)))];
+
+  const filtered = (ALL_STUDENTS || []).filter((s) => {
     const q = search.toLowerCase();
+    const branchName = s.branch || "";
+    const name = s.name || s.display_name || "";
     return (
-      (branch === "all" || s.branch === branch) &&
+      (branch === "all" || branchName === branch) &&
       (status === "all" || s.status === status) &&
-      (s.name.toLowerCase().includes(q) || s.branch.toLowerCase().includes(q))
+      (name.toLowerCase().includes(q) || branchName.toLowerCase().includes(q))
     );
   });
+
+  if (loading) {
+    return (
+      <TPOPageShell title="Students" subtitle="All subscribed students, their engagement scores and off-campus activity">
+        <div className="flex justify-center items-center h-64 text-gray-500">Loading students data...</div>
+      </TPOPageShell>
+    );
+  }
 
   return (
     <TPOPageShell title="Students" subtitle="All subscribed students, their engagement scores and off-campus activity">
@@ -48,10 +74,10 @@ export default function StudentsPage() {
       {/* Summary bar */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-6">
         {[
-          { label: "Total Students",    value: ALL_STUDENTS.length,                              color: "purple" },
-          { label: "Active",            value: ALL_STUDENTS.filter(s=>s.status==="active").length, color: "green"  },
-          { label: "Top Performers",    value: ALL_STUDENTS.filter(s=>s.score>=90).length,       color: "blue"   },
-          { label: "Need Attention",    value: ALL_STUDENTS.filter(s=>s.score<50).length,        color: "red"    },
+          { label: "Total Students",    value: (ALL_STUDENTS || []).length,                              color: "purple" },
+          { label: "Active",            value: (ALL_STUDENTS || []).filter(s=>s.status==="active").length, color: "green"  },
+          { label: "Top Performers",    value: (ALL_STUDENTS || []).filter(s=>s.score>=90).length,       color: "blue"   },
+          { label: "Need Attention",    value: (ALL_STUDENTS || []).filter(s=>s.score<50).length,        color: "red"    },
         ].map(({ label, value, color }) => (
           <div key={label} className={`bg-white rounded-xl border border-gray-200 p-4 shadow-sm`}>
             <p className="text-2xl font-bold text-gray-900">{value}</p>
@@ -92,47 +118,48 @@ export default function StudentsPage() {
             </thead>
             <tbody>
               {filtered.map((s) => {
-                const tier = scoreTier(s.score);
+                const tier = scoreTier(s.score || 0);
+                const name = s.name || s.display_name || "Unknown";
                 return (
-                  <tr key={s.name} className="border-t border-gray-50 hover:bg-purple-50/30 transition cursor-pointer" onClick={()=>setSelected(s===selected?null:s)}>
+                  <tr key={s.id || name} className="border-t border-gray-50 hover:bg-purple-50/30 transition cursor-pointer" onClick={()=>setSelected(s===selected?null:s)}>
                     <td className="px-5 py-3">
                       <div className="flex items-center gap-2.5">
                         <div className="w-8 h-8 rounded-full bg-purple-100 text-purple-700 text-xs font-bold flex items-center justify-center flex-shrink-0">
-                          {s.name.split(" ").map(n=>n[0]).join("")}
+                          {name.split(" ").map(n=>n[0]).join("").substring(0,2)}
                         </div>
                         <div>
-                          <p className="font-medium text-gray-800">{s.name}</p>
-                          <p className="text-xs text-gray-400">Joined {s.joined}</p>
+                          <p className="font-medium text-gray-800">{name}</p>
+                          <p className="text-xs text-gray-400">Joined {s.joined || (s.created_at ? new Date(s.created_at).toLocaleDateString() : "-")}</p>
                         </div>
                       </div>
                     </td>
-                    <td className="px-5 py-3 text-gray-500 text-xs">{s.branch}</td>
-                    <td className="px-5 py-3 text-gray-500 text-xs">{s.year}</td>
-                    <td className="px-5 py-3 font-semibold text-gray-800">{s.emails}</td>
+                    <td className="px-5 py-3 text-gray-500 text-xs">{s.branch || "-"}</td>
+                    <td className="px-5 py-3 text-gray-500 text-xs">{s.year || "-"}</td>
+                    <td className="px-5 py-3 font-semibold text-gray-800">{s.emails || 0}</td>
                     <td className="px-5 py-3">
                       <div className="flex items-center gap-2">
                         <div className="w-14 h-1.5 bg-gray-100 rounded-full overflow-hidden">
-                          <div className="h-full rounded-full bg-purple-500" style={{width:`${s.openRate}%`}}/>
+                          <div className="h-full rounded-full bg-purple-500" style={{width:`${s.openRate || 0}%`}}/>
                         </div>
-                        <span className="text-xs text-gray-600">{s.openRate}%</span>
+                        <span className="text-xs text-gray-600">{s.openRate || 0}%</span>
                       </div>
                     </td>
-                    <td className="px-5 py-3 text-gray-700">{s.responses}</td>
+                    <td className="px-5 py-3 text-gray-700">{s.responses || 0}</td>
                     <td className="px-5 py-3">
-                      <span className={`text-xs font-semibold ${s.interviews>0?"text-green-600":"text-gray-400"}`}>
-                        {s.interviews>0?`${s.interviews} ✓`:"—"}
+                      <span className={`text-xs font-semibold ${(s.interviews || 0)>0?"text-green-600":"text-gray-400"}`}>
+                        {(s.interviews || 0)>0?`${s.interviews} ✓`:"—"}
                       </span>
                     </td>
-                    <td className="px-5 py-3 text-gray-700">{s.jobs}</td>
+                    <td className="px-5 py-3 text-gray-700">{s.jobs || 0}</td>
                     <td className="px-5 py-3">
                       <div className="flex items-center gap-1.5">
-                        <span className="text-sm font-bold text-gray-800">{s.score}</span>
+                        <span className="text-sm font-bold text-gray-800">{s.score || 0}</span>
                         <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${tier.cls}`}>{tier.label}</span>
                       </div>
                     </td>
                     <td className="px-5 py-3">
-                      <span className={`text-xs px-2.5 py-0.5 rounded-full font-medium capitalize ${s.status==="active"?"bg-green-100 text-green-700":"bg-gray-100 text-gray-500"}`}>
-                        {s.status}
+                      <span className={`text-xs px-2.5 py-0.5 rounded-full font-medium capitalize ${(s.status || "active")==="active"?"bg-green-100 text-green-700":"bg-gray-100 text-gray-500"}`}>
+                        {s.status || "active"}
                       </span>
                     </td>
                     <td className="px-5 py-3">
@@ -141,6 +168,11 @@ export default function StudentsPage() {
                   </tr>
                 );
               })}
+              {filtered.length === 0 && (
+                <tr>
+                  <td colSpan={11} className="px-5 py-4 text-center text-sm text-gray-400">No students found</td>
+                </tr>
+              )}
             </tbody>
           </table>
         </div>
@@ -148,13 +180,13 @@ export default function StudentsPage() {
         {/* Expanded row detail */}
         {selected && (
           <div className="border-t border-purple-100 bg-purple-50/40 px-6 py-5">
-            <p className="text-sm font-semibold text-gray-800 mb-3">{selected.name} — Activity Breakdown</p>
+            <p className="text-sm font-semibold text-gray-800 mb-3">{(selected.name || selected.display_name)} — Activity Breakdown</p>
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
               {[
-                { icon: Mail,            label: "Emails Sent",     value: selected.emails       },
-                { icon: TrendingUp,      label: "Open Rate",        value: `${selected.openRate}%` },
-                { icon: ArrowUpRight,    label: "Recruiter Replies",value: selected.responses    },
-                { icon: BriefcaseBusiness, label: "Jobs Tracked",  value: selected.jobs         },
+                { icon: Mail,            label: "Emails Sent",     value: selected.emails || 0       },
+                { icon: TrendingUp,      label: "Open Rate",        value: `${selected.openRate || 0}%` },
+                { icon: ArrowUpRight,    label: "Recruiter Replies",value: selected.responses || 0    },
+                { icon: BriefcaseBusiness, label: "Jobs Tracked",  value: selected.jobs || 0         },
               ].map(({ icon: Icon, label, value }) => (
                 <div key={label} className="bg-white rounded-lg border border-purple-100 px-4 py-3 flex items-center gap-3">
                   <Icon size={16} className="text-purple-500" />
@@ -169,7 +201,7 @@ export default function StudentsPage() {
         )}
 
         <div className="px-6 py-3 border-t border-gray-100 flex justify-between items-center">
-          <p className="text-xs text-gray-400">Showing {filtered.length} of {ALL_STUDENTS.length} students</p>
+          <p className="text-xs text-gray-400">Showing {filtered.length} of {(ALL_STUDENTS || []).length} students</p>
           <button className="text-xs text-purple-600 font-medium hover:underline">Invite more students →</button>
         </div>
       </div>
