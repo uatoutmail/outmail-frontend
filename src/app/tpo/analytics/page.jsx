@@ -56,15 +56,15 @@ export default function AnalyticsPage() {
       <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm mb-6">
         <div className="flex items-center justify-between mb-1">
           <h3 className="text-sm font-semibold text-gray-900">Student Engagement Trend — Aug 2025 to Mar 2026</h3>
-          <span className="flex items-center gap-1 text-xs text-green-600 font-medium bg-green-50 px-2 py-1 rounded-md">
-            <TrendingUp size={11}/> +133% active students
+          <span className="flex items-center gap-1 text-xs text-purple-600 font-medium bg-purple-50 px-2 py-1 rounded-md">
+            <TrendingUp size={11}/> Real-time engagement
           </span>
         </div>
         <p className="text-xs text-gray-400 mb-4">Active students on platform vs. total interviews secured</p>
         <div className="h-64">
           {engagementTrend && engagementTrend.length > 0 ? (
             <ResponsiveLine
-              data={engagementTrend}
+              data={engagementTrend.filter(s => s.id !== "Interviews")}
               margin={{top:10,right:20,bottom:50,left:50}}
               axisBottom={{tickSize:0,tickPadding:10}}
               axisLeft={{tickSize:0,tickPadding:8,tickValues:5}}
@@ -161,7 +161,7 @@ export default function AnalyticsPage() {
               </div>
               <div className="flex-1">
                 <p className="text-sm font-semibold text-gray-800">{s.name}</p>
-                <p className="text-xs text-gray-400">{s.emails} emails · {s.interviews} interviews</p>
+                <p className="text-xs text-gray-400">{s.emails} emails sent</p>
               </div>
               <div className="text-right">
                 <p className="text-xl font-black text-purple-700">{s.score}</p>

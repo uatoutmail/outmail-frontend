@@ -2,8 +2,7 @@
 import { useState, useEffect } from "react";
 import TPOPageShell from "@/component/tpo/TPOPageShell";
 import { ResponsiveLine } from "@nivo/line";
-import { ResponsiveBar } from "@nivo/bar";
-import { Mail, TrendingUp, MousePointerClick, MessageSquareReply, ArrowUpRight } from "lucide-react";
+import { Mail } from "lucide-react";
 import { api } from "@/lib/api";
 
 export default function OutreachPage() {
@@ -37,7 +36,7 @@ export default function OutreachPage() {
     );
   }
 
-  const { monthlySent, openByDayData, topTemplates, topStudents } = data;
+  const { monthlySent, topTemplates, topStudents } = data;
 
   return (
     <TPOPageShell title="Cold Outreach" subtitle="College-wide email campaign performance and recruiter engagement metrics">
@@ -45,10 +44,7 @@ export default function OutreachPage() {
       {/* KPI row */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
         {[
-          { icon:Mail,                  label:"Total Emails Sent",    value:"28,460", sub:"Across all students",   color:"purple" },
-          { icon:MousePointerClick,     label:"Avg Open Rate",         value:"64%",    sub:"Industry avg: 21%",    color:"blue"   },
-          { icon:MessageSquareReply,    label:"Total Replies",         value:"1,934",  sub:"Reply rate: 6.8%",     color:"green"  },
-          { icon:TrendingUp,            label:"Interviews Secured",    value:"187",    sub:"From cold outreach",   color:"orange" },
+          { icon:Mail,                  label:"Total Emails Sent",    value:stats?.totalEmailsSent?.toLocaleString() || "0", sub:"Across all students",   color:"purple" },
         ].map(({icon:Icon,label,value,sub,color})=>(
           <div key={label} className="bg-white rounded-xl border border-gray-200 p-5 shadow-sm">
             <div className={`inline-flex p-2.5 rounded-lg bg-${color}-50 mb-3`}>
@@ -62,14 +58,14 @@ export default function OutreachPage() {
       </div>
 
       {/* Charts row */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+      <div className="mb-6">
         <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm">
-          <h3 className="text-sm font-semibold text-gray-900 mb-1">Monthly Email Volume vs. Replies</h3>
-          <p className="text-xs text-gray-400 mb-4">Oct 2025 – Mar 2026</p>
-          <div className="h-60">
+          <h3 className="text-sm font-semibold text-gray-900 mb-1">Monthly Email Volume</h3>
+          <p className="text-xs text-gray-400 mb-4">Last 6 Months</p>
+          <div className="h-64">
             {monthlySent && monthlySent.length > 0 ? (
               <ResponsiveLine
-                data={monthlySent}
+                data={monthlySent.filter(s => s.id === "Emails Sent")}
                 margin={{top:10,right:20,bottom:50,left:50}}
                 axisBottom={{tickSize:0,tickPadding:10}}
                 axisLeft={{tickSize:0,tickPadding:8,tickValues:5}}
@@ -82,31 +78,6 @@ export default function OutreachPage() {
                 enableGridX={false}
                 theme={{textColor:"#6B7280",fontSize:11,grid:{line:{stroke:"#F3F4F6"}}}}
                 legends={[{anchor:"bottom",direction:"row",translateY:46,itemWidth:120,itemHeight:14,itemTextColor:"#6B7280",symbolSize:8,symbolShape:"circle"}]}
-              />
-            ) : (
-              <div className="h-full flex justify-center items-center text-sm text-gray-400">No data available</div>
-            )}
-          </div>
-        </div>
-
-        <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm">
-          <h3 className="text-sm font-semibold text-gray-900 mb-1">Best Days to Send Cold Emails</h3>
-          <p className="text-xs text-gray-400 mb-4">Average open rate by day of week</p>
-          <div className="h-60">
-            {openByDayData && openByDayData.length > 0 ? (
-              <ResponsiveBar
-                data={openByDayData}
-                keys={["rate"]}
-                indexBy="day"
-                margin={{top:10,right:10,bottom:40,left:40}}
-                padding={0.35}
-                colors={d=>d.index===1||d.index===3?"#7C3AED":"#C4B5FD"}
-                borderRadius={4}
-                axisBottom={{tickSize:0,tickPadding:8}}
-                axisLeft={{tickSize:0,tickPadding:8,tickValues:4}}
-                enableGridX={false}
-                enableLabel={false}
-                theme={{textColor:"#6B7280",fontSize:11,grid:{line:{stroke:"#F3F4F6"}}}}
               />
             ) : (
               <div className="h-full flex justify-center items-center text-sm text-gray-400">No data available</div>
@@ -129,17 +100,8 @@ export default function OutreachPage() {
               <div key={t.name} className="px-6 py-4 flex items-center justify-between">
                 <div className="flex-1 min-w-0 mr-4">
                   <p className="text-sm font-medium text-gray-800 truncate">{t.name}</p>
-                  <div className="flex gap-3 mt-1 text-xs text-gray-400">
-                    <span>{t.sent?.toLocaleString()} sent</span>
-                    <span>{t.opens?.toLocaleString()} opens</span>
-                    <span>{t.replies} replies</span>
-                  </div>
+                  <p className="text-xs text-gray-400 mt-1">{t.sent?.toLocaleString()} emails sent</p>
                 </div>
-                <span className={`text-xs font-semibold px-2.5 py-1 rounded-full whitespace-nowrap ${
-                  t.replyRate>=8?"bg-green-100 text-green-700":t.replyRate>=5?"bg-yellow-100 text-yellow-700":"bg-red-50 text-red-500"
-                }`}>
-                  {t.replyRate}% reply
-                </span>
               </div>
             ))}
             {(!topTemplates || topTemplates.length === 0) && (
@@ -163,9 +125,8 @@ export default function OutreachPage() {
                 </div>
                 <div className="flex-1">
                   <p className="text-sm font-medium text-gray-800">{s.name}</p>
-                  <p className="text-xs text-gray-400">{s.emails} emails · {s.replies} replies</p>
+                  <p className="text-xs text-gray-400">{s.emails} emails sent</p>
                 </div>
-                <span className="text-sm font-bold text-purple-600">{s.rate}%</span>
               </div>
             ))}
             {(!topStudents || topStudents.length === 0) && (

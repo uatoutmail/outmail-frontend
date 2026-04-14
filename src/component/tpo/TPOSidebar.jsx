@@ -46,8 +46,8 @@ export default function TPOSidebar({ isOpen, onToggle, user }) {
       {/* Logo */}
       <div className="flex items-center justify-between px-4 py-5 border-b border-gray-100">
         <div className="flex items-center gap-3 overflow-hidden">
-          <div className="w-8 h-8 flex-shrink-0 bg-purple-600 rounded-lg flex items-center justify-center">
-            <span className="text-white font-bold text-sm">O</span>
+          <div className="flex-shrink-0">
+            <img src="/logo-nav.png" alt="Outmail Logo" className="w-8 h-8 object-contain" />
           </div>
           {isOpen && (
             <div className="overflow-hidden">
@@ -58,16 +58,9 @@ export default function TPOSidebar({ isOpen, onToggle, user }) {
         </div>
         <button
           onClick={onToggle}
-          className="p-1.5 rounded-md text-gray-400 hover:text-gray-600 hover:bg-gray-100 transition"
+          className="lg:hidden p-1.5 rounded-md text-gray-400 hover:text-gray-600 hover:bg-gray-100 transition"
         >
-          {isOpen ? (
-            <div className="flex">
-              <ChevronLeft size={16} className="hidden lg:block" />
-              <X size={18} className="lg:hidden" />
-            </div>
-          ) : (
-            <ChevronRight size={16} />
-          )}
+          {isOpen ? <X size={18} /> : <ChevronRight size={16} />}
         </button>
       </div>
 

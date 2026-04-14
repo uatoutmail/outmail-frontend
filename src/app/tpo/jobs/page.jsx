@@ -54,10 +54,10 @@ export default function JobsPage() {
       {/* KPI */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
         {[
-          { icon:BriefcaseBusiness, label:"Total Openings Tracked", value:"4,812", sub:"Across all students",     color:"purple" },
-          { icon:TrendingUp,        label:"Avg per Student",          value:"15.4",  sub:"Openings tracked",       color:"blue"   },
-          { icon:Building2,         label:"Unique Companies",         value:"312",   sub:"With active hiring",     color:"green"  },
-          { icon:Zap,               label:"Hot Opportunities",        value:"48",    sub:"Score ≥ 90 this week",   color:"orange" },
+          { icon:BriefcaseBusiness, label:"Total Openings Tracked", value:stats?.totalOpenings?.toLocaleString() || "0", sub:"Across all students",     color:"purple" },
+          { icon:TrendingUp,        label:"Avg per Student",          value:stats?.avgPerStudent || "0",             sub:"Openings tracked",       color:"blue"   },
+          { icon:Building2,         label:"Unique Companies",         value:stats?.uniqueCompanies?.toLocaleString() || "0", sub:"With active hiring",     color:"green"  },
+          { icon:Zap,               label:"Hot Opportunities",        value:stats?.hotOpportunities?.toLocaleString() || "0", sub:"Score ≥ 90 this week",   color:"orange" },
         ].map(({icon:Icon,label,value,sub,color})=>(
           <div key={label} className={`bg-white rounded-xl border border-gray-200 p-5 shadow-sm`}>
             <div className={`inline-flex p-2.5 rounded-lg bg-${color}-50 mb-3`}>

@@ -111,7 +111,7 @@ export default function StudentsPage() {
           <table className="w-full text-sm">
             <thead className="bg-gray-50">
               <tr>
-                {["Student","Branch","Year","Emails","Open Rate","Replies","Interviews","Jobs","Score","Status","Actions"].map(h=>(
+                {["Student","Branch","Year","Emails","Jobs","Score","Status","Actions"].map(h=>(
                   <th key={h} className="text-left text-xs font-medium text-gray-500 px-5 py-3 whitespace-nowrap">{h}</th>
                 ))}
               </tr>
@@ -136,20 +136,6 @@ export default function StudentsPage() {
                     <td className="px-5 py-3 text-gray-500 text-xs">{s.branch || "-"}</td>
                     <td className="px-5 py-3 text-gray-500 text-xs">{s.year || "-"}</td>
                     <td className="px-5 py-3 font-semibold text-gray-800">{s.emails || 0}</td>
-                    <td className="px-5 py-3">
-                      <div className="flex items-center gap-2">
-                        <div className="w-14 h-1.5 bg-gray-100 rounded-full overflow-hidden">
-                          <div className="h-full rounded-full bg-purple-500" style={{width:`${s.openRate || 0}%`}}/>
-                        </div>
-                        <span className="text-xs text-gray-600">{s.openRate || 0}%</span>
-                      </div>
-                    </td>
-                    <td className="px-5 py-3 text-gray-700">{s.responses || 0}</td>
-                    <td className="px-5 py-3">
-                      <span className={`text-xs font-semibold ${(s.interviews || 0)>0?"text-green-600":"text-gray-400"}`}>
-                        {(s.interviews || 0)>0?`${s.interviews} ✓`:"—"}
-                      </span>
-                    </td>
                     <td className="px-5 py-3 text-gray-700">{s.jobs || 0}</td>
                     <td className="px-5 py-3">
                       <div className="flex items-center gap-1.5">
@@ -170,7 +156,7 @@ export default function StudentsPage() {
               })}
               {filtered.length === 0 && (
                 <tr>
-                  <td colSpan={11} className="px-5 py-4 text-center text-sm text-gray-400">No students found</td>
+                  <td colSpan={8} className="px-5 py-4 text-center text-sm text-gray-400">No students found</td>
                 </tr>
               )}
             </tbody>
@@ -184,8 +170,6 @@ export default function StudentsPage() {
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
               {[
                 { icon: Mail,            label: "Emails Sent",     value: selected.emails || 0       },
-                { icon: TrendingUp,      label: "Open Rate",        value: `${selected.openRate || 0}%` },
-                { icon: ArrowUpRight,    label: "Recruiter Replies",value: selected.responses || 0    },
                 { icon: BriefcaseBusiness, label: "Jobs Tracked",  value: selected.jobs || 0         },
               ].map(({ icon: Icon, label, value }) => (
                 <div key={label} className="bg-white rounded-lg border border-purple-100 px-4 py-3 flex items-center gap-3">

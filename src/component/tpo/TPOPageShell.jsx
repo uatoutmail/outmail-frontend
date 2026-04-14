@@ -6,12 +6,12 @@ import { useAuth } from "@/context/AuthContext";
 
 export default function TPOPageShell({ children, title, subtitle }) {
   const { user } = useAuth();
-  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [sidebarOpen, setSidebarOpen] = useState(true);
 
   // Initialize sidebar state based on screen size
   useEffect(() => {
-    if (window.innerWidth >= 1024) {
-      setSidebarOpen(true);
+    if (window.innerWidth < 1024) {
+      setSidebarOpen(false);
     }
   }, []);
 
