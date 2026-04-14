@@ -7,8 +7,10 @@ import { useRouter } from 'next/navigation';
 import { Mail, Lock, ArrowRight, Loader2 } from 'lucide-react';
 import { api } from '@/lib/api';
 import { toast } from 'sonner';
+import { useAuth } from '@/context/AuthContext';
 
 export default function TpoLoginPage() {
+  const { login } = useAuth();
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [email, setEmail] = useState('');
@@ -28,6 +30,9 @@ export default function TpoLoginPage() {
         
         // Set cookie for middleware
         document.cookie = `outmail_auth=${token}; path=/; max-age=${7 * 24 * 60 * 60}; secure; samesite=strict`;
+        
+        // Refresh session in context
+        await login();
         
         router.push('/tpo/dashboard');
       }

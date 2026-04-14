@@ -15,7 +15,16 @@ const urgencyBadge = {
 export default function JobsPage() {
   const [search, setSearch] = useState("");
   const [sector, setSector] = useState("all");
-  const [data, setData] = useState({ sectorBreakdown: [], ALL_JOBS: [] });
+  const [data, setData] = useState({ 
+    sectorBreakdown: [], 
+    ALL_JOBS: [],
+    stats: {
+      totalOpenings: 0,
+      avgPerStudent: 0,
+      uniqueCompanies: 0,
+      hotOpportunities: 0
+    }
+  });
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -32,7 +41,7 @@ export default function JobsPage() {
     fetchJobs();
   }, []);
 
-  const { sectorBreakdown, ALL_JOBS } = data;
+  const { sectorBreakdown, ALL_JOBS, stats } = data;
 
   const sectors = ["all", ...Array.from(new Set(ALL_JOBS.map(j=>j.sector)))];
   const filtered = ALL_JOBS.filter(j=>

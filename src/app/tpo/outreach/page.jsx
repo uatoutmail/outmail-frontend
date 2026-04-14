@@ -10,7 +10,13 @@ export default function OutreachPage() {
     monthlySent: [],
     openByDayData: [],
     topTemplates: [],
-    topStudents: []
+    topStudents: [],
+    stats: {
+      totalEmailsSent: 0,
+      avgOpenRate: 0,
+      totalReplies: 0,
+      interviewsSecured: 0
+    }
   });
   const [loading, setLoading] = useState(true);
 
@@ -36,7 +42,7 @@ export default function OutreachPage() {
     );
   }
 
-  const { monthlySent, topTemplates, topStudents } = data;
+  const { monthlySent, topTemplates, topStudents, stats } = data;
 
   return (
     <TPOPageShell title="Cold Outreach" subtitle="College-wide email campaign performance and recruiter engagement metrics">
@@ -44,7 +50,10 @@ export default function OutreachPage() {
       {/* KPI row */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
         {[
-          { icon:Mail,                  label:"Total Emails Sent",    value:stats?.totalEmailsSent?.toLocaleString() || "0", sub:"Across all students",   color:"purple" },
+          { icon:Mail,  label:"Total Emails Sent",    value:stats?.totalEmailsSent?.toLocaleString() || "0", sub:"Across all students",   color:"purple" },
+          { icon:Mail,  label:"Response Rate",        value:`${stats?.avgOpenRate || 0}%`,                 sub:"Total reply rate",      color:"blue" },
+          { icon:Mail,  label:"Total Replies",        value:stats?.totalReplies?.toLocaleString() || "0",    sub:"Confirmed responses",    color:"green" },
+          { icon:Mail,  label:"Interviews",          value:stats?.interviewsSecured?.toLocaleString() || "0", sub:"Secured via outreach", color:"orange" },
         ].map(({icon:Icon,label,value,sub,color})=>(
           <div key={label} className="bg-white rounded-xl border border-gray-200 p-5 shadow-sm">
             <div className={`inline-flex p-2.5 rounded-lg bg-${color}-50 mb-3`}>

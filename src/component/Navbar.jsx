@@ -74,7 +74,7 @@ function Navbar({ variant = "gradient" }) {
               {isUserMenuOpen && (
                 <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg py-1 z-50">
                   <Link
-                    href="/dashboard"
+                    href={user?.role === "TPO_ADMIN" ? "/tpo/dashboard" : "/dashboard"}
                     className="block px-4 py-2 text-gray-800 hover:bg-gray-100 transition"
                     onClick={() => setIsUserMenuOpen(false)}
                   >
@@ -197,7 +197,7 @@ function Navbar({ variant = "gradient" }) {
                   
                   {/* Dashboard Link */}
                   <Link
-                    href="/dashboard"
+                    href={user?.role === "TPO_ADMIN" ? "/tpo/dashboard" : "/dashboard"}
                     className="text-center text-white bg-[#AD46FF] font-semibold rounded-full px-8 py-3 hover:bg-[#c289f0] transition-colors"
                     onClick={() => setIsOpen(false)}
                   >
