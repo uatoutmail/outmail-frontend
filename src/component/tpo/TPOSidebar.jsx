@@ -1,5 +1,6 @@
 "use client";
 import Link from "next/link";
+import { useAuth } from "@/context/AuthContext";
 import {
   LayoutDashboard,
   Users,
@@ -11,7 +12,8 @@ import {
   Settings,
   ChevronLeft,
   ChevronRight,
-  X
+  X,
+  LogOut
 } from "lucide-react";
 
 const navItems = [
@@ -26,6 +28,7 @@ const navItems = [
 ];
 
 export default function TPOSidebar({ isOpen, onToggle, user }) {
+  const { logout } = useAuth();
   return (
     <>
       {/* Overlay Backdrop - only show on mobile when sidebar is open */}
@@ -88,9 +91,14 @@ export default function TPOSidebar({ isOpen, onToggle, user }) {
       {/* College Badge */}
       {isOpen && (
         <div className="px-4 py-4 border-t border-gray-100">
-          <div className="bg-purple-50 rounded-lg px-3 py-2.5">
-            <p className="text-xs font-semibold text-purple-700">{user?.college || "Institute"}</p>
-            <p className="text-xs text-purple-500 mt-0.5">Admin Dashboard View</p>
+          <div className="bg-purple-50 rounded-lg px-3 py-2.5 flex justify-between items-center group">
+            <div>
+              <p className="text-xs font-semibold text-purple-700">{user?.college || "Institute"}</p>
+              <button onClick={logout} className="text-xs text-purple-500 mt-0.5 hover:text-purple-800 transition flex items-center gap-1 font-medium">
+                <LogOut size={12} />
+                Logout
+              </button>
+            </div>
           </div>
         </div>
       )}

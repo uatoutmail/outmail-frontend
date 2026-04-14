@@ -14,12 +14,27 @@ export default function TPODashboard() {
   const { isAuthenticated, loading } = useAuth();
   const router = useRouter();
   const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [stats, setStats] = useState(null);
 
   useEffect(() => {
     if (!loading && !isAuthenticated) {
       router.replace("/");
     }
   }, [isAuthenticated, loading, router]);
+
+  useEffect(() => {
+    const fetchStats = async () => {
+      try {
+        const res = await api.get("/api/admin/stats");
+        setStats(res.data.stats);
+      } catch (err) {
+        console.error("Failed to fetch TPO stats", err);
+      }
+    };
+    if (isAuthenticated) {
+      fetchStats();
+    }
+  }, [isAuthenticated]);
 
   if (loading || !isAuthenticated) {
     return (
@@ -36,22 +51,6 @@ export default function TPODashboard() {
     role: "Placement Officer",
     avatar: null,
   };
-
-  const [stats, setStats] = useState(null);
-
-  useEffect(() => {
-    const fetchStats = async () => {
-      try {
-        const res = await api.get("/api/admin/stats");
-        setStats(res.data.stats);
-      } catch (err) {
-        console.error("Failed to fetch TPO stats", err);
-      }
-    };
-    if (isAuthenticated) {
-      fetchStats();
-    }
-  }, [isAuthenticated]);
 
   return (
     <div className="min-h-screen bg-gray-50 flex">
