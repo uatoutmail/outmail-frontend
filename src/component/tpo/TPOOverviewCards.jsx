@@ -4,78 +4,10 @@ import {
   Mail,
   BriefcaseBusiness,
   TrendingUp,
-  GraduationCap,
-  Star,
+  FileText,
   ArrowUpRight,
   ArrowDownRight,
 } from "lucide-react";
-
-const cards = [
-  {
-    label: "Total Students on Outmail",
-    value: "312",
-    sub: "+18 joined this month",
-    trend: "up",
-    icon: Users,
-    color: "purple",
-  },
-  {
-    label: "Total Cold Emails Sent",
-    value: "28,460",
-    sub: "Avg 91 emails / student",
-    trend: "up",
-    icon: Mail,
-    color: "blue",
-  },
-  {
-    label: "Avg Open Rate",
-    value: "64%",
-    sub: "Industry avg: 21%",
-    trend: "up",
-    icon: TrendingUp,
-    color: "green",
-  },
-  {
-    label: "Total Job Openings Tracked",
-    value: "4,812",
-    sub: "Avg 15 openings / student",
-    trend: "up",
-    icon: BriefcaseBusiness,
-    color: "orange",
-  },
-  {
-    label: "Mentor Sessions Held",
-    value: "638",
-    sub: "Across 24 expert mentors",
-    trend: "up",
-    icon: GraduationCap,
-    color: "teal",
-  },
-  {
-    label: "Avg Mentor Rating",
-    value: "4.7 / 5",
-    sub: "Based on 510 reviews",
-    trend: "up",
-    icon: Star,
-    color: "yellow",
-  },
-  {
-    label: "Recruiter Responses Received",
-    value: "1,934",
-    sub: "Response rate: 6.8%",
-    trend: "up",
-    icon: ArrowUpRight,
-    color: "indigo",
-  },
-  {
-    label: "Students with ≥1 Interview",
-    value: "187",
-    sub: "60% of active students",
-    trend: "up",
-    icon: TrendingUp,
-    color: "pink",
-  },
-];
 
 const colorMap = {
   purple: { bg: "bg-purple-50", text: "text-purple-600", badge: "bg-purple-100 text-purple-700" },
@@ -88,7 +20,42 @@ const colorMap = {
   pink:   { bg: "bg-pink-50",   text: "text-pink-600",   badge: "bg-pink-100 text-pink-700" },
 };
 
-export default function TPOOverviewCards() {
+export default function TPOOverviewCards({ stats }) {
+  const cards = [
+    {
+      label: "Total Students on Outmail",
+      value: stats?.totalStudents || 0,
+      sub: "Active students",
+      trend: "up",
+      icon: Users,
+      color: "purple",
+    },
+    {
+      label: "Total Cold Emails Sent",
+      value: stats?.totalEmailsSent || 0,
+      sub: "Total outreach",
+      trend: "up",
+      icon: Mail,
+      color: "blue",
+    },
+    {
+      label: "Total Companies Tracked",
+      value: stats?.totalCompanies || 0,
+      sub: "Across all students",
+      trend: "up",
+      icon: BriefcaseBusiness,
+      color: "orange",
+    },
+    {
+      label: "Total Templates Created",
+      value: stats?.totalTemplates || 0,
+      sub: "Active templates",
+      trend: "up",
+      icon: FileText,
+      color: "teal",
+    },
+  ];
+
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
       {cards.map(({ label, value, sub, trend, icon: Icon, color }) => {

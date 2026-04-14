@@ -8,6 +8,7 @@ import TPOOverviewCards from "@/component/tpo/TPOOverviewCards";
 import TPOCharts from "@/component/tpo/TPOCharts";
 import TPOStudentTable from "@/component/tpo/TPOStudentTable";
 import TPOMentorshipPanel from "@/component/tpo/TPOMentorshipPanel";
+import { api } from "@/lib/api";
 
 export default function TPODashboard() {
   const { isAuthenticated, loading } = useAuth();
@@ -35,6 +36,22 @@ export default function TPODashboard() {
     role: "Placement Officer",
     avatar: null,
   };
+
+  const [stats, setStats] = useState(null);
+
+  useEffect(() => {
+    const fetchStats = async () => {
+      try {
+        const res = await api.get("/api/admin/stats");
+        setStats(res.data.stats);
+      } catch (err) {
+        console.error("Failed to fetch TPO stats", err);
+      }
+    };
+    if (isAuthenticated) {
+      fetchStats();
+    }
+  }, [isAuthenticated]);
 
   return (
     <div className="min-h-screen bg-gray-50 flex">
@@ -79,10 +96,10 @@ export default function TPODashboard() {
           </div>
 
           {/* KPI Cards */}
-          <TPOOverviewCards />
+          <TPOOverviewCards stats={stats} />
 
           {/* Charts Row */}
-          <TPOCharts />
+          <TPOCharts stats={stats} />
 
           {/* Bottom Row — Student Table + Mentorship Panel */}
           <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
