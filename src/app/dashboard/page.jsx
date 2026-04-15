@@ -10,7 +10,6 @@ import ColdOutreachTab from "./components/cold-outreach/ColdOutreachTab";
 import MentorshipTab from "./components/mentorship/MentorshipTab";
 import JobOpeningsTab from "./components/jobs/JobOpeningsTab";
 import SettingsTab from "./components/settings/SettingsTab";
-import ContactTab from "./components/contact/ContactTab";
 
 export default function Page() {
   const { user, isAuthenticated, loading, logout } = useAuth();
@@ -81,7 +80,6 @@ export default function Page() {
         {activeSection === "mentorship" && <MentorshipTab />}
         {activeSection === "jobOpenings" && <JobOpeningsTab />}
         {activeSection === "settings" && <SettingsTab />}
-        {activeSection === "contact" && <ContactTab />}
       </main>
     </div>
   );

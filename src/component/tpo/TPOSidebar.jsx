@@ -4,13 +4,11 @@ import { useAuth } from "@/context/AuthContext";
 import {
   LayoutDashboard,
   Users,
-  Mail,
   BriefcaseBusiness,
   GraduationCap,
   BarChart3,
   BookOpen,
   Settings,
-  ChevronLeft,
   ChevronRight,
   X,
   LogOut
@@ -19,7 +17,6 @@ import {
 const navItems = [
   { label: "Overview", href: "/tpo/dashboard", icon: LayoutDashboard },
   { label: "Students", href: "/tpo/students", icon: Users },
-  { label: "Cold Outreach", href: "/tpo/outreach", icon: Mail },
   { label: "Job Intelligence", href: "/tpo/jobs", icon: BriefcaseBusiness },
   { label: "Mentorship", href: "/tpo/mentorship", icon: GraduationCap },
   { label: "Analytics", href: "/tpo/analytics", icon: BarChart3 },

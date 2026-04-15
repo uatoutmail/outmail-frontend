@@ -8,7 +8,6 @@ import {
   Users, 
   Briefcase, 
   SlidersHorizontal, 
-  Phone, 
   LogOut 
 } from "lucide-react";
 
@@ -130,20 +129,6 @@ const DashboardSidebar = ({
             >
               <SlidersHorizontal size={18} />
               Settings
-            </a>
-            <a
-              onClick={() => {
-                setActiveSection("contact");
-                setIsSidebarOpen(false);
-              }}
-              className={`block transition cursor-pointer flex items-center gap-2 ${
-                activeSection === "contact"
-                  ? "text-purple-400 font-semibold"
-                  : "text-white hover:text-purple-400"
-              }`}
-            >
-              <Phone size={18} />
-              Contact Us
             </a>
           </nav>
         </div>
