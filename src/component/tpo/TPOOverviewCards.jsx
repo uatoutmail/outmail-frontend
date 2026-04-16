@@ -3,10 +3,7 @@ import {
   Users,
   Mail,
   BriefcaseBusiness,
-  TrendingUp,
   FileText,
-  ArrowUpRight,
-  ArrowDownRight,
 } from "lucide-react";
 
 const colorMap = {
@@ -26,7 +23,6 @@ export default function TPOOverviewCards({ stats }) {
       label: "Total Students on Outmail",
       value: stats?.totalStudents || 0,
       sub: "Active students",
-      trend: "up",
       icon: Users,
       color: "purple",
     },
@@ -34,7 +30,6 @@ export default function TPOOverviewCards({ stats }) {
       label: "Total Cold Emails Sent",
       value: stats?.totalEmailsSent || 0,
       sub: "Total outreach",
-      trend: "up",
       icon: Mail,
       color: "blue",
     },
@@ -42,7 +37,6 @@ export default function TPOOverviewCards({ stats }) {
       label: "Total Companies Tracked",
       value: stats?.totalCompanies || 0,
       sub: "Across all students",
-      trend: "up",
       icon: BriefcaseBusiness,
       color: "orange",
     },
@@ -50,7 +44,6 @@ export default function TPOOverviewCards({ stats }) {
       label: "Total Templates Created",
       value: stats?.totalTemplates || 0,
       sub: "Active templates",
-      trend: "up",
       icon: FileText,
       color: "teal",
     },
@@ -58,23 +51,14 @@ export default function TPOOverviewCards({ stats }) {
 
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-      {cards.map(({ label, value, sub, trend, icon: Icon, color }) => {
+      {cards.map(({ label, value, sub, icon: Icon, color }) => {
         const c = colorMap[color];
         return (
           <div key={label} className="bg-white rounded-xl border border-gray-200 p-5 shadow-sm hover:shadow-md transition">
-            <div className="flex items-start justify-between mb-3">
-              <div className={`p-2.5 rounded-lg ${c.bg}`}>
+            <div className="mb-3">
+              <div className={`p-2.5 rounded-lg inline-block ${c.bg}`}>
                 <Icon size={18} className={c.text} />
               </div>
-              {trend === "up" ? (
-                <span className={`flex items-center gap-1 text-xs font-medium px-2 py-0.5 rounded-full ${c.badge}`}>
-                  <ArrowUpRight size={11} /> Up
-                </span>
-              ) : (
-                <span className="flex items-center gap-1 text-xs font-medium px-2 py-0.5 rounded-full bg-red-100 text-red-600">
-                  <ArrowDownRight size={11} /> Down
-                </span>
-              )}
             </div>
             <p className="text-2xl font-bold text-gray-900">{value}</p>
             <p className="text-xs font-medium text-gray-600 mt-0.5 leading-tight">{label}</p>

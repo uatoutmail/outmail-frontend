@@ -60,7 +60,7 @@ export default function AnalyticsPage() {
             <TrendingUp size={11}/> Real-time engagement
           </span>
         </div>
-        <p className="text-xs text-gray-400 mb-4">Active students on platform vs. total interviews secured</p>
+        <p className="text-xs text-gray-400 mb-4">Active students on platform over time</p>
         <div className="h-64">
           {engagementTrend && engagementTrend.length > 0 ? (
             <ResponsiveLine
