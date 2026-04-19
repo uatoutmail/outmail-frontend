@@ -1,59 +1,25 @@
-"use client";
-// components/dashboard/Charts.tsx
-
+import { useEffect, useState } from 'react';
 import { ResponsiveLine } from '@nivo/line';
 import { ResponsiveBar } from '@nivo/bar';
 import { ResponsivePie } from '@nivo/pie';
+import { api } from '@/lib/api';
+import { Loader2, Inbox } from 'lucide-react';
 
-export function LineChart({ userRole = 'STUDENT' }) {
-  // Different data based on role
-  const getData = () => {
-    if (userRole === 'TPO_ADMIN') {
-      return [
-        {
-          id: 'Total Campaigns',
-          data: [
-            { x: 'Jan', y: 120 },
-            { x: 'Feb', y: 190 },
-            { x: 'Mar', y: 270 },
-            { x: 'Apr', y: 200 },
-            { x: 'May', y: 250 },
-            { x: 'Jun', y: 300 },
-          ],
-        },
-        {
-          id: 'Active Students',
-          data: [
-            { x: 'Jan', y: 80 },
-            { x: 'Feb', y: 120 },
-            { x: 'Mar', y: 150 },
-            { x: 'Apr', y: 140 },
-            { x: 'May', y: 156 },
-            { x: 'Jun', y: 142 },
-          ],
-        },
-      ];
-    }
-    
-    return [
-      {
-        id: 'My Applications',
-        data: [
-          { x: 'Jan', y: 12 },
-          { x: 'Feb', y: 19 },
-          { x: 'Mar', y: 27 },
-          { x: 'Apr', y: 20 },
-          { x: 'May', y: 25 },
-          { x: 'Jun', y: 30 },
-        ],
-      },
-    ];
-  };
+const EmptyState = ({ message = "No data available to show" }) => (
+  <div className="flex flex-col items-center justify-center h-full gap-2">
+    <Inbox size={32} className="text-gray-200" />
+    <p className="text-sm text-gray-400 font-medium">{message}</p>
+  </div>
+);
+
+export function LineChart({ data, loading }) {
+  if (loading) return <div className="h-60 flex items-center justify-center"><Loader2 className="animate-spin text-purple-600" /></div>;
+  if (!data || data.length === 0 || data[0].data.every(d => d.y === 0)) return <div className="h-60"><EmptyState /></div>;
 
   return (
     <div className="h-60">
       <ResponsiveLine
-        data={getData()}
+        data={data}
         margin={{ top: 10, right: 20, bottom: 50, left: 40 }}
         axisBottom={{ tickRotation: -30 }}
         colors={['#6c00ff', '#ad46ff', '#4F21A1']}
@@ -68,31 +34,14 @@ export function LineChart({ userRole = 'STUDENT' }) {
   );
 }
 
-export function BarChart({ userRole = 'STUDENT' }) {
-  // Different data based on role
-  const getData = () => {
-    if (userRole === 'TPO_ADMIN') {
-      return [
-        { category: 'Backend', value: 450 },
-        { category: 'Frontend', value: 380 },
-        { category: 'DevOps', value: 300 },
-        { category: 'Mobile', value: 240 },
-        { category: 'AI/ML', value: 180 },
-      ];
-    }
-    
-    return [
-      { category: 'Backend', value: 45 },
-      { category: 'Frontend', value: 38 },
-      { category: 'DevOps', value: 30 },
-      { category: 'Mobile', value: 24 },
-    ];
-  };
+export function BarChart({ data, loading }) {
+  if (loading) return <div className="h-60 flex items-center justify-center"><Loader2 className="animate-spin text-purple-600" /></div>;
+  if (!data || data.length === 0) return <div className="h-60"><EmptyState /></div>;
 
   return (
     <div className="h-60">
       <ResponsiveBar
-        data={getData()}
+        data={data}
         keys={['value']}
         indexBy="category"
         margin={{ top: 10, right: 20, bottom: 40, left: 40 }}
@@ -104,32 +53,16 @@ export function BarChart({ userRole = 'STUDENT' }) {
   );
 }
 
-export function PieChart({ userRole = 'STUDENT' }) {
-  // Different data based on role
-  const getData = () => {
-    if (userRole === 'TPO_ADMIN') {
-      return [
-        { id: 'Active Students', value: 142 },
-        { id: 'Inactive Students', value: 14 },
-        { id: 'Pending Approval', value: 8 },
-        { id: 'Graduated', value: 25 },
-      ];
-    }
-    
-    return [
-      { id: 'Applied', value: 35 },
-      { id: 'Interviewed', value: 30 },
-      { id: 'Rejected', value: 25 },
-      { id: 'Offer', value: 10 },
-    ];
-  };
+export function PieChart({ data, loading }) {
+  if (loading) return <div className="h-60 flex items-center justify-center"><Loader2 className="animate-spin text-purple-600" /></div>;
+  if (!data || data.length === 0) return <div className="h-60"><EmptyState /></div>;
 
   return (
     <div className="h-60">
       <ResponsivePie
-        data={getData()}
+        data={data}
         colors={['#4F21A1', '#6B1C9A', '#A46EDB', '#D4BBF0']}
-        margin={{ top: 10, bottom: 10 }}
+        margin={{ top: 10, bottom: 60 }}
         innerRadius={0.5}
         theme={{ textColor: '#333' }}
         enableArcLabels={false}
@@ -141,12 +74,12 @@ export function PieChart({ userRole = 'STUDENT' }) {
             translateX: 0,
             translateY: 56,
             itemsSpacing: 0,
-            itemWidth: 100,
+            itemWidth: 80,
             itemHeight: 18,
             itemTextColor: '#333',
             itemDirection: 'left-to-right',
             itemOpacity: 1,
-            symbolSize: 12,
+            symbolSize: 10,
             symbolShape: 'circle',
           }
         ]}
@@ -156,31 +89,49 @@ export function PieChart({ userRole = 'STUDENT' }) {
 }
 
 export default function Charts({ userRole = 'STUDENT' }) {
+  const [analytics, setAnalytics] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchAnalytics = async () => {
+      try {
+        const response = await api.get('/api/student/analytics');
+        setAnalytics(response.data.analytics);
+      } catch (err) {
+        console.error('Failed to fetch analytics:', err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchAnalytics();
+  }, []);
+
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
       {/* Line Chart */}
       <div className="bg-white p-6 rounded-lg shadow-sm border">
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">
-          {userRole === 'TPO_ADMIN' ? 'System Overview' : 'My Progress'}
+        <h3 className="text-lg font-semibold text-gray-900 mb-4 tracking-tight">
+          My Application Pulse
         </h3>
-        <LineChart userRole={userRole} />
+        <LineChart data={analytics?.monthlyActivity} loading={loading} />
       </div>
 
       {/* Bar Chart */}
       <div className="bg-white p-6 rounded-lg shadow-sm border">
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">
-          {userRole === 'TPO_ADMIN' ? 'Applications by Category' : 'Applications by Category'}
+        <h3 className="text-lg font-semibold text-gray-900 mb-4 tracking-tight">
+          Outreach by Domain
         </h3>
-        <BarChart userRole={userRole} />
+        <BarChart data={analytics?.categoryDistribution} loading={loading} />
       </div>
 
       {/* Pie Chart */}
       <div className="bg-white p-6 rounded-lg shadow-sm border">
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">
-          {userRole === 'TPO_ADMIN' ? 'Student Status' : 'Application Status'}
+        <h3 className="text-lg font-semibold text-gray-900 mb-4 tracking-tight">
+          Fulfillment Status
         </h3>
-        <PieChart userRole={userRole} />
+        <PieChart data={analytics?.statusDistribution} loading={loading} />
       </div>
     </div>
   );
 }
+

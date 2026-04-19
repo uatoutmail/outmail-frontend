@@ -19,7 +19,6 @@ import {
   Eye, 
   Trash2, 
   Globe, 
-  Bell, 
   Zap, 
   AlertTriangle,
   Briefcase,
@@ -42,6 +41,7 @@ const SettingsTab = () => {
     portfolio_url: user?.portfolio_url || "",
     bio: user?.bio || "",
     notifications: true,
+    autoMailingEnabled: user?.autoMailingEnabled || false,
   });
 
   const [isLoading, setIsLoading] = useState(false);
@@ -224,7 +224,8 @@ const SettingsTab = () => {
         job_title: user.job_title || "",
         location: user.location || "",
         portfolio_url: user.portfolio_url || "",
-        bio: user.bio || ""
+        bio: user.bio || "",
+        autoMailingEnabled: user.autoMailingEnabled || false
       }));
     }
   }, [user]);
@@ -266,7 +267,8 @@ const SettingsTab = () => {
         job_title: profileSettings.job_title,
         location: profileSettings.location,
         portfolio_url: profileSettings.portfolio_url,
-        bio: profileSettings.bio
+        bio: profileSettings.bio,
+        autoMailingEnabled: profileSettings.autoMailingEnabled
       });
       if (result.success) {
         toast.success('Profile updated successfully!');
@@ -569,12 +571,6 @@ const SettingsTab = () => {
                       </div>
                     </div>
                   </div>
-                ) : user?.institute_name ? (
-                  <div className="p-4 rounded-xl bg-white/5 border border-white/10">
-                    <p className="text-xs font-medium text-white/40 uppercase tracking-wider mb-1">Current Institution (Legacy)</p>
-                    <h3 className="text-lg font-bold text-white">{user.institute_name}</h3>
-                    <p className="text-xs text-white/30 mt-2 italic">Connect using an Official ID below to unlock institution-specific features.</p>
-                  </div>
                 ) : (
                   <div className="p-4 rounded-xl bg-white/5 border border-white/10 text-center">
                     <p className="text-sm text-white/40">You haven't joined an institution yet.</p>
@@ -709,54 +705,6 @@ const SettingsTab = () => {
                 </p>
               </div>
             </div>
-
-            <div className="bg-white/10 backdrop-blur-md rounded-2xl shadow-lg p-6 border border-white/20">
-              <div className="flex items-center gap-3 mb-6">
-                <Bell className="text-purple-400" size={22} />
-                <h2 className="text-xl font-semibold text-white">Email Preferences</h2>
-              </div>
-              <div className="space-y-1">
-                {[
-                  {
-                    key: 'notifyOnComplete',
-                    label: 'Notify when sending is complete',
-                    desc: 'Get a confirmation once your outreach batch finishes',
-                  },
-                  {
-                    key: 'dailySummary',
-                    label: 'Weekly outreach summary',
-                    desc: 'Get a weekly digest of your outreach stats delivered to your inbox',
-                  },
-                  {
-                    key: 'pauseOnWeekends',
-                    label: 'Pause outreach on weekends',
-                    desc: 'Automatically skip Saturday and Sunday sends',
-                  },
-                ].map((pref) => (
-                  <div
-                    key={pref.key}
-                    className="flex items-start justify-between gap-4 py-3.5 border-b border-white/5 last:border-0"
-                  >
-                    <div className="min-w-0">
-                      <p className="text-sm font-medium text-white">{pref.label}</p>
-                      <p className="text-xs text-white/40 mt-0.5">{pref.desc}</p>
-                    </div>
-                    <button
-                      onClick={() => togglePref(pref.key)}
-                      className={`relative flex-shrink-0 w-10 h-5 rounded-full transition-colors duration-200 ${
-                        preferences[pref.key] ? 'bg-purple-600' : 'bg-white/20'
-                      }`}
-                    >
-                      <span
-                        className={`absolute top-0.5 left-0.5 w-4 h-4 rounded-full bg-white shadow transition-transform duration-200 ${
-                          preferences[pref.key] ? 'translate-x-5' : 'translate-x-0'
-                        }`}
-                      />
-                    </button>
-                  </div>
-                ))}
-              </div>
-            </div>
           </div>
 
           <div className="lg:col-span-1 space-y-6">
@@ -826,6 +774,31 @@ const SettingsTab = () => {
                   <span>Priority job recommendations</span>
                 </li>
               </ul>
+              
+              <div className="mt-8 pt-6 border-t border-white/10">
+                <div className="flex items-center justify-between gap-4">
+                  <div className="min-w-0">
+                    <div className="flex items-center gap-2">
+                      <Zap size={14} className="text-purple-400" />
+                      <p className="text-sm font-bold text-white">Auto-Mailing</p>
+                      <span className="text-[10px] bg-purple-500/20 text-purple-300 px-1.5 py-0.5 rounded-full font-bold animate-pulse">BETA</span>
+                    </div>
+                    <p className="text-[10px] text-white/40 mt-1">Intelligent daily outreach</p>
+                  </div>
+                  <button
+                    onClick={() => setProfileSettings(prev => ({ ...prev, autoMailingEnabled: !prev.autoMailingEnabled }))}
+                    className={`relative flex-shrink-0 w-10 h-5 rounded-full transition-colors duration-200 ${
+                      profileSettings.autoMailingEnabled ? 'bg-purple-600' : 'bg-white/20'
+                    }`}
+                  >
+                    <span
+                      className={`absolute top-0.5 left-0.5 w-4 h-4 rounded-full bg-white shadow transition-transform duration-200 ${
+                        profileSettings.autoMailingEnabled ? 'translate-x-5' : 'translate-x-0'
+                      }`}
+                    />
+                  </button>
+                </div>
+              </div>
             </div>
           </div>
         </div>

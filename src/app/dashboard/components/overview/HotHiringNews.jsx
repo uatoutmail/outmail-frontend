@@ -60,40 +60,23 @@ const HotHiringNews = () => {
     return [];
   };
 
-  const displayNews = news.length > 0 ? news : [
-    { id: 1, headline: 'No hiring data available yet', source: 'Check back later', tag: 'N/A', tagColor: 'bg-gray-500/20 text-gray-300', time: '', url: '#' }
-  ];
-
-  return (
-    <div className="bg-white/10 backdrop-blur-md rounded-xl p-4 border border-white/10 flex flex-col h-full">
-      <div className="flex justify-between items-center mb-3">
-        <div>
-          <h3 className="text-sm font-semibold text-white flex items-center gap-1.5">
-            <Zap size={13} className="text-yellow-400" />
-            Hot in the Hiring Market
-          </h3>
-          <p className="text-[11px] text-white/40">
-            {loading ? 'Loading...' : news.length > 0 ? 'Live hiring signals' : 'No data available'}
-          </p>
-        </div>
-        {!loading && (
-          <span className="text-[9px] uppercase tracking-widest text-white/30 border border-white/10 px-1.5 py-0.5 rounded">
-            {news.length > 0 ? 'Live' : 'N/A'}
-          </span>
-        )}
-      </div>
-      
       {loading ? (
         <div className="flex-1 flex items-center justify-center">
           <Loader2 size={20} className="animate-spin text-white/40" />
         </div>
+      ) : news.length === 0 ? (
+        <div className="flex-1 flex flex-col items-center justify-center text-center p-4">
+          <Zap size={24} className="text-white/10 mb-2" />
+          <p className="text-[12px] text-white/40 font-medium">No fresh hiring signals detected for today.</p>
+          <p className="text-[10px] text-white/25 mt-1 whitespace-pre-wrap">Check back tomorrow for AI-curated market alerts.</p>
+        </div>
       ) : (
         <div className="flex flex-col gap-0 flex-1 overflow-hidden">
-          {displayNews.map((item, i) => (
+          {news.map((item, i) => (
             <div
               key={item.id}
               className={`flex items-start gap-2.5 py-2.5 ${
-                i < displayNews.length - 1 ? 'border-b border-white/5' : ''
+                i < news.length - 1 ? 'border-b border-white/5' : ''
               } group cursor-pointer ${item.url !== '#' ? 'hover:bg-white/5 rounded' : ''}`}
             >
               <div className="flex-1 min-w-0">
