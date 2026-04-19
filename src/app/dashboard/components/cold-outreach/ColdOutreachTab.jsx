@@ -69,19 +69,14 @@ const ColdOutreachTab = () => {
     setIsTestLoading(true);
     
     try {
-      await api.post('/api/cold-outreach/test-pipeline', {
-        hrEmail: contact.email,
-        companyName: company.name,
-        domain: company.industry || "Technology",
-        location: company.location || "Remote",
-        teamSize: "11-50",
-        companyStage: "Series A",
+      await api.post('/api/cold-outreach/start-single', {
+        companyEmailId: contact.id,
       });
 
-      toast.success(`Pipeline triggered successfully! An email will be sent to ${company.name} shortly.`);
+      toast.success(`Outreach triggered successfully! An email will be sent to ${company.name} shortly.`);
     } catch (error) {
-      console.error('Error running test pipeline:', error);
-      toast.error(error.response?.data?.error || 'An error occurred while triggering the pipeline.');
+      console.error('Error running outreach:', error);
+      toast.error(error.response?.data?.error || 'An error occurred while triggering the outreach.');
     } finally {
       setIsTestLoading(false);
       setSelectedCompany(null);

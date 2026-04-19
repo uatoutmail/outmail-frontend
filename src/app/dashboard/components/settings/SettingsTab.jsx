@@ -54,9 +54,6 @@ const SettingsTab = () => {
   const [isDeleteAttachmentConfirmOpen, setIsDeleteAttachmentConfirmOpen] = useState(false);
   const [attachmentToDelete, setAttachmentToDelete] = useState(null);
   const [isDeleteAccountConfirmOpen, setIsDeleteAccountConfirmOpen] = useState(false);
-  const [institutionCode, setInstitutionCode] = useState("");
-  const [isJoining, setIsJoining] = useState(false);
-
 
   const fileInputRef = useRef(null);
 
@@ -283,33 +280,6 @@ const SettingsTab = () => {
     }
   };
 
-  const handleJoinInstitution = async () => {
-    if (!institutionCode.trim()) {
-      toast.error('Please enter an Institution ID');
-      return;
-    }
-    
-    setIsJoining(true);
-    try {
-      const response = await api.put('/api/user/join', {
-        institutionCode: institutionCode
-      });
-      
-      if (response.data.success) {
-        toast.success(response.data.message || 'Successfully joined institution!');
-        setInstitutionCode("");
-        // Re-fetch user data via context
-        await checkAuth();
-      } else {
-        toast.error(response.data.error || 'Failed to join institution');
-      }
-    } catch (error) {
-      console.error('Error joining institution:', error);
-      toast.error(error.response?.data?.error || 'An error occurred while joining the institution.');
-    } finally {
-      setIsJoining(false);
-    }
-  };
 
   const deleteUser = () => {
     setIsDeleteAccountConfirmOpen(true);
@@ -577,47 +547,6 @@ const SettingsTab = () => {
                   </div>
                 )}
 
-                <div className="pt-2 border-t border-white/10">
-                  <label htmlFor="instCode" className="block text-sm font-medium text-gray-300 mb-2">
-                    {user?.institution ? 'Change Institution' : 'Join Institution'}
-                  </label>
-                  <p className="text-xs text-white/40 mb-3">
-                    Enter the unique ID provided by your Training & Placement Office (TPO).
-                  </p>
-                  <div className="flex flex-col sm:flex-row gap-3">
-                    <div className="relative flex-grow">
-                      <input
-                        type="text"
-                        id="instCode"
-                        value={institutionCode}
-                        onChange={(e) => setInstitutionCode(e.target.value)}
-                        placeholder="e.g. PESU-2024"
-                        className="w-full p-3 rounded-lg border border-gray-600 bg-white/5 text-white focus:outline-none focus:ring-2 focus:ring-emerald-500 transition-colors uppercase font-mono"
-                      />
-                    </div>
-                    <button
-                      onClick={handleJoinInstitution}
-                      disabled={isJoining || !institutionCode.trim()}
-                      className={`px-6 py-3 rounded-lg font-semibold shadow-lg transition-all duration-300 flex items-center justify-center gap-2 ${
-                        isJoining || !institutionCode.trim()
-                          ? 'bg-gray-600 cursor-not-allowed text-gray-400'
-                          : 'bg-emerald-600 hover:bg-emerald-500 text-white'
-                      }`}
-                    >
-                      {isJoining ? (
-                        <>
-                          <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                          Joining...
-                        </>
-                      ) : (
-                        <>
-                          <Zap size={18} />
-                          Join Now
-                        </>
-                      )}
-                    </button>
-                  </div>
-                </div>
               </div>
             </div>
 

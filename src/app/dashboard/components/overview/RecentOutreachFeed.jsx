@@ -81,7 +81,7 @@ const RecentOutreachFeed = () => {
               </div>
               <div className="flex-1 min-w-0">
                 <p className="text-xs font-semibold text-white truncate">
-                  {companyFromEmail(log.recipient_email)}
+                  {log.organization_name || companyFromEmail(log.recipient_email)}
                 </p>
                 <p className="text-[10px] text-white/40 truncate">
                   {log.subject || "Cold Outreach"}
