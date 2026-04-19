@@ -1,3 +1,4 @@
+"use client";
 import { useState, useEffect } from "react";
 import TPOPageShell from "@/component/tpo/TPOPageShell";
 import { GraduationCap, Users, Star, CalendarDays, Clock, ChevronDown, ChevronUp, Loader2, Inbox } from "lucide-react";
