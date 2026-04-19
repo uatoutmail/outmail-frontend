@@ -46,11 +46,6 @@ const SettingsTab = () => {
 
   const [isLoading, setIsLoading] = useState(false);
   const [lastSaveTime, setLastSaveTime] = useState(0);
-  const [preferences, setPreferences] = useState({
-    notifyOnComplete: true,
-    dailySummary: false,
-    pauseOnWeekends: true,
-  });
   const [isDeleteAttachmentConfirmOpen, setIsDeleteAttachmentConfirmOpen] = useState(false);
   const [attachmentToDelete, setAttachmentToDelete] = useState(null);
   const [isDeleteAccountConfirmOpen, setIsDeleteAccountConfirmOpen] = useState(false);
@@ -203,10 +198,6 @@ const SettingsTab = () => {
     } else {
       toast.error('File URL not available. Please check console for details or contact support.');
     }
-  };
-
-  const togglePref = (key) => {
-    setPreferences(prev => ({ ...prev, [key]: !prev[key] }));
   };
 
   useEffect(() => {
