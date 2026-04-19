@@ -56,10 +56,17 @@ const HotHiringNews = () => {
     fetchInsights();
   }, []);
 
-  const getIndustryTags = () => {
-    return [];
-  };
-
+  return (
+    <div className="bg-white/10 backdrop-blur-md rounded-xl p-4 border border-white/10 h-full flex flex-col">
+      <div className="flex items-center gap-2 mb-4">
+        <div className="p-2 bg-purple-500/20 rounded-lg text-purple-400">
+          <Zap size={18} />
+        </div>
+        <div>
+          <h3 className="text-sm font-semibold text-white">Hot Hiring Signals</h3>
+          <p className="text-[10px] text-white/40">AI-curated market alerts</p>
+        </div>
+      </div>
       {loading ? (
         <div className="flex-1 flex items-center justify-center">
           <Loader2 size={20} className="animate-spin text-white/40" />
