@@ -2,8 +2,10 @@ import React, { useState, useEffect, useCallback } from "react";
 import { Mail, Zap, AlertTriangle, Building2, MapPin, Briefcase, ChevronRight, ChevronLeft, User } from "lucide-react";
 import { api } from "@/lib/api";
 import { toast } from "sonner";
+import { useAuth } from "@/context/AuthContext";
 
 const ColdOutreachTab = () => {
+  const { user } = useAuth();
   const [companies, setCompanies] = useState([]);
   const [pagination, setPagination] = useState(null);
   const [page, setPage] = useState(1);
@@ -62,6 +64,11 @@ const ColdOutreachTab = () => {
 
     if (!hasResumes) {
       toast.error('Please upload a resume in Settings first');
+      return;
+    }
+
+    if (!user?.hasGmailConnected) {
+      toast.error('Please connect your Gmail App Password in Settings first');
       return;
     }
 
@@ -135,6 +142,18 @@ const ColdOutreachTab = () => {
             </div>
           )}
 
+          {!user?.hasGmailConnected && (
+            <div className="p-4 mb-6 rounded-lg bg-yellow-500/10 border border-yellow-500/20 flex items-start gap-3">
+              <AlertTriangle size={18} className="text-yellow-400 mt-0.5 flex-shrink-0" />
+              <div>
+                <h4 className="text-yellow-400 font-semibold mb-1">Gmail Connection Required</h4>
+                <p className="text-sm text-yellow-400/80">
+                  You need to connect your Gmail account using an App Password in the Settings before you can send outreach emails.
+                </p>
+              </div>
+            </div>
+          )}
+
           <div className={`flex flex-col gap-4 transition-opacity duration-200 ${paginating ? 'opacity-50 pointer-events-none' : 'opacity-100'}`}>
             {companies.length > 0 ? (
               companies.map((company) => {
@@ -195,11 +214,11 @@ const ColdOutreachTab = () => {
 
                     <button
                       onClick={() => handleRunTestPipeline(company)}
-                      disabled={isTestLoading || !hasResumes || !contact?.email}
+                      disabled={isTestLoading || !hasResumes || !contact?.email || !user?.hasGmailConnected}
                       className={`flex items-center justify-center gap-2 px-6 py-2.5 rounded-lg font-semibold shadow-md transition-all duration-300 w-full md:w-auto ${
                         isTestLoading && selectedCompany?.id === company.id
                           ? 'bg-purple-600/50 cursor-not-allowed border border-purple-500/30 text-white/70' 
-                          : !hasResumes || isTestLoading || !contact?.email
+                          : !hasResumes || isTestLoading || !contact?.email || !user?.hasGmailConnected
                           ? 'bg-gray-800 text-gray-500 cursor-not-allowed border border-gray-700'
                           : 'bg-white/10 hover:bg-purple-600 border border-white/10 hover:border-purple-500 text-white hover:shadow-lg hover:shadow-purple-500/20'
                       }`}

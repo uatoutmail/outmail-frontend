@@ -42,7 +42,11 @@ const SettingsTab = () => {
     bio: user?.bio || "",
     notifications: true,
     autoMailingEnabled: user?.autoMailingEnabled || false,
+    gmailAppPassword: "",
   });
+
+  const [gmailStatus, setGmailStatus] = useState({ connected: false, email: "" });
+  const [isVerifyingGmail, setIsVerifyingGmail] = useState(false);
 
   const [isLoading, setIsLoading] = useState(false);
   const [lastSaveTime, setLastSaveTime] = useState(0);
@@ -217,6 +221,56 @@ const SettingsTab = () => {
       }));
     }
   }, [user]);
+
+  useEffect(() => {
+    const fetchStatus = async () => {
+      try {
+        const response = await api.get('/api/user/gmail-status');
+        setGmailStatus(response.data);
+      } catch (error) {
+        console.error('Error fetching Gmail status:', error);
+      }
+    };
+    fetchStatus();
+  }, []);
+
+  const handleSaveGmailAppPassword = async () => {
+    if (!profileSettings.gmailAppPassword.trim()) {
+      toast.error('Please enter your Gmail App Password');
+      return;
+    }
+    
+    setIsVerifyingGmail(true);
+    try {
+      const response = await api.post('/api/user/gmail-app-password', {
+        appPassword: profileSettings.gmailAppPassword
+      });
+      
+      if (response.data.success) {
+        toast.success('Gmail App Password saved and verified!');
+        setGmailStatus({ connected: true, email: user?.email });
+        setProfileSettings(prev => ({ ...prev, gmailAppPassword: "" }));
+        await checkAuth(); // Refresh user data to get updated gmail_app_password status
+      }
+    } catch (error) {
+      console.error('Error saving Gmail App Password:', error);
+      toast.error(error.response?.data?.error || 'Failed to verify App Password. Make sure it is 16 characters long.');
+    } finally {
+      setIsVerifyingGmail(false);
+    }
+  };
+
+  const handleRemoveGmailAppPassword = async () => {
+    try {
+      await api.delete('/api/user/gmail-app-password');
+      toast.success('Gmail App Password removed');
+      setGmailStatus({ connected: false, email: "" });
+      await checkAuth();
+    } catch (error) {
+      console.error('Error removing Gmail App Password:', error);
+      toast.error('Failed to remove Gmail App Password');
+    }
+  };
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -653,15 +707,64 @@ const SettingsTab = () => {
                 </div>
               </div>
               <div className="flex items-center gap-2 mb-5">
-                <span className="w-2 h-2 rounded-full bg-green-400"></span>
-                <span className="text-xs text-green-400 font-medium">Gmail connected</span>
+                {gmailStatus.connected ? (
+                  <>
+                    <span className="w-2 h-2 rounded-full bg-green-400"></span>
+                    <span className="text-xs text-green-400 font-medium">Gmail connected via SMTP</span>
+                  </>
+                ) : (
+                  <>
+                    <span className="w-2 h-2 rounded-full bg-red-400"></span>
+                    <span className="text-xs text-red-400 font-medium">Gmail not connected</span>
+                  </>
+                )}
               </div>
-              <button
-                onClick={() => toast.error('Disconnect — please contact support to unlink your account')}
-                className="w-full py-2 rounded-lg border border-red-500/30 text-red-400 text-sm hover:bg-red-500/10 transition-colors"
-              >
-                Disconnect Account
-              </button>
+
+              {!gmailStatus.connected ? (
+                <div className="space-y-4">
+                  <div className="p-3 rounded-lg bg-blue-500/10 border border-blue-500/20 mb-4">
+                    <p className="text-[10px] text-blue-300 leading-relaxed">
+                      To send emails, you need a 16-character <strong>App Password</strong> from your Google Account settings.
+                    </p>
+                    <a 
+                      href="https://myaccount.google.com/apppasswords" 
+                      target="_blank" 
+                      rel="noopener noreferrer"
+                      className="text-[10px] text-blue-400 hover:underline flex items-center gap-1 mt-1"
+                    >
+                      Get App Password <ExternalLink size={10} />
+                    </a>
+                  </div>
+                  <div>
+                    <label htmlFor="gmailAppPassword" className="block text-[10px] font-medium text-gray-400 mb-1">
+                      16-character App Password
+                    </label>
+                    <input
+                      type="password"
+                      id="gmailAppPassword"
+                      name="gmailAppPassword"
+                      value={profileSettings.gmailAppPassword}
+                      onChange={handleChange}
+                      placeholder="abcd efgh ijkl mnop"
+                      className="w-full p-2 text-sm rounded-lg border border-gray-600 bg-white/5 text-white focus:outline-none focus:ring-1 focus:ring-purple-500"
+                    />
+                  </div>
+                  <button
+                    onClick={handleSaveGmailAppPassword}
+                    disabled={isVerifyingGmail}
+                    className="w-full py-2 rounded-lg bg-purple-600 text-white text-sm font-semibold hover:bg-purple-500 transition-colors disabled:bg-purple-800"
+                  >
+                    {isVerifyingGmail ? 'Verifying...' : 'Connect Gmail'}
+                  </button>
+                </div>
+              ) : (
+                <button
+                  onClick={handleRemoveGmailAppPassword}
+                  className="w-full py-2 rounded-lg border border-red-500/30 text-red-400 text-sm hover:bg-red-500/10 transition-colors"
+                >
+                  Disconnect Gmail
+                </button>
+              )}
             </div>
 
             <div className="bg-white/10 backdrop-blur-md rounded-2xl shadow-lg p-6 border border-white/20">
@@ -706,7 +809,13 @@ const SettingsTab = () => {
                     <p className="text-[10px] text-white/40 mt-1">Intelligent daily outreach</p>
                   </div>
                   <button
-                    onClick={() => setProfileSettings(prev => ({ ...prev, autoMailingEnabled: !prev.autoMailingEnabled }))}
+                    onClick={() => {
+                      if (!gmailStatus.connected && !profileSettings.autoMailingEnabled) {
+                        toast.error('Please connect your Gmail account before enabling Auto-Mailing');
+                        return;
+                      }
+                      setProfileSettings(prev => ({ ...prev, autoMailingEnabled: !prev.autoMailingEnabled }));
+                    }}
                     className={`relative flex-shrink-0 w-10 h-5 rounded-full transition-colors duration-200 ${
                       profileSettings.autoMailingEnabled ? 'bg-purple-600' : 'bg-white/20'
                     }`}
