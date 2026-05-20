@@ -3,7 +3,6 @@ import {
   Users,
   Mail,
   BriefcaseBusiness,
-  FileText,
 } from "lucide-react";
 
 const colorMap = {
@@ -40,17 +39,10 @@ export default function TPOOverviewCards({ stats }) {
       icon: BriefcaseBusiness,
       color: "orange",
     },
-    {
-      label: "Total Templates Created",
-      value: stats?.totalTemplates || 0,
-      sub: "Active templates",
-      icon: FileText,
-      color: "teal",
-    },
   ];
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
       {cards.map(({ label, value, sub, icon: Icon, color }) => {
         const c = colorMap[color];
         return (
