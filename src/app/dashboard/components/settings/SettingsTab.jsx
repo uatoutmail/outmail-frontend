@@ -250,7 +250,7 @@ const SettingsTab = () => {
         toast.success('Gmail App Password saved and verified!');
         setGmailStatus({ connected: true, email: user?.email });
         setProfileSettings(prev => ({ ...prev, gmailAppPassword: "" }));
-        await checkAuth(); // Refresh user data to get updated gmail_app_password status
+        checkAuth();
       }
     } catch (error) {
       console.error('Error saving Gmail App Password:', error);
@@ -265,7 +265,7 @@ const SettingsTab = () => {
       await api.delete('/api/user/gmail-app-password');
       toast.success('Gmail App Password removed');
       setGmailStatus({ connected: false, email: "" });
-      await checkAuth();
+      checkAuth();
     } catch (error) {
       console.error('Error removing Gmail App Password:', error);
       toast.error('Failed to remove Gmail App Password');
