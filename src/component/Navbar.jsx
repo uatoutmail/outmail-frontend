@@ -39,7 +39,7 @@ function Navbar({ variant = "gradient" }) {
         <div className="hidden md:flex space-x-6 text-white text-lg font-medium">
           <Link href="/" className="hover:text-[#AD46FF] transition">Home</Link>
           <Link href="/Features" className="hover:text-[#AD46FF] transition">Features</Link>
-          <Link href="/Pricing" className="hover:text-[#AD46FF] transition">Pricing</Link>
+          <Link href="/pricing" className="hover:text-[#AD46FF] transition">Pricing</Link>
           <Link href="/Contactus" className="hover:text-[#AD46FF] transition">Contact Us</Link>
           <Link href="/partnership" className="hover:text-[#AD46FF] transition">Partnership</Link>
         </div>
