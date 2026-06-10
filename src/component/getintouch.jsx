@@ -45,7 +45,7 @@ export default function GetInTouch() {
     setIsSubmitting(true);
     
     try {
-      await api.post(`/api/auth/contact`, form)
+      await api.post(`/api/contact`, form);
       toast.success('Message sent successfully!');
       setSubmitted(true);
     } catch (error) {

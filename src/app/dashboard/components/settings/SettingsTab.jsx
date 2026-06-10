@@ -46,6 +46,7 @@ const SettingsTab = () => {
 
   const [gmailStatus, setGmailStatus] = useState({ connected: false, email: "" });
   const [isVerifyingGmail, setIsVerifyingGmail] = useState(false);
+  const [emailUsage, setEmailUsage] = useState(null);
 
   const [isLoading, setIsLoading] = useState(false);
   const [lastSaveTime, setLastSaveTime] = useState(0);
@@ -226,6 +227,14 @@ const SettingsTab = () => {
       try {
         const response = await api.get('/api/user/gmail/status');
         setGmailStatus(response.data);
+        if (response.data.connected) {
+          try {
+            const usageRes = await api.get('/api/user/gmail/usage');
+            setEmailUsage(usageRes.data);
+          } catch (err) {
+            console.error('Error fetching email usage:', err);
+          }
+        }
       } catch (error) {
         console.error('Error fetching Gmail status:', error);
       }
@@ -757,12 +766,37 @@ const SettingsTab = () => {
                   </button>
                 </div>
               ) : (
-                <button
-                  onClick={handleRemoveGmailAppPassword}
-                  className="w-full py-2 rounded-lg border border-red-500/30 text-red-400 text-sm hover:bg-red-500/10 transition-colors"
-                >
-                  Disconnect Gmail
-                </button>
+                <div className="space-y-4">
+                  {emailUsage && (
+                    <div className="p-4 rounded-xl bg-white/5 border border-white/10">
+                      <h3 className="text-sm font-semibold text-white mb-3">Email Sending Limits</h3>
+                      <div className="mb-3">
+                        <div className="flex justify-between items-center mb-1.5">
+                          <span className="text-xs text-gray-400">Daily Usage</span>
+                          <span className="text-xs font-medium text-white">{emailUsage.dailyUsed} / {emailUsage.dailyLimit}</span>
+                        </div>
+                        <div className="w-full bg-gray-700/50 rounded-full h-2">
+                          <div className={`h-2 rounded-full ${emailUsage.dailyUsed >= emailUsage.dailyLimit ? 'bg-red-500' : 'bg-purple-500'}`} style={{ width: `${Math.min(100, (emailUsage.dailyUsed / emailUsage.dailyLimit) * 100)}%` }}></div>
+                        </div>
+                      </div>
+                      <div>
+                        <div className="flex justify-between items-center mb-1.5">
+                          <span className="text-xs text-gray-400">Hourly Usage</span>
+                          <span className="text-xs font-medium text-white">{emailUsage.hourlyUsed} / {emailUsage.hourlyLimit}</span>
+                        </div>
+                        <div className="w-full bg-gray-700/50 rounded-full h-2">
+                          <div className={`h-2 rounded-full ${emailUsage.hourlyUsed >= emailUsage.hourlyLimit ? 'bg-red-500' : 'bg-blue-500'}`} style={{ width: `${Math.min(100, (emailUsage.hourlyUsed / emailUsage.hourlyLimit) * 100)}%` }}></div>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                  <button
+                    onClick={handleRemoveGmailAppPassword}
+                    className="w-full py-2 rounded-lg border border-red-500/30 text-red-400 text-sm hover:bg-red-500/10 transition-colors"
+                  >
+                    Disconnect Gmail
+                  </button>
+                </div>
               )}
             </div>
 

@@ -1,19 +1,32 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import { useAuth } from "@/context/AuthContext";
+import DashboardLayout from "@/component/DashboardLayout";
+import {
+  LayoutDashboard,
+  Mail,
+  Users,
+  Briefcase,
+  SlidersHorizontal
+} from "lucide-react";
 
 // Import Components
-import DashboardSidebar from "./components/shared/DashboardSidebar";
-import DashboardHeader from "./components/shared/DashboardHeader";
 import DashboardOverview from "./components/overview/DashboardOverview";
 import ColdOutreachTab from "./components/cold-outreach/ColdOutreachTab";
 import MentorshipTab from "./components/mentorship/MentorshipTab";
 import JobOpeningsTab from "./components/jobs/JobOpeningsTab";
 import SettingsTab from "./components/settings/SettingsTab";
 
+const studentNavItems = [
+  { label: "Dashboard", action: "dashboard", icon: LayoutDashboard },
+  { label: "Cold Outreach", action: "coldOutreach", icon: Mail },
+  { label: "Mentorship", action: "mentorship", icon: Users },
+  { label: "Job Openings", action: "jobOpenings", icon: Briefcase },
+  { label: "Settings", action: "settings", icon: SlidersHorizontal },
+];
+
 export default function Page() {
   const { user, isAuthenticated, loading, logout } = useAuth();
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [activeSection, setActiveSection] = useState("dashboard");
 
   // Check if user has stored token
@@ -49,38 +62,23 @@ export default function Page() {
   }
 
   return (
-    <div
-      className="relative flex h-screen bg-gradient-to-l from-black via-[#6c00ff] to-black text-white font-syne overflow-hidden"
-      style={{
-        background:
-          "radial-gradient(ellipse at center, #6c00ff 0%, #0f0f2d 60%, #000 100%)",
-      }}
+    <DashboardLayout
+      theme="dark"
+      user={user}
+      portalName="Student Portal"
+      navItems={studentNavItems}
+      activeSection={activeSection}
+      setActiveSection={setActiveSection}
+      logout={logout}
+      title=""
+      subtitle=""
     >
-      <DashboardSidebar 
-        isSidebarOpen={isSidebarOpen}
-        setIsSidebarOpen={setIsSidebarOpen}
-        activeSection={activeSection}
-        setActiveSection={setActiveSection}
-        user={user}
-        logout={logout}
-      />
-
-      {/* Main Content */}
-      <main
-        className={`flex-1 flex flex-col transition-all duration-300 ease-in-out lg:ml-64 overflow-y-auto overflow-x-hidden ${
-          isSidebarOpen ? "overflow-x-hidden" : "overflow-x-hidden"
-        }`}
-      >
-        {/* Topbar */}
-        <DashboardHeader setIsSidebarOpen={setIsSidebarOpen} isSidebarOpen={isSidebarOpen} />
-        
-        {/* Conditional rendering based on activeSection */}
-        {activeSection === "dashboard" && <DashboardOverview />}
-        {activeSection === "coldOutreach" && <ColdOutreachTab />}
-        {activeSection === "mentorship" && <MentorshipTab />}
-        {activeSection === "jobOpenings" && <JobOpeningsTab />}
-        {activeSection === "settings" && <SettingsTab />}
-      </main>
-    </div>
+      {/* Conditional rendering based on activeSection */}
+      {activeSection === "dashboard" && <DashboardOverview />}
+      {activeSection === "coldOutreach" && <ColdOutreachTab />}
+      {activeSection === "mentorship" && <MentorshipTab />}
+      {activeSection === "jobOpenings" && <JobOpeningsTab />}
+      {activeSection === "settings" && <SettingsTab />}
+    </DashboardLayout>
   );
 }

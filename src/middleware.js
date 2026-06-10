@@ -22,6 +22,9 @@ export function middleware(request) {
 
   if (isAuthRoute) {
     if (isAuthenticated) {
+      if (path.startsWith("/tpo/")) {
+        return NextResponse.redirect(new URL(`/tpo/dashboard${query}`, origin));
+      }
       return NextResponse.redirect(new URL(`/dashboard${query}`, origin));
     }
     return NextResponse.next();

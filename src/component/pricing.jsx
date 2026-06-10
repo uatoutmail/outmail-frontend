@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { toast } from 'sonner';
-import { getPlans, startCheckout } from '@/lib/api';
+import { getPlans, startCheckout } from '@/lib/payments';
 import { useAuth } from '@/context/AuthContext';
 
 const plans = [
