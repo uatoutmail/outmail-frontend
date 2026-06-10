@@ -8,7 +8,7 @@ export default function sitemap() {
       priority: 1.0,
     },
     {
-      path: "/Pricing",
+      path: "/pricing",
       changeFrequency: "weekly",
       priority: 0.9,
     },
@@ -18,7 +18,7 @@ export default function sitemap() {
       priority: 0.9,
     },
     {
-      path: "/Aboutus",
+      path: "/aboutus",
       changeFrequency: "monthly",
       priority: 0.8,
     },
@@ -28,7 +28,7 @@ export default function sitemap() {
       priority: 0.8,
     },
     {
-      path: "/Contactus",
+      path: "/contactus",
       changeFrequency: "monthly",
       priority: 0.7,
     },

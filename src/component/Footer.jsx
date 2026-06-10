@@ -70,8 +70,8 @@ export default function Footer({ variant = "gradient" }) {
           </p>
 
           <div className="flex flex-wrap gap-4 text-sm text-white/80">
-            <Link href="/Features" className="hover:underline">
-              Features
+            <Link href="/features" className="hover:underline">
+              features
             </Link>
             <Link
               href="/terms-and-conditions"
@@ -88,8 +88,8 @@ export default function Footer({ variant = "gradient" }) {
             <Link href="/faq" className="hover:underline">
               FAQ
             </Link>
-            <Link href="/Contactus" className="hover:underline">
-              Contact Us
+            <Link href="/contactus" className="hover:underline">
+              contact us
             </Link>
           </div>
         </div>

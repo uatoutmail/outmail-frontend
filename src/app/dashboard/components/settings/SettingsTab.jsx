@@ -780,8 +780,10 @@ const SettingsTab = () => {
                 <div className="w-16 h-16 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-full flex items-center justify-center mb-3 shadow-lg group hover:rotate-12 transition-transform duration-300">
                   <Zap className="text-white fill-current" size={32} />
                 </div>
-                <span className="text-lg font-bold text-white">Pro Plan</span>
-                <p className="text-xs text-white/40 mt-1">Full access to all AI features</p>
+                <span className="text-lg font-bold text-white">{user?.currentPlan?.name || "Free Plan"}</span>
+                <p className="text-xs text-white/40 mt-1">
+                  {user?.currentPlan ? "Active subscription" : "Upgrade to unlock premium features"}
+                </p>
               </div>
               <ul className="mt-6 space-y-3">
                 <li className="flex items-center gap-3 text-gray-300 text-xs">

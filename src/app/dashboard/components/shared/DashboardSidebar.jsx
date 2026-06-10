@@ -56,8 +56,8 @@ const DashboardSidebar = ({
             )}
             <div>
               <p className="font-semibold">{user?.display_name || user?.name || "User"}</p>
-              <span className="text-xs bg-[#2C2C2C] px-2 py-0.5 rounded text-purple-400">
-                PRO
+              <span className="text-xs bg-[#2C2C2C] px-2 py-0.5 rounded text-purple-400 uppercase">
+                {user?.currentPlan?.name || "Free"}
               </span>
             </div>
           </div>

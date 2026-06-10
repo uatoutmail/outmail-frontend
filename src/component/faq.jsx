@@ -174,7 +174,7 @@ export default function Faq2() {
         <div className="mt-16 text-center">
           <p className="mb-4 text-white">Can’t find what you’re looking for?</p>
           <Link
-            href="/Contactus"
+            href="/contactus"
             className="px-4 py-3 bg-gradient-to-r from-[#6c00ff] to-[#ad46ff] text-white font-extrabold rounded-xl hover:brightness-110 transition"
           >
             Contact Support

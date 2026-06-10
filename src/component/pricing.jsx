@@ -99,7 +99,7 @@ export default function ZPricing() {
 
     // Custom / quote-only plan — route to contact instead of checkout.
     if (!db || db.amount == null) {
-      window.location.href = '/contact';
+      window.location.href = '/contactus';
       return;
     }
 
@@ -145,16 +145,23 @@ export default function ZPricing() {
             const db = dbPlans[plan.code];
             const price = formatPrice(db?.amount, db?.currency);
             const isCustom = !db || db.amount == null;
+            const isCurrentPlan = isAuthenticated && user?.currentPlan?.code === plan.code;
             return (
               <div
                 key={idx}
                 className={`relative rounded-2xl p-8 text-left flex flex-col justify-between transition-all duration-300 hover:-translate-y-1
-                  ${plan.highlight
-                    ? 'bg-white/6 border-2 border-purple-500 shadow-[0_0_32px_rgba(108,0,255,0.25)] backdrop-blur-xl'
-                    : 'bg-white/5 border border-white/12 hover:border-purple-500/40 backdrop-blur-xl'
+                  ${isCurrentPlan
+                    ? 'bg-emerald-500/10 border-2 border-emerald-400 shadow-[0_0_32px_rgba(16,185,129,0.25)] backdrop-blur-xl'
+                    : plan.highlight
+                      ? 'bg-white/6 border-2 border-purple-500 shadow-[0_0_32px_rgba(108,0,255,0.25)] backdrop-blur-xl'
+                      : 'bg-white/5 border border-white/12 hover:border-purple-500/40 backdrop-blur-xl'
                   }`}
               >
-                {plan.highlight && (
+                {isCurrentPlan ? (
+                  <span className="absolute -top-3 left-1/2 -translate-x-1/2 text-[11px] uppercase tracking-[3px] bg-emerald-500 text-white px-4 py-1 rounded-full">
+                    Current Plan
+                  </span>
+                ) : plan.highlight && (
                   <span className="absolute -top-3 left-1/2 -translate-x-1/2 text-[11px] uppercase tracking-[3px] bg-purple-600 text-white px-4 py-1 rounded-full">
                     Most Popular
                   </span>
@@ -191,16 +198,20 @@ export default function ZPricing() {
                 <button
                   type="button"
                   onClick={() => handleCheckout(plan)}
-                  disabled={loadingCode === plan.code}
+                  disabled={loadingCode === plan.code || isCurrentPlan}
                   className={`w-full block text-center py-3 px-4 rounded-full font-semibold text-sm transition-all duration-200 disabled:opacity-60 disabled:cursor-not-allowed
-                    ${plan.highlight
-                      ? 'bg-white text-black hover:bg-gray-100'
-                      : 'bg-white/10 text-white border border-white/20 hover:bg-white/20'
+                    ${isCurrentPlan
+                      ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-400/40'
+                      : plan.highlight
+                        ? 'bg-white text-black hover:bg-gray-100'
+                        : 'bg-white/10 text-white border border-white/20 hover:bg-white/20'
                     }`}
                 >
-                  {loadingCode === plan.code
-                    ? 'Processing…'
-                    : `${isCustom ? plan.cta : plan.cta} →`}
+                  {isCurrentPlan
+                    ? 'Your Current Plan'
+                    : loadingCode === plan.code
+                      ? 'Processing…'
+                      : `${plan.cta} →`}
                 </button>
               </div>
             );

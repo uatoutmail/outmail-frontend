@@ -12,13 +12,13 @@ export const metadata = {
     "student outreach assistance",
   ],
   alternates: {
-    canonical: "https://outmail.in/Contactus",
+    canonical: "https://outmail.in/contactus",
   },
   openGraph: {
     title: "Contact Us | Personalized Cold Outreach Support",
     description:
       "Get in touch for support, partnerships, or more information about Outmail.",
-    url: "https://outmail.in/Contactus",
+    url: "https://outmail.in/contactus",
     type: "website",
     images: [
       {

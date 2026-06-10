@@ -12,13 +12,13 @@ export const metadata = {
     "job search automation",
   ],
   alternates: {
-    canonical: "https://outmail.in/Aboutus",
+    canonical: "https://outmail.in/aboutus",
   },
   openGraph: {
     title: "About Outmail | The Unfair Advantage You Deserve",
     description:
       "Built to give every student and early-career professional a direct line to hiring managers.",
-    url: "https://outmail.in/Aboutus",
+    url: "https://outmail.in/aboutus",
     type: "website",
     images: [
       {

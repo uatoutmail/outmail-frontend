@@ -7,7 +7,7 @@ export default function Page() {
   const router = useRouter();
 
   useEffect(() => {
-    router.replace("/Features");
+    router.replace("/features");
   }, [router]);
 
   return null;

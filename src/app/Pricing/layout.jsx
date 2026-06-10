@@ -12,13 +12,13 @@ export const metadata = {
     "cold email platform plans",
   ],
   alternates: {
-    canonical: "https://outmail.in/Pricing",
+    canonical: "https://outmail.in/pricing",
   },
   openGraph: {
     title: "Outmail Pricing | Flexible Plans for Your Organisation",
     description:
       "Scale your outreach with plans tailored to your specific goals. Book a call to find your perfect fit.",
-    url: "https://outmail.in/Pricing",
+    url: "https://outmail.in/pricing",
     type: "website",
     images: [
       {
