@@ -9,32 +9,29 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@nivo/bar": "^0.99.0",
-    "@nivo/line": "^0.99.0",
-    "@nivo/pie": "^0.99.0",
-    "@radix-ui/react-alert-dialog": "^1.1.15",
-    "axios": "^1.13.6",
+    "@radix-ui/react-alert-dialog": "^1.1.16",
+    "axios": "^1.17.0",
     "clsx": "^2.1.1",
-    "framer-motion": "^12.36.0",
+    "framer-motion": "^12.40.0",
     "locomotive-scroll": "^5.0.1",
-    "lucide-react": "^0.577.0",
-    "motion": "^12.36.0",
-    "next": "16.1.6",
-    "react": "19.2.4",
+    "lucide-react": "^1.17.0",
+    "motion": "^12.40.0",
+    "next": "16.2.9",
+    "react": "19.2.7",
     "react-countup": "^6.5.3",
-    "react-dom": "19.2.4",
-    "recharts": "^3.8.0",
+    "react-dom": "19.2.7",
+    "recharts": "^3.8.1",
     "sonner": "^2.0.7",
-    "swiper": "^12.1.2",
+    "swiper": "^12.2.0",
     "tabler-icons-react": "^1.56.0",
-    "tailwind-merge": "^3.5.0",
-    "zod": "^4.3.6"
+    "tailwind-merge": "^3.6.0",
+    "zod": "^4.4.3"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
     "@tailwindcss/postcss": "^4",
     "eslint": "^10",
-    "eslint-config-next": "16.1.6",
+    "eslint-config-next": "16.2.9",
     "tailwindcss": "^4"
   }
 }

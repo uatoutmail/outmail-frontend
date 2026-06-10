@@ -16,18 +16,21 @@ export default function AuthGuard({
   fallbackPath = '/',
   showLoading = true 
 }) {
-  const { isAuthenticated, loading } = useAuth();
+  const { isAuthenticated, loading, userRole } = useAuth();
   const router = useRouter();
 
   useEffect(() => {
     if (!loading) {
-      // Not authenticated - redirect to home
       if (!isAuthenticated) {
         router.push(fallbackPath);
         return;
       }
+      if (allowedRoles.length > 0 && !allowedRoles.includes(userRole)) {
+        router.push(fallbackPath);
+        return;
+      }
     }
-  }, [isAuthenticated, loading, router, fallbackPath]);
+  }, [isAuthenticated, loading, router, fallbackPath, allowedRoles, userRole]);
 
   // Show loading spinner while checking auth
   if (loading && showLoading) {

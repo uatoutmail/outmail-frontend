@@ -11,7 +11,7 @@ function Hero() {
   const [demoOpen, setDemoOpen] = useState(false);
 
   return (
-    <div className="relative overflow-hidden bg-[#0a0b14]">
+    <div className="relative overflow-x-clip bg-[#0a0b14]">
       {/* Hero text block — reduced height so first stacked card is more visible */}
       <div className="h-[46vh] flex flex-col justify-center pt-16 px-4">
         <div className="max-w-3xl mx-auto text-center">

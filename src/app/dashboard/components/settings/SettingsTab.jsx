@@ -4,15 +4,14 @@ import Image from "next/image";
 import { useAuth } from "@/context/AuthContext";
 import { api } from "@/lib/api";
 import { toast } from "sonner";
-import { ConfirmDialog } from "@/component/ui/ConfirmDialog";
+import { ConfirmDialog } from "@/component/ui/alert-dialog";
 import { 
   Check, 
   X, 
   User, 
   Mail, 
   Phone, 
-  Linkedin, 
-  Github, 
+  Link,
   Save, 
   FileText, 
   Upload, 
@@ -423,7 +422,7 @@ const SettingsTab = () => {
                     </label>
                     <div className="relative">
                       <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-                        <Linkedin className="text-gray-400" size={18} />
+                        <Link className="text-gray-400" size={18} />
                       </div>
                       <input
                         type="text"
@@ -444,7 +443,7 @@ const SettingsTab = () => {
                     </label>
                     <div className="relative">
                       <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-                        <Github className="text-gray-400" size={18} />
+                        <Link className="text-gray-400" size={18} />
                       </div>
                       <input
                         type="text"

@@ -1,11 +1,25 @@
 "use client";
 import { useState, useEffect } from "react";
 import TPOPageShell from "@/component/tpo/TPOPageShell";
-import { ResponsiveLine } from "@nivo/line";
-import { ResponsiveBar } from "@nivo/bar";
-import { ResponsivePie } from "@nivo/pie";
+import {
+  LineChart, Line, BarChart, Bar, PieChart, Pie, Cell,
+  XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer
+} from "recharts";
 import { Download, TrendingUp } from "lucide-react";
 import { api } from "@/lib/api";
+
+function transformLineData(series) {
+  if (!series || series.length === 0) return [];
+  const keys = series.map((s) => s.id);
+  const indices = series[0].data.map((_, i) => i);
+  return indices.map((i) => {
+    const row = { x: series[0].data[i].x };
+    series.forEach((s) => {
+      row[s.id] = s.data[i].y;
+    });
+    return row;
+  });
+}
 
 export default function AnalyticsPage() {
   const [data, setData] = useState({
@@ -41,6 +55,10 @@ export default function AnalyticsPage() {
   }
 
   const { engagementTrend, weeklyEmailData, branchFunnel, leaderboard } = data;
+  const lineData = transformLineData(engagementTrend?.filter((s) => s.id !== "Interviews") || []);
+  const lineKeys = engagementTrend
+    ?.filter((s) => s.id !== "Interviews")
+    .map((s) => ({ key: s.id, color: s.color })) || [];
 
   return (
     <TPOPageShell title="Analytics" subtitle="Deep-dive metrics on student engagement, outreach performance, and placement readiness">
@@ -62,22 +80,27 @@ export default function AnalyticsPage() {
         </div>
         <p className="text-xs text-gray-400 mb-4">Active students on platform over time</p>
         <div className="h-64">
-          {engagementTrend && engagementTrend.length > 0 ? (
-            <ResponsiveLine
-              data={engagementTrend.filter(s => s.id !== "Interviews")}
-              margin={{top:10,right:20,bottom:50,left:50}}
-              axisBottom={{tickSize:0,tickPadding:10}}
-              axisLeft={{tickSize:0,tickPadding:8,tickValues:5}}
-              colors={d=>d.color}
-              curve="monotoneX"
-              enablePoints
-              pointSize={7}
-              pointBorderWidth={2}
-              pointBorderColor={{from:"serieColor"}}
-              enableGridX={false}
-              theme={{textColor:"#6B7280",fontSize:11,grid:{line:{stroke:"#F3F4F6"}}}}
-              legends={[{anchor:"bottom",direction:"row",translateY:46,itemWidth:140,itemHeight:14,itemTextColor:"#6B7280",symbolSize:8,symbolShape:"circle"}]}
-            />
+          {lineData.length > 0 ? (
+            <ResponsiveContainer width="100%" height="100%">
+              <LineChart data={lineData} margin={{ top: 10, right: 20, bottom: 50, left: 10 }}>
+                <CartesianGrid stroke="#F3F4F6" />
+                <XAxis dataKey="x" tick={{ fill: "#6B7280", fontSize: 11 }} />
+                <YAxis tick={{ fill: "#6B7280", fontSize: 11 }} />
+                <Tooltip />
+                <Legend wrapperStyle={{ fontSize: 12, color: "#6B7280" }} />
+                {lineKeys.map((s) => (
+                  <Line
+                    key={s.key}
+                    type="monotone"
+                    dataKey={s.key}
+                    stroke={s.color}
+                    strokeWidth={2}
+                    dot={{ r: 4, strokeWidth: 2 }}
+                    activeDot={{ r: 6 }}
+                  />
+                ))}
+              </LineChart>
+            </ResponsiveContainer>
           ) : (
             <div className="h-full flex items-center justify-center text-sm text-gray-400">No data available</div>
           )}
@@ -92,20 +115,15 @@ export default function AnalyticsPage() {
           <p className="text-xs text-gray-400 mb-4">Total cold emails sent by your cohort per week</p>
           <div className="h-56">
             {weeklyEmailData && weeklyEmailData.length > 0 ? (
-              <ResponsiveBar
-                data={weeklyEmailData}
-                keys={["sent"]}
-                indexBy="week"
-                margin={{top:10,right:10,bottom:50,left:45}}
-                padding={0.3}
-                colors="#8B5CF6"
-                borderRadius={4}
-                axisBottom={{tickSize:0,tickPadding:8,tickRotation:-30}}
-                axisLeft={{tickSize:0,tickPadding:8,tickValues:4}}
-                enableGridX={false}
-                enableLabel={false}
-                theme={{textColor:"#6B7280",fontSize:10,grid:{line:{stroke:"#F3F4F6"}}}}
-              />
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart data={weeklyEmailData} margin={{ top: 10, right: 10, bottom: 30, left: 10 }}>
+                  <CartesianGrid stroke="#F3F4F6" vertical={false} />
+                  <XAxis dataKey="week" tick={{ fill: "#6B7280", fontSize: 10 }} angle={-30} textAnchor="end" height={50} />
+                  <YAxis tick={{ fill: "#6B7280", fontSize: 10 }} />
+                  <Tooltip />
+                  <Bar dataKey="sent" fill="#8B5CF6" radius={[4, 4, 0, 0]} />
+                </BarChart>
+              </ResponsiveContainer>
             ) : (
               <div className="h-full flex items-center justify-center text-sm text-gray-400">No data available</div>
             )}
@@ -118,25 +136,34 @@ export default function AnalyticsPage() {
           <p className="text-xs text-gray-400 mb-2">Which branches are most engaged with off-campus outreach</p>
           <div className="h-44">
             {branchFunnel && branchFunnel.length > 0 ? (
-              <ResponsivePie
-                data={branchFunnel}
-                colors={d=>d.data.color}
-                margin={{top:5,right:5,bottom:5,left:5}}
-                innerRadius={0.5}
-                padAngle={2}
-                cornerRadius={3}
-                enableArcLabels={false}
-                enableArcLinkLabels={false}
-                theme={{textColor:"#6B7280",fontSize:11}}
-              />
+              <ResponsiveContainer width="100%" height="100%">
+                <PieChart>
+                  <Pie
+                    data={branchFunnel}
+                    dataKey="value"
+                    nameKey="id"
+                    cx="50%"
+                    cy="50%"
+                    innerRadius="50%"
+                    outerRadius="80%"
+                    paddingAngle={2}
+                    cornerRadius={3}
+                  >
+                    {branchFunnel.map((entry, index) => (
+                      <Cell key={`cell-${index}`} fill={entry.color} />
+                    ))}
+                  </Pie>
+                  <Tooltip />
+                </PieChart>
+              </ResponsiveContainer>
             ) : (
               <div className="h-full flex items-center justify-center text-sm text-gray-400">No data available</div>
             )}
           </div>
           <div className="grid grid-cols-3 gap-1 mt-2">
-            {branchFunnel?.map(b=>(
+            {branchFunnel?.map((b) => (
               <div key={b.id} className="flex items-center gap-1.5">
-                <span className="w-2.5 h-2.5 rounded-full flex-shrink-0" style={{background:b.color}}/>
+                <span className="w-2.5 h-2.5 rounded-full flex-shrink-0" style={{ background: b.color }}/>
                 <span className="text-xs text-gray-600">{b.id} <span className="font-semibold">{b.value}</span></span>
               </div>
             ))}
@@ -151,13 +178,13 @@ export default function AnalyticsPage() {
           <p className="text-xs text-gray-400 mt-0.5">Top 5 students ranked by composite Outmail Engagement Score</p>
         </div>
         <div className="divide-y divide-gray-50">
-          {leaderboard?.map((s,i)=>(
+          {leaderboard?.map((s, i) => (
             <div key={s.name} className="px-6 py-4 flex items-center gap-5">
-              <span className={`text-lg font-black w-6 text-center ${i===0?"text-yellow-400":i===1?"text-gray-400":i===2?"text-orange-400":"text-gray-200"}`}>
-                {i+1}
+              <span className={`text-lg font-black w-6 text-center ${i === 0 ? "text-yellow-400" : i === 1 ? "text-gray-400" : i === 2 ? "text-orange-400" : "text-gray-200"}`}>
+                {i + 1}
               </span>
               <div className="w-9 h-9 rounded-full bg-purple-100 text-purple-700 text-sm font-bold flex items-center justify-center flex-shrink-0">
-                {s.name.split(" ").map(n=>n[0]).join("")}
+                {s.name.split(" ").map((n) => n[0]).join("")}
               </div>
               <div className="flex-1">
                 <p className="text-sm font-semibold text-gray-800">{s.name}</p>
@@ -165,7 +192,7 @@ export default function AnalyticsPage() {
               </div>
               <div className="text-right">
                 <p className="text-xl font-black text-purple-700">{s.score}</p>
-                <p className={`text-xs font-medium ${s.delta.startsWith("+")?"text-green-500":s.delta.startsWith("-")?"text-red-400":"text-gray-400"}`}>
+                <p className={`text-xs font-medium ${s.delta.startsWith("+") ? "text-green-500" : s.delta.startsWith("-") ? "text-red-400" : "text-gray-400"}`}>
                   {s.delta} this week
                 </p>
               </div>

@@ -7,23 +7,17 @@ const projects = [
   {
     title: 'Smart Automated Cold Outreach',
     description: 'Send personalised emails to the right recruiters at scale — powered by live hiring signals, funding data, and smart company targeting.',
-    src: 'dashboard_landingPage.png',
     link: '/dashboard_landingPage.png',
-    color: '#6c00ff',
   },
   {
     title: 'Curated Job Openings',
     description: 'Browse roles ranked by Outmail Priority Score — surfaced by hiring urgency, funding signals, and company momentum.',
-    src: 'JobOpenings.png',
     link: '/JobOpenings.png',
-    color: '#6c00ff',
   },
   {
     title: 'Expert Mentorship',
     description: 'Book live sessions with professionals and alumni — real guidance from people who\'ve navigated the path you\'re on.',
-    src: 'Mentorship.png',
     link: '/Mentorship.png',
-    color: '#6c00ff',
   },
 ];
 
@@ -66,9 +60,7 @@ export default function StackingCards() {
               key={`p_${i}`}
               i={i}
               url={project?.link}
-              src={project?.src}
               title={project?.title}
-              color={project?.color}
               description={project?.description}
               progress={scrollYProgress}
               range={[i * 0.25, 1]}
@@ -85,9 +77,7 @@ export const Card = ({
   i,
   title,
   description,
-  src,
   url,
-  color,
   progress,
   range,
   targetScale,
@@ -159,12 +149,6 @@ export const Card = ({
   };
 
   const responsive = getResponsiveValues();
-  const enterStart = i === 0 ? 0 : i * 0.25;
-  const enterEnd = i === 0 ? 0.15 : enterStart + 0.2;
-  const initialY = i === 0 ? 90 : 340;
-  const initialOpacity = i === 0 ? 0.92 : 0;
-  const y = useTransform(progress, [enterStart, enterEnd], [initialY, -80], { clamp: true });
-  const opacity = useTransform(progress, [enterStart, enterEnd], [initialOpacity, 1]);
 
   return (
     <div
@@ -173,13 +157,11 @@ export const Card = ({
       <motion.div
         style={{
           scale,
-          y,
-          opacity,
-          top: `calc(-8vh + ${i * parseInt(responsive.topOffset)}px)`,
+          top: `${i * parseInt(responsive.topOffset)}px`,
           width: responsive.cardWidth,
           height: responsive.cardHeight,
         }}
-        className="relative rounded-2xl origin-top z-10 max-w-6xl overflow-hidden border border-purple-400/40"
+        className="relative rounded-2xl origin-top z-10 max-w-6xl overflow-hidden border border-purple-400/40 shadow-2xl shadow-black/50"
       >
         {/* Full-bleed screenshot — static for now, zoom-out effect commented out */}
         <div className="absolute inset-0 w-full h-full">
