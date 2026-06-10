@@ -20,7 +20,7 @@ export default function TpoLoginPage() {
     e.preventDefault();
     setLoading(true);
     try {
-      const response = await api.post('/api/auth/tpo-login', { email, password });
+      const response = await api.post('/api/auth/tpo/login', { email, password });
       
       if (response.data.success) {
         toast.success("Welcome back!");

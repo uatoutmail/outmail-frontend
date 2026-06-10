@@ -11,7 +11,7 @@ const OutreachStatPills = ({ selectedPeriod = '7' }) => {
     const fetchStats = async () => {
       try {
         setLoading(true);
-        const response = await api.get(`/api/analytics/outreach-stats?period=${selectedPeriod}`);
+        const response = await api.get(`/api/analytics/outreach?period=${selectedPeriod}`);
         setData(response.data);
         setError(null);
       } catch (err) {

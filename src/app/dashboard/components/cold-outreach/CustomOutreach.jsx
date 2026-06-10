@@ -31,7 +31,7 @@ const CustomOutreach = ({ resumes, hasResumes, user }) => {
     setIsCustomSending(true);
 
     try {
-      await api.post('/api/cold-outreach/start-custom', {
+      await api.post('/api/outreach/custom', {
         targetMail: customTargetEmail,
         resumeId: customSelectedResumeId,
         jobDescription: customJobDescription,

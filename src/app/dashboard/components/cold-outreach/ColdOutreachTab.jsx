@@ -22,7 +22,7 @@ const ColdOutreachTab = () => {
 
   const fetchCompanies = useCallback(async (pageNum) => {
     try {
-      const response = await api.get('/api/cold-outreach/companies', {
+      const response = await api.get('/api/outreach/companies', {
         params: { page: pageNum, limit: 10 },
       });
       if (response.data) {
@@ -82,7 +82,7 @@ const ColdOutreachTab = () => {
     setIsTestLoading(true);
     
     try {
-      await api.post('/api/cold-outreach/start-single', {
+      await api.post('/api/outreach/single', {
         companyEmailId: contact.id,
       });
 

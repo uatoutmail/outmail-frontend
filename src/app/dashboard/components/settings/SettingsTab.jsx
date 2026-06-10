@@ -224,7 +224,7 @@ const SettingsTab = () => {
   useEffect(() => {
     const fetchStatus = async () => {
       try {
-        const response = await api.get('/api/user/gmail-status');
+        const response = await api.get('/api/user/gmail/status');
         setGmailStatus(response.data);
       } catch (error) {
         console.error('Error fetching Gmail status:', error);
@@ -241,7 +241,7 @@ const SettingsTab = () => {
     
     setIsVerifyingGmail(true);
     try {
-      const response = await api.post('/api/user/gmail-app-password', {
+      const response = await api.post('/api/user/gmail/password', {
         appPassword: profileSettings.gmailAppPassword
       });
       
@@ -261,7 +261,7 @@ const SettingsTab = () => {
 
   const handleRemoveGmailAppPassword = async () => {
     try {
-      await api.delete('/api/user/gmail-app-password');
+      await api.delete('/api/user/gmail/password');
       toast.success('Gmail App Password removed');
       setGmailStatus({ connected: false, email: "" });
       checkAuth();

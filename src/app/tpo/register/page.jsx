@@ -35,7 +35,7 @@ export default function TpoRegisterPage() {
 
     setLoading(true);
     try {
-      const response = await api.post('/api/auth/tpo-register', {
+      const response = await api.post('/api/auth/tpo/register', {
         name: formData.name,
         institute: formData.institute,
         email: formData.email,
