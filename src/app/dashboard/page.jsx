@@ -16,6 +16,7 @@ import ColdOutreachTab from "./components/cold-outreach/ColdOutreachTab";
 import MentorshipTab from "./components/mentorship/MentorshipTab";
 import JobOpeningsTab from "./components/jobs/JobOpeningsTab";
 import SettingsTab from "./components/settings/SettingsTab";
+import UpgradePrompt from "./components/UpgradePrompt";
 
 const studentNavItems = [
   { label: "Dashboard", action: "dashboard", icon: LayoutDashboard },
@@ -76,8 +77,12 @@ export default function Page() {
       {/* Conditional rendering based on activeSection */}
       {activeSection === "dashboard" && <DashboardOverview />}
       {activeSection === "coldOutreach" && <ColdOutreachTab />}
-      {activeSection === "mentorship" && <MentorshipTab />}
-      {activeSection === "jobOpenings" && <JobOpeningsTab />}
+      {activeSection === "mentorship" && (
+        user?.currentPlan ? <MentorshipTab /> : <UpgradePrompt feature="Mentorship" />
+      )}
+      {activeSection === "jobOpenings" && (
+        user?.currentPlan ? <JobOpeningsTab /> : <UpgradePrompt feature="Job Openings" />
+      )}
       {activeSection === "settings" && <SettingsTab />}
     </DashboardLayout>
   );

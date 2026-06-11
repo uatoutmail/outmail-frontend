@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { toast } from 'sonner';
-import { getPlans, startCheckout } from '@/lib/payments';
+import { getPlans, startCheckout, validateCoupon } from '@/lib/payments';
 import { useAuth } from '@/context/AuthContext';
 
 const plans = [
@@ -79,6 +79,8 @@ export default function ZPricing() {
   const { isAuthenticated, user } = useAuth();
   const [dbPlans, setDbPlans] = useState({}); // code -> { id, amount, currency }
   const [loadingCode, setLoadingCode] = useState(null);
+  // Per-plan coupon state: code -> { input, data, validating }
+  const [coupons, setCoupons] = useState({});
 
   useEffect(() => {
     getPlans()
@@ -89,10 +91,37 @@ export default function ZPricing() {
         });
         setDbPlans(map);
       })
-      .catch(() => {
-        /* Pricing still renders with copy if the plans endpoint is unavailable. */
-      });
+      .catch(() => {});
   }, []);
+
+  const setCouponField = (code, patch) =>
+    setCoupons((prev) => ({ ...prev, [code]: { ...prev[code], ...patch } }));
+
+  const handleApplyCoupon = async (plan) => {
+    const db = dbPlans[plan.code];
+    const input = coupons[plan.code]?.input?.trim();
+    if (!input) return;
+
+    if (!isAuthenticated) {
+      toast.message('Please log in to apply a coupon.');
+      return;
+    }
+
+    setCouponField(plan.code, { validating: true, data: null });
+    try {
+      const result = await validateCoupon({ code: input, planId: db?.id });
+      if (result.valid) {
+        setCouponField(plan.code, { data: result, validating: false });
+        toast.success(`Coupon applied! ${result.spotsLeft - 1} spot${result.spotsLeft - 1 !== 1 ? 's' : ''} left at this price.`);
+      } else {
+        setCouponField(plan.code, { data: null, validating: false });
+        toast.error(result.error || 'Invalid coupon code.');
+      }
+    } catch {
+      setCouponField(plan.code, { data: null, validating: false });
+      toast.error('Could not validate coupon. Try again.');
+    }
+  };
 
   const handleCheckout = async (plan) => {
     const db = dbPlans[plan.code];
@@ -109,10 +138,14 @@ export default function ZPricing() {
       return;
     }
 
+    const couponData = coupons[plan.code]?.data;
+    const couponCode = couponData?.valid ? couponData.code : undefined;
+
     try {
       setLoadingCode(plan.code);
       await startCheckout({
         planId: db.id,
+        couponCode,
         prefill: { name: user?.display_name || '', email: user?.email || '' },
       });
       toast.success('Payment successful! 🎉');
@@ -174,13 +207,32 @@ export default function ZPricing() {
                   </span>
                   <h3 className="text-2xl font-bold text-white mt-2 mb-1">{plan.title}</h3>
                   <p className="text-purple-300 text-sm font-medium mb-3">{plan.tagline}</p>
-                  <div className="mb-3">
-                    {price ? (
-                      <span className="text-3xl font-bold text-white">{price}</span>
-                    ) : (
-                      <span className="text-2xl font-bold text-white">Custom</span>
-                    )}
+                  <div className="mb-1">
+                    {(() => {
+                      const couponData = coupons[plan.code]?.data;
+                      const discountedPrice = couponData?.valid
+                        ? formatPrice(couponData.finalAmount, db?.currency)
+                        : null;
+                      return price ? (
+                        <div className="flex items-baseline gap-2 flex-wrap">
+                          {discountedPrice ? (
+                            <>
+                              <span className="text-3xl font-bold text-emerald-400">{discountedPrice}</span>
+                              <span className="text-lg font-medium text-white/40 line-through">{price}</span>
+                            </>
+                          ) : (
+                            <span className="text-3xl font-bold text-white">{price}</span>
+                          )}
+                          <span className="text-white/50 text-sm">/yr</span>
+                        </div>
+                      ) : (
+                        <span className="text-2xl font-bold text-white">Custom</span>
+                      );
+                    })()}
                   </div>
+                  {!isCustom && (
+                    <p className="text-white/40 text-xs mb-3">First 10 students per university get ₹999/yr — enter your university coupon below.</p>
+                  )}
                   <p className="text-white/55 text-sm leading-relaxed">{plan.description}</p>
                 </div>
 
@@ -193,6 +245,41 @@ export default function ZPricing() {
                     </li>
                   ))}
                 </ul>
+
+                {/* Coupon input */}
+                {!isCustom && !isCurrentPlan && (
+                  <div className="mb-4">
+                    {coupons[plan.code]?.data?.valid ? (
+                      <div className="flex items-center gap-2 bg-emerald-500/10 border border-emerald-400/40 rounded-lg px-3 py-2">
+                        <span className="text-emerald-400 text-xs font-semibold flex-1">✓ {coupons[plan.code].data.code} applied</span>
+                        <button
+                          type="button"
+                          onClick={() => setCouponField(plan.code, { data: null, input: '' })}
+                          className="text-white/40 hover:text-white text-xs transition"
+                        >Remove</button>
+                      </div>
+                    ) : (
+                      <div className="flex gap-2">
+                        <input
+                          type="text"
+                          placeholder="University coupon (e.g. PESU999)"
+                          value={coupons[plan.code]?.input || ''}
+                          onChange={(e) => setCouponField(plan.code, { input: e.target.value })}
+                          onKeyDown={(e) => e.key === 'Enter' && handleApplyCoupon(plan)}
+                          className="flex-1 bg-white/5 border border-white/15 rounded-lg px-3 py-2 text-white text-xs placeholder-white/30 focus:outline-none focus:border-purple-500/60 transition"
+                        />
+                        <button
+                          type="button"
+                          onClick={() => handleApplyCoupon(plan)}
+                          disabled={coupons[plan.code]?.validating}
+                          className="bg-purple-600/40 hover:bg-purple-600/60 text-white text-xs font-semibold px-3 py-2 rounded-lg transition disabled:opacity-50"
+                        >
+                          {coupons[plan.code]?.validating ? '…' : 'Apply'}
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                )}
 
                 {/* CTA */}
                 <button

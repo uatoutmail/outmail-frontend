@@ -6,9 +6,15 @@ export const getPlans = async () => {
   return response.data;
 };
 
+// Validate a coupon code against a plan (auth required)
+export const validateCoupon = async ({ code, planId }) => {
+  const response = await api.post('/api/payments/validate-coupon', { code, planId });
+  return response.data; // { valid, finalAmount, originalAmount, savings, spotsLeft, error }
+};
+
 // Create a Razorpay order for a plan (auth required)
-export const createPaymentOrder = async ({ planId, amount, currency }) => {
-  const response = await api.post('/api/payments/orders', { planId, amount, currency });
+export const createPaymentOrder = async ({ planId, amount, currency, couponCode }) => {
+  const response = await api.post('/api/payments/orders', { planId, amount, currency, couponCode });
   return response.data; // { orderId, razorpayOrderId, amount, currency, keyId }
 };
 
@@ -32,11 +38,11 @@ export const loadRazorpayScript = () =>
 
 // Full one-time checkout flow: create order -> open Razorpay -> verify.
 // `prefill` is optional { name, email }. Returns the verify response on success.
-export const startCheckout = async ({ planId, amount, currency, prefill = {} } = {}) => {
+export const startCheckout = async ({ planId, amount, currency, couponCode, prefill = {} } = {}) => {
   const ok = await loadRazorpayScript();
   if (!ok) throw new Error('Failed to load Razorpay. Check your connection.');
 
-  const order = await createPaymentOrder({ planId, amount, currency });
+  const order = await createPaymentOrder({ planId, amount, currency, couponCode });
 
   return new Promise((resolve, reject) => {
     const rzp = new window.Razorpay({

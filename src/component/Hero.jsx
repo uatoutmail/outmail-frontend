@@ -69,7 +69,7 @@ function Hero() {
 
             {/* Dialog */}
             <motion.div
-              className="relative z-10 w-full max-w-md rounded-2xl border border-purple-500/40 bg-gradient-to-b from-[#1a0040] to-black p-10 text-center shadow-2xl shadow-purple-900/40"
+              className="relative z-10 w-full max-w-4xl rounded-2xl border border-purple-500/40 bg-gradient-to-b from-[#1a0040] to-black p-4 shadow-2xl shadow-purple-900/40"
               initial={{ scale: 0.88, opacity: 0, y: 20 }}
               animate={{ scale: 1, opacity: 1, y: 0 }}
               exit={{ scale: 0.88, opacity: 0, y: 20 }}
@@ -77,28 +77,17 @@ function Hero() {
             >
               <button
                 onClick={() => setDemoOpen(false)}
-                className="absolute top-4 right-4 text-white/40 hover:text-white transition"
+                className="absolute -top-3 -right-3 z-20 bg-[#1a0040] border border-purple-500/40 rounded-full p-1 text-white/60 hover:text-white transition"
               >
-                <X size={18} />
+                <X size={16} />
               </button>
 
-              {/* Glow dot */}
-              <div className="mx-auto mb-6 h-14 w-14 rounded-full bg-[#6c00ff]/30 border border-purple-500/50 flex items-center justify-center">
-                <span className="text-2xl">🎬</span>
-              </div>
-
-              <h2 className="text-xl font-bold text-white mb-3">Demo Coming Soon</h2>
-              <p className="text-white/60 text-sm leading-relaxed">
-                We&apos;re putting the finishing touches on the demo experience.<br />
-                <span className="text-purple-300 font-medium">Thanks for your patience!</span>
-              </p>
-
-              <button
-                onClick={() => setDemoOpen(false)}
-                className="mt-8 bg-[#6c00ff] hover:bg-[#8a00ff] text-white text-sm font-semibold px-6 py-2.5 rounded-full transition"
-              >
-                Got it
-              </button>
+              <iframe
+                src="https://www.youtube.com/embed/LXtszHCWsgo?autoplay=1"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowFullScreen
+                className="w-full aspect-video rounded-xl"
+              />
             </motion.div>
           </motion.div>
         )}

@@ -107,6 +107,16 @@ export const AuthProvider = ({ children }) => {
     await checkAuth();
   };
 
+  // Silently re-fetch the current user (e.g. after a payment to pick up the new plan)
+  const refreshUser = async () => {
+    try {
+      const response = await api.get('/api/user/me');
+      const userData = response.data;
+      const finalUser = userData.user || userData;
+      setUser(finalUser);
+    } catch (_) {}
+  };
+
   // Update user profile function
   const updateUser = async (userData) => {
     try {
@@ -145,6 +155,7 @@ export const AuthProvider = ({ children }) => {
     logout,
     checkAuth,
     updateUser,
+    refreshUser,
   };
 
   return (
