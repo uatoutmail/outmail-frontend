@@ -73,7 +73,7 @@ export default function StackingCards() {
   );
 }
 
-export const Card = ({
+const Card = ({
   i,
   title,
   description,

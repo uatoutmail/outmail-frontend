@@ -99,7 +99,7 @@ const TestimonialCard = ({ position, testimonial, handleMove, cardSize }) => {
   );
 };
 
-export const StaggerTestimonials = () => {
+const StaggerTestimonials = () => {
   const [cardSize, setCardSize] = useState(365);
   const [testimonialsList, setTestimonialsList] = useState(
     testimonials.map((t) => ({ ...t, tempId: Math.random() }))

@@ -13,19 +13,19 @@ export const validateCoupon = async ({ code, planId }) => {
 };
 
 // Create a Razorpay order for a plan (auth required)
-export const createPaymentOrder = async ({ planId, amount, currency, couponCode }) => {
+const createPaymentOrder = async ({ planId, amount, currency, couponCode }) => {
   const response = await api.post('/api/payments/orders', { planId, amount, currency, couponCode });
   return response.data; // { orderId, razorpayOrderId, amount, currency, keyId }
 };
 
 // Verify a completed payment's signature (auth required)
-export const verifyPayment = async (payload) => {
+const verifyPayment = async (payload) => {
   const response = await api.post('/api/payments/verify', payload);
   return response.data;
 };
 
 // Lazily load the Razorpay Checkout script once.
-export const loadRazorpayScript = () =>
+const loadRazorpayScript = () =>
   new Promise((resolve) => {
     if (typeof window === 'undefined') return resolve(false);
     if (window.Razorpay) return resolve(true);
