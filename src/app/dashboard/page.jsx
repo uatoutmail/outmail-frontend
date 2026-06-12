@@ -16,7 +16,7 @@ import ColdOutreachTab from "./components/cold-outreach/ColdOutreachTab";
 import MentorshipTab from "./components/mentorship/MentorshipTab";
 import JobOpeningsTab from "./components/jobs/JobOpeningsTab";
 import SettingsTab from "./components/settings/SettingsTab";
-import UpgradePrompt from "./components/UpgradePrompt";
+import LockedFeatureOverlay from "./components/LockedFeatureOverlay";
 
 const studentNavItems = [
   { label: "Dashboard", action: "dashboard", icon: LayoutDashboard },
@@ -78,10 +78,14 @@ export default function Page() {
       {activeSection === "dashboard" && <DashboardOverview />}
       {activeSection === "coldOutreach" && <ColdOutreachTab />}
       {activeSection === "mentorship" && (
-        user?.currentPlan ? <MentorshipTab /> : <UpgradePrompt feature="Mentorship" />
+        user?.currentPlan?.code === 'PLAN_C' 
+          ? <MentorshipTab /> 
+          : <LockedFeatureOverlay feature="Expert Mentorship"><MentorshipTab /></LockedFeatureOverlay>
       )}
       {activeSection === "jobOpenings" && (
-        user?.currentPlan ? <JobOpeningsTab /> : <UpgradePrompt feature="Job Openings" />
+        ['PLAN_B', 'PLAN_C'].includes(user?.currentPlan?.code)
+          ? <JobOpeningsTab /> 
+          : <LockedFeatureOverlay feature="Curated Job Openings"><JobOpeningsTab /></LockedFeatureOverlay>
       )}
       {activeSection === "settings" && <SettingsTab />}
     </DashboardLayout>
