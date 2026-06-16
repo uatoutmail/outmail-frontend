@@ -6,7 +6,7 @@ const cspHeader = `
     img-src 'self' blob: data: https://images.unsplash.com https://lh3.googleusercontent.com https://res.cloudinary.com https://outmail.in.s3.ap-south-1.amazonaws.com;
     font-src 'self' https://fonts.gstatic.com;
     connect-src 'self' ${process.env.NEXT_PUBLIC_API_BASE_URL || ""} https://www.google-analytics.com https://api.razorpay.com;
-    frame-src 'self' https://api.razorpay.com;
+    frame-src 'self' https://api.razorpay.com https://www.youtube.com https://*.youtube.com;
     object-src 'none';
     base-uri 'self';
     form-action 'self';
