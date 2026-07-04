@@ -6,6 +6,7 @@ import OutreachStatPills from "./OutreachStatPills";
 import HiringSpotlight from "./HiringSpotlight";
 import RecentOutreachFeed from "./RecentOutreachFeed";
 import HotHiringNews from "./HotHiringNews";
+import MailingAgentPanel from "./MailingAgentPanel";
 
 const DashboardOverview = () => {
   const { user } = useAuth();
@@ -48,7 +49,12 @@ const DashboardOverview = () => {
         </div>
       </div>
 
-      {/* Row 3: Companies Hiring Now (left) + Recent Outreach Feed (right) */}
+      {/* Row 3: Mailing Agent (desktop sending progress) full width */}
+      <div style={{ minHeight: '280px' }}>
+        <MailingAgentPanel />
+      </div>
+
+      {/* Row 4: Companies Hiring Now (left) + Recent Outreach Feed (right) */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         <div style={{ minHeight: '240px' }}>
           <HiringSpotlight />
