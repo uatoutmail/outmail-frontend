@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from "react";
-import { 
-  Briefcase 
-} from "lucide-react";
+import { Briefcase } from "lucide-react";
 import JobCard from "./JobCard";
+import { api } from "@/lib/api";
 
 const JobOpeningsTab = () => {
   const [jobOpenings, setJobOpenings] = useState([]);
@@ -10,85 +9,92 @@ const JobOpeningsTab = () => {
   const [filter, setFilter] = useState('all');
   const [pagination, setPagination] = useState({ page: 1, limit: 10, total: 0, totalPages: 1 });
 
-  const getOutmailScore = (job) => {
-    const seed = String(job.id || job._id || job.title || '').split('').reduce((acc, c) => acc + c.charCodeAt(0), 0);
-    return 70 + (seed % 29);
-  };
-
-  const fetchJobs = async (page = 1, currentFilter = filter) => {
+  // OUT-32: authenticated call to the personalized, scored feed. The backend
+  // returns real matchScore + reasons per job — no client-side fabrication.
+  const fetchJobs = async (page = 1) => {
     setLoading(true);
     try {
-      const statusParam = currentFilter === 'all' ? 'pending' : currentFilter;
-      const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:8080';
-      const response = await fetch(`${backendUrl}/api/jobs?page=${page}&limit=10&status=${statusParam}`);
-      const data = await response.json();
+      const { data } = await api.get('/api/jobs', { params: { page, limit: 10 } });
       if (data.success) {
-        const scored = data.data.map((job) => ({
-          ...job,
-          priorityScore: getOutmailScore(job),
-        }));
-        scored.sort((a, b) => b.priorityScore - a.priorityScore);
-        setJobOpenings(scored);
+        setJobOpenings(data.data);
         setPagination(data.pagination);
       }
     } catch (error) {
       console.error('Error fetching jobs:', error);
+      setJobOpenings([]);
     } finally {
       setLoading(false);
     }
   };
 
   useEffect(() => {
-    fetchJobs(1, filter);
-  }, [filter]);
+    fetchJobs(1);
+  }, []);
 
-  const handleApply = (jobId) => {
-    setJobOpenings(prev => prev.filter(job => job.id !== jobId));
+  const recordAction = async (jobId, action) => {
+    try {
+      await api.post(`/api/jobs/${jobId}/interactions`, { action });
+    } catch (e) {
+      console.error('Failed to record action:', e);
+    }
   };
 
-  const handleDiscard = (jobId) => {
-    setJobOpenings(prev => prev.filter(job => job.id !== jobId));
+  const handleApply = async (jobId) => {
+    await recordAction(jobId, 'applied');
+    setJobOpenings(prev => prev.map(j => (j.id === jobId ? { ...j, userAction: 'applied' } : j)));
   };
 
-  const handleResetStatus = (jobId) => {
-    setJobOpenings(prev => prev.filter(job => job.id !== jobId));
+  const handleDiscard = async (jobId) => {
+    await recordAction(jobId, 'discarded');
+    setJobOpenings(prev => prev.filter(j => j.id !== jobId));
+  };
+
+  const handleResetStatus = async (jobId) => {
+    try {
+      await api.patch(`/api/jobs/${jobId}/status`, { status: 'pending' });
+    } catch (e) {
+      console.error('Failed to reset status:', e);
+    }
+    setJobOpenings(prev => prev.map(j => (j.id === jobId ? { ...j, userAction: null } : j)));
   };
 
   const handleOpenJob = (url) => {
     if (url) window.open(url, '_blank');
   };
 
-  const getStatusColor = (status) => {
-    switch (status) {
+  const getStatusColor = (action) => {
+    switch (action) {
       case 'applied': return 'text-green-400';
-      case 'discarded': return 'text-red-400';
+      case 'saved': return 'text-yellow-400';
       default: return 'text-blue-400';
     }
   };
 
-  const getStatusText = (status) => {
-    switch (status) {
+  const getStatusText = (action) => {
+    switch (action) {
       case 'applied': return 'Applied';
-      case 'discarded': return 'Discarded';
+      case 'saved': return 'Saved';
       default: return 'New';
     }
   };
 
+  // Real 0–100 Outmail Score tiers.
   const getPriorityTier = (score) => {
-    if (score >= 90) return { label: 'High Priority', color: 'text-red-400', dot: 'bg-red-400', border: 'border-red-500/30' };
-    if (score >= 80) return { label: 'Medium Priority', color: 'text-yellow-400', dot: 'bg-yellow-400', border: 'border-yellow-500/30' };
-    return { label: 'Standard', color: 'text-blue-300', dot: 'bg-blue-300', border: 'border-blue-500/20' };
+    if (score >= 70) return { label: 'Strong Match', color: 'text-green-400', dot: 'bg-green-400', border: 'border-green-500/30' };
+    if (score >= 55) return { label: 'Good Match', color: 'text-yellow-400', dot: 'bg-yellow-400', border: 'border-yellow-500/30' };
+    return { label: 'Possible Match', color: 'text-blue-300', dot: 'bg-blue-300', border: 'border-blue-500/20' };
   };
 
   const getPriorityScoreColor = (score) => {
-    if (score >= 90) return 'text-red-400';
-    if (score >= 80) return 'text-yellow-400';
+    if (score >= 70) return 'text-green-400';
+    if (score >= 55) return 'text-yellow-400';
     return 'text-blue-300';
   };
 
-  const highPriority = jobOpenings.filter(j => j.priorityScore >= 90);
-  const mediumPriority = jobOpenings.filter(j => j.priorityScore >= 80 && j.priorityScore < 90);
-  const standard = jobOpenings.filter(j => j.priorityScore < 80);
+  const visibleJobs = jobOpenings.filter(j => (filter === 'all' ? true : j.userAction === filter));
+  const highPriority = visibleJobs.filter(j => j.matchScore >= 70);
+  const mediumPriority = visibleJobs.filter(j => j.matchScore >= 55 && j.matchScore < 70);
+  const standard = visibleJobs.filter(j => j.matchScore < 55);
 
   const TierHeader = ({ label, color, dot, count }) => (
     <div className="flex items-center gap-3 mt-8 mb-4">
@@ -99,6 +105,17 @@ const JobOpeningsTab = () => {
     </div>
   );
 
+  const cardProps = {
+    getPriorityTier,
+    getPriorityScoreColor,
+    getStatusColor,
+    getStatusText,
+    handleOpenJob,
+    handleDiscard,
+    handleResetStatus,
+    handleApply,
+  };
+
   return (
     <div className="p-4 sm:p-8 max-w-7xl mx-auto font-syne pb-20">
       <div className="flex flex-col lg:flex-row justify-between items-start lg:items-end gap-6 mb-10 pt-8 sm:pt-12">
@@ -107,17 +124,17 @@ const JobOpeningsTab = () => {
             <h1 className="text-3xl sm:text-4xl font-black text-white tracking-tight">Job Openings</h1>
             {!loading && pagination.total > 0 && (
               <span className="px-3 py-1 bg-white/10 rounded-full text-xs font-bold text-white/50 border border-white/10 uppercase tracking-widest">
-                {pagination.total} Available
+                {pagination.total} Matched
               </span>
             )}
           </div>
           <p className="text-white/40 text-sm max-w-md">
-            Our AI-powered engine ranks openings specifically for your profile using real-time market signals.
+            Ranked for your profile by the Outmail Score — real skill, seniority and intent fit, not a generic list.
           </p>
         </div>
 
         <div className="flex bg-white/5 backdrop-blur-sm rounded-2xl p-1.5 border border-white/10 w-full sm:w-auto">
-          {['all', 'applied', 'discarded'].map((filterType) => (
+          {['all', 'applied'].map((filterType) => (
             <button
               key={filterType}
               onClick={() => setFilter(filterType)}
@@ -141,75 +158,42 @@ const JobOpeningsTab = () => {
           </div>
           <p className="text-white/30 text-xs font-bold uppercase tracking-widest animate-pulse">Analyzing Opportunities...</p>
         </div>
-      ) : jobOpenings.length === 0 ? (
+      ) : visibleJobs.length === 0 ? (
         <div className="flex flex-col items-center justify-center py-20 bg-white/5 rounded-3xl border border-dashed border-white/10">
           <div className="w-16 h-16 bg-white/5 rounded-2xl flex items-center justify-center mb-6">
             <Briefcase size={32} className="text-white/20" />
           </div>
-          <p className="text-white/50 text-xl font-bold mb-2">No jobs matched your filter</p>
-          <p className="text-white/20 text-sm uppercase tracking-widest font-bold">Try changing your filters or check back later</p>
+          <p className="text-white/50 text-xl font-bold mb-2">No matches yet</p>
+          <p className="text-white/20 text-sm uppercase tracking-widest font-bold">Add a résumé & job-hunt intent, or check back later</p>
         </div>
       ) : (
         <div className="space-y-4">
           {highPriority.length > 0 && (
             <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
-              <TierHeader label="High Priority" color="text-red-400" dot="bg-red-400" count={highPriority.length} />
+              <TierHeader label="Strong Match" color="text-green-400" dot="bg-green-400" count={highPriority.length} />
               <div className="grid gap-4">
                 {highPriority.map(job => (
-                  <JobCard 
-                    key={job.id} 
-                    job={job} 
-                    getPriorityTier={getPriorityTier}
-                    getPriorityScoreColor={getPriorityScoreColor}
-                    getStatusColor={getStatusColor}
-                    getStatusText={getStatusText}
-                    handleOpenJob={handleOpenJob}
-                    handleDiscard={handleDiscard}
-                    handleResetStatus={handleResetStatus}
-                    handleApply={handleApply}
-                  />
+                  <JobCard key={job.id} job={job} {...cardProps} />
                 ))}
               </div>
             </div>
           )}
           {mediumPriority.length > 0 && (
             <div className="animate-in fade-in slide-in-from-bottom-4 duration-700">
-              <TierHeader label="Medium Priority" color="text-yellow-400" dot="bg-yellow-400" count={mediumPriority.length} />
+              <TierHeader label="Good Match" color="text-yellow-400" dot="bg-yellow-400" count={mediumPriority.length} />
               <div className="grid gap-4">
                 {mediumPriority.map(job => (
-                  <JobCard 
-                    key={job.id} 
-                    job={job} 
-                    getPriorityTier={getPriorityTier}
-                    getPriorityScoreColor={getPriorityScoreColor}
-                    getStatusColor={getStatusColor}
-                    getStatusText={getStatusText}
-                    handleOpenJob={handleOpenJob}
-                    handleDiscard={handleDiscard}
-                    handleResetStatus={handleResetStatus}
-                    handleApply={handleApply}
-                  />
+                  <JobCard key={job.id} job={job} {...cardProps} />
                 ))}
               </div>
             </div>
           )}
           {standard.length > 0 && (
             <div className="animate-in fade-in slide-in-from-bottom-4 duration-1000">
-              <TierHeader label="Standard Match" color="text-blue-400" dot="bg-blue-400" count={standard.length} />
+              <TierHeader label="Possible Match" color="text-blue-400" dot="bg-blue-400" count={standard.length} />
               <div className="grid gap-4">
                 {standard.map(job => (
-                  <JobCard 
-                    key={job.id} 
-                    job={job} 
-                    getPriorityTier={getPriorityTier}
-                    getPriorityScoreColor={getPriorityScoreColor}
-                    getStatusColor={getStatusColor}
-                    getStatusText={getStatusText}
-                    handleOpenJob={handleOpenJob}
-                    handleDiscard={handleDiscard}
-                    handleResetStatus={handleResetStatus}
-                    handleApply={handleApply}
-                  />
+                  <JobCard key={job.id} job={job} {...cardProps} />
                 ))}
               </div>
             </div>
