@@ -10,8 +10,14 @@ const JobCard = ({ job, getPriorityTier, getPriorityScoreColor, getStatusColor, 
   const tier = getPriorityTier(job.matchScore);
   const isNew = !job.userAction; // no per-user action yet
 
+  // Accept either backend field shape (applyLink/url or applyUrl/sourceUrl) so
+  // links work regardless of which backend version is deployed.
+  const applyUrl = job.applyLink || job.applyUrl || job.url || job.sourceUrl;
+  const sourceUrl = job.url || job.sourceUrl || applyUrl;
+  const skills = job.signals || job.skills || [];
+
   const onApply = () => {
-    handleOpenJob(job.applyLink || job.url);
+    handleOpenJob(applyUrl);
     handleApply(job.id);
   };
 
@@ -81,9 +87,9 @@ const JobCard = ({ job, getPriorityTier, getPriorityScoreColor, getStatusColor, 
         </div>
       )}
 
-      {job.signals && job.signals.length > 0 && (
+      {skills.length > 0 && (
         <div className="flex flex-wrap gap-2 mb-4">
-          {job.signals.map((signal, i) => (
+          {skills.map((signal, i) => (
             <span key={i} className="px-2 py-1 bg-purple-500/10 border border-purple-500/20 text-purple-200 rounded-md text-[11px] font-medium">
               {signal}
             </span>
@@ -147,7 +153,7 @@ const JobCard = ({ job, getPriorityTier, getPriorityScoreColor, getStatusColor, 
           </>
         )}
         <button
-          onClick={() => handleOpenJob(job.url || job.applyLink)}
+          onClick={() => handleOpenJob(sourceUrl)}
           className={`flex-1 sm:flex-none flex items-center justify-center gap-2 px-6 py-2.5 ${isNew ? 'bg-purple-600/50 hover:bg-purple-600' : 'bg-purple-600 hover:bg-purple-500'} text-white font-bold rounded-xl transition-all active:scale-95 text-sm shadow-lg shadow-purple-900/20`}
         >
           <ExternalLink size={18} /> Source Link
