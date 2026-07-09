@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Briefcase } from "lucide-react";
 import JobCard from "./JobCard";
+import JobPreferences from "./JobPreferences";
 import { api } from "@/lib/api";
 
 const JobOpeningsTab = () => {
@@ -149,6 +150,8 @@ const JobOpeningsTab = () => {
           ))}
         </div>
       </div>
+
+      <JobPreferences onSaved={() => fetchJobs(1)} />
 
       {loading ? (
         <div className="flex flex-col items-center justify-center h-96 gap-4">
