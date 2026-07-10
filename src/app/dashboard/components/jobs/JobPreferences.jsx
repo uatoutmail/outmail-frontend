@@ -21,7 +21,7 @@ const JobPreferences = ({ onSaved }) => {
   const [saving, setSaving] = useState(false);
   const [savedAt, setSavedAt] = useState(null);
   const [intentText, setIntentText] = useState("");
-  const [countries, setCountries] = useState([]);
+  const [country, setCountry] = useState("");
   const [remotePref, setRemotePref] = useState("any");
   const [minSalary, setMinSalary] = useState("");
   const [targetRoles, setTargetRoles] = useState("");
@@ -31,7 +31,7 @@ const JobPreferences = ({ onSaved }) => {
       try {
         const { data } = await api.get("/api/profile");
         setIntentText(data.intentText || "");
-        setCountries(data.countries || []);
+        setCountry((data.countries || [])[0] || "");
         setRemotePref(data.remotePref || "any");
         setMinSalary(data.minSalary ?? "");
         setTargetRoles((data.targetRoles || []).join(", "));
@@ -43,15 +43,12 @@ const JobPreferences = ({ onSaved }) => {
     })();
   }, []);
 
-  const toggleCountry = (code) =>
-    setCountries((prev) => (prev.includes(code) ? prev.filter((c) => c !== code) : [...prev, code]));
-
   const handleSave = async () => {
     setSaving(true);
     try {
       await api.put("/api/profile", {
         intentText,
-        countries,
+        countries: country ? [country] : [],
         remotePref,
         minSalary: minSalary === "" ? null : Number(minSalary),
         targetRoles: targetRoles.split(",").map((r) => r.trim()).filter(Boolean),
@@ -102,22 +99,18 @@ const JobPreferences = ({ onSaved }) => {
               </div>
 
               <div>
-                <label className="block text-xs font-bold uppercase tracking-wider text-white/40 mb-2">Target countries</label>
-                <div className="flex flex-wrap gap-2">
+                <label className="block text-xs font-bold uppercase tracking-wider text-white/40 mb-2">Primary country of job search</label>
+                <select
+                  value={country}
+                  onChange={(e) => setCountry(e.target.value)}
+                  className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-purple-500/50"
+                >
+                  <option value="" className="bg-[#1a1a1a]">Select your country…</option>
                   {COUNTRIES.map((c) => (
-                    <button
-                      key={c.code}
-                      onClick={() => toggleCountry(c.code)}
-                      className={`px-3 py-1.5 rounded-lg text-xs font-semibold border transition-all ${
-                        countries.includes(c.code)
-                          ? "bg-purple-600 text-white border-purple-500"
-                          : "bg-white/5 text-white/50 border-white/10 hover:text-white"
-                      }`}
-                    >
-                      {c.code}
-                    </button>
+                    <option key={c.code} value={c.code} className="bg-[#1a1a1a]">{c.label} ({c.code})</option>
                   ))}
-                </div>
+                </select>
+                <p className="text-white/25 text-[11px] mt-1.5">You'll only see openings in this country.</p>
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
