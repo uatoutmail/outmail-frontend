@@ -7,7 +7,8 @@ import {
   Mail,
   Users,
   Briefcase,
-  SlidersHorizontal
+  SlidersHorizontal,
+  ClipboardList
 } from "lucide-react";
 
 // Import Components
@@ -16,6 +17,7 @@ import ColdOutreachTab from "./components/cold-outreach/ColdOutreachTab";
 import MentorshipTab from "./components/mentorship/MentorshipTab";
 import JobOpeningsTab from "./components/jobs/JobOpeningsTab";
 import SettingsTab from "./components/settings/SettingsTab";
+import AutofillDataTab from "./components/autofill/AutofillDataTab";
 import LockedFeatureOverlay from "./components/LockedFeatureOverlay";
 
 const studentNavItems = [
@@ -23,6 +25,7 @@ const studentNavItems = [
   { label: "Cold Outreach", action: "coldOutreach", icon: Mail },
   { label: "Mentorship", action: "mentorship", icon: Users },
   { label: "Job Openings", action: "jobOpenings", icon: Briefcase },
+  { label: "Autofill Data", action: "autofillData", icon: ClipboardList },
   { label: "Settings", action: "settings", icon: SlidersHorizontal },
 ];
 
@@ -87,6 +90,7 @@ export default function Page() {
           ? <JobOpeningsTab /> 
           : <LockedFeatureOverlay feature="Curated Job Openings"><JobOpeningsTab /></LockedFeatureOverlay>
       )}
+      {activeSection === "autofillData" && <AutofillDataTab />}
       {activeSection === "settings" && <SettingsTab />}
     </DashboardLayout>
   );
