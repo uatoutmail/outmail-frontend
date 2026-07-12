@@ -1,11 +1,11 @@
 import React, { useState } from "react";
 import {
   Briefcase, Building, MapPin, DollarSign, Sparkles,
-  CheckCircle, X, ExternalLink,
+  CheckCircle, X, ExternalLink, Zap,
   ChevronDown, ChevronUp
 } from "lucide-react";
 
-const JobCard = ({ job, getPriorityTier, getPriorityScoreColor, getStatusColor, getStatusText, handleOpenJob, handleDiscard, handleResetStatus, handleApply }) => {
+const JobCard = ({ job, getPriorityTier, getPriorityScoreColor, getStatusColor, getStatusText, handleOpenJob, handleDiscard, handleResetStatus, handleApply, handleAutoApply }) => {
   const [isExpanded, setIsExpanded] = useState(false);
   const tier = getPriorityTier(job.matchScore);
   const isNew = !job.userAction; // no per-user action yet
@@ -138,6 +138,15 @@ const JobCard = ({ job, getPriorityTier, getPriorityScoreColor, getStatusColor, 
       <div className="flex flex-wrap gap-3 mt-4">
         {isNew && (
           <>
+            {handleAutoApply && (
+              <button
+                onClick={() => handleAutoApply(job)}
+                title="Opens the application and the Outmail Autofiller extension fills it for you"
+                className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-6 py-2.5 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white font-bold rounded-xl transition-all active:scale-95 text-sm shadow-lg shadow-purple-900/30"
+              >
+                <Zap size={18} /> Auto-Apply
+              </button>
+            )}
             <button
               onClick={onApply}
               className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-6 py-2.5 bg-green-600 hover:bg-green-500 text-white font-bold rounded-xl transition-all active:scale-95 text-sm shadow-lg shadow-green-900/20"

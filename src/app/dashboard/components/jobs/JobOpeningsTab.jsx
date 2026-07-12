@@ -45,6 +45,15 @@ const JobOpeningsTab = () => {
     setJobOpenings(prev => prev.map(j => (j.id === jobId ? { ...j, userAction: 'applied' } : j)));
   };
 
+  // Auto-apply: open the application so the Outmail Autofiller extension fills
+  // it, and record the apply. (The extension autofills on the opened page.)
+  const handleAutoApply = async (job) => {
+    const applyUrl = job.applyLink || job.applyUrl || job.url || job.sourceUrl;
+    if (applyUrl) window.open(applyUrl, '_blank');
+    await recordAction(job.id, 'applied');
+    setJobOpenings(prev => prev.map(j => (j.id === job.id ? { ...j, userAction: 'applied' } : j)));
+  };
+
   const handleDiscard = async (jobId) => {
     await recordAction(jobId, 'discarded');
     setJobOpenings(prev => prev.filter(j => j.id !== jobId));
@@ -115,6 +124,7 @@ const JobOpeningsTab = () => {
     handleDiscard,
     handleResetStatus,
     handleApply,
+    handleAutoApply,
   };
 
   return (
