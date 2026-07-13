@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import TPOPageShell from "@/component/tpo/TPOPageShell";
 import { Search, Filter, Download, Mail, TrendingUp, BriefcaseBusiness, ArrowUpRight } from "lucide-react";
 import { toast } from "sonner";
+import { tpoColor } from "@/component/tpo/tpoColors";
 import { api } from "@/lib/api";
 
 const scoreTier = (s) => {
@@ -24,14 +25,7 @@ export default function StudentsPage() {
     const fetchStudents = async () => {
       try {
         const res = await api.get("/api/admin/students");
-        // /api/admin/students returns basic list, we will call our new detailed tpo students route
-        const detailedRes = await api.get("/api/admin/students");
-        // We added getTPOStudents as /api/admin/students route was already there... wait, I overrode or added? 
-        // Ah, I added `router.get('/students', getTPOStudents)` and replaced the old getStudents mapping? 
-        // No, I had `getStudents` and `getTPOStudents`. Let me just use the detailed one. 
-        // The one I added was `getTPOStudents` at `/api/admin/students`? Wait, I didn't change the path. I added `getTPOStudents`. Let's just fetch from `/api/admin/students`. I will handle both cases.
-        
-        // Actually, let's call the generic students API and use it. I'll just use res.data.
+        // The endpoint may return either { ALL_STUDENTS } or { students }.
         if (res.data.ALL_STUDENTS) {
           setData({ ALL_STUDENTS: res.data.ALL_STUDENTS });
         } else if (res.data.students) {
@@ -82,7 +76,7 @@ export default function StudentsPage() {
         ].map(({ label, value, color }) => (
           <div key={label} className={`bg-white rounded-xl border border-gray-200 p-4 shadow-sm`}>
             <p className="text-2xl font-bold text-gray-900">{value}</p>
-            <p className={`text-xs font-medium mt-0.5 text-${color}-600`}>{label}</p>
+            <p className={`text-xs font-medium mt-0.5 ${tpoColor(color).text600}`}>{label}</p>
           </div>
         ))}
       </div>

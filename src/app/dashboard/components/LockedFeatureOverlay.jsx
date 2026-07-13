@@ -2,12 +2,20 @@ import React from 'react';
 import Link from 'next/link';
 import { Lock } from 'lucide-react';
 
-const LockedFeatureOverlay = ({ children, feature }) => {
+const LockedFeatureOverlay = ({ feature }) => {
   return (
     <div className="relative w-full h-full min-h-[600px] overflow-hidden rounded-2xl">
-      {/* Blurred out background content */}
-      <div className="pointer-events-none blur-sm opacity-50 select-none h-full overflow-hidden">
-        {children}
+      {/* Static teaser backdrop — no live component mounts here, so locked
+          features never fetch data behind the paywall. */}
+      <div className="pointer-events-none blur-sm opacity-40 select-none h-full overflow-hidden p-6 space-y-4">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+          {Array.from({ length: 4 }).map((_, i) => (
+            <div key={i} className="bg-white/10 border border-white/10 rounded-xl h-24" />
+          ))}
+        </div>
+        {Array.from({ length: 3 }).map((_, i) => (
+          <div key={i} className="bg-white/10 border border-white/10 rounded-xl h-28" />
+        ))}
       </div>
 
       {/* Foreground locked overlay */}
