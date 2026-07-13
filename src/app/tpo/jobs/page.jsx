@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import TPOPageShell from "@/component/tpo/TPOPageShell";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
 import { BriefcaseBusiness, TrendingUp, Building2, Zap, Search } from "lucide-react";
+import { tpoColor } from "@/component/tpo/tpoColors";
 import { api } from "@/lib/api";
 
 const urgencyBadge = {
@@ -69,8 +70,8 @@ export default function JobsPage() {
           { icon: Zap,               label: "Hot Opportunities",        value: stats?.hotOpportunities?.toLocaleString() || "0", sub: "Score ≥ 90 this week",   color: "orange" },
         ].map(({ icon: Icon, label, value, sub, color }) => (
           <div key={label} className={`bg-white rounded-xl border border-gray-200 p-5 shadow-sm`}>
-            <div className={`inline-flex p-2.5 rounded-lg bg-${color}-50 mb-3`}>
-              <Icon size={16} className={`text-${color}-600`}/>
+            <div className={`inline-flex p-2.5 rounded-lg ${tpoColor(color).bg50} mb-3`}>
+              <Icon size={16} className={tpoColor(color).text600}/>
             </div>
             <p className="text-2xl font-bold text-gray-900">{value}</p>
             <p className="text-xs font-medium text-gray-600 mt-0.5">{label}</p>
@@ -117,10 +118,10 @@ export default function JobsPage() {
               { label: "Company Momentum", desc: "Growth stage, market buzz, press mentions this quarter", color: "blue",  weight: "35%" },
               { label: "Fit Score",        desc: "Match between student profile & role requirements",    color: "green",  weight: "25%" },
             ].map(({ label, desc, color, weight }) => (
-              <div key={label} className={`border border-${color}-100 bg-${color}-50 rounded-xl p-4`}>
+              <div key={label} className={`border ${tpoColor(color).border100} ${tpoColor(color).bg50} rounded-xl p-4`}>
                 <div className="flex items-center justify-between mb-1">
-                  <p className={`text-xs font-semibold text-${color}-700`}>{label}</p>
-                  <span className={`text-xs font-bold text-${color}-600`}>{weight}</span>
+                  <p className={`text-xs font-semibold ${tpoColor(color).text700}`}>{label}</p>
+                  <span className={`text-xs font-bold ${tpoColor(color).text600}`}>{weight}</span>
                 </div>
                 <p className="text-xs text-gray-500 leading-relaxed">{desc}</p>
               </div>

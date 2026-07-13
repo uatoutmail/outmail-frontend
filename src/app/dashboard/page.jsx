@@ -81,14 +81,14 @@ export default function Page() {
       {activeSection === "dashboard" && <DashboardOverview />}
       {activeSection === "coldOutreach" && <ColdOutreachTab />}
       {activeSection === "mentorship" && (
-        user?.currentPlan?.code === 'PLAN_C' 
-          ? <MentorshipTab /> 
-          : <LockedFeatureOverlay feature="Expert Mentorship"><MentorshipTab /></LockedFeatureOverlay>
+        user?.currentPlan?.code === 'PLAN_C'
+          ? <MentorshipTab />
+          : <LockedFeatureOverlay feature="Expert Mentorship" />
       )}
       {activeSection === "jobOpenings" && (
         ['PLAN_B', 'PLAN_C'].includes(user?.currentPlan?.code)
-          ? <JobOpeningsTab /> 
-          : <LockedFeatureOverlay feature="Curated Job Openings"><JobOpeningsTab /></LockedFeatureOverlay>
+          ? <JobOpeningsTab />
+          : <LockedFeatureOverlay feature="Curated Job Openings" />
       )}
       {activeSection === "autofillData" && <AutofillDataTab />}
       {activeSection === "settings" && <SettingsTab />}

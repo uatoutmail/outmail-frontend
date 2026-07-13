@@ -2,6 +2,7 @@
 import { useState, useEffect } from "react";
 import TPOPageShell from "@/component/tpo/TPOPageShell";
 import { GraduationCap, Users, Star, CalendarDays, Clock, ChevronDown, ChevronUp, Loader2, Inbox } from "lucide-react";
+import { tpoColor } from "@/component/tpo/tpoColors";
 import { api } from "@/lib/api";
 
 function StarRow({ count }) {
@@ -78,8 +79,8 @@ export default function MentorshipPage() {
               { icon: Clock, label: "Avg Session Length", value: "60 min", sub: "Standard duration", color: "green" },
             ].map(({ icon: Icon, label, value, sub, color }) => (
               <div key={label} className="bg-white rounded-xl border border-gray-200 p-5 shadow-sm">
-                <div className={`inline-flex p-2.5 rounded-lg bg-${color}-50 mb-3`}>
-                  <Icon size={16} className={`text-${color}-600`} />
+                <div className={`inline-flex p-2.5 rounded-lg ${tpoColor(color).bg50} mb-3`}>
+                  <Icon size={16} className={tpoColor(color).text600} />
                 </div>
                 <p className="text-2xl font-bold text-gray-900">{value}</p>
                 <p className="text-xs font-medium text-gray-600 mt-0.5">{label}</p>
