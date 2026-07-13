@@ -1,162 +1,78 @@
 "use client";
-import React, { useEffect, useState } from 'react';
-import Link from 'next/link';
-import { toast } from 'sonner';
-import { getPlans, startCheckout, validateCoupon } from '@/lib/payments';
+import React from 'react';
 import { useAuth } from '@/context/AuthContext';
 
+// Free-first pricing (USD). Free = Cold Outreach; paid tiers add the next two
+// pillars (Job Aggregator, then Mentorship). Cumulative.
 const plans = [
   {
-    code: 'PLAN_A',
-    badge: 'Plan A',
-    title: 'Smart Cold Outreach',
-    tagline: 'Direct recruiter reach, at scale.',
+    id: 'free',
+    badge: 'Free',
+    title: 'Cold Outreach',
+    price: '$0',
+    period: 'free forever',
+    tagline: 'Get seen by the right recruiters.',
     description:
-      'For organisations that want to put their candidates directly in front of the right recruiters — bypassing ATS filters with personalised, signal-driven cold email campaigns.',
+      'Find the right companies and send AI-personalized cold emails from your own inbox — free, forever.',
     features: [
-      'Automated personalised cold email outreach',
-      'Live hiring signal targeting (funding, headcount, job postings)',
-      'Smart company database with priority scoring',
-      'Multiple customisable email templates',
-      'Campaign scheduling, throttling & safe sending',
-      'Campaign analytics & performance reports',
+      'AI-personalized cold emails from your own Gmail',
+      'Recruiter & company discovery',
+      'Hiring-signal targeting',
+      'Send scheduling & daily limits',
+      'Outreach analytics',
     ],
-    cta: 'Get Started',
+    cta: 'Get Started Free',
     highlight: false,
   },
   {
-    code: 'PLAN_B',
-    badge: 'Plan B',
+    id: 'pro',
+    badge: 'Pro',
     title: 'Outreach + Job Intelligence',
-    tagline: 'Everything in Plan A, plus curated job visibility.',
+    price: '$9',
+    period: 'per month',
+    tagline: 'Everything in Free, plus matched jobs.',
     description:
-      'For organisations that want to combine direct recruiter outreach with a curated, signal-ranked job feed — so candidates can act on the right opportunities at exactly the right time.',
+      'Add a résumé- and intent-matched job feed with an explainable Outmail Score, plus the one-click Autofill browser extension.',
     features: [
-      'Everything in Plan A',
-      'Curated job openings ranked by Outmail Priority Score',
-      'Hiring urgency & company momentum signals',
-      'Funding & growth-stage filters',
-      'Job bookmarking & application tracking',
-      'Dedicated account support',
+      'Everything in Free',
+      'Résumé & intent-matched job feed',
+      'Explainable Outmail Score + "why matched"',
+      'Autofill browser extension',
+      'Apply / save / discard tracking',
+      'Priority support',
     ],
     cta: 'Get Started',
     highlight: true,
   },
   {
-    code: 'PLAN_C',
-    badge: 'Plan C',
-    title: 'Custom Suite',
-    tagline: 'Your tools, your combination.',
+    id: 'elite',
+    badge: 'Elite',
+    title: 'Everything + Mentorship',
+    price: '$19',
+    period: 'per month',
+    tagline: 'Outreach, jobs, and real mentors.',
     description:
-      'For organisations with specific needs. Pick any combination of cold outreach, job intelligence, and expert mentorship sessions — or request a fully tailored setup. Let\'s talk.',
+      "Everything in Pro, plus bi-weekly mentorship sessions with people who've navigated the path you're on.",
     features: [
-      'Choose any combination of Plan A & Plan B features',
-      'Expert mentorship session access for candidates',
-      'Bulk account management & admin dashboard',
-      'Placement officer controls & reporting',
-      'Custom integrations & onboarding assistance',
-      'Priority support with dedicated account manager',
+      'Everything in Pro',
+      'Bi-weekly mentorship sessions',
+      'Mentor Q&A + session recordings',
+      'Personalized career guidance',
+      'Priority support',
     ],
-    cta: 'Get a Custom Quote',
+    cta: 'Get Started',
     highlight: false,
   },
 ];
 
-const formatPrice = (amount, currency) => {
-  if (amount == null) return null;
-  try {
-    return new Intl.NumberFormat('en-IN', {
-      style: 'currency',
-      currency: currency || 'INR',
-      maximumFractionDigits: 0,
-    }).format(amount / 100);
-  } catch {
-    return `₹${(amount / 100).toLocaleString('en-IN')}`;
-  }
-};
-
 export default function ZPricing() {
-  const { isAuthenticated, user } = useAuth();
-  const [dbPlans, setDbPlans] = useState({}); // code -> { id, amount, currency }
-  const [loadingCode, setLoadingCode] = useState(null);
-  // Per-plan coupon state: code -> { input, data, validating }
-  const [coupons, setCoupons] = useState({});
+  const { isAuthenticated } = useAuth();
 
-  useEffect(() => {
-    getPlans()
-      .then((rows) => {
-        const map = {};
-        rows.forEach((p) => {
-          map[p.code] = { id: p.id, amount: p.amount, currency: p.currency };
-        });
-        setDbPlans(map);
-      })
-      .catch(() => {});
-  }, []);
-
-  const setCouponField = (code, patch) =>
-    setCoupons((prev) => ({ ...prev, [code]: { ...prev[code], ...patch } }));
-
-  const handleApplyCoupon = async (plan) => {
-    const db = dbPlans[plan.code];
-    const input = coupons[plan.code]?.input?.trim();
-    if (!input) return;
-
-    if (!isAuthenticated) {
-      toast.message('Please log in to apply a coupon.');
-      return;
-    }
-
-    setCouponField(plan.code, { validating: true, data: null });
-    try {
-      const result = await validateCoupon({ code: input, planId: db?.id });
-      if (result.valid) {
-        setCouponField(plan.code, { data: result, validating: false });
-        toast.success(`Coupon applied! ${result.spotsLeft - 1} spot${result.spotsLeft - 1 !== 1 ? 's' : ''} left at this price.`);
-      } else {
-        setCouponField(plan.code, { data: null, validating: false });
-        toast.error(result.error || 'Invalid coupon code.');
-      }
-    } catch {
-      setCouponField(plan.code, { data: null, validating: false });
-      toast.error('Could not validate coupon. Try again.');
-    }
-  };
-
-  const handleCheckout = async (plan) => {
-    const db = dbPlans[plan.code];
-
-    // Custom / quote-only plan — route to contact instead of checkout.
-    if (!db || db.amount == null) {
-      window.location.href = '/contactus';
-      return;
-    }
-
-    if (!isAuthenticated) {
-      toast.message('Please log in to continue to payment.');
+  const handleCta = () => {
+    if (isAuthenticated) {
+      window.location.href = '/dashboard';
+    } else {
       window.location.href = `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/auth/google`;
-      return;
-    }
-
-    const couponData = coupons[plan.code]?.data;
-    const couponCode = couponData?.valid ? couponData.code : undefined;
-
-    try {
-      setLoadingCode(plan.code);
-      await startCheckout({
-        planId: db.id,
-        couponCode,
-        prefill: { name: user?.display_name || '', email: user?.email || '' },
-      });
-      toast.success('Payment successful! 🎉');
-    } catch (err) {
-      if (err?.message === 'Payment cancelled') {
-        toast.message('Payment cancelled.');
-      } else {
-        toast.error(err?.response?.data?.error || err?.message || 'Payment failed.');
-      }
-    } finally {
-      setLoadingCode(null);
     }
   };
 
@@ -164,149 +80,70 @@ export default function ZPricing() {
     <div className="text-white py-20 px-4 bg-[#0a0b14]">
       <div className="max-w-7xl mx-auto text-center">
         <p className="text-sm font-medium text-indigo-300 uppercase tracking-[4px] mb-3">
-          Subscription Plans
+          Pricing
         </p>
         <h2 className="text-3xl md:text-4xl font-bold mb-4 tracking-tighter">
-          Flexible Plans Built Around Your Organisation
+          Choose your plan
         </h2>
         <p className="text-white/60 mb-12 max-w-2xl mx-auto text-base">
-          Pick the plan that matches your goals and check out securely. Need something tailored? Talk to us for a custom quote.
+          Every plan includes the ones before it. Start with free cold outreach; add jobs, then mentorship.
         </p>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {plans.map((plan, idx) => {
-            const db = dbPlans[plan.code];
-            const price = formatPrice(db?.amount, db?.currency);
-            const isCustom = !db || db.amount == null;
-            const isCurrentPlan = isAuthenticated && user?.currentPlan?.code === plan.code;
-            return (
-              <div
-                key={idx}
-                className={`relative rounded-2xl p-8 text-left flex flex-col justify-between transition-all duration-300 hover:-translate-y-1
-                  ${isCurrentPlan
-                    ? 'bg-emerald-500/10 border-2 border-emerald-400 shadow-[0_0_32px_rgba(16,185,129,0.25)] backdrop-blur-xl'
-                    : plan.highlight
-                      ? 'bg-white/6 border-2 border-purple-500 shadow-[0_0_32px_rgba(108,0,255,0.25)] backdrop-blur-xl'
-                      : 'bg-white/5 border border-white/12 hover:border-purple-500/40 backdrop-blur-xl'
+          {plans.map((plan) => (
+            <div
+              key={plan.id}
+              className={`relative rounded-2xl p-8 text-left flex flex-col justify-between transition-all duration-300 hover:-translate-y-1 backdrop-blur-xl
+                ${plan.highlight
+                  ? 'bg-white/6 border-2 border-purple-500 shadow-[0_0_32px_rgba(108,0,255,0.25)]'
+                  : 'bg-white/5 border border-white/12 hover:border-purple-500/40'
+                }`}
+            >
+              {plan.highlight && (
+                <span className="absolute -top-3 left-1/2 -translate-x-1/2 text-[11px] uppercase tracking-[3px] bg-purple-600 text-white px-4 py-1 rounded-full">
+                  Most Popular
+                </span>
+              )}
+
+              <div className="mb-6">
+                <span className="text-xs uppercase tracking-[3px] text-purple-400 font-medium">
+                  {plan.badge}
+                </span>
+                <h3 className="text-2xl font-bold text-white mt-2 mb-1">{plan.title}</h3>
+                <p className="text-purple-300 text-sm font-medium mb-3">{plan.tagline}</p>
+                <div className="flex items-baseline gap-2 flex-wrap mb-3">
+                  <span className="text-4xl font-bold text-white">{plan.price}</span>
+                  <span className="text-white/50 text-sm">{plan.period}</span>
+                </div>
+                <p className="text-white/55 text-sm leading-relaxed">{plan.description}</p>
+              </div>
+
+              <ul className="mb-8 space-y-3 flex-1">
+                {plan.features.map((feature, i) => (
+                  <li key={i} className="flex items-start gap-3 text-sm text-white/80">
+                    <span className="mt-0.5 flex-shrink-0 w-4 h-4 rounded-full bg-purple-600/50 border border-purple-500/60 flex items-center justify-center text-[10px] text-purple-300">✓</span>
+                    {feature}
+                  </li>
+                ))}
+              </ul>
+
+              <button
+                type="button"
+                onClick={handleCta}
+                className={`w-full block text-center py-3 px-4 rounded-full font-semibold text-sm transition-all duration-200
+                  ${plan.highlight
+                    ? 'bg-white text-black hover:bg-gray-100'
+                    : 'bg-white/10 text-white border border-white/20 hover:bg-white/20'
                   }`}
               >
-                {isCurrentPlan ? (
-                  <span className="absolute -top-3 left-1/2 -translate-x-1/2 text-[11px] uppercase tracking-[3px] bg-emerald-500 text-white px-4 py-1 rounded-full">
-                    Current Plan
-                  </span>
-                ) : plan.highlight && (
-                  <span className="absolute -top-3 left-1/2 -translate-x-1/2 text-[11px] uppercase tracking-[3px] bg-purple-600 text-white px-4 py-1 rounded-full">
-                    Most Popular
-                  </span>
-                )}
-
-                {/* Header */}
-                <div className="mb-6">
-                  <span className="text-xs uppercase tracking-[3px] text-purple-400 font-medium">
-                    {plan.badge}
-                  </span>
-                  <h3 className="text-2xl font-bold text-white mt-2 mb-1">{plan.title}</h3>
-                  <p className="text-purple-300 text-sm font-medium mb-3">{plan.tagline}</p>
-                  <div className="mb-1">
-                    {(() => {
-                      const couponData = coupons[plan.code]?.data;
-                      const discountedPrice = couponData?.valid
-                        ? formatPrice(couponData.finalAmount, db?.currency)
-                        : null;
-                      return price ? (
-                        <div className="flex items-baseline gap-2 flex-wrap">
-                          {discountedPrice ? (
-                            <>
-                              <span className="text-3xl font-bold text-emerald-400">{discountedPrice}</span>
-                              <span className="text-lg font-medium text-white/40 line-through">{price}</span>
-                            </>
-                          ) : (
-                            <span className="text-3xl font-bold text-white">{price}</span>
-                          )}
-                          <span className="text-white/50 text-sm">/yr</span>
-                        </div>
-                      ) : (
-                        <span className="text-2xl font-bold text-white">Custom</span>
-                      );
-                    })()}
-                  </div>
-                  {!isCustom && (
-                    <p className="text-white/40 text-xs mb-3">First 10 students per university get ₹999/yr — enter your university coupon below.</p>
-                  )}
-                  <p className="text-white/55 text-sm leading-relaxed">{plan.description}</p>
-                </div>
-
-                {/* Features */}
-                <ul className="mb-8 space-y-3 flex-1">
-                  {plan.features.map((feature, i) => (
-                    <li key={i} className="flex items-start gap-3 text-sm text-white/80">
-                      <span className="mt-0.5 flex-shrink-0 w-4 h-4 rounded-full bg-purple-600/50 border border-purple-500/60 flex items-center justify-center text-[10px] text-purple-300">✓</span>
-                      {feature}
-                    </li>
-                  ))}
-                </ul>
-
-                {/* Coupon input */}
-                {!isCustom && !isCurrentPlan && (
-                  <div className="mb-4">
-                    {coupons[plan.code]?.data?.valid ? (
-                      <div className="flex items-center gap-2 bg-emerald-500/10 border border-emerald-400/40 rounded-lg px-3 py-2">
-                        <span className="text-emerald-400 text-xs font-semibold flex-1">✓ {coupons[plan.code].data.code} applied</span>
-                        <button
-                          type="button"
-                          onClick={() => setCouponField(plan.code, { data: null, input: '' })}
-                          className="text-white/40 hover:text-white text-xs transition"
-                        >Remove</button>
-                      </div>
-                    ) : (
-                      <div className="flex gap-2">
-                        <input
-                          type="text"
-                          placeholder="University coupon (e.g. PESU999)"
-                          value={coupons[plan.code]?.input || ''}
-                          onChange={(e) => setCouponField(plan.code, { input: e.target.value })}
-                          onKeyDown={(e) => e.key === 'Enter' && handleApplyCoupon(plan)}
-                          className="flex-1 bg-white/5 border border-white/15 rounded-lg px-3 py-2 text-white text-xs placeholder-white/30 focus:outline-none focus:border-purple-500/60 transition"
-                        />
-                        <button
-                          type="button"
-                          onClick={() => handleApplyCoupon(plan)}
-                          disabled={coupons[plan.code]?.validating}
-                          className="bg-purple-600/40 hover:bg-purple-600/60 text-white text-xs font-semibold px-3 py-2 rounded-lg transition disabled:opacity-50"
-                        >
-                          {coupons[plan.code]?.validating ? '…' : 'Apply'}
-                        </button>
-                      </div>
-                    )}
-                  </div>
-                )}
-
-                {/* CTA */}
-                <button
-                  type="button"
-                  onClick={() => handleCheckout(plan)}
-                  disabled={loadingCode === plan.code || isCurrentPlan}
-                  className={`w-full block text-center py-3 px-4 rounded-full font-semibold text-sm transition-all duration-200 disabled:opacity-60 disabled:cursor-not-allowed
-                    ${isCurrentPlan
-                      ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-400/40'
-                      : plan.highlight
-                        ? 'bg-white text-black hover:bg-gray-100'
-                        : 'bg-white/10 text-white border border-white/20 hover:bg-white/20'
-                    }`}
-                >
-                  {isCurrentPlan
-                    ? 'Your Current Plan'
-                    : loadingCode === plan.code
-                      ? 'Processing…'
-                      : `${plan.cta} →`}
-                </button>
-              </div>
-            );
-          })}
+                {plan.cta} →
+              </button>
+            </div>
+          ))}
         </div>
 
-        <p className="text-white/60 text-sm mt-10">
-          Secure payments powered by Razorpay. Custom plans are scoped on a discovery call.
+        <p className="text-white/50 text-sm mt-10">
+          Prices in USD. Paid plans are billed monthly, cancel anytime.
         </p>
       </div>
     </div>
