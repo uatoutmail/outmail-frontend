@@ -128,7 +128,7 @@ const trustCards = [
 
 function GradientWord({ children }) {
   return (
-    <span className="bg-gradient-to-r from-[#ad46ff] via-[#c387ff] to-[#6c00ff] bg-clip-text text-transparent">
+    <span className="gradient-hero">
       {children}
     </span>
   );

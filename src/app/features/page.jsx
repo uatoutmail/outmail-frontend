@@ -442,7 +442,7 @@ function Page() {
 					>
 						What
 						{" "}
-						<span className="font-satisfy bg-gradient-to-r from-primary-soft via-white to-primary-soft bg-clip-text text-transparent">
+						<span className="font-satisfy gradient-hero">
 							Outmail
 						</span>{" "}
 						Does

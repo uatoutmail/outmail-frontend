@@ -1,4 +1,4 @@
-import { Geist, Geist_Mono, Satisfy, Syne } from "next/font/google";
+import { Geist, Geist_Mono, Satisfy, Syne, Space_Grotesk } from "next/font/google";
 import "./globals.css";
 import SmoothScrollWrapper from "@/component/SmoothScrollWrapper";
 import { AuthProvider } from "@/context/AuthContext";
@@ -30,6 +30,13 @@ const satisfy = Satisfy({
   subsets: ["latin"],
   weight: ["400"],
   variable: "--font-satisfy",
+});
+
+// Nav / UI accent typeface — modern, geometric, "savvy" (--font-nav / font-nav)
+const spaceGrotesk = Space_Grotesk({
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
+  variable: "--font-nav-var",
 });
 
 export const metadata = {
@@ -134,7 +141,7 @@ export default function RootLayout({ children }) {
         )}
       </head>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} ${syne.variable} ${satisfy.variable} antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} ${syne.variable} ${satisfy.variable} ${spaceGrotesk.variable} antialiased`}
       >
         <AuthProvider>
           <SmoothScrollWrapper>

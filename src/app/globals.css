@@ -15,6 +15,7 @@
   --brand-primary: #a855f7;          /* main purple */
   --brand-primary-hover: #9333ea;    /* deeper purple for hovers/active */
   --brand-primary-soft: #c084fc;     /* light purple accent */
+  --brand-glow: #b06cff;             /* hero gradient purple (edit to retune all hero headings) */
   --brand-accent: #3b82f6;           /* blue — gradient start */
   --brand-primary-foreground: #ffffff;
 
@@ -54,6 +55,7 @@
   --font-syne: var(--font-syne-var);
   --font-geist: var(--font-geist-var);
   --font-mono: var(--font-geist-mono-var);
+  --font-nav: var(--font-nav-var);   /* nav / UI accent font (Space Grotesk) */
 
   /* Radius scale → rounded-btn / rounded-card / rounded-pill */
   --radius-btn: 0.625rem;
@@ -109,6 +111,15 @@ body {
 
 .bg-gradient-brand {
   background-image: var(--gradient-brand);
+}
+
+/* The one hero gradient used by every page's hero heading + the wordmark.
+   Purple → white → purple. Retune all heroes by editing --brand-glow above. */
+.gradient-hero {
+  background-image: linear-gradient(to right, var(--brand-glow), #ffffff, var(--brand-glow));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
 }
 
 .phase-card {

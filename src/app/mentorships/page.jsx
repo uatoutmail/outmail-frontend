@@ -91,7 +91,7 @@ export default function MentorshipsPage() {
             <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-purple-500/10 border border-purple-500/20 text-[#ad46ff] text-[10px] font-bold uppercase tracking-[0.2em] mb-6">
               <TrendingUp size={12} /> Empowering Your Journey
             </span>
-            <h1 className="text-4xl md:text-6xl font-syne font-bold mb-6 tracking-tight">
+            <h1 className="text-4xl md:text-6xl font-syne font-bold mb-6 tracking-tight gradient-hero">
               Expert Mentorship
             </h1>
             <p className="text-base text-white/50 max-w-xl mx-auto leading-relaxed">

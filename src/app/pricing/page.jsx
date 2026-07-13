@@ -25,7 +25,7 @@ function page() {
         <h1 className="text-4xl sm:text-5xl font-syne font-semibold tracking-tight leading-tight mt-3 text-white">
           Flexible Plans Built
           <br />
-          <span className="bg-gradient-to-r from-[#b06cff] via-white to-[#b06cff] bg-clip-text text-transparent">
+          <span className="gradient-hero">
             Around Your Organisation.
           </span>
         </h1>
