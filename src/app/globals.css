@@ -33,7 +33,7 @@
 }
 
 @theme inline {
-  /* Colors → generate bg-*/text-*/border-*/ring-* utilities that reference
+  /* Colors: generate the bg/text/border/ring color utilities that reference
      the :root tokens above (so runtime re-skin = edit :root). */
   --color-background: var(--background);
   --color-foreground: var(--foreground);
