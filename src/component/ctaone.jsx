@@ -1,7 +1,6 @@
 'use client';
 import React from 'react';
 import Wordmark from '@/component/ui/wordmark';
-import CountUp, { useCountUp } from 'react-countup';
 
 export default function CtaOne() {
   return (
@@ -17,26 +16,18 @@ export default function CtaOne() {
           Outmail doesn’t just send emails — it gets you seen. Start today and maximize your chances of landing interviews faster.
         </p>
 
-        {/* Stats */}
-        <div className="flex flex-col md:flex-row justify-center gap-12 text-center mb-16">
-          <div>
-            <h3 className="text-3xl font-bold text-[#ffff]">
-              <CountUp end={5} duration={2.5} suffix="x" enableScrollSpy/>
-            </h3>
-            <p className="text-white">More Visibility</p>
-          </div>
-          <div>
-            <h3 className="text-3xl font-bold text-[#ffff]">
-              <CountUp end={500} duration={2.5} suffix="+" enableScrollSpy/>
-            </h3>
-            <p className="text-white">Hiring Signals Tracked Daily</p>
-          </div>
-          <div>
-            <h3 className="text-3xl font-bold text-[#ffff]">
-              <CountUp end={10000} duration={2.5} suffix="+" enableScrollSpy/>
-            </h3>
-            <p className="text-white">Companies in Our Database</p>
-          </div>
+        {/* What Outmail does (honest value, no invented metrics) */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-16 text-left">
+          {[
+            { title: "AI-personalized outreach", desc: "Emails tailored to each recruiter, sent from your own inbox — not spray-and-pray." },
+            { title: "Résumé-matched jobs", desc: "A ranked, explainable feed of openings that actually fit your profile and goals." },
+            { title: "Mentorship on tap", desc: "Bi-weekly sessions with people who've navigated the path you're on." },
+          ].map((f) => (
+            <div key={f.title} className="rounded-2xl border border-white/12 bg-white/5 p-6">
+              <h3 className="text-lg font-semibold text-white mb-2">{f.title}</h3>
+              <p className="text-white/60 text-sm leading-relaxed">{f.desc}</p>
+            </div>
+          ))}
         </div>
 
         {/* CTA Box */}

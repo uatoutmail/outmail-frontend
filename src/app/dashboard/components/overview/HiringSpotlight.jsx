@@ -20,8 +20,9 @@ const HiringSpotlight = () => {
           <h3 className="text-sm font-semibold text-white flex items-center gap-1.5">
             <Briefcase size={13} className="text-amber-400" />
             Companies Hiring Now
+            <span className="text-[9px] px-1.5 py-0.5 rounded-full bg-white/10 text-white/50 font-semibold uppercase tracking-wide">Sample</span>
           </h3>
-          <p className="text-[11px] text-white/40">Based on your targeted sectors</p>
+          <p className="text-[11px] text-white/40">Illustrative — live hiring data coming soon</p>
         </div>
         <span className="text-[10px] text-white/30">
           {new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}

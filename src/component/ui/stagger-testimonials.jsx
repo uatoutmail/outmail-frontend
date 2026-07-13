@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { ChevronLeft, ChevronRight, GraduationCap } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const SQRT_5000 = Math.sqrt(5000);
@@ -9,32 +9,32 @@ const SQRT_5000 = Math.sqrt(5000);
 const testimonials = [
   {
     testimonial: "I've sent 60+ applications this semester and heard back from maybe 3. The moment the team explained what Outmail does, I literally said — why doesn't this exist already? I'd pay for this right now. Please launch fast.",
-    by: "Arjun Mehta, 4th Year CSE, BITS Pilani",
+    by: "Final-year CSE student",
     imgSrc: "",
   },
   {
     testimonial: "I asked my placement officer if our college could tie up with Outmail and make it part of our placement prep. She loved the idea and asked for a proposal. We're pushing for it to be an official offering next year.",
-    by: "Priya Nair, 3rd Year, IIT Bombay",
+    by: "3rd-year engineering student",
     imgSrc: "",
   },
   {
     testimonial: "Cold emailing recruiters is something I always knew I should be doing but had no idea how to start. When I saw the Outmail demo, I went and told my entire study group about it. Five of us signed up for early access the same evening.",
-    by: "Rohan Sharma, Final Year MBA, IIM Indore",
+    by: "Final-year MBA student",
     imgSrc: "",
   },
   {
     testimonial: "Our placement cell has been looking for something exactly like this — a way to help students reach out to companies that aren't even posting on campus portals. We've already raised this with the TPO and she's asked the Outmail team for a demo.",
-    by: "Sneha Iyer, 3rd Year ECE, NIT Trichy",
+    by: "3rd-year ECE student",
     imgSrc: "",
   },
   {
     testimonial: "When I showed this to my batchmates, the reaction was unanimous — we need this. Everyone is frustrated with portal applications going nowhere. I'm personally vouching for Outmail within our placement committee.",
-    by: "Karan Verma, Placement Coordinator, VIT Vellore",
+    by: "Student placement coordinator",
     imgSrc: "",
   },
   {
     testimonial: "The idea of targeting companies based on funding signals and growth stage is so obvious in hindsight. I don't understand why no one built this for students before. I've already referred three friends and we're all waiting for the full launch.",
-    by: "Ananya Kapoor, 4th Year CS, IIIT Hyderabad",
+    by: "4th-year CS student",
     imgSrc: "",
   },
 ];
@@ -74,11 +74,9 @@ const TestimonialCard = ({ position, testimonial, handleMove, cardSize }) => {
           height: 2,
         }}
       />
-      <img
-        src="/Logo_Outmail.png"
-        alt="Outmail"
-        className="mb-4 h-12 w-12 object-contain"
-      />
+      <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-br from-[#3b82f6] to-[#a855f7] text-white">
+        <GraduationCap className="h-6 w-6" />
+      </div>
       <h3
         className={cn(
           "text-sm sm:text-base font-medium leading-relaxed line-clamp-6",

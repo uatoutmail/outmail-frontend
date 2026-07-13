@@ -66,9 +66,12 @@ function CompanyItem({ company }) {
 export default function Partners() {
   return (
     <div className="w-full overflow-hidden py-12 bg-[#0a0b14]">
-      <h2 className="text-2xl font-bold text-white text-center mb-16 mt-10">
-        Trusted by Job Seekers Connecting with Top Companies
+      <h2 className="text-2xl font-bold text-white text-center mb-3 mt-10">
+        Get in front of recruiters at companies like these
       </h2>
+      <p className="text-white/50 text-center text-sm max-w-xl mx-auto mb-14">
+        The kinds of companies Outmail helps students reach — from global names to fast-growing startups.
+      </p>
 
       {/* Outer mask for fade edges */}
       <div
