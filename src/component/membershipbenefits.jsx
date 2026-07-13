@@ -1,5 +1,5 @@
 import React from 'react';
-import Image from 'next/image';
+import PillarVisual from '@/component/animations/PillarVisual';
 
 const benefits = [
   {
@@ -68,13 +68,9 @@ const MembershipBenefits = () => {
             WebkitMaskImage: 'linear-gradient(to right, transparent 0%, black 28%, black 85%, transparent 100%)',
           }}
         >
-          <Image
-            src="/OutmailOfferings.png"
-            alt="Outmail platform features"
-            width={640}
-            height={520}
-            className="w-full h-auto object-cover object-center opacity-90"
-          />
+          <div className="relative w-full aspect-[5/4] overflow-hidden rounded-2xl border border-white/10">
+            <PillarVisual variant="jobs" />
+          </div>
         </div>
 
       </div>
