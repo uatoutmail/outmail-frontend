@@ -40,6 +40,7 @@ function Navbar({ variant = "gradient" }) {
         <div className="hidden md:flex space-x-7 text-white text-[15px] font-medium font-nav tracking-wide">
           <Link href="/" className="hover:text-[#AD46FF] transition">Home</Link>
           <Link href="/features" className="hover:text-[#AD46FF] transition">Features</Link>
+          <Link href="/mentorships" className="hover:text-[#AD46FF] transition">Mentorship</Link>
           <Link href="/pricing" className="hover:text-[#AD46FF] transition">Pricing</Link>
           <Link href="/contactus" className="hover:text-[#AD46FF] transition">Contact Us</Link>
           <Link href="/partnership" className="hover:text-[#AD46FF] transition">Partnership</Link>
@@ -168,6 +169,7 @@ function Navbar({ variant = "gradient" }) {
             <div className="flex flex-col space-y-8 text-white text-xl font-medium font-nav tracking-wide">
               <Link href="/" className="hover:text-[#AD46FF] transition text-center">Home</Link>
               <Link href="/features" className="hover:text-[#AD46FF] transition text-center">Features</Link>
+              <Link href="/mentorships" className="hover:text-[#AD46FF] transition text-center">Mentorship</Link>
               <Link href="/pricing" className="hover:text-[#AD46FF] transition text-center">Pricing</Link>
               <Link href="/contactus" className="hover:text-[#AD46FF] transition text-center">Contact Us</Link>
               <Link href="/partnership" className="hover:text-[#AD46FF] transition text-center">Partnership</Link>
@@ -229,7 +231,7 @@ function Navbar({ variant = "gradient" }) {
                     className="flex flex-col items-center justify-center w-full bg-[#AD46FF] text-white font-semibold rounded-2xl p-4 hover:bg-[#c289f0] transition-all shadow-lg shadow-purple-500/20 active:scale-[0.98]"
                     onClick={() => setIsOpen(false)}
                   >
-                    <span className="text-lg">Login as TPO admin</span>
+                    <span className="text-lg">Login as TPO Admin</span>
                     <span className="text-[10px] text-white/70 font-medium">For training & placement officers</span>
                   </Link>
                 </div>

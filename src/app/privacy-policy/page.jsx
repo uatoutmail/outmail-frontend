@@ -25,7 +25,7 @@ export default function PrivacyPolicy() {
             <h2 className="text-2xl font-bold text-slate-900 border-b border-slate-100 pb-2 font-syne">1. Company Information</h2>
             <ul className="list-disc pl-6 space-y-2">
               <li>Service Name: Outmail (Outmail.in)</li>
-              <li>Contact Email: support@outmail.in</li>
+              <li>Contact Email: contact@outmail.in</li>
               <li>Jurisdiction: India</li>
               <li>Target Audience: Individuals aged 18 and above, primarily Indian customers</li>
             </ul>
@@ -142,7 +142,7 @@ export default function PrivacyPolicy() {
               <li><strong>Right to Deletion:</strong> Request complete deletion of your account and data.</li>
               <li><strong>Right to Stop Campaigns:</strong> Pause or stop campaigns at any time via dashboard.</li>
             </ul>
-            <p>Contact <a href="mailto:support@outmail.in" className="text-[#AD46FF] hover:underline font-medium">support@outmail.in</a> to exercise these rights.</p>
+            <p>Contact <a href="mailto:contact@outmail.in" className="text-[#AD46FF] hover:underline font-medium">contact@outmail.in</a> to exercise these rights.</p>
           </section>
 
           <section className="space-y-6">
@@ -176,7 +176,7 @@ export default function PrivacyPolicy() {
           <section className="space-y-6">
             <h2 className="text-2xl font-bold text-slate-900 border-b border-slate-100 pb-2 font-syne">14. Contact Us</h2>
             <ul className="list-none space-y-2">
-              <li>Email: <a href="mailto:support@outmail.in" className="text-[#AD46FF] hover:underline">support@outmail.in</a></li>
+              <li>Email: <a href="mailto:contact@outmail.in" className="text-[#AD46FF] hover:underline">contact@outmail.in</a></li>
               <li>Website: <a href="https://outmail.in" className="text-[#AD46FF] hover:underline">https://outmail.in</a></li>
             </ul>
           </section>

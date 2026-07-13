@@ -119,7 +119,7 @@ export default function TermsAndConditions() {
             <h2 className="text-2xl font-bold text-slate-900 border-b border-slate-100 pb-2 font-syne">10. Termination</h2>
             <ul className="list-disc pl-6 space-y-3">
               <li>We may suspend or terminate your account at any time if you violate these Terms or use the Services unlawfully.</li>
-              <li>You may terminate your account at any time by contacting <a href="mailto:support@outmail.in" className="text-[#AD46FF] hover:underline">support@outmail.in</a>.</li>
+              <li>You may terminate your account at any time by contacting <a href="mailto:contact@outmail.in" className="text-[#AD46FF] hover:underline">contact@outmail.in</a>.</li>
               <li>Upon termination, your right to use the Services will immediately cease.</li>
             </ul>
           </section>
@@ -148,7 +148,7 @@ export default function TermsAndConditions() {
             <h2 className="text-2xl font-bold text-slate-900 border-b border-slate-100 pb-2 font-syne">15. Contact Information</h2>
             <p>For questions regarding these Terms, please contact us at:</p>
             <ul className="list-none space-y-2">
-              <li>Email: <a href="mailto:support@outmail.in" className="text-[#AD46FF] hover:underline">support@outmail.in</a></li>
+              <li>Email: <a href="mailto:contact@outmail.in" className="text-[#AD46FF] hover:underline">contact@outmail.in</a></li>
               <li>Website: <a href="https://outmail.in" className="text-[#AD46FF] hover:underline">https://outmail.in</a></li>
             </ul>
           </section>

@@ -9,13 +9,13 @@ const infoItems = [
   {
     icon: Mail,
     label: 'Email Us',
-    value: 'support@outmail.in',
+    value: 'contact@outmail.in',
     sub: 'For account & campaign questions',
   },
   {
     icon: Handshake,
     label: 'Partnerships & Collaborations',
-    value: 'team@outmail.in',
+    value: 'contact@outmail.in',
     sub: 'For brand deals, integrations & co-builds',
   },
   {
