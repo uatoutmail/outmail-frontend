@@ -67,15 +67,29 @@ const faqItems = [
     id: '9',
     question: 'What are Mentorship Sessions?',
     answer:
-      'Outmail connects you with experienced professionals and alumni for live mentorship sessions. Growth and Campus plan users can book sessions, explore session types, and revisit past sessions — all within the dashboard.',
+      'Outmail connects you with experienced professionals and alumni for live mentorship sessions. Mentorship is included on the Elite plan — book sessions, explore session types, and revisit past recordings, all within your dashboard.',
     category: 'general',
   },
   {
     id: '10',
     question: 'Does Outmail show real job openings?',
     answer:
-      'Yes. The Job Openings section in your dashboard surfaces active roles with priority scoring based on hiring urgency, company momentum, and signals like recent funding. This helps you focus your outreach on the most promising opportunities.',
+      'Yes. The Job Openings section surfaces active roles matched to your résumé and job-hunt intent, each ranked by an explainable Outmail Score based on skill and seniority fit, hiring urgency, and company momentum — so you focus on the roles most worth your outreach.',
     category: 'general',
+  },
+  {
+    id: '11',
+    question: 'What is the Outmail Autofill extension?',
+    answer:
+      'Outmail’s Chrome extension fills out job applications for you using the details from your résumé and profile — so each application takes seconds, not minutes. Autofill is available on the Pro and Elite plans.',
+    category: 'technical',
+  },
+  {
+    id: '12',
+    question: 'What plans does Outmail offer?',
+    answer:
+      'Outmail is free to start — cold outreach is free, forever. Pro adds the résumé-matched job feed and the Autofill extension; Elite adds live mentorship on top. See the pricing page for current details.',
+    category: 'pricing',
   },
 ];
 

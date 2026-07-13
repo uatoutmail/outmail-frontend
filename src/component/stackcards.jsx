@@ -11,7 +11,7 @@ const projects = [
   },
   {
     title: 'Curated Job Openings',
-    description: 'Browse roles ranked by Outmail Priority Score — surfaced by hiring urgency, funding signals, and company momentum.',
+    description: 'Browse roles ranked by Outmail Score — surfaced by hiring urgency, funding signals, and company momentum.',
     variant: 'jobs',
   },
   {

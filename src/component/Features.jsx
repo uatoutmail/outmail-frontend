@@ -1,5 +1,5 @@
 import React from 'react';
-import { BarChart2, Zap, Briefcase, Users } from 'lucide-react';
+import { BarChart2, Zap, Briefcase, Users, MousePointerClick } from 'lucide-react';
 
 export default function Features() {
   const features = [
@@ -9,19 +9,24 @@ export default function Features() {
       desc: 'Send personalized emails to recruiters at scale, directly from your Gmail — safely throttled and fully automated.',
     },
     {
-      icon: <BarChart2 size={28} className="text-white" />,
-      title: 'Live Hiring Intelligence',
-      desc: 'Stay ahead with real-time funding trends, hot-hiring news, and hiring spotlights — so you always know where the opportunities are.',
+      icon: <Briefcase size={28} className="text-white" />,
+      title: 'Résumé-Matched Job Feed',
+      desc: 'Browse roles matched to your résumé and job-hunt intent, each ranked by an explainable Outmail Score — skill and seniority fit, hiring urgency, and company momentum.',
     },
     {
-      icon: <Briefcase size={28} className="text-white" />,
-      title: 'Curated Job Openings',
-      desc: 'Browse roles ranked by an Outmail Priority Score — surfaced based on hiring urgency, company momentum, and recent funding signals.',
+      icon: <MousePointerClick size={28} className="text-white" />,
+      title: 'One-Click Autofill',
+      desc: 'Our Chrome extension fills out job applications for you from your résumé and profile — so each application takes seconds, not minutes.',
     },
     {
       icon: <Users size={28} className="text-white" />,
-      title: 'Mentorship Sessions',
+      title: 'Expert Mentorship',
       desc: 'Connect with experienced professionals and alumni for live guidance on interviews, career paths, and building the right outreach strategy.',
+    },
+    {
+      icon: <BarChart2 size={28} className="text-white" />,
+      title: 'Live Hiring Intelligence',
+      desc: 'Stay ahead with real-time funding trends, hot-hiring news, and hiring spotlights — so you always know where the opportunities are.',
     },
   ];
 
