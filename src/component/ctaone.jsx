@@ -1,5 +1,6 @@
 'use client';
 import React from 'react';
+import Wordmark from '@/component/ui/wordmark';
 import CountUp, { useCountUp } from 'react-countup';
 
 export default function CtaOne() {
@@ -11,7 +12,7 @@ export default function CtaOne() {
       {/* Insights Section */}
       <div className="max-w-6xl mx-auto text-center mt-30">
         <p className="text-sm font-medium text-indigo-300 uppercase tracking-wider mb-2">Why Visibility Matters</p>
-        <h2 className="text-3xl text-white md:text-4xl font-bold mb-4">Most Resumes Never Get Seen. Outmail Changes That.</h2>
+        <h2 className="text-3xl text-white md:text-4xl font-bold mb-4">Most Resumes Never Get Seen. <Wordmark variant="gradient" /> Changes That.</h2>
         <p className="text-white mb-8 max-w-2xl mx-auto">
           Outmail doesn’t just send emails — it gets you seen. Start today and maximize your chances of landing interviews faster.
         </p>

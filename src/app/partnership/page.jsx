@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Wordmark from "@/component/ui/wordmark";
 import Navbar from "@/component/Navbar";
 import Footer from "@/component/Footer";
 import { motion, AnimatePresence } from "framer-motion";
@@ -215,7 +216,7 @@ export default function PartnershipPage() {
             <div className="mx-auto w-14 h-14 rounded-2xl bg-gradient-to-r from-[#6c00ff] to-[#ad46ff] flex items-center justify-center mb-5 shadow-[0_10px_25px_rgba(108,0,255,0.35)]">
               <Building2 size={24} />
             </div>
-            <h2 className="font-syne text-2xl md:text-3xl font-bold">Outmail Institutional Platform</h2>
+            <h2 className="font-syne text-2xl md:text-3xl font-bold"><Wordmark /> Institutional Platform</h2>
             <p className="text-white/65 mt-2">A complete placement intelligence and outreach platform for universities.</p>
 
             <div className="mt-8">

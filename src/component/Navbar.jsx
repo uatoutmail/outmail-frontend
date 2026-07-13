@@ -1,5 +1,6 @@
 "use client";
 import React, { useState } from "react";
+import Wordmark from "@/component/ui/wordmark";
 import Image from "next/image";
 import Link from "next/link";
 import { Menu, X, User, LogOut, ChevronDown } from "lucide-react";
@@ -32,7 +33,7 @@ function Navbar({ variant = "gradient" }) {
         {/* Logo */}
         <Link href="/" className="flex items-center space-x-2 text-2xl font-bold">
           <Image src="/logo-nav.png" alt="Logo" width={40} height={40} />
-          <span className="text-white font-satisfy text-2xl">Outmail</span>
+          <Wordmark className="text-white text-2xl" />
         </Link>
 
         {/* Desktop Links */}
