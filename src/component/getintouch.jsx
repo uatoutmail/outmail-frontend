@@ -1,6 +1,5 @@
 'use client';
 import React, { useState } from 'react';
-import Link from 'next/link';
 import { Mail, Clock, Handshake, CalendarDays } from 'lucide-react';
 import { toast, Toaster } from 'sonner';
 import { api } from '@/lib/api';
@@ -30,6 +29,7 @@ const infoItems = [
     value: 'Book a Discovery Call',
     sub: 'Explore campus-wide Outmail plans',
     isLink: true,
+    href: 'mailto:contact@outmail.in?subject=Discovery%20Call%20Request%20%E2%80%94%20Campus%20Outmail&body=Hi%20Outmail%20team%2C%0A%0AWe%27d%20like%20to%20explore%20campus-wide%20Outmail%20plans.%0A%0AInstitution%3A%0ARole%3A%0APreferred%20time%3A%0A',
   },
 ];
 
@@ -85,9 +85,9 @@ export default function GetInTouch() {
                     <div>
                       <p className="text-white/50 text-xs font-medium uppercase tracking-wider mb-0.5">{item.label}</p>
                       {item.isLink ? (
-                        <Link href="/" className="text-white font-semibold text-sm hover:text-purple-300 transition underline underline-offset-2">
+                        <a href={item.href} className="text-white font-semibold text-sm hover:text-purple-300 transition underline underline-offset-2">
                           {item.value}
-                        </Link>
+                        </a>
                       ) : (
                         <p className="text-white font-semibold text-sm">{item.value}</p>
                       )}

@@ -1,6 +1,10 @@
 "use client";
 import TPOPageShell from "@/component/tpo/TPOPageShell";
+import { toast } from "sonner";
 import { BookOpen, FileText, Video, Link2, Download, ExternalLink } from "lucide-react";
+
+const SUCCESS_TEAM_MAILTO =
+  "mailto:contact@outmail.in?subject=TPO%20Success%20Team%20%E2%80%94%20Request%20a%20Call&body=Hi%20Outmail%20team%2C%0A%0AWe%27d%20like%20to%20schedule%20a%20call.%0A%0AInstitution%3A%0AName%3A%0APreferred%20time%3A%0A";
 
 const resources = [
   {
@@ -58,11 +62,11 @@ export default function ResourcesPage() {
       {/* Quick links */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
         {[
-          { label:"Download Onboarding PDF",    icon:Download,     hint:"Quick-start guide for your college" },
-          { label:"Watch Platform Demo",         icon:Video,        hint:"5-minute recorded walkthrough"      },
-          { label:"Talk to Our Success Team",    icon:ExternalLink, hint:"Book a 30-min call with us"         },
-        ].map(({label,icon:Icon,hint})=>(
-          <button key={label} className="flex items-center gap-3 bg-white border border-gray-200 rounded-xl px-5 py-4 hover:border-purple-300 hover:bg-purple-50/40 transition text-left shadow-sm group">
+          { label:"Download Onboarding PDF",    icon:Download,     hint:"Quick-start guide for your college", onClick:()=>toast("Onboarding guide is coming soon.") },
+          { label:"Watch Platform Demo",         icon:Video,        hint:"5-minute recorded walkthrough",      onClick:()=>toast("The demo video is coming soon.")    },
+          { label:"Talk to Our Success Team",    icon:ExternalLink, hint:"Book a 30-min call with us",          onClick:()=>{ window.location.href = SUCCESS_TEAM_MAILTO; } },
+        ].map(({label,icon:Icon,hint,onClick})=>(
+          <button key={label} onClick={onClick} className="flex items-center gap-3 bg-white border border-gray-200 rounded-xl px-5 py-4 hover:border-purple-300 hover:bg-purple-50/40 transition text-left shadow-sm group">
             <div className="p-2.5 bg-purple-100 rounded-lg group-hover:bg-purple-200 transition">
               <Icon size={16} className="text-purple-600"/>
             </div>
@@ -97,7 +101,10 @@ export default function ResourcesPage() {
                   </div>
                   <p className="text-sm font-semibold text-gray-800 mb-1 group-hover:text-purple-700 transition">{item.title}</p>
                   <p className="text-xs text-gray-500 leading-relaxed mb-4">{item.desc}</p>
-                  <button className="flex items-center gap-1 text-xs text-purple-600 font-medium hover:underline">
+                  <button
+                    onClick={() => toast("This resource is coming soon.")}
+                    className="flex items-center gap-1 text-xs text-purple-600 font-medium hover:underline"
+                  >
                     {item.type==="Link"?"Open link →":"Download →"}
                   </button>
                 </div>
@@ -113,9 +120,12 @@ export default function ResourcesPage() {
           <p className="text-white font-bold text-lg">Need personalised help?</p>
           <p className="text-purple-200 text-sm mt-1">Our customer success team is happy to walk you through any feature or help you drive student adoption.</p>
         </div>
-        <button className="flex-shrink-0 bg-white text-purple-700 font-semibold text-sm px-5 py-2.5 rounded-lg hover:bg-purple-50 transition">
+        <a
+          href={SUCCESS_TEAM_MAILTO}
+          className="flex-shrink-0 bg-white text-purple-700 font-semibold text-sm px-5 py-2.5 rounded-lg hover:bg-purple-50 transition"
+        >
           Book a Call
-        </button>
+        </a>
       </div>
     </TPOPageShell>
   );

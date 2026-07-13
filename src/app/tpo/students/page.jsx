@@ -2,6 +2,7 @@
 import { useState, useEffect } from "react";
 import TPOPageShell from "@/component/tpo/TPOPageShell";
 import { Search, Filter, Download, Mail, TrendingUp, BriefcaseBusiness, ArrowUpRight } from "lucide-react";
+import { toast } from "sonner";
 import { api } from "@/lib/api";
 
 const scoreTier = (s) => {
@@ -101,7 +102,10 @@ export default function StudentsPage() {
             <option value="active">Active</option>
             <option value="inactive">Inactive</option>
           </select>
-          <button className="flex items-center gap-1.5 text-sm text-gray-500 border border-gray-200 rounded-lg px-3 py-2 hover:bg-gray-50 transition">
+          <button
+            onClick={() => toast("Student export is coming soon.")}
+            className="flex items-center gap-1.5 text-sm text-gray-500 border border-gray-200 rounded-lg px-3 py-2 hover:bg-gray-50 transition"
+          >
             <Download size={13}/> Export
           </button>
         </div>
@@ -149,7 +153,12 @@ export default function StudentsPage() {
                       </span>
                     </td>
                     <td className="px-5 py-3">
-                      <button className="text-xs text-purple-600 font-medium hover:underline">View</button>
+                      <button
+                        onClick={(e) => { e.stopPropagation(); toast("Detailed student profiles are coming soon."); }}
+                        className="text-xs text-purple-600 font-medium hover:underline"
+                      >
+                        View
+                      </button>
                     </td>
                   </tr>
                 );
@@ -186,7 +195,12 @@ export default function StudentsPage() {
 
         <div className="px-6 py-3 border-t border-gray-100 flex justify-between items-center">
           <p className="text-xs text-gray-400">Showing {filtered.length} of {(ALL_STUDENTS || []).length} students</p>
-          <button className="text-xs text-purple-600 font-medium hover:underline">Invite more students →</button>
+          <button
+            onClick={() => toast("Student invites are coming soon.")}
+            className="text-xs text-purple-600 font-medium hover:underline"
+          >
+            Invite more students →
+          </button>
         </div>
       </div>
     </TPOPageShell>

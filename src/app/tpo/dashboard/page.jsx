@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from "react";
 import { useAuth } from "@/context/AuthContext";
 import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 import TPOPageShell from "@/component/tpo/TPOPageShell";
 import TPOOverviewCards from "@/component/tpo/TPOOverviewCards";
 import TPOCharts from "@/component/tpo/TPOCharts";
@@ -74,7 +75,10 @@ export default function TPODashboard() {
                 );
               })}
             </select>
-            <button className="text-sm bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700 transition font-medium">
+            <button
+              onClick={() => toast("Report export is coming soon.")}
+              className="text-sm bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700 transition font-medium"
+            >
               Export Report
             </button>
           </div>

@@ -337,12 +337,18 @@ const SettingsTab = () => {
 
   const confirmDeleteUser = async () => {
     try {
-      // await api.delete('/api/user');
-      // router.push('/');
-      toast.success('Account deleted successfully!');
+      await api.delete('/api/user');
+      toast.success('Your account has been deleted.');
+      // Full reload clears client auth state and returns to the public site.
+      window.location.href = '/';
     } catch (error) {
       console.error('Error deleting user:', error);
-      toast.error('An error occurred while deleting your account.');
+      toast.error(
+        error?.message ||
+          'Could not delete your account. Please try again or contact support.'
+      );
+    } finally {
+      setIsDeleteAccountConfirmOpen(false);
     }
   };
 
@@ -873,13 +879,6 @@ const SettingsTab = () => {
           </div>
           <p className="text-xs text-white/40 mb-5">These actions are permanent and cannot be undone. Proceed with caution.</p>
           <div className="flex flex-col sm:flex-row gap-3">
-            <button
-              onClick={() => toast.error('Clear all data — feature coming soon')}
-              className="flex items-center gap-2 px-4 py-2.5 rounded-lg border border-red-500/30 text-red-400 text-sm hover:bg-red-500/10 transition-colors"
-            >
-              <Trash2 size={14} />
-              Clear All Data
-            </button>
             <button
               onClick={deleteUser}
               className="flex items-center gap-2 px-4 py-2.5 rounded-lg bg-red-500/15 border border-red-500/30 text-red-400 text-sm hover:bg-red-500/25 transition-colors"

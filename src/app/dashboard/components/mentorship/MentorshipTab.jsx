@@ -1,7 +1,18 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import { Calendar, FileText, Play, ExternalLink, Eye, Plus, Loader2 } from "lucide-react";
+import { toast } from "sonner";
 import { api } from "@/lib/api";
+
+// Open a session link if the backend provided one; otherwise give honest
+// feedback instead of a silent no-op or a fake success.
+const openOrNotice = (url, message) => {
+  if (url) {
+    window.open(url, "_blank", "noopener,noreferrer");
+  } else {
+    toast(message);
+  }
+};
 
 const MentorshipTab = () => {
   const [showArchivedSessions, setShowArchivedSessions] = useState(false);
@@ -118,19 +129,31 @@ const MentorshipTab = () => {
 
         <div className="flex gap-2">
           {status === 'past' ? (
-            <button className="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg transition-colors flex items-center justify-center gap-2 text-sm">
+            <button
+              onClick={() => openOrNotice(session.recordingUrl || session.recordingLink, 'Recording will be available here soon.')}
+              className="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg transition-colors flex items-center justify-center gap-2 text-sm"
+            >
               <Play size={14} /> Watch Recording
             </button>
           ) : status === 'active' ? (
-            <button className="flex-1 bg-green-600 hover:bg-green-700 text-white font-medium py-2 px-4 rounded-lg transition-colors flex items-center justify-center gap-2 text-sm">
+            <button
+              onClick={() => openOrNotice(session.meetingLink || session.joinUrl || session.link, 'The join link opens when the session goes live.')}
+              className="flex-1 bg-green-600 hover:bg-green-700 text-white font-medium py-2 px-4 rounded-lg transition-colors flex items-center justify-center gap-2 text-sm"
+            >
               <ExternalLink size={14} /> Join Now
             </button>
           ) : (
             <>
-              <button className="flex-1 bg-white/10 hover:bg-white/20 text-white font-medium py-2 px-4 rounded-lg transition-colors flex items-center justify-center gap-2 text-sm">
+              <button
+                onClick={() => openOrNotice(session.detailsUrl, 'Full session details are coming soon.')}
+                className="flex-1 bg-white/10 hover:bg-white/20 text-white font-medium py-2 px-4 rounded-lg transition-colors flex items-center justify-center gap-2 text-sm"
+              >
                 <Eye size={14} /> View Details
               </button>
-              <button className="flex-1 bg-purple-600 hover:bg-purple-700 text-white font-medium py-2 px-4 rounded-lg transition-colors flex items-center justify-center gap-2 text-sm">
+              <button
+                onClick={() => openOrNotice(session.bookingLink, 'Slot booking opens soon — we\'ll notify you.')}
+                className="flex-1 bg-purple-600 hover:bg-purple-700 text-white font-medium py-2 px-4 rounded-lg transition-colors flex items-center justify-center gap-2 text-sm"
+              >
                 <Plus size={14} /> Book Slot
               </button>
             </>

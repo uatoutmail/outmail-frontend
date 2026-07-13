@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Briefcase } from "lucide-react";
 import JobCard from "./JobCard";
 import JobPreferences from "./JobPreferences";
+import { toast } from "sonner";
 import { api } from "@/lib/api";
 
 const JobOpeningsTab = () => {
@@ -32,40 +33,62 @@ const JobOpeningsTab = () => {
     fetchJobs(1);
   }, []);
 
+  // Throws on failure so callers can surface a real error instead of updating
+  // the UI as if the server recorded the action.
   const recordAction = async (jobId, action) => {
-    try {
-      await api.post(`/api/jobs/${jobId}/interactions`, { action });
-    } catch (e) {
-      console.error('Failed to record action:', e);
-    }
+    await api.post(`/api/jobs/${jobId}/interactions`, { action });
   };
 
   const handleApply = async (jobId) => {
-    await recordAction(jobId, 'applied');
-    setJobOpenings(prev => prev.map(j => (j.id === jobId ? { ...j, userAction: 'applied' } : j)));
+    try {
+      await recordAction(jobId, 'applied');
+      setJobOpenings(prev => prev.map(j => (j.id === jobId ? { ...j, userAction: 'applied' } : j)));
+      toast.success('Marked as applied.');
+    } catch (e) {
+      console.error('Failed to record action:', e);
+      toast.error('Could not update this job. Please try again.');
+    }
   };
 
   // Auto-apply: open the application so the Outmail Autofiller extension fills
   // it, and record the apply. (The extension autofills on the opened page.)
   const handleAutoApply = async (job) => {
     const applyUrl = job.applyLink || job.applyUrl || job.url || job.sourceUrl;
-    if (applyUrl) window.open(applyUrl, '_blank');
-    await recordAction(job.id, 'applied');
-    setJobOpenings(prev => prev.map(j => (j.id === job.id ? { ...j, userAction: 'applied' } : j)));
+    if (!applyUrl) {
+      toast.error('No application link is available for this job.');
+      return;
+    }
+    window.open(applyUrl, '_blank');
+    try {
+      await recordAction(job.id, 'applied');
+      setJobOpenings(prev => prev.map(j => (j.id === job.id ? { ...j, userAction: 'applied' } : j)));
+      toast.success('Opened the application — Autofill will fill it in.');
+    } catch (e) {
+      console.error('Failed to record action:', e);
+      toast.error("Opened the application, but couldn't save the status.");
+    }
   };
 
   const handleDiscard = async (jobId) => {
-    await recordAction(jobId, 'discarded');
-    setJobOpenings(prev => prev.filter(j => j.id !== jobId));
+    try {
+      await recordAction(jobId, 'discarded');
+      setJobOpenings(prev => prev.filter(j => j.id !== jobId));
+      toast('Job discarded.');
+    } catch (e) {
+      console.error('Failed to record action:', e);
+      toast.error('Could not discard this job. Please try again.');
+    }
   };
 
   const handleResetStatus = async (jobId) => {
     try {
       await api.patch(`/api/jobs/${jobId}/status`, { status: 'pending' });
+      setJobOpenings(prev => prev.map(j => (j.id === jobId ? { ...j, userAction: null } : j)));
+      toast('Status reset.');
     } catch (e) {
       console.error('Failed to reset status:', e);
+      toast.error('Could not reset status. Please try again.');
     }
-    setJobOpenings(prev => prev.map(j => (j.id === jobId ? { ...j, userAction: null } : j)));
   };
 
   const handleOpenJob = (url) => {
