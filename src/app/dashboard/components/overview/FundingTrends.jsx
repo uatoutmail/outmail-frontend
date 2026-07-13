@@ -89,6 +89,7 @@ const FundingTrends = ({ selectedPeriod, onPeriodChange }) => {
           <h3 className="text-sm font-semibold flex items-center gap-1.5">
             <TrendingUp size={14} className="text-green-400" />
             Industry Funding Trends
+            <span className="text-[9px] px-1.5 py-0.5 rounded-full bg-white/10 text-white/50 font-semibold uppercase tracking-wide">Sample</span>
           </h3>
           <p className="text-[10px] text-white/50 mt-0.5">
             Last {selectedPeriod} days · Total&nbsp;

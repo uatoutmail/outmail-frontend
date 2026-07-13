@@ -90,15 +90,11 @@ const SettingsTab = () => {
         
         if (response.data && Array.isArray(response.data)) {
           const formattedAttachments = response.data.map(item => {
-            const randomSizeKB = Math.floor(Math.random() * (2048 - 500) + 500);
-            const randomSize = randomSizeKB >= 1024 
-              ? `${(randomSizeKB / 1024).toFixed(2)} MB` 
-              : `${randomSizeKB} KB`;
             return {
               id: item.id,
               name: item.filename || item.original_filename || item.name || 'Unknown File',
               type: item.mimeType || item.type || item.fileType || 'Unknown',
-              size: randomSize,
+              size: item.size || item.fileSize || null,
               uploadDate: item.uploaded_at ? new Date(item.uploaded_at).toISOString().slice(0, 10) : new Date().toISOString().slice(0, 10),
               url: item.s3_path,
               uploaded: true
@@ -650,7 +646,7 @@ const SettingsTab = () => {
                         </div>
                         <div className="min-w-0">
                           <p className="text-sm font-medium text-white truncate">{file.name}</p>
-                          <p className="text-xs text-white/40 mt-0.5">{file.size} • Uploaded on {file.uploadDate}</p>
+                          <p className="text-xs text-white/40 mt-0.5">{file.size ? `${file.size} • ` : ''}Uploaded on {file.uploadDate}</p>
                         </div>
                       </div>
                       <div className="flex items-center gap-2 ml-4">
