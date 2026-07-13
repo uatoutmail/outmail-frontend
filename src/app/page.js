@@ -66,13 +66,13 @@ const softwareApplicationSchema = {
     "Automate personalized recruiter outreach, track email opens, and get noticed by top companies using Outmail's cold outreach platform.",
   offers: {
     "@type": "Offer",
-    price: "499",
-    priceCurrency: "INR",
+    price: "0",
+    priceCurrency: "USD",
     priceSpecification: {
       "@type": "UnitPriceSpecification",
-      price: "499",
-      priceCurrency: "INR",
-      unitText: "per student per month",
+      price: "0",
+      priceCurrency: "USD",
+      unitText: "Free plan; paid plans from $9/month",
     },
   },
   provider: {

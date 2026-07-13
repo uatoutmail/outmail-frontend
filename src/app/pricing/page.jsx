@@ -19,19 +19,19 @@ function page() {
 
       <div className="container mx-auto px-4 text-center">
         <p className="text-xs uppercase tracking-[4px] text-purple-400 font-medium mb-4">
-          Subscription Plans
+          Pricing
         </p>
 
         <h1 className="text-4xl sm:text-5xl font-syne font-semibold tracking-tight leading-tight mt-3 text-white">
-          Flexible Plans Built
+          Start free.
           <br />
           <span className="gradient-hero">
-            Around Your Organisation.
+            Upgrade when you&apos;re ready.
           </span>
         </h1>
 
         <p className="text-white/60 text-base sm:text-lg mt-6 leading-relaxed max-w-2xl mx-auto">
-          No fixed price tags — every organisation is different. Pick the plan that fits your goals and we&apos;ll work out the right arrangement on a call.
+          Cold outreach is free, forever — add résumé-matched jobs and mentorship whenever you want more.
         </p>
 
         <div className="text-center mt-10">
