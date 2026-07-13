@@ -108,7 +108,7 @@ export default function Faq2() {
             variant="outline"
             className="border-primary mb-4 px-10 py-1 text-xl font-medium tracking-wider uppercase"
           >
-            FAQ&rsquo;s
+            FAQs
           </Badge>
 
           <h2 className="mb-6 text-center text-4xl font-bold tracking-tight md:text-5xl text-white">

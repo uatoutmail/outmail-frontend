@@ -72,7 +72,7 @@ export default function Footer({ variant = "gradient" }) {
 
           <div className="flex flex-wrap gap-4 text-sm text-white/80">
             <Link href="/features" className="hover:underline">
-              features
+              Features
             </Link>
             <Link
               href="/terms-and-conditions"
@@ -90,7 +90,7 @@ export default function Footer({ variant = "gradient" }) {
               FAQ
             </Link>
             <Link href="/contactus" className="hover:underline">
-              contact us
+              Contact Us
             </Link>
           </div>
         </div>
@@ -113,7 +113,7 @@ export default function Footer({ variant = "gradient" }) {
               onChange={(e) => setEmail(e.target.value)}
               placeholder="Enter your email"
               aria-label="Email address"
-              className="px-5 py-3 rounded-full text-white w-full sm:w-auto focus:outline-none focus:ring-2 focus:ring-white placeholder:text-white border border-amber-50"
+              className="px-5 py-3 rounded-full text-white w-full sm:w-auto focus:outline-none focus:ring-2 focus:ring-primary placeholder:text-white/40 border border-white/20 bg-white/5"
             />
             <button
               type="submit"
