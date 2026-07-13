@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
+import Wordmark from "@/component/ui/wordmark";
 import Link from "next/link";
 import Image from "next/image";
 import { z } from "zod";
@@ -60,7 +61,7 @@ export default function Footer({ variant = "gradient" }) {
               width={40}
               height={40}
             />
-            <span className="text-white font-satisfy text-2xl">Outmail</span>
+            <Wordmark className="text-white text-2xl" />
           </div>
 
           <p className="text-white/70 text-sm leading-relaxed max-w-md mb-6">

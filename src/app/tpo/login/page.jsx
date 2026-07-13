@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
+import Wordmark from '@/component/ui/wordmark';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
@@ -54,7 +55,7 @@ export default function TpoLoginPage() {
       <div className="mb-8 z-10 flex flex-col items-center">
         <Link href="/" className="flex items-center gap-3 group transition-transform hover:scale-105">
            <Image src="/logo-nav.png" alt="Outmail Logo" width={50} height={50} className="drop-shadow-[0_0_15px_rgba(108,0,255,0.5)]" />
-           <span className="text-3xl font-satisfy text-white">Outmail</span>
+           <Wordmark className="text-white text-3xl" />
         </Link>
         <div className="mt-4 flex items-center gap-2">
             <div className="h-px w-8 bg-purple-500/30" />
