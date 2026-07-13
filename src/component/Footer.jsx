@@ -31,15 +31,14 @@ export default function Footer({ variant = "gradient" }) {
       }, 3000);
     } catch (err) {
       setError("Failed to subscribe. Please try again later.");
+      toast.error("Couldn't subscribe. Please try again later.");
     }
   };
 
   const subscribeNewsletter = async (email) => {
-    try {
-      await api.post(`/api/newsletter/subscribe`, { email });
-    } catch (error) {
-      console.error("Error subscribing to newsletter:", error);
-    }
+    // Let failures propagate so handleSubmit surfaces a real error instead of
+    // always reporting success.
+    await api.post(`/api/newsletter/subscribe`, { email });
     toast.success("Subscribed Successfully!");
   };
 
