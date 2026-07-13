@@ -17,7 +17,7 @@ const WrapButton = ({ className, children, href = "/" }) => {
       <Link href={href}>
         <div className={outerButtonStyle}>
           <div className="bg-primary rounded-full flex items-center justify-center text-white">
-            <Globe className="mx-2 group-hover:text-black" />
+            <Globe className="mx-2 animate-spin group-hover:text-black" />
             <p className="font-medium tracking-tight mr-3 group-hover:text-black">
               {children ? children : "Get Started"}
             </p>
