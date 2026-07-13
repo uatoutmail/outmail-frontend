@@ -1,5 +1,6 @@
 'use client';
 import React from 'react';
+import { Send } from 'lucide-react';
 import Wordmark from '@/component/ui/wordmark';
 
 export default function CtaOne() {
@@ -44,11 +45,27 @@ export default function CtaOne() {
               Get Started Now
             </a>
           </div>
-          <img
-            src="/Logo_Outmail.png"
-            alt="Outmail Job Visibility"
-            className="w-44 h-44 mt-10 md:mt-0 md:ml-8 object-contain"
-          />
+          {/* On-brand animated emblem (replaces AI logo art) */}
+          <div
+            className="relative mt-10 md:mt-0 md:ml-8 flex h-44 w-44 flex-shrink-0 items-center justify-center"
+            aria-hidden="true"
+          >
+            <span
+              className="anim-pulse-ring absolute h-24 w-24 rounded-full border"
+              style={{ borderColor: "color-mix(in srgb, var(--brand-primary) 55%, transparent)" }}
+            />
+            <span
+              className="anim-pulse-ring absolute h-24 w-24 rounded-full border"
+              style={{ animationDelay: "1.4s", borderColor: "color-mix(in srgb, var(--brand-primary) 55%, transparent)" }}
+            />
+            <div className="absolute h-40 w-40 rounded-full border border-dashed border-white/10" />
+            <div
+              className="anim-float-y relative flex h-20 w-20 items-center justify-center rounded-2xl shadow-2xl"
+              style={{ background: "linear-gradient(135deg, var(--brand-accent), var(--brand-primary))" }}
+            >
+              <Send size={30} className="text-white" />
+            </div>
+          </div>
         </div>
       </div>
     </div>

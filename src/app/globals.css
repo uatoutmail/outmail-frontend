@@ -199,3 +199,37 @@ body {
 .bg-radial-purple {
   background: linear-gradient(to bottom, #691ffc 0%, #461c9a 54%, #461c9a 98%);
 }
+
+/* ============================================================
+   W2 — on-brand product animations (replace AI imagery).
+   All motion below is disabled by the prefers-reduced-motion block
+   above, so each scene degrades to a clean static composition.
+   ============================================================ */
+@keyframes ob-float-y   { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
+@keyframes ob-float-y-lg{ 0%,100% { transform: translateY(0); } 50% { transform: translateY(-14px); } }
+@keyframes ob-fill-bar  { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+@keyframes ob-pulse-ring{ 0% { transform: scale(.55); opacity:.55; } 70% { opacity:0; } 100% { transform: scale(1.7); opacity:0; } }
+@keyframes ob-orbit     { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+@keyframes ob-orbit-rev { from { transform: rotate(0deg); } to { transform: rotate(-360deg); } }
+@keyframes ob-travel-x  { 0% { left:6%; opacity:0; } 12% { opacity:1; } 80% { opacity:1; } 100% { left:82%; opacity:0; } }
+@keyframes ob-soft-pulse{ 0%,100% { opacity:.45; } 50% { opacity:1; } }
+@keyframes ob-twinkle   { 0%,100% { opacity:.12; } 50% { opacity:.55; } }
+@keyframes ob-count-up  { from { transform: translateY(40%); opacity:0; } to { transform: translateY(0); opacity:1; } }
+
+.anim-float-y    { animation: ob-float-y 4s ease-in-out infinite; }
+.anim-float-y-lg { animation: ob-float-y-lg 6s ease-in-out infinite; }
+.anim-fill-bar   { transform: scaleX(0); transform-origin: left center; animation: ob-fill-bar 1.4s cubic-bezier(.22,.61,.36,1) forwards; }
+.anim-pulse-ring { animation: ob-pulse-ring 2.8s ease-out infinite; }
+.anim-orbit      { animation: ob-orbit 18s linear infinite; }
+.anim-orbit-rev  { animation: ob-orbit-rev 18s linear infinite; }
+.anim-travel-x   { animation: ob-travel-x 4.5s ease-in-out infinite; }
+.anim-soft-pulse { animation: ob-soft-pulse 2.4s ease-in-out infinite; }
+.anim-twinkle    { animation: ob-twinkle 3.5s ease-in-out infinite; }
+.anim-count-up   { animation: ob-count-up .7s cubic-bezier(.22,.61,.36,1) forwards; }
+
+/* When motion is reduced, make sure fill bars & count-ups show their END state
+   (the keyframes are frozen, but these start hidden — reveal them). */
+@media (prefers-reduced-motion: reduce) {
+  .anim-fill-bar { transform: scaleX(1); }
+  .anim-count-up { opacity: 1; transform: none; }
+}

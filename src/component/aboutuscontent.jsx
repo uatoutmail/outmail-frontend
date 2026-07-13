@@ -1,6 +1,6 @@
 'use client';
 import React from 'react';
-import Image from 'next/image';
+import PillarVisual from '@/component/animations/PillarVisual';
 
 export default function AboutUs() {
   return (
@@ -64,13 +64,9 @@ export default function AboutUs() {
             WebkitMaskImage: 'linear-gradient(to right, transparent 0%, black 28%, black 85%, transparent 100%)',
           }}
         >
-          <Image
-            src="/OutmailOfferings.png"
-            alt="Outmail dashboard preview"
-            width={560}
-            height={460}
-            className="w-full h-auto object-cover object-center opacity-90"
-          />
+          <div className="relative w-full aspect-[5/4] overflow-hidden rounded-2xl border border-white/10">
+            <PillarVisual variant="outreach" />
+          </div>
         </div>
       </div>
     </section>
