@@ -1,3 +1,17 @@
+export const metadata = {
+  title: "Privacy Policy",
+  description:
+    "How Outmail collects, uses, and protects your data across cold outreach, job intelligence, and mentorship — including Gmail and résumé handling.",
+  alternates: { canonical: "https://outmail.in/privacy-policy" },
+  openGraph: {
+    title: "Privacy Policy | Outmail",
+    description:
+      "How Outmail collects, uses, and protects your data.",
+    url: "https://outmail.in/privacy-policy",
+    type: "website",
+  },
+};
+
 export default function PrivacyPolicy() {
   return (
     <div className="min-h-screen bg-white text-slate-900 selection:bg-[#AD46FF]/30">

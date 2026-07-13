@@ -8,6 +8,11 @@ export default function sitemap() {
       priority: 1.0,
     },
     {
+      path: "/features",
+      changeFrequency: "weekly",
+      priority: 0.9,
+    },
+    {
       path: "/pricing",
       changeFrequency: "weekly",
       priority: 0.9,
@@ -31,6 +36,16 @@ export default function sitemap() {
       path: "/contactus",
       changeFrequency: "monthly",
       priority: 0.7,
+    },
+    {
+      path: "/privacy-policy",
+      changeFrequency: "yearly",
+      priority: 0.3,
+    },
+    {
+      path: "/terms-and-conditions",
+      changeFrequency: "yearly",
+      priority: 0.3,
     },
   ];
 

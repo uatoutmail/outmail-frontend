@@ -25,8 +25,8 @@ export const metadata = {
     images: [
       {
         url: "/image.png",
-        width: 1200,
-        height: 630,
+        width: 1536,
+        height: 1024,
         alt: "Outmail Partnership - University Placement Software",
       },
     ],

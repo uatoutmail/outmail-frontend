@@ -1,3 +1,17 @@
+export const metadata = {
+  title: "Terms and Conditions",
+  description:
+    "Read the Terms and Conditions governing your use of Outmail's cold outreach, job intelligence, and mentorship services.",
+  alternates: { canonical: "https://outmail.in/terms-and-conditions" },
+  openGraph: {
+    title: "Terms and Conditions | Outmail",
+    description:
+      "The terms governing your use of Outmail's services.",
+    url: "https://outmail.in/terms-and-conditions",
+    type: "website",
+  },
+};
+
 export default function TermsAndConditions() {
   return (
     <div className="min-h-screen bg-white text-slate-900 selection:bg-[#AD46FF]/30">

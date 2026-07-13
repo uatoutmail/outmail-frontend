@@ -24,8 +24,8 @@ export const metadata = {
     images: [
       {
         url: "/image.png",
-        width: 1200,
-        height: 630,
+        width: 1536,
+        height: 1024,
         alt: "Outmail Mentorships - Expert Career Guidance",
       },
     ],
