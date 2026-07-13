@@ -52,14 +52,14 @@ export default function JobsPage() {
 
   if (loading) {
     return (
-      <TPOPageShell title="Job Intelligence" subtitle="Live job openings tracked by your students, ranked by Outmail Priority Score">
+      <TPOPageShell title="Job Intelligence" subtitle="Live job openings tracked by your students, ranked by Outmail Score">
         <div className="flex justify-center items-center h-64 text-gray-500">Loading jobs data...</div>
       </TPOPageShell>
     );
   }
 
   return (
-    <TPOPageShell title="Job Intelligence" subtitle="Live job openings tracked by your students, ranked by Outmail Priority Score">
+    <TPOPageShell title="Job Intelligence" subtitle="Live job openings tracked by your students, ranked by Outmail Score">
 
       {/* KPI */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
@@ -109,7 +109,7 @@ export default function JobsPage() {
         {/* Priority score legend */}
         <div className="lg:col-span-2 bg-white rounded-xl border border-gray-200 p-6 shadow-sm flex flex-col gap-4">
           <div>
-            <h3 className="text-sm font-semibold text-gray-900 mb-1">Outmail Priority Score — How It Works</h3>
+            <h3 className="text-sm font-semibold text-gray-900 mb-1">Outmail Score — How It Works</h3>
             <p className="text-xs text-gray-400">Scores rank each job by how urgently students should reach out</p>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
@@ -145,7 +145,7 @@ export default function JobsPage() {
           <table className="w-full text-sm">
             <thead className="bg-gray-50">
               <tr>
-                {["Company", "Role", "Sector", "Priority Score", "Students Tracking", "Urgency", "Posted"].map((h) => (
+                {["Company", "Role", "Sector", "Outmail Score", "Students Tracking", "Urgency", "Posted"].map((h) => (
                   <th key={h} className="text-left text-xs font-medium text-gray-500 px-5 py-3 whitespace-nowrap">{h}</th>
                 ))}
               </tr>

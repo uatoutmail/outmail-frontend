@@ -22,7 +22,7 @@ const resources = [
     icon: FileText,
     color: "blue",
     items: [
-      { title:"Outmail Priority Score — Explained",  type:"PDF",   desc:"How job scores are calculated and what drives them", tag:"Recommended" },
+      { title:"Outmail Score — Explained",  type:"PDF",   desc:"How job scores are calculated and what drives them", tag:"Recommended" },
       { title:"Reading Email Analytics",             type:"PDF",   desc:"Open rate, reply rate, and what benchmarks to target",tag:"Recommended" },
       { title:"Engagement Score Breakdown",          type:"PDF",   desc:"What factors make up a student's engagement score",   tag:"Recommended" },
     ],
