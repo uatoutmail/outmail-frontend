@@ -5,20 +5,25 @@ import { AuthProvider } from "@/context/AuthContext";
 import { Toaster } from "sonner";
 
 
+// Font CSS variables are consumed by the design tokens in globals.css:
+//   --font-syne-var  -> --font-sans / font-syne (app default)
+//   --font-geist-var -> font-geist
+//   --font-geist-mono-var -> font-mono
+//   --font-satisfy   -> .font-satisfy
 const geistSans = Geist({
-  variable: "--font-geist-sans",
+  variable: "--font-geist-var",
   subsets: ["latin"],
 });
 
 const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
+  variable: "--font-geist-mono-var",
   subsets: ["latin"],
 });
 
 const syne = Syne({
   subsets: ["latin"],
-  weight: ["400", "600", "700"],
-  variable: "--font-syne",
+  weight: ["400", "500", "600", "700", "800"],
+  variable: "--font-syne-var",
 });
 
 const satisfy = Satisfy({
@@ -107,16 +112,7 @@ export default function RootLayout({ children }) {
         />
         <link rel="shortcut icon" href="/favicon-32.png" />
         <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link
-          rel="preconnect"
-          href="https://fonts.gstatic.com"
-          crossOrigin="anonymous"
-        />
-        <link
-          href="https://fonts.googleapis.com/css2?family=Satisfy&display=swap"
-          rel="stylesheet"
-        />
+        {/* Fonts are self-hosted via next/font (Geist, Syne, Satisfy) — no external font CSS needed. */}
         {/* Google Analytics */}
         {process.env.NODE_ENV === "production" && (
           <>

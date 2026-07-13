@@ -1,36 +1,119 @@
 @import "tailwindcss";
 
+/* ============================================================
+   DESIGN TOKENS — the single source of truth for the brand.
 
+   • To change the PRIMARY COLOR of the whole app: edit --brand-primary
+     (and its hover/soft variants) below. Nothing else needs touching.
+   • To change the APP FONT: re-point --font-sans in the @theme block to a
+     different --font-*-var (fonts are loaded in src/app/layout.js).
+   Every component uses these tokens (bg-primary, text-primary, font-sans,
+   rounded-card, …) instead of hardcoded hexes, so re-skinning is one edit.
+   ============================================================ */
 :root {
+  /* Brand palette — the ONLY place raw brand hexes should live */
+  --brand-primary: #a855f7;          /* main purple */
+  --brand-primary-hover: #9333ea;    /* deeper purple for hovers/active */
+  --brand-primary-soft: #c084fc;     /* light purple accent */
+  --brand-accent: #3b82f6;           /* blue — gradient start */
+  --brand-primary-foreground: #ffffff;
+
+  /* Surfaces & lines (dark glass theme) */
+  --surface: rgba(15, 23, 42, 0.7);
+  --surface-2: rgba(255, 255, 255, 0.05);
+  --surface-3: rgba(255, 255, 255, 0.10);
+  --border-subtle: rgba(148, 163, 184, 0.35);
+
   --background: #050816;
   --foreground: #f9fafb;
+  --muted-foreground: #94a3b8;
+
+  --gradient-brand: linear-gradient(135deg, var(--brand-accent), var(--brand-primary));
+  /* Fonts come from next/font as --font-*-var (see layout.js) */
 }
 
 @theme inline {
+  /* Colors → generate bg-*/text-*/border-*/ring-* utilities that reference
+     the :root tokens above (so runtime re-skin = edit :root). */
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-primary: var(--brand-primary);
+  --color-primary-hover: var(--brand-primary-hover);
+  --color-primary-soft: var(--brand-primary-soft);
+  --color-primary-foreground: var(--brand-primary-foreground);
+  --color-accent: var(--brand-accent);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-surface-3: var(--surface-3);
+  --color-border-subtle: var(--border-subtle);
+
+  /* Fonts → generate font-sans / font-syne / font-geist / font-mono.
+     --font-sans is the app default; change it to re-typeface everything. */
+  --font-sans: var(--font-syne-var);
+  --font-syne: var(--font-syne-var);
+  --font-geist: var(--font-geist-var);
+  --font-mono: var(--font-geist-mono-var);
+
+  /* Radius scale → rounded-btn / rounded-card / rounded-pill */
+  --radius-btn: 0.625rem;
+  --radius-card: 1rem;
+  --radius-pill: 9999px;
 }
 
+/* ---- Base ---- */
+html,
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans), "Segoe UI", system-ui, -apple-system, sans-serif;
+}
+
+/* Visible keyboard focus everywhere (a11y) */
+*:focus-visible {
+  outline: 2px solid var(--brand-primary);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* Respect reduced-motion (also covers the W2 animation work) */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* ---- Reusable utility classes (kept for existing markup) ---- */
 .font-satisfy {
-  font-family: 'Satisfy', cursive !important;
+  font-family: var(--font-satisfy), cursive !important;
 }
 
 .glass-card {
-  border-radius: 1rem;
-  background: rgba(15, 23, 42, 0.7);
-  border: 1px solid rgba(148, 163, 184, 0.4);
+  border-radius: var(--radius-card);
+  background: var(--surface);
+  border: 1px solid var(--border-subtle);
   -webkit-backdrop-filter: blur(18px);
   backdrop-filter: blur(18px);
-  box-shadow:
-    0 18px 45px rgba(15, 23, 42, 0.75),
-    0 0 0 1px rgba(15, 23, 42, 0.4);
+  box-shadow: 0 18px 45px rgba(15, 23, 42, 0.75), 0 0 0 1px rgba(15, 23, 42, 0.4);
+}
+
+.gradient-text {
+  background-image: var(--gradient-brand);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.bg-gradient-brand {
+  background-image: var(--gradient-brand);
 }
 
 .phase-card {
   border-radius: 1.25rem;
-  border: 1px solid rgba(148, 163, 184, 0.35);
+  border: 1px solid var(--border-subtle);
   padding: 1.75rem;
   background: radial-gradient(circle at top left, rgba(56, 189, 248, 0.12), transparent 55%),
     radial-gradient(circle at bottom right, rgba(168, 85, 247, 0.12), transparent 55%),
@@ -38,7 +121,6 @@
   position: relative;
   overflow: hidden;
 }
-
 .phase-card::before {
   content: "";
   position: absolute;
@@ -48,25 +130,13 @@
   transition: opacity 0.4s ease;
   pointer-events: none;
 }
-
-.phase-card:hover::before {
-  opacity: 1;
-}
+.phase-card:hover::before { opacity: 1; }
 
 .note-box {
   padding: 1rem 1rem 1rem 1.25rem;
   border-radius: 0.75rem;
-  border-left-width: 4px;
-  border-left-style: solid;
-  border-left-color: #3b82f6;
+  border-left: 4px solid var(--brand-accent);
   background: rgba(15, 23, 42, 0.95);
-}
-
-.gradient-text {
-  background-image: linear-gradient(135deg, #3b82f6, #a855f7);
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
 }
 
 .hero-glow {
@@ -82,96 +152,39 @@
   filter: blur(10px);
   pointer-events: none;
 }
-@keyframes scroll {
-  0% {
-    transform: translateX(0%);
-  }
-  100% {
-    transform: translateX(-50%);
-  }
-}
 
-.animate-scroll {
-  animation: scroll 10s linear infinite;
+@keyframes scroll {
+  0% { transform: translateX(0%); }
+  100% { transform: translateX(-50%); }
 }
+.animate-scroll { animation: scroll 10s linear infinite; }
 
 @keyframes pop-burst {
-  0% {
-    transform: scale(1);
-  }
-  50% {
-    transform: scale(1.3);
-  }
-  100% {
-    transform: scale(1);
-  }
+  0% { transform: scale(1); }
+  50% { transform: scale(1.3); }
+  100% { transform: scale(1); }
 }
+.animate-pop { animation: pop-burst 0.4s cubic-bezier(0.68, -0.55, 0.27, 1.55); }
 
-.animate-pop {
-  animation: pop-burst 0.4s cubic-bezier(.68,-0.55,.27,1.55);
-}
-
-
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #050816;
-    --foreground: #e5e7eb;
-  }
-}
-
-.flip-card {
-  background-color: transparent;
-  width: 100%;
-  aspect-ratio: 1/1;
-  perspective: 1000px;
-}
-
+/* ---- Flip card ---- */
+.flip-card { background-color: transparent; width: 100%; aspect-ratio: 1/1; perspective: 1000px; }
 .flip-card-inner {
-  position: relative;
-  width: 100%;
-  height: 100%;
-  transition: transform 0.6s ease;
-  transform-style: preserve-3d;
+  position: relative; width: 100%; height: 100%;
+  transition: transform 0.6s ease; transform-style: preserve-3d;
 }
-
-.flip-card:hover .flip-card-inner {
-  transform: rotateY(180deg);
-}
-html,
-body {
-  background-color: #050816;
-  color: #f9fafb;
-  font-family: 'Syne', sans-serif;
-}
+.flip-card:hover .flip-card-inner { transform: rotateY(180deg); }
 .flip-card-front, .flip-card-back {
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  backface-visibility: hidden;
-  border-radius: 0.75rem; /* Tailwind's rounded-xl */
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
+  position: absolute; width: 100%; height: 100%;
+  backface-visibility: hidden; border-radius: 0.75rem;
+  display: flex; flex-direction: column; justify-content: center; align-items: center;
 }
-
-.flip-card-front {
-  background: #e5d4ff;
-}
-
+.flip-card-front { background: #e5d4ff; }
 .flip-card-back {
-  background-color: #6c00ff;
+  background-color: var(--brand-primary);
   transform: rotateY(180deg);
   color: white;
 }
 
 .bg-radial-purple {
-  background: linear-gradient(to bottom, #691FFC 0%, #461C9A 54%, #461C9A 98%)
-}
- 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: 'syne' , Arial, Helvetica;
+  background: linear-gradient(to bottom, #691ffc 0%, #461c9a 54%, #461c9a 98%);
 }
