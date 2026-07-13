@@ -9,7 +9,7 @@ export default function CtaOne() {
       <div className="absolute bottom-16 right-[8%] w-20 h-20 rounded-xl border border-white/10 bg-[#ad46ff]/10 -rotate-12" />
 
       {/* Insights Section */}
-      <div className="max-w-6xl mx-auto text-center mt-30">
+      <div className="max-w-6xl mx-auto text-center mt-16">
         <p className="text-sm font-medium text-indigo-300 uppercase tracking-wider mb-2">Why Visibility Matters</p>
         <h2 className="text-3xl text-white md:text-4xl font-bold mb-4">Most Resumes Never Get Seen. <Wordmark variant="gradient" /> Changes That.</h2>
         <p className="text-white mb-8 max-w-2xl mx-auto">
@@ -31,7 +31,7 @@ export default function CtaOne() {
         </div>
 
         {/* CTA Box */}
-        <div className="rounded-2xl p-20 flex border border-white/12 bg-white/5 backdrop-blur-xl flex-col md:flex-row justify-between items-center shadow-[0_0_45px_rgba(108,0,255,0.20)]">
+        <div className="rounded-2xl p-8 md:p-12 flex border border-white/12 bg-white/5 backdrop-blur-xl flex-col md:flex-row justify-between items-center gap-8 shadow-[0_0_45px_rgba(108,0,255,0.20)]">
           <div className="text-white max-w-md">
             <h3 className="text-2xl font-semibold mb-4">Start Your Outmail Journey Today</h3>
             <p className="mb-6 text-white/80">

@@ -565,7 +565,7 @@ function Page() {
 							"Hiring trend discussions and market insights",
 							"Group Q&A sessions for targeted preparation",
 						]}
-						highlight="Students prepare effectively for the roles and companies they are targeting with guidance from those who&apos;ve been there."
+						highlight="Students prepare effectively for the roles and companies they are targeting with guidance from those who've been there."
 					>
 						<MentorshipDemo />
 					</OfferingCard>
