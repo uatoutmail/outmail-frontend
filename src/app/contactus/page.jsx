@@ -23,7 +23,7 @@ function page() {
           <h1 className="text-4xl sm:text-5xl font-syne font-semibold text-white leading-tight mb-6">
             Have a Question?
             <br />
-            <span className="bg-gradient-to-r from-[#b06cff] via-white to-[#b06cff] bg-clip-text text-transparent">
+            <span className="gradient-hero">
               We&apos;re Here for You.
             </span>
           </h1>

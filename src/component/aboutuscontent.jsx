@@ -15,7 +15,7 @@ export default function AboutUs() {
           <h2 className="text-4xl md:text-5xl font-bold mb-6 leading-tight">
             Helping You Get Noticed,
             <br />
-            <span className="bg-gradient-to-r from-[#b06cff] via-white to-[#b06cff] bg-clip-text text-transparent">
+            <span className="gradient-hero">
               Not Ignored.
             </span>
           </h2>

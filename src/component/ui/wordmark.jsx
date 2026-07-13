@@ -15,8 +15,7 @@ export function Wordmark({ variant = "inherit", className, children = "Outmail" 
     <span
       className={cn(
         "font-satisfy",
-        variant === "gradient" &&
-          "bg-gradient-to-r from-primary-soft via-white to-primary-soft bg-clip-text text-transparent",
+        variant === "gradient" && "gradient-hero",
         className
       )}
     >

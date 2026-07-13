@@ -15,7 +15,7 @@ function Hero() {
       {/* Hero text block — reduced height so first stacked card is more visible */}
       <div className="relative z-10 h-[46vh] flex flex-col justify-center pt-16 px-4">
         <div className="max-w-3xl mx-auto text-center">
-          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-syne font-semibold tracking-tight leading-snug bg-gradient-to-r from-[#b06cff] via-white to-[#b06cff] bg-clip-text text-transparent">
+          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-syne font-semibold tracking-tight leading-snug gradient-hero">
             Where Smart Outreach Meets Real Opportunities and Expert Mentorship.
           </h1>
 

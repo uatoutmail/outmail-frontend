@@ -37,7 +37,7 @@ const MembershipBenefits = () => {
           <h2 className="text-4xl sm:text-5xl font-bold text-white leading-tight mb-6">
             Every Edge You Need,
             <br />
-            <span className="bg-gradient-to-r from-[#b06cff] via-white to-[#b06cff] bg-clip-text text-transparent">
+            <span className="gradient-hero">
               All in One Place.
             </span>
           </h2>

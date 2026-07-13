@@ -37,7 +37,7 @@ function Navbar({ variant = "gradient" }) {
         </Link>
 
         {/* Desktop Links */}
-        <div className="hidden md:flex space-x-6 text-white text-lg font-medium">
+        <div className="hidden md:flex space-x-7 text-white text-[15px] font-medium font-nav tracking-wide">
           <Link href="/" className="hover:text-[#AD46FF] transition">Home</Link>
           <Link href="/features" className="hover:text-[#AD46FF] transition">Features</Link>
           <Link href="/pricing" className="hover:text-[#AD46FF] transition">Pricing</Link>
@@ -165,7 +165,7 @@ function Navbar({ variant = "gradient" }) {
             >
               <X size={24} />
             </button>
-            <div className="flex flex-col space-y-8 text-white text-xl font-medium">
+            <div className="flex flex-col space-y-8 text-white text-xl font-medium font-nav tracking-wide">
               <Link href="/" className="hover:text-[#AD46FF] transition text-center">Home</Link>
               <Link href="/features" className="hover:text-[#AD46FF] transition text-center">Features</Link>
               <Link href="/pricing" className="hover:text-[#AD46FF] transition text-center">Pricing</Link>
