@@ -1,16 +1,13 @@
 "use client";
 
 import { useState } from "react";
-import Wordmark from "@/component/ui/wordmark";
 import Navbar from "@/component/Navbar";
 import Footer from "@/component/Footer";
 import { motion, AnimatePresence } from "framer-motion";
 import {
-  Sparkles,
   Phone,
   ArrowRight,
   Mail,
-  Building2,
   Send,
   Search,
   BarChart3,
@@ -20,7 +17,8 @@ import {
   Globe,
   Users,
   FileText,
-  Zap,
+  GraduationCap,
+  TrendingDown,
   Eye,
   X,
 } from "lucide-react";
@@ -34,11 +32,7 @@ const fadeUp = {
 
 const staggerParent = {
   initial: {},
-  whileInView: {
-    transition: {
-      staggerChildren: 0.08,
-    },
-  },
+  whileInView: { transition: { staggerChildren: 0.08 } },
   viewport: { once: true, amount: 0.2 },
 };
 
@@ -48,46 +42,82 @@ const staggerItem = {
   transition: { duration: 0.45 },
 };
 
+const problems = [
+  "On-campus drives reach only a fraction of the roles your students actually qualify for.",
+  "The best-fit companies often never visit campus — and reaching them is manual and unstructured.",
+  "Off-campus effort is invisible to your placement cell, so you can't support, guide, or measure it.",
+];
+
+const howItHelps = [
+  {
+    icon: Send,
+    title: "Extend your reach beyond campus",
+    body: "Every student runs structured recruiter outreach to companies that never visit — at scale, from their own inbox, with safe sending limits.",
+  },
+  {
+    icon: Search,
+    title: "Point them at the right roles",
+    body: "Resume-matched opportunities ranked by an explainable Outmail Score, so students focus where they genuinely fit.",
+  },
+  {
+    icon: BarChart3,
+    title: "See off-campus activity",
+    body: "A placement-cell dashboard surfaces outreach sent, companies contacted, and engagement — visibility your team never had before.",
+  },
+  {
+    icon: GraduationCap,
+    title: "Prepare every student",
+    body: "Mentorship, resume reviews, and hiring-trend sessions get students ready for the exact roles and companies they're targeting.",
+  },
+];
+
 const featureCards = [
   {
     icon: Send,
     title: "Student Outreach Infrastructure",
     points: [
-      "Structured recruiter outreach campaigns using student Gmail accounts",
+      "Structured recruiter outreach from student inboxes",
       "Smart company database for recruiter targeting",
-      "Personalized email templates for cold outreach",
-      "Campaign scheduling and safe sending limits",
-      "Email campaign analytics and tracking",
+      "Personalized templates + safe sending limits",
+      "Campaign scheduling, analytics, and tracking",
     ],
   },
   {
     icon: Search,
     title: "Opportunity Discovery",
     points: [
-      "Curated job opportunity discovery for students",
-      "Company hiring signals (funding, hiring trends, growth stage)",
-      "Industry and role-based opportunity filters",
-      "Job bookmarking and tracking",
+      "Curated, resume-matched opportunities",
+      "Company hiring signals (funding, growth, momentum)",
+      "Role- and industry-based filtering",
+      "Explainable Outmail Score prioritization",
     ],
   },
   {
     icon: BarChart3,
-    title: "Placement Visibility for Universities",
+    title: "Placement Visibility & Analytics",
     points: [
       "Institutional dashboard for placement officers",
-      "Visibility into student outreach activity",
+      "Visibility into off-campus outreach activity",
       "Companies contacted vs untouched insights",
-      "Student engagement analytics",
-      "Interview and offer tracking (self-reported)",
+      "Student engagement + outcome tracking",
     ],
   },
   {
     icon: Shield,
-    title: "Governance and Controls",
+    title: "Governance & Controls",
     points: [
-      "Outreach enable/disable controls for placement officers",
+      "Outreach enable/disable controls for the cell",
       "Sending limits and safe-sending compliance",
-      "Activity monitoring for institutional transparency",
+      "Activity monitoring for full transparency",
+    ],
+  },
+  {
+    icon: GraduationCap,
+    title: "Mentorship & Preparation",
+    points: [
+      "Live mentorship with industry professionals",
+      "Resume reviews and profile workshops",
+      "Hiring-trend and interview-prep sessions",
     ],
   },
   {
@@ -104,33 +134,25 @@ const featureCards = [
 const customOptions = [
   { icon: Send, label: "Outreach-only deployments" },
   { icon: Globe, label: "Opportunity discovery integrations" },
-  { icon: Users, label: "Mentorship or placement preparation modules" },
+  { icon: Users, label: "Mentorship or placement-prep modules" },
   { icon: FileText, label: "Institution-specific reporting dashboards" },
 ];
 
 const trustCards = [
-  {
-    icon: Eye,
-    title: "Full Visibility",
-    body: "Know what every student is doing — without micromanaging.",
-  },
-  {
-    icon: Shield,
-    title: "Safe & Compliant",
-    body: "Sending limits, controls, and institutional governance built-in.",
-  },
-  {
-    icon: BarChart3,
-    title: "Outcome Focused",
-    body: "Track interviews, offers, and real placement metrics.",
-  },
+  { icon: Eye, title: "Full Visibility", body: "Know what every student is doing off campus — without micromanaging." },
+  { icon: Shield, title: "Safe & Compliant", body: "Sending limits, controls, and institutional governance are built in." },
+  { icon: BarChart3, title: "Outcome Focused", body: "Track outreach, engagement, and real off-campus placement progress." },
 ];
 
 function GradientWord({ children }) {
+  return <span className="gradient-hero">{children}</span>;
+}
+
+function Eyebrow({ children }) {
   return (
-    <span className="gradient-hero">
+    <p className="text-xs uppercase tracking-[4px] text-[#AD46FF] font-display font-medium mb-4">
       {children}
-    </span>
+    </p>
   );
 }
 
@@ -138,7 +160,7 @@ function BookCallButton({ onClick, className = "", children }) {
   return (
     <button
       onClick={onClick}
-      className={`inline-flex items-center justify-center gap-2 bg-gradient-to-r from-[#6c00ff] to-[#ad46ff] text-white px-6 py-3 rounded-xl font-semibold shadow-[0_10px_30px_rgba(108,0,255,0.35)] hover:brightness-110 transition ${className}`}
+      className={`inline-flex items-center justify-center gap-2 bg-gradient-to-r from-[#6c00ff] to-[#ad46ff] text-white px-6 py-3 rounded-xl font-display font-semibold shadow-[0_10px_30px_rgba(108,0,255,0.35)] hover:brightness-110 transition ${className}`}
     >
       <Phone size={16} />
       <span>{children || "Book a Call"}</span>
@@ -154,35 +176,29 @@ export default function PartnershipPage() {
     <div className="min-h-screen bg-[#0a0b14] text-white">
       <Navbar variant="dark" />
 
-      {/* Hero */}
+      {/* Hero — value-first, matches site hero typography */}
       <section className="relative overflow-hidden">
-        <div className="max-w-7xl mx-auto px-6 pt-24 pb-20 text-center relative z-10">
-          <motion.div {...fadeUp} className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-white/15 bg-white/5 text-sm text-white/80">
-            <Sparkles size={14} className="text-[#ad46ff]" />
-            Pricing
+        <div className="max-w-4xl mx-auto px-6 pt-28 pb-16 text-center relative z-10">
+          <motion.div {...fadeUp}>
+            <Eyebrow>For Universities &amp; Placement Cells</Eyebrow>
           </motion.div>
 
-          <motion.h1 {...fadeUp} className="mt-6 font-syne text-4xl sm:text-5xl font-semibold leading-tight max-w-5xl mx-auto">
-            Simple Pricing for Universities That Want{" "}
-            <GradientWord>Better Placement Outcomes</GradientWord>
+          <motion.h1 {...fadeUp} className="font-syne text-4xl sm:text-5xl font-semibold leading-tight">
+            Help more of your students get placed —{" "}
+            <GradientWord>off campus.</GradientWord>
           </motion.h1>
 
-          <motion.p {...fadeUp} className="mt-6 text-white/70 max-w-4xl mx-auto text-lg leading-relaxed">
-            Outmail helps universities empower students to run structured recruiter outreach,
-            discover high-quality opportunities, and give placement officers visibility into
-            off-campus hiring activity.
+          <motion.p {...fadeUp} className="mt-6 text-white/60 max-w-2xl mx-auto text-base sm:text-lg leading-relaxed">
+            Outmail extends your placement cell beyond campus drives — giving every student
+            structured recruiter outreach, resume-matched opportunities, and mentorship,
+            with full visibility for your team.
           </motion.p>
 
-          <motion.p {...fadeUp} className="mt-4 text-white/60 max-w-3xl mx-auto text-lg leading-relaxed">
-            Instead of fixed pricing tiers, we offer a simple institutional plan designed
-            specifically for universities.
-          </motion.p>
-
-          <motion.div {...fadeUp} className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
+          <motion.div {...fadeUp} className="mt-9 flex flex-col sm:flex-row items-center justify-center gap-4">
             <BookCallButton onClick={() => setIsBookCallOpen(true)} />
             <a
               href="mailto:contact@outmail.in"
-              className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl border border-white/20 text-white/85 hover:bg-white/10 transition"
+              className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl border border-white/20 font-display text-white/85 hover:bg-white/10 transition"
             >
               <Mail size={16} />
               Contact Us
@@ -201,46 +217,15 @@ export default function PartnershipPage() {
           transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
           className="absolute top-32 right-[12%] w-20 h-20 rounded-full border border-white/15 bg-[#ad46ff]/20"
         />
-        <motion.div
-          animate={{ y: [0, -14, 0] }}
-          transition={{ duration: 6.5, repeat: Infinity, ease: "easeInOut" }}
-          className="absolute bottom-8 left-[20%] w-24 h-24 rounded-lg border border-white/10 bg-[#2f1a7a]/40 -rotate-12"
-        />
       </section>
 
-      {/* Pricing Card */}
+      {/* The gap (problem) */}
       <section className="px-6 pb-20">
-        <motion.div {...fadeUp} className="max-w-2xl mx-auto rounded-2xl overflow-hidden border border-white/12 bg-white/5 backdrop-blur-xl shadow-[0_0_45px_rgba(108,0,255,0.20)]">
-          <div className="h-1 w-full bg-gradient-to-r from-[#6c00ff] to-[#ad46ff]" />
-          <div className="p-8 md:p-10 text-center">
-            <div className="mx-auto w-14 h-14 rounded-2xl bg-gradient-to-r from-[#6c00ff] to-[#ad46ff] flex items-center justify-center mb-5 shadow-[0_10px_25px_rgba(108,0,255,0.35)]">
-              <Building2 size={24} />
-            </div>
-            <h2 className="font-syne text-2xl md:text-3xl font-bold"><Wordmark /> Institutional Platform</h2>
-            <p className="text-white/65 mt-2">A complete placement intelligence and outreach platform for universities.</p>
-
-            <div className="mt-8">
-              <p className="font-syne text-5xl md:text-6xl font-bold leading-none">
-                <GradientWord>₹499</GradientWord>
-              </p>
-              <p className="text-white/70 mt-2 text-lg">/ student / month</p>
-              <p className="text-white/50 mt-2 text-sm">Billed institutionally based on active students.</p>
-            </div>
-
-            <BookCallButton onClick={() => setIsBookCallOpen(true)} className="w-full mt-8" />
-
-            <p className="text-white/45 text-sm mt-4">Custom plans available for larger institutions</p>
-          </div>
-        </motion.div>
-      </section>
-
-      {/* Features */}
-      <section className="px-6 pb-24">
-        <motion.div {...fadeUp} className="max-w-7xl mx-auto text-center">
-          <h3 className="font-syne text-3xl md:text-5xl font-bold">
-            Everything Your <GradientWord>Placement Office</GradientWord> Needs
-          </h3>
-          <p className="text-white/60 mt-3 text-lg">One plan. Full capabilities. Built for universities.</p>
+        <motion.div {...fadeUp} className="max-w-3xl mx-auto text-center">
+          <Eyebrow>The off-campus gap</Eyebrow>
+          <h2 className="font-syne text-3xl md:text-4xl font-semibold leading-tight">
+            On-campus drives reach a <GradientWord>fraction</GradientWord> of the opportunities.
+          </h2>
         </motion.div>
 
         <motion.div
@@ -248,7 +233,81 @@ export default function PartnershipPage() {
           initial="initial"
           whileInView="whileInView"
           viewport={{ once: true, amount: 0.15 }}
-          className="max-w-7xl mx-auto mt-12 grid md:grid-cols-2 xl:grid-cols-3 gap-6"
+          className="max-w-5xl mx-auto mt-10 grid md:grid-cols-3 gap-6"
+        >
+          {problems.map((p, i) => (
+            <motion.div
+              key={i}
+              variants={staggerItem}
+              className="rounded-2xl border border-white/10 bg-white/[0.04] backdrop-blur-xl p-6 text-left"
+            >
+              <div className="w-10 h-10 rounded-xl bg-red-500/15 border border-red-500/25 flex items-center justify-center mb-4">
+                <TrendingDown size={18} className="text-red-300" />
+              </div>
+              <p className="text-white/75 text-sm leading-relaxed">{p}</p>
+            </motion.div>
+          ))}
+        </motion.div>
+      </section>
+
+      {/* How Outmail helps (solution) */}
+      <section className="px-6 pb-24">
+        <motion.div {...fadeUp} className="max-w-3xl mx-auto text-center">
+          <Eyebrow>How Outmail helps</Eyebrow>
+          <h2 className="font-syne text-3xl md:text-4xl font-semibold leading-tight">
+            A proactive placement engine for{" "}
+            <GradientWord>every student.</GradientWord>
+          </h2>
+          <p className="text-white/60 mt-4 max-w-2xl mx-auto">
+            Not another job board — an outreach and intelligence layer that helps your students
+            reach opportunities campus drives never touch.
+          </p>
+        </motion.div>
+
+        <motion.div
+          variants={staggerParent}
+          initial="initial"
+          whileInView="whileInView"
+          viewport={{ once: true, amount: 0.15 }}
+          className="max-w-5xl mx-auto mt-12 grid md:grid-cols-2 gap-6"
+        >
+          {howItHelps.map((item, i) => {
+            const Icon = item.icon;
+            return (
+              <motion.div
+                key={i}
+                variants={staggerItem}
+                className="rounded-2xl border border-white/12 bg-white/5 backdrop-blur-xl p-6 flex gap-4 hover:border-[#ad46ff]/40 transition"
+              >
+                <div className="w-11 h-11 shrink-0 rounded-xl bg-gradient-to-r from-[#6c00ff] to-[#ad46ff] flex items-center justify-center">
+                  <Icon size={20} />
+                </div>
+                <div>
+                  <h3 className="font-syne text-lg font-semibold mb-1.5">{item.title}</h3>
+                  <p className="text-white/65 text-sm leading-relaxed">{item.body}</p>
+                </div>
+              </motion.div>
+            );
+          })}
+        </motion.div>
+      </section>
+
+      {/* What your placement office gets */}
+      <section className="px-6 pb-24">
+        <motion.div {...fadeUp} className="max-w-3xl mx-auto text-center">
+          <Eyebrow>The institutional platform</Eyebrow>
+          <h2 className="font-syne text-3xl md:text-4xl font-semibold leading-tight">
+            Everything your <GradientWord>placement office</GradientWord> gets.
+          </h2>
+          <p className="text-white/60 mt-4">One plan. Full capabilities. Built for universities.</p>
+        </motion.div>
+
+        <motion.div
+          variants={staggerParent}
+          initial="initial"
+          whileInView="whileInView"
+          viewport={{ once: true, amount: 0.15 }}
+          className="max-w-6xl mx-auto mt-12 grid md:grid-cols-2 xl:grid-cols-3 gap-6"
         >
           {featureCards.map((card, index) => {
             const Icon = card.icon;
@@ -261,7 +320,7 @@ export default function PartnershipPage() {
                 <div className="w-11 h-11 rounded-xl bg-gradient-to-r from-[#6c00ff] to-[#ad46ff] flex items-center justify-center mb-4">
                   <Icon size={20} />
                 </div>
-                <h4 className="font-syne text-xl font-semibold mb-4">{card.title}</h4>
+                <h3 className="font-syne text-lg font-semibold mb-4">{card.title}</h3>
                 <ul className="space-y-2.5 text-sm text-white/70 text-left">
                   {card.points.map((point, i) => (
                     <li key={i} className="flex items-start gap-2">
@@ -276,66 +335,13 @@ export default function PartnershipPage() {
         </motion.div>
       </section>
 
-      {/* Customization */}
+      {/* Why Outmail (outcomes) */}
       <section className="px-6 pb-24">
-        <motion.div
-          {...fadeUp}
-          className="max-w-6xl mx-auto rounded-2xl border border-white/12 bg-white/5 backdrop-blur-xl p-8 md:p-10"
-        >
-          <h3 className="font-syne text-3xl md:text-4xl font-bold leading-tight">
-            Need a <GradientWord>Custom Setup</GradientWord> for Your Institution?
-          </h3>
-          <p className="text-white/65 mt-4 max-w-3xl">
-            Every university has different placement workflows. Outmail can be configured based on your placement structure,
-            student size, and outreach strategy.
-          </p>
-
-          <div className="grid md:grid-cols-2 gap-4 mt-8">
-            {customOptions.map((opt, i) => {
-              const Icon = opt.icon;
-              return (
-                <motion.div
-                  key={i}
-                  variants={staggerItem}
-                  initial="initial"
-                  whileInView="whileInView"
-                  viewport={{ once: true }}
-                  className="rounded-xl border border-white/12 bg-[#0f1222] p-4 flex items-start gap-3"
-                >
-                  <div className="w-9 h-9 rounded-lg bg-[#6c00ff]/25 border border-[#ad46ff]/30 flex items-center justify-center">
-                    <Icon size={16} className="text-[#c387ff]" />
-                  </div>
-                  <p className="text-white/80 text-sm leading-relaxed">{opt.label}</p>
-                </motion.div>
-              );
-            })}
-          </div>
-
-          <div className="mt-8 flex flex-col sm:flex-row items-start sm:items-center gap-4">
-            <BookCallButton onClick={() => setIsBookCallOpen(true)}>
-              Schedule a Call to Discuss
-            </BookCallButton>
-            <a href="mailto:contact@outmail.in" className="text-white/80 hover:text-white underline underline-offset-4">
-              Or email us at contact@outmail.in
-            </a>
-          </div>
-        </motion.div>
-      </section>
-
-      {/* Trust */}
-      <section className="px-6 pb-24">
-        <motion.div {...fadeUp} className="max-w-6xl mx-auto text-center">
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-white/15 bg-white/5 text-sm text-white/80">
-            <Zap size={14} className="text-[#ad46ff]" />
-            Why Outmail
-          </div>
-          <h3 className="font-syne text-3xl md:text-5xl font-bold mt-5 leading-tight">
-            Built for the Next Generation of <GradientWord>Placement Infrastructure</GradientWord>
-          </h3>
-          <p className="text-white/65 mt-4 max-w-4xl mx-auto">
-            Outmail is designed to help universities bring structure and visibility to off-campus placements
-            while empowering students to take proactive action.
-          </p>
+        <motion.div {...fadeUp} className="max-w-3xl mx-auto text-center">
+          <Eyebrow>Why Outmail</Eyebrow>
+          <h2 className="font-syne text-3xl md:text-4xl font-semibold leading-tight">
+            The next generation of <GradientWord>placement infrastructure.</GradientWord>
+          </h2>
         </motion.div>
 
         <motion.div
@@ -352,7 +358,7 @@ export default function PartnershipPage() {
                 <div className="w-11 h-11 rounded-xl bg-gradient-to-r from-[#6c00ff] to-[#ad46ff] flex items-center justify-center mb-4">
                   <Icon size={20} />
                 </div>
-                <h4 className="font-syne text-xl font-semibold mb-2">{item.title}</h4>
+                <h3 className="font-syne text-lg font-semibold mb-2">{item.title}</h3>
                 <p className="text-white/65 text-sm leading-relaxed">{item.body}</p>
               </motion.div>
             );
@@ -360,18 +366,51 @@ export default function PartnershipPage() {
         </motion.div>
       </section>
 
-      {/* Final CTA */}
+      {/* Custom setup */}
       <section className="px-6 pb-24">
-        <motion.div {...fadeUp} className="max-w-4xl mx-auto text-center rounded-2xl border border-white/12 bg-white/5 backdrop-blur-xl p-8 md:p-12">
-          <h3 className="font-syne text-3xl md:text-5xl font-bold leading-tight">
-            Bring <GradientWord>Structured Outreach</GradientWord> to Your Students
-          </h3>
+        <motion.div {...fadeUp} className="max-w-6xl mx-auto rounded-2xl border border-white/12 bg-white/5 backdrop-blur-xl p-8 md:p-10">
+          <h2 className="font-syne text-2xl md:text-3xl font-semibold leading-tight">
+            Need a <GradientWord>custom setup</GradientWord> for your institution?
+          </h2>
+          <p className="text-white/65 mt-4 max-w-3xl">
+            Every university has different placement workflows. Outmail can be configured around your
+            placement structure, student cohort size, and outreach strategy.
+          </p>
 
+          <div className="grid md:grid-cols-2 gap-4 mt-8">
+            {customOptions.map((opt, i) => {
+              const Icon = opt.icon;
+              return (
+                <div key={i} className="rounded-xl border border-white/12 bg-[#0f1222] p-4 flex items-start gap-3">
+                  <div className="w-9 h-9 rounded-lg bg-[#6c00ff]/25 border border-[#ad46ff]/30 flex items-center justify-center">
+                    <Icon size={16} className="text-[#c387ff]" />
+                  </div>
+                  <p className="text-white/80 text-sm leading-relaxed">{opt.label}</p>
+                </div>
+              );
+            })}
+          </div>
+        </motion.div>
+      </section>
+
+      {/* Institutional plan CTA band (pricing = talk to us, no discount framing) */}
+      <section className="px-6 pb-24">
+        <motion.div {...fadeUp} className="max-w-4xl mx-auto text-center rounded-2xl border border-white/12 bg-gradient-to-b from-white/[0.07] to-white/[0.02] backdrop-blur-xl p-8 md:p-12">
+          <Eyebrow>Institutional plan</Eyebrow>
+          <h2 className="font-syne text-3xl md:text-4xl font-semibold leading-tight">
+            Simple per-student pricing that scales with your cohort.
+          </h2>
+          <p className="text-white/60 mt-4 max-w-2xl mx-auto">
+            One institutional plan, tailored to your student count and the modules you need.
+            Book a call and we'll put together a quote for your placement cell.
+          </p>
           <div className="mt-8 flex flex-col sm:flex-row justify-center gap-4">
-            <BookCallButton onClick={() => setIsBookCallOpen(true)} />
+            <BookCallButton onClick={() => setIsBookCallOpen(true)}>
+              Book a Call for Pricing
+            </BookCallButton>
             <a
               href="mailto:contact@outmail.in"
-              className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl border border-white/20 text-white/85 hover:bg-white/10 transition"
+              className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl border border-white/20 font-display text-white/85 hover:bg-white/10 transition"
             >
               <Mail size={16} />
               Contact Us
@@ -412,14 +451,14 @@ export default function PartnershipPage() {
                 <Phone size={24} />
               </div>
 
-              <h4 className="font-syne text-2xl font-bold mb-3">Book a Call</h4>
+              <h3 className="font-syne text-2xl font-bold mb-3">Book a Call</h3>
               <p className="text-white/70 leading-relaxed mb-6">
-                Please mail us at contact@outmail.in with your preferred timing for a call and we will get in touch with you.
+                Email us at contact@outmail.in with your institution and a preferred time, and we'll get in touch to set up a call.
               </p>
 
               <a
-                href="mailto:contact@outmail.in"
-                className="inline-flex w-full items-center justify-center gap-2 bg-gradient-to-r from-[#6c00ff] to-[#ad46ff] text-white px-5 py-3 rounded-xl font-semibold hover:brightness-110 transition"
+                href="mailto:contact@outmail.in?subject=Outmail%20for%20our%20institution"
+                className="inline-flex w-full items-center justify-center gap-2 bg-gradient-to-r from-[#6c00ff] to-[#ad46ff] text-white px-5 py-3 rounded-xl font-display font-semibold hover:brightness-110 transition"
               >
                 <Mail size={16} />
                 Send Email
