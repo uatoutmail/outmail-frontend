@@ -125,7 +125,7 @@ export default function Faq2() {
             FAQs
           </Badge>
 
-          <h2 className="mb-6 text-center text-4xl font-bold tracking-tight md:text-5xl text-white">
+          <h2 className="mb-6 text-center text-3xl md:text-4xl font-syne font-bold tracking-tight text-white">
             Frequently Asked Questions
           </h2>
 

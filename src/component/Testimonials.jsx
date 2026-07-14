@@ -5,7 +5,7 @@ export default function Testimonials() {
   return (
     <div className="text-white px-4 py-20 bg-[#0a0b14]">
       <div className="max-w-6xl mx-auto text-center">
-        <p className="text-xs uppercase tracking-[4px] text-purple-400 font-medium mb-3">
+        <p className="text-xs uppercase tracking-[4px] text-[#AD46FF] font-display font-medium mb-3">
           Early Validation
         </p>
         <h2 className="text-3xl md:text-4xl font-bold mb-3">

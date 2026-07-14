@@ -35,8 +35,8 @@ export default function Features() {
       <div className="max-w-7xl w-full grid grid-cols-1 md:grid-cols-2 gap-16 items-stretch">
         {/* Left Side */}
         <div className="text-white flex flex-col">
-          <p className="text-sm font-display font-medium text-indigo-300 uppercase tracking-wider mb-2">Everything You Need to Land the Job</p>
-          <h2 className="text-4xl font-bold mb-10">
+          <p className="text-xs font-display font-medium text-[#AD46FF] uppercase tracking-[4px] mb-2">Everything You Need to Land the Job</p>
+          <h2 className="text-3xl md:text-4xl font-syne font-bold mb-10">
             One Platform. Every Edge You Need.
           </h2>
 

@@ -79,7 +79,7 @@ export default function ZPricing() {
   return (
     <div className="text-white py-20 px-4 bg-[#0a0b14]">
       <div className="max-w-7xl mx-auto text-center">
-        <p className="text-sm font-medium text-indigo-300 uppercase tracking-[4px] mb-3">
+        <p className="text-xs font-display font-medium text-[#AD46FF] uppercase tracking-[4px] mb-3">
           Pricing
         </p>
         <h2 className="text-3xl md:text-4xl font-bold mb-4 tracking-tighter">

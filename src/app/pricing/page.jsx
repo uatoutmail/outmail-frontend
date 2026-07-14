@@ -18,7 +18,7 @@ function page() {
       
 
       <div className="container mx-auto px-4 text-center">
-        <p className="text-xs uppercase tracking-[4px] text-purple-400 font-medium mb-4">
+        <p className="text-xs uppercase tracking-[4px] text-[#AD46FF] font-display font-medium mb-4">
           Pricing
         </p>
 
