@@ -46,7 +46,7 @@ const AutofillExtensionCard = () => {
       </div>
       <p className="text-xs text-white/50 mb-4 leading-relaxed">
         Install the Outmail Autofiller browser extension, then paste a link code
-        to sync your résumé profile for one-click job-application autofill.
+        to sync your resume profile for one-click job-application autofill.
       </p>
 
       {code && expiresIn > 0 ? (

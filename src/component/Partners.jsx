@@ -44,7 +44,7 @@ const companies = [
 function CompanyItem({ company }) {
   if (company.type === "icon") {
     return (
-      <div className="flex flex-col items-center justify-center gap-2 min-w-[80px] group">
+      <div className="flex flex-col items-center justify-center gap-1.5 min-w-[80px] h-14 group">
         <span className="text-white/60 group-hover:text-white transition-colors duration-300">
           {company.component}
         </span>
@@ -55,8 +55,8 @@ function CompanyItem({ company }) {
     );
   }
   return (
-    <div className="flex items-center justify-center min-w-[80px] group">
-      <span className="text-white/60 group-hover:text-white font-semibold text-base tracking-wide transition-colors duration-300 border border-white/15 group-hover:border-white/40 rounded-lg px-4 py-2">
+    <div className="flex items-center justify-center min-w-[80px] h-14 group">
+      <span className="text-white/60 group-hover:text-white font-semibold text-xl tracking-wide transition-colors duration-300">
         {company.name}
       </span>
     </div>

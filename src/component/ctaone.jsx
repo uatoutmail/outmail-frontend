@@ -21,7 +21,7 @@ export default function CtaOne() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-16 text-left">
           {[
             { title: "AI-personalized outreach", desc: "Emails tailored to each recruiter, sent from your own inbox — not spray-and-pray." },
-            { title: "Résumé-matched jobs", desc: "A ranked, explainable feed of openings that actually fit your profile and goals." },
+            { title: "Resume-matched jobs", desc: "A ranked, explainable feed of openings that actually fit your profile and goals." },
             { title: "Mentorship on tap", desc: "Bi-weekly sessions with people who've navigated the path you're on." },
           ].map((f) => (
             <div key={f.title} className="rounded-2xl border border-white/12 bg-white/5 p-6">

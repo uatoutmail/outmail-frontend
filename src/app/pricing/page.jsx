@@ -31,7 +31,7 @@ function page() {
         </h1>
 
         <p className="text-white/60 text-base sm:text-lg mt-6 leading-relaxed max-w-2xl mx-auto">
-          Cold outreach is free, forever — add résumé-matched jobs and mentorship whenever you want more.
+          Cold outreach is free, forever — add resume-matched jobs and mentorship whenever you want more.
         </p>
 
         <div className="text-center mt-10">

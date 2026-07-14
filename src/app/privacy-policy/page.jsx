@@ -1,7 +1,7 @@
 export const metadata = {
   title: "Privacy Policy",
   description:
-    "How Outmail collects, uses, and protects your data across cold outreach, job intelligence, and mentorship — including Gmail and résumé handling.",
+    "How Outmail collects, uses, and protects your data across cold outreach, job intelligence, and mentorship — including Gmail and resume handling.",
   alternates: { canonical: "https://outmail.in/privacy-policy" },
   openGraph: {
     title: "Privacy Policy | Outmail",

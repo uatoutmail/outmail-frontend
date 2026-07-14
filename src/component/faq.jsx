@@ -74,21 +74,21 @@ const faqItems = [
     id: '10',
     question: 'Does Outmail show real job openings?',
     answer:
-      'Yes. The Job Openings section surfaces active roles matched to your résumé and job-hunt intent, each ranked by an explainable Outmail Score based on skill and seniority fit, hiring urgency, and company momentum — so you focus on the roles most worth your outreach.',
+      'Yes. The Job Openings section surfaces active roles matched to your resume and job-hunt intent, each ranked by an explainable Outmail Score based on skill and seniority fit, hiring urgency, and company momentum — so you focus on the roles most worth your outreach.',
     category: 'general',
   },
   {
     id: '11',
     question: 'What is the Outmail Autofill extension?',
     answer:
-      'Outmail’s Chrome extension fills out job applications for you using the details from your résumé and profile — so each application takes seconds, not minutes. Autofill is available on the Pro and Elite plans.',
+      'Outmail’s Chrome extension fills out job applications for you using the details from your resume and profile — so each application takes seconds, not minutes. Autofill is available on the Pro and Elite plans.',
     category: 'technical',
   },
   {
     id: '12',
     question: 'What plans does Outmail offer?',
     answer:
-      'Outmail is free to start — cold outreach is free, forever. Pro adds the résumé-matched job feed and the Autofill extension; Elite adds live mentorship on top. See the pricing page for current details.',
+      'Outmail is free to start — cold outreach is free, forever. Pro adds the resume-matched job feed and the Autofill extension; Elite adds live mentorship on top. See the pricing page for current details.',
     category: 'pricing',
   },
 ];
@@ -189,7 +189,7 @@ export default function Faq2() {
           <p className="mb-4 text-white">Can’t find what you’re looking for?</p>
           <Link
             href="/contactus"
-            className="px-4 py-3 bg-gradient-to-r from-[#6c00ff] to-[#ad46ff] text-white font-extrabold rounded-xl hover:brightness-110 transition"
+            className="inline-block px-6 py-3 bg-gradient-to-r from-[#6c00ff] to-[#ad46ff] text-white font-display font-medium tracking-wide rounded-xl hover:brightness-110 transition"
           >
             Contact Support
           </Link>

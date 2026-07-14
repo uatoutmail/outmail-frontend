@@ -200,7 +200,7 @@ const JobOpeningsTab = () => {
             <Briefcase size={32} className="text-white/20" />
           </div>
           <p className="text-white/50 text-xl font-bold mb-2">No matches yet</p>
-          <p className="text-white/20 text-sm uppercase tracking-widest font-bold">Add a résumé & job-hunt intent, or check back later</p>
+          <p className="text-white/20 text-sm uppercase tracking-widest font-bold">Add a resume & job-hunt intent, or check back later</p>
         </div>
       ) : (
         <div className="space-y-4">

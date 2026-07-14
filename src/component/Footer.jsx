@@ -76,9 +76,6 @@ export default function Footer({ variant = "gradient" }) {
             <Link href="/pricing" className="hover:underline">
               Pricing
             </Link>
-            <Link href="/mentorships" className="hover:underline">
-              Mentorship
-            </Link>
             <Link href="/partnership" className="hover:underline">
               Partnership
             </Link>

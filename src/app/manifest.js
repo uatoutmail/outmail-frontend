@@ -3,7 +3,7 @@ export default function manifest() {
     name: "Outmail — Cold Outreach, Jobs & Mentorship",
     short_name: "Outmail",
     description:
-      "AI-personalized cold outreach from your own inbox, résumé-matched job intelligence, one-click Autofill, and mentorship.",
+      "AI-personalized cold outreach from your own inbox, resume-matched job intelligence, one-click Autofill, and mentorship.",
     start_url: "/",
     display: "standalone",
     background_color: "#0a0b14",

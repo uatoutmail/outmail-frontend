@@ -1,5 +1,5 @@
 import React from 'react';
-import { BarChart2, Zap, Briefcase, Users, MousePointerClick } from 'lucide-react';
+import { Zap, Briefcase, Users, MousePointerClick } from 'lucide-react';
 
 export default function Features() {
   const features = [
@@ -10,23 +10,18 @@ export default function Features() {
     },
     {
       icon: <Briefcase size={28} className="text-white" />,
-      title: 'Résumé-Matched Job Feed',
-      desc: 'Browse roles matched to your résumé and job-hunt intent, each ranked by an explainable Outmail Score — skill and seniority fit, hiring urgency, and company momentum.',
+      title: 'Resume-Matched Job Feed',
+      desc: 'Browse roles matched to your resume and job-hunt intent, each ranked by an explainable Outmail Score — skill and seniority fit, hiring urgency, and company momentum.',
     },
     {
       icon: <MousePointerClick size={28} className="text-white" />,
       title: 'One-Click Autofill',
-      desc: 'Our Chrome extension fills out job applications for you from your résumé and profile — so each application takes seconds, not minutes.',
+      desc: 'Our Chrome extension fills out job applications for you from your resume and profile — so each application takes seconds, not minutes.',
     },
     {
       icon: <Users size={28} className="text-white" />,
       title: 'Expert Mentorship',
       desc: 'Connect with experienced professionals and alumni for live guidance on interviews, career paths, and building the right outreach strategy.',
-    },
-    {
-      icon: <BarChart2 size={28} className="text-white" />,
-      title: 'Live Hiring Intelligence',
-      desc: 'Stay ahead with real-time funding trends, hot-hiring news, and hiring spotlights — so you always know where the opportunities are.',
     },
   ];
 
@@ -37,17 +32,17 @@ export default function Features() {
       <div className="absolute top-14 right-[8%] w-24 h-24 rounded-full border border-white/10 bg-[#ad46ff]/12" />
       <div className="absolute bottom-12 left-[6%] w-20 h-20 rounded-lg border border-white/10 bg-[#6c00ff]/12 rotate-12" />
 
-      <div className="max-w-7xl w-full grid grid-cols-1 md:grid-cols-2 gap-16 items-center">
+      <div className="max-w-7xl w-full grid grid-cols-1 md:grid-cols-2 gap-16 items-stretch">
         {/* Left Side */}
-        <div className="text-white">
-          <p className="text-sm font-medium text-indigo-300 uppercase tracking-wider mb-2">Everything You Need to Land the Job</p>
+        <div className="text-white flex flex-col">
+          <p className="text-sm font-display font-medium text-indigo-300 uppercase tracking-wider mb-2">Everything You Need to Land the Job</p>
           <h2 className="text-4xl font-bold mb-10">
             One Platform. Every Edge You Need.
           </h2>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 flex-1">
             {features.map((feature, idx) => (
-              <div key={idx} className="flex flex-col gap-4 p-6 rounded-xl border border-white/12 bg-white/5 backdrop-blur-xl hover:border-purple-500/40 transition-all duration-300 ease-in-out transform hover:scale-[1.02] shadow-[0_0_20px_rgba(108,0,255,0.15)]">
+              <div key={idx} className="flex flex-col gap-4 h-full p-6 rounded-xl border border-white/12 bg-white/5 backdrop-blur-xl hover:border-purple-500/40 transition-all duration-300 ease-in-out transform hover:scale-[1.02] shadow-[0_0_20px_rgba(108,0,255,0.15)]">
                 <div className="bg-[#6c00ff]/30 p-3 w-fit rounded-full border border-purple-500/40">
                   {feature.icon}
                 </div>
@@ -59,7 +54,7 @@ export default function Features() {
         </div>
 
         {/* Right Side - Dashboard image (mockup or actual image) */}
-        <div className="w-full flex  justify-end ">
+        <div className="w-full flex items-center justify-end">
           <img
             src="/dashboard_edited.png" 
             alt="Outmail Dashboard Preview"

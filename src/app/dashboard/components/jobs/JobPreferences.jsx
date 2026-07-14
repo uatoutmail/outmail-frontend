@@ -95,7 +95,7 @@ const JobPreferences = ({ onSaved }) => {
                   placeholder="e.g. Backend / ML engineer roles at early-stage startups; open to remote. Pivoting from frontend."
                   className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm text-white placeholder:text-white/25 focus:outline-none focus:border-purple-500/50"
                 />
-                <p className="text-white/25 text-[11px] mt-1.5">Tells matching what you want next — weighted alongside your résumé.</p>
+                <p className="text-white/25 text-[11px] mt-1.5">Tells matching what you want next — weighted alongside your resume.</p>
               </div>
 
               <div>

@@ -1,12 +1,12 @@
 export const metadata = {
   title: "Features",
   description:
-    "Explore Outmail's features: AI-personalized cold outreach from your own inbox, résumé-matched job intelligence with an explainable Outmail Score, one-click Autofill, and mentorship.",
+    "Explore Outmail's features: AI-personalized cold outreach from your own inbox, resume-matched job intelligence with an explainable Outmail Score, one-click Autofill, and mentorship.",
   alternates: { canonical: "https://outmail.in/features" },
   openGraph: {
     title: "Features | Outmail",
     description:
-      "AI-personalized cold outreach, résumé-matched jobs, one-click Autofill, and mentorship — all in one place.",
+      "AI-personalized cold outreach, resume-matched jobs, one-click Autofill, and mentorship — all in one place.",
     url: "https://outmail.in/features",
     siteName: "Outmail",
     type: "website",

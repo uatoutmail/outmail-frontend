@@ -5,7 +5,7 @@ import AboutUs from "@/component/aboutuscontent";
 export const metadata = {
   title: "About Us",
   description:
-    "Outmail helps university students reach the right companies, get résumé-matched jobs, and learn from real mentors. Learn about our mission.",
+    "Outmail helps university students reach the right companies, get resume-matched jobs, and learn from real mentors. Learn about our mission.",
   alternates: { canonical: "https://outmail.in/aboutus" },
 };
 
