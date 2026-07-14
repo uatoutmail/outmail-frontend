@@ -144,7 +144,7 @@ const AutofillDataTab = () => {
     try {
       await api.post("/api/autofill/profile/rebuild");
       await load();
-      toast.success("Rebuilt from your résumé");
+      toast.success("Rebuilt from your resume");
     } catch (e) {
       toast.error(e.response?.data?.error || "Rebuild failed");
     } finally {
@@ -174,7 +174,7 @@ const AutofillDataTab = () => {
             <ClipboardList className="text-purple-400" size={26} /> Autofill Data
           </h1>
           <p className="text-white/60 text-sm">
-            One profile the Outmail browser extension fills every job application from. Derived from your résumé — review and complete it.
+            One profile the Outmail browser extension fills every job application from. Derived from your resume — review and complete it.
           </p>
         </div>
         <div className="flex items-center gap-3">
@@ -183,7 +183,7 @@ const AutofillDataTab = () => {
             disabled={saving || loading}
             className="flex items-center gap-2 px-4 py-2.5 rounded-lg border border-white/20 text-white/80 text-sm font-semibold hover:bg-white/5 transition-colors disabled:opacity-50"
           >
-            <RefreshCw size={16} /> Rebuild from résumé
+            <RefreshCw size={16} /> Rebuild from resume
           </button>
           <button
             onClick={save}
@@ -321,7 +321,7 @@ const AutofillDataTab = () => {
                 <Info className="text-white/40" size={18} />
                 <div>
                   <h2 className="text-base font-semibold text-white">Demographics / EEO (optional)</h2>
-                  <p className="text-xs text-white/40 mt-0.5">Only filled if you provide it AND enable the opt-in toggle in the extension. Never derived from your résumé.</p>
+                  <p className="text-xs text-white/40 mt-0.5">Only filled if you provide it AND enable the opt-in toggle in the extension. Never derived from your resume.</p>
                 </div>
               </div>
               <span className="text-white/40 text-sm">{showEeo ? "Hide" : "Show"}</span>

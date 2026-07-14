@@ -32,10 +32,10 @@ const plans = [
     period: 'per month',
     tagline: 'Everything in Free, plus matched jobs.',
     description:
-      'Add a résumé- and intent-matched job feed with an explainable Outmail Score, plus the one-click Autofill browser extension.',
+      'Add a resume- and intent-matched job feed with an explainable Outmail Score, plus the one-click Autofill browser extension.',
     features: [
       'Everything in Free',
-      'Résumé & intent-matched job feed',
+      'Resume & intent-matched job feed',
       'Explainable Outmail Score + "why matched"',
       'Autofill browser extension',
       'Apply / save / discard tracking',

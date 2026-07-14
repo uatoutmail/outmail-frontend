@@ -1,23 +1,23 @@
 'use client';
 import { useTransform, motion, useScroll } from 'motion/react';
 import { useRef, useState, useEffect } from 'react';
-import PillarVisual from '@/component/animations/PillarVisual';
+import Image from 'next/image';
 
 const projects = [
   {
     title: 'Smart Automated Cold Outreach',
     description: 'Send personalised emails to the right recruiters at scale — powered by live hiring signals, funding data, and smart company targeting.',
-    variant: 'outreach',
+    link: '/dashboard_landingPage.png',
   },
   {
     title: 'Curated Job Openings',
-    description: 'Browse roles ranked by Outmail Score — surfaced by hiring urgency, funding signals, and company momentum.',
-    variant: 'jobs',
+    description: 'Browse roles ranked by Outmail Priority Score — surfaced by hiring urgency, funding signals, and company momentum.',
+    link: '/JobOpenings.png',
   },
   {
     title: 'Expert Mentorship',
     description: 'Book live sessions with professionals and alumni — real guidance from people who\'ve navigated the path you\'re on.',
-    variant: 'mentorship',
+    link: '/Mentorship.png',
   },
 ];
 
@@ -59,7 +59,7 @@ export default function StackingCards() {
             <Card
               key={`p_${i}`}
               i={i}
-              variant={project?.variant}
+              url={project?.link}
               title={project?.title}
               description={project?.description}
               progress={scrollYProgress}
@@ -77,7 +77,7 @@ const Card = ({
   i,
   title,
   description,
-  variant,
+  url,
   progress,
   range,
   targetScale,
@@ -163,8 +163,16 @@ const Card = ({
         }}
         className="relative rounded-2xl origin-top z-10 max-w-6xl overflow-hidden border border-purple-400/40 shadow-2xl shadow-black/50"
       >
-        {/* On-brand animated scene (replaces AI screenshot) */}
-        <PillarVisual variant={variant} />
+        {/* Full-bleed screenshot — static for now, zoom-out effect commented out */}
+        <div className="absolute inset-0 w-full h-full">
+          <Image
+            fill
+            src={url}
+            alt={title}
+            className="object-cover object-top"
+            sizes="(max-width: 640px) 95vw, (max-width: 768px) 90vw, (max-width: 1024px) 85vw, 70vw"
+          />
+        </div>
 
         {/* Dark gradient overlay — strong at bottom for readability */}
         <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/50 to-black/5 z-10" />

@@ -1,4 +1,4 @@
-import { Geist, Geist_Mono, Satisfy, Syne, Space_Grotesk } from "next/font/google";
+import { Geist, Geist_Mono, Satisfy, Syne, Space_Grotesk, Bricolage_Grotesque } from "next/font/google";
 import "./globals.css";
 import SmoothScrollWrapper from "@/component/SmoothScrollWrapper";
 import { AuthProvider } from "@/context/AuthContext";
@@ -37,6 +37,15 @@ const spaceGrotesk = Space_Grotesk({
   subsets: ["latin"],
   weight: ["400", "500", "600", "700"],
   variable: "--font-nav-var",
+});
+
+// Display / accent typeface — sharp, contemporary, "Gen-Z" (--font-display / font-display).
+// Used for nav, hero headline, and prominent CTAs. Swap this one import to
+// restyle the whole accent voice of the site.
+const bricolage = Bricolage_Grotesque({
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700", "800"],
+  variable: "--font-display-var",
 });
 
 export const metadata = {
@@ -141,7 +150,7 @@ export default function RootLayout({ children }) {
         )}
       </head>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} ${syne.variable} ${satisfy.variable} ${spaceGrotesk.variable} antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} ${syne.variable} ${satisfy.variable} ${spaceGrotesk.variable} ${bricolage.variable} antialiased`}
       >
         <AuthProvider>
           <SmoothScrollWrapper>

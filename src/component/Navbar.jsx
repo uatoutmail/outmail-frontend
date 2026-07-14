@@ -37,10 +37,9 @@ function Navbar({ variant = "gradient" }) {
         </Link>
 
         {/* Desktop Links */}
-        <div className="hidden md:flex space-x-7 text-white text-[15px] font-medium font-nav tracking-wide">
+        <div className="hidden md:flex space-x-7 text-white text-[15px] font-medium font-display tracking-wide">
           <Link href="/" className="hover:text-[#AD46FF] transition">Home</Link>
           <Link href="/features" className="hover:text-[#AD46FF] transition">Features</Link>
-          <Link href="/mentorships" className="hover:text-[#AD46FF] transition">Mentorship</Link>
           <Link href="/pricing" className="hover:text-[#AD46FF] transition">Pricing</Link>
           <Link href="/contactus" className="hover:text-[#AD46FF] transition">Contact Us</Link>
           <Link href="/partnership" className="hover:text-[#AD46FF] transition">Partnership</Link>
@@ -166,10 +165,9 @@ function Navbar({ variant = "gradient" }) {
             >
               <X size={24} />
             </button>
-            <div className="flex flex-col space-y-8 text-white text-xl font-medium font-nav tracking-wide">
+            <div className="flex flex-col space-y-8 text-white text-xl font-medium font-display tracking-wide">
               <Link href="/" className="hover:text-[#AD46FF] transition text-center">Home</Link>
               <Link href="/features" className="hover:text-[#AD46FF] transition text-center">Features</Link>
-              <Link href="/mentorships" className="hover:text-[#AD46FF] transition text-center">Mentorship</Link>
               <Link href="/pricing" className="hover:text-[#AD46FF] transition text-center">Pricing</Link>
               <Link href="/contactus" className="hover:text-[#AD46FF] transition text-center">Contact Us</Link>
               <Link href="/partnership" className="hover:text-[#AD46FF] transition text-center">Partnership</Link>

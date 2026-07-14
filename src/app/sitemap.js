@@ -28,11 +28,6 @@ export default function sitemap() {
       priority: 0.8,
     },
     {
-      path: "/mentorships",
-      changeFrequency: "monthly",
-      priority: 0.8,
-    },
-    {
       path: "/contactus",
       changeFrequency: "monthly",
       priority: 0.7,
