@@ -16,7 +16,7 @@ function Hero() {
       <div className="relative z-10 min-h-[46vh] flex flex-col justify-center pt-16 pb-10 px-4">
         <div className="max-w-3xl mx-auto text-center">
           <h1 className="text-4xl sm:text-5xl font-syne font-semibold tracking-tight leading-tight gradient-hero">
-            Start landing the right interviews.
+            Reach the right companies. Land the right jobs.
           </h1>
           <p className="mt-5 text-white/60 text-base sm:text-lg max-w-2xl mx-auto leading-relaxed">
             Outmail helps students send AI-personalized cold emails from their own inbox,
