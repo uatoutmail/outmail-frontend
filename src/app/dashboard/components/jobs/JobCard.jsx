@@ -1,9 +1,15 @@
 import React, { useState } from "react";
+import DOMPurify from "dompurify";
 import {
   Briefcase, Building, MapPin, DollarSign, Sparkles,
   CheckCircle, X, ExternalLink, Zap,
   ChevronDown, ChevronUp
 } from "lucide-react";
+
+// Job details/qualifications are admin-authored HTML. Sanitize before rendering
+// so stored markup can never execute script (these blocks only render client-side
+// on expand). Guard for the no-DOM case just in case.
+const cleanHtml = (html) => (typeof window === "undefined" ? "" : DOMPurify.sanitize(html || ""));
 
 const JobCard = ({ job, getPriorityTier, getPriorityScoreColor, getStatusColor, getStatusText, handleOpenJob, handleDiscard, handleResetStatus, handleApply, handleAutoApply }) => {
   const [isExpanded, setIsExpanded] = useState(false);
@@ -117,7 +123,7 @@ const JobCard = ({ job, getPriorityTier, getPriorityScoreColor, getStatusColor, 
                   <h4 className="text-xs font-bold uppercase tracking-wider text-white/40 mb-3">Job Description</h4>
                   <div
                     className="text-white/70 text-sm prose prose-invert max-w-none prose-p:leading-relaxed prose-li:my-1"
-                    dangerouslySetInnerHTML={{ __html: job.details }}
+                    dangerouslySetInnerHTML={{ __html: cleanHtml(job.details) }}
                   />
                 </div>
               )}
@@ -126,7 +132,7 @@ const JobCard = ({ job, getPriorityTier, getPriorityScoreColor, getStatusColor, 
                   <h4 className="text-xs font-bold uppercase tracking-wider text-purple-300/60 mb-3">Qualifications</h4>
                   <div
                     className="text-white/70 text-sm prose prose-invert max-w-none prose-p:leading-relaxed prose-li:my-1"
-                    dangerouslySetInnerHTML={{ __html: job.qualifications }}
+                    dangerouslySetInnerHTML={{ __html: cleanHtml(job.qualifications) }}
                   />
                 </div>
               )}
