@@ -42,11 +42,9 @@ const SettingsTab = () => {
     bio: user?.bio || "",
     notifications: true,
     autoMailingEnabled: user?.autoMailingEnabled || false,
-    gmailAppPassword: "",
   });
 
   const [gmailStatus, setGmailStatus] = useState({ connected: false, email: "" });
-  const [isVerifyingGmail, setIsVerifyingGmail] = useState(false);
   const [emailUsage, setEmailUsage] = useState(null);
 
   const [isLoading, setIsLoading] = useState(false);
@@ -238,44 +236,6 @@ const SettingsTab = () => {
     };
     fetchStatus();
   }, []);
-
-  const handleSaveGmailAppPassword = async () => {
-    if (!profileSettings.gmailAppPassword.trim()) {
-      toast.error('Please enter your Gmail App Password');
-      return;
-    }
-    
-    setIsVerifyingGmail(true);
-    try {
-      const response = await api.post('/api/user/gmail/password', {
-        appPassword: profileSettings.gmailAppPassword
-      });
-      
-      if (response.data.success) {
-        toast.success('Gmail App Password saved and verified!');
-        setGmailStatus({ connected: true, email: user?.email });
-        setProfileSettings(prev => ({ ...prev, gmailAppPassword: "" }));
-        checkAuth();
-      }
-    } catch (error) {
-      console.error('Error saving Gmail App Password:', error);
-      toast.error(error.response?.data?.error || 'Failed to verify App Password. Make sure it is 16 characters long.');
-    } finally {
-      setIsVerifyingGmail(false);
-    }
-  };
-
-  const handleRemoveGmailAppPassword = async () => {
-    try {
-      await api.delete('/api/user/gmail/password');
-      toast.success('Gmail App Password removed');
-      setGmailStatus({ connected: false, email: "" });
-      checkAuth();
-    } catch (error) {
-      console.error('Error removing Gmail App Password:', error);
-      toast.error('Failed to remove Gmail App Password');
-    }
-  };
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -735,38 +695,22 @@ const SettingsTab = () => {
                 <div className="space-y-4">
                   <div className="p-3 rounded-lg bg-blue-500/10 border border-blue-500/20 mb-4">
                     <p className="text-[10px] text-blue-300 leading-relaxed">
-                      To send emails, you need a 16-character <strong>App Password</strong> from your Google Account settings.
+                      Emails are sent by the <strong>OutMail desktop app</strong> from your own computer.
+                      Your Gmail app password is stored only on your machine — it never touches OutMail&apos;s servers.
                     </p>
-                    <a 
-                      href="https://myaccount.google.com/apppasswords" 
-                      target="_blank" 
+                    <p className="text-[10px] text-blue-300 leading-relaxed mt-2">
+                      To connect: open the OutMail desktop app, link it with a code from the
+                      &quot;Link Desktop Agent&quot; panel, then add your Gmail app password there.
+                    </p>
+                    <a
+                      href="https://myaccount.google.com/apppasswords"
+                      target="_blank"
                       rel="noopener noreferrer"
                       className="text-[10px] text-blue-400 hover:underline flex items-center gap-1 mt-1"
                     >
-                      Get App Password <ExternalLink size={10} />
+                      Create a Gmail App Password <ExternalLink size={10} />
                     </a>
                   </div>
-                  <div>
-                    <label htmlFor="gmailAppPassword" className="block text-[10px] font-medium text-gray-400 mb-1">
-                      16-character App Password
-                    </label>
-                    <input
-                      type="password"
-                      id="gmailAppPassword"
-                      name="gmailAppPassword"
-                      value={profileSettings.gmailAppPassword}
-                      onChange={handleChange}
-                      placeholder="abcd efgh ijkl mnop"
-                      className="w-full p-2 text-sm rounded-lg border border-gray-600 bg-white/5 text-white focus:outline-none focus:ring-1 focus:ring-purple-500"
-                    />
-                  </div>
-                  <button
-                    onClick={handleSaveGmailAppPassword}
-                    disabled={isVerifyingGmail}
-                    className="w-full py-2 rounded-lg bg-purple-600 text-white text-sm font-semibold hover:bg-purple-500 transition-colors disabled:bg-purple-800"
-                  >
-                    {isVerifyingGmail ? 'Verifying...' : 'Connect Gmail'}
-                  </button>
                 </div>
               ) : (
                 <div className="space-y-4">
@@ -793,12 +737,10 @@ const SettingsTab = () => {
                       </div>
                     </div>
                   )}
-                  <button
-                    onClick={handleRemoveGmailAppPassword}
-                    className="w-full py-2 rounded-lg border border-red-500/30 text-red-400 text-sm hover:bg-red-500/10 transition-colors"
-                  >
-                    Disconnect Gmail
-                  </button>
+                  <p className="text-[10px] text-gray-400 leading-relaxed">
+                    Gmail is connected in your OutMail desktop app. To disconnect, open the
+                    desktop app and use &quot;Disconnect Gmail&quot; there.
+                  </p>
                 </div>
               )}
             </div>

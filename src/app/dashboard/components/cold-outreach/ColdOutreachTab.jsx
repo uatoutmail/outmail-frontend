@@ -74,7 +74,7 @@ const ColdOutreachTab = () => {
     }
 
     if (!user?.hasGmailConnected) {
-      toast.error('Please connect your Gmail App Password in Settings first');
+      toast.error('Please connect your Gmail in the OutMail desktop app first');
       return;
     }
 
@@ -86,7 +86,7 @@ const ColdOutreachTab = () => {
         companyEmailId: contact.id,
       });
 
-      toast.success(`Outreach triggered successfully! An email will be sent to ${company.name} shortly.`);
+      toast.success(`Outreach queued! Your desktop app will send the email to ${company.name} within a minute while it's online.`);
     } catch (error) {
       console.error('Error running outreach:', error);
       toast.error(error.response?.data?.error || 'An error occurred while triggering the outreach.');

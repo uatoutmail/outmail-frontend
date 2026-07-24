@@ -24,7 +24,7 @@ const CustomOutreach = ({ resumes, hasResumes, user }) => {
     }
 
     if (!user?.hasGmailConnected) {
-      toast.error('Please connect your Gmail App Password in Settings first.');
+      toast.error('Please connect your Gmail in the OutMail desktop app first.');
       return;
     }
 
@@ -37,7 +37,7 @@ const CustomOutreach = ({ resumes, hasResumes, user }) => {
         jobDescription: customJobDescription,
       });
 
-      toast.success(`Custom outreach sent successfully! An email will be sent to ${customTargetEmail} shortly.`);
+      toast.success(`Custom outreach queued! Your desktop app will send it to ${customTargetEmail} within a minute while it's online.`);
 
       setCustomTargetEmail('');
       setCustomJobDescription('');
