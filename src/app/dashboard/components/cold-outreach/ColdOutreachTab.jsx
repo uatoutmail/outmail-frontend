@@ -24,6 +24,23 @@ const ColdOutreachTab = () => {
   // My Outreach (queued + sent, all lanes) — user-scoped history
   const [outreachHistory, setOutreachHistory] = useState(null);
 
+  // Agent status strip (OUT-150): live view of the thing that actually sends.
+  const [agentStatus, setAgentStatus] = useState(null);
+  useEffect(() => {
+    let timer;
+    const fetchAgent = async () => {
+      try {
+        const res = await api.get('/api/agent/status');
+        setAgentStatus(res.data);
+      } catch (error) {
+        console.warn('Error fetching agent status:', error.message);
+      }
+    };
+    fetchAgent();
+    timer = setInterval(fetchAgent, 30000);
+    return () => clearInterval(timer);
+  }, []);
+
   const fetchOutreachHistory = useCallback(async () => {
     try {
       const response = await api.get('/api/outreach/status');
@@ -137,6 +154,29 @@ const ColdOutreachTab = () => {
           <span className="text-sm text-gray-400 mt-2 sm:mt-0">
             {pagination.total} companies found
           </span>
+        )}
+      </div>
+
+      {/* Agent status strip (OUT-150) */}
+      <div className="flex flex-wrap items-center gap-x-5 gap-y-2 mb-6 px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-xs">
+        <span className={`flex items-center gap-1.5 font-semibold ${agentStatus?.online ? 'text-green-400' : 'text-red-400'}`}>
+          <span className={`w-2 h-2 rounded-full ${agentStatus?.online ? 'bg-green-400' : 'bg-red-400'}`}></span>
+          Desktop app {agentStatus?.online ? 'online' : 'offline'}
+        </span>
+        <span className={`flex items-center gap-1.5 ${user?.hasGmailConnected ? 'text-gray-300' : 'text-yellow-400'}`}>
+          <Mail size={12} />
+          Gmail {user?.hasGmailConnected ? 'connected' : 'not connected'}
+        </span>
+        {agentStatus?.usage && (
+          <span className="text-gray-300">
+            Today: <span className="font-semibold text-white">{agentStatus.usage.dailyUsed}/{agentStatus.usage.dailyLimit}</span> sent
+          </span>
+        )}
+        {[0, 6].includes(new Date().getDay()) && (
+          <span className="text-blue-300">Weekend — sending resumes Monday</span>
+        )}
+        {!agentStatus?.online && (
+          <span className="text-gray-400">Open the OutMail desktop app to send queued emails (link it from the Overview page).</span>
         )}
       </div>
 
