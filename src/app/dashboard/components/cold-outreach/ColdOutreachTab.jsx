@@ -4,6 +4,7 @@ import { api } from "@/lib/api";
 import { toast } from "sonner";
 import { useAuth } from "@/context/AuthContext";
 import CustomOutreach from "./CustomOutreach";
+import WeeklyPlan from "./WeeklyPlan";
 
 const ColdOutreachTab = () => {
   const { user } = useAuth();
@@ -171,6 +172,17 @@ const ColdOutreachTab = () => {
         >
           My Outreach
           {activeSubTab === "history" && (
+            <div className="absolute bottom-0 left-0 right-0 h-[2px] bg-purple-500 rounded-full" />
+          )}
+        </button>
+        <button
+          onClick={() => setActiveSubTab("plan")}
+          className={`pb-3 font-semibold text-lg relative transition-colors ${
+            activeSubTab === "plan" ? "text-purple-400" : "text-gray-400 hover:text-white"
+          }`}
+        >
+          Weekly Plan
+          {activeSubTab === "plan" && (
             <div className="absolute bottom-0 left-0 right-0 h-[2px] bg-purple-500 rounded-full" />
           )}
         </button>
@@ -385,6 +397,8 @@ const ColdOutreachTab = () => {
       {activeSubTab === "custom" && (
         <CustomOutreach resumes={resumes} hasResumes={hasResumes} user={user} />
       )}
+
+      {activeSubTab === "plan" && <WeeklyPlan />}
 
       {activeSubTab === "history" && (
         <div className="mt-6 mb-10 bg-white/10 backdrop-blur-md rounded-2xl shadow-xl p-6 border border-white/10">
