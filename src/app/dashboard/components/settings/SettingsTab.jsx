@@ -717,7 +717,7 @@ const SettingsTab = () => {
                   {emailUsage && (
                     <div className="p-4 rounded-xl bg-white/5 border border-white/10">
                       <h3 className="text-sm font-semibold text-white mb-3">Email Sending Limits</h3>
-                      <div className="mb-3">
+                      <div>
                         <div className="flex justify-between items-center mb-1.5">
                           <span className="text-xs text-gray-400">Daily Usage</span>
                           <span className="text-xs font-medium text-white">{emailUsage.dailyUsed} / {emailUsage.dailyLimit}</span>
@@ -725,15 +725,9 @@ const SettingsTab = () => {
                         <div className="w-full bg-gray-700/50 rounded-full h-2">
                           <div className={`h-2 rounded-full ${emailUsage.dailyUsed >= emailUsage.dailyLimit ? 'bg-red-500' : 'bg-purple-500'}`} style={{ width: `${Math.min(100, (emailUsage.dailyUsed / emailUsage.dailyLimit) * 100)}%` }}></div>
                         </div>
-                      </div>
-                      <div>
-                        <div className="flex justify-between items-center mb-1.5">
-                          <span className="text-xs text-gray-400">Hourly Usage</span>
-                          <span className="text-xs font-medium text-white">{emailUsage.hourlyUsed} / {emailUsage.hourlyLimit}</span>
-                        </div>
-                        <div className="w-full bg-gray-700/50 rounded-full h-2">
-                          <div className={`h-2 rounded-full ${emailUsage.hourlyUsed >= emailUsage.hourlyLimit ? 'bg-red-500' : 'bg-blue-500'}`} style={{ width: `${Math.min(100, (emailUsage.hourlyUsed / emailUsage.hourlyLimit) * 100)}%` }}></div>
-                        </div>
+                        <p className="text-[10px] text-gray-500 mt-2 leading-relaxed">
+                          Your daily limit starts small and grows automatically as you send consistently — this protects your Gmail account&apos;s reputation.
+                        </p>
                       </div>
                     </div>
                   )}
