@@ -263,8 +263,16 @@ const ColdOutreachTab = () => {
                 <div>
                   <h4 className="text-yellow-400 font-semibold mb-1">Gmail Connection Required</h4>
                   <p className="text-sm text-yellow-400/80">
-                    Connect your Gmail in the OutMail desktop app before sending outreach emails — your app password stays on your own computer.
+                    Connect your Gmail in the Outmail desktop app before sending outreach emails — your app password stays on your own computer.
                   </p>
+                  {typeof window !== "undefined" && typeof window.outmail?.openAgentSettings === "function" && (
+                    <button
+                      onClick={() => window.outmail.openAgentSettings()}
+                      className="mt-3 px-4 py-2 rounded-lg bg-purple-600 hover:bg-purple-700 text-white text-xs font-semibold transition"
+                    >
+                      Open Agent &amp; Gmail Settings
+                    </button>
+                  )}
                 </div>
               </div>
             )}

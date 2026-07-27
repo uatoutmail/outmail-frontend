@@ -47,6 +47,14 @@ const SettingsTab = () => {
   const [gmailStatus, setGmailStatus] = useState({ connected: false, email: "" });
   const [emailUsage, setEmailUsage] = useState(null);
 
+  // True when this page runs inside the Outmail desktop shell (its preload
+  // exposes window.outmail). The Gmail app password is only ever entered in
+  // the app's NATIVE settings panel — this lets us open it from here.
+  const [canOpenAgentSettings, setCanOpenAgentSettings] = useState(false);
+  useEffect(() => {
+    setCanOpenAgentSettings(typeof window !== "undefined" && typeof window.outmail?.openAgentSettings === "function");
+  }, []);
+
   const [isLoading, setIsLoading] = useState(false);
   const [lastSaveTime, setLastSaveTime] = useState(0);
   const [isDeleteAttachmentConfirmOpen, setIsDeleteAttachmentConfirmOpen] = useState(false);
@@ -695,13 +703,20 @@ const SettingsTab = () => {
                 <div className="space-y-4">
                   <div className="p-3 rounded-lg bg-blue-500/10 border border-blue-500/20 mb-4">
                     <p className="text-[10px] text-blue-300 leading-relaxed">
-                      Emails are sent by the <strong>OutMail desktop app</strong> from your own computer.
-                      Your Gmail app password is stored only on your machine — it never touches OutMail&apos;s servers.
+                      Emails are sent by the <strong>Outmail desktop app</strong> from your own computer.
+                      Your Gmail app password is stored only on your machine — it never touches Outmail&apos;s servers.
                     </p>
-                    <p className="text-[10px] text-blue-300 leading-relaxed mt-2">
-                      To connect: open the OutMail desktop app, link it with a code from the
-                      &quot;Link Desktop Agent&quot; panel, then add your Gmail app password there.
-                    </p>
+                    {canOpenAgentSettings ? (
+                      <p className="text-[10px] text-blue-300 leading-relaxed mt-2">
+                        Use the button below to open the app&apos;s settings panel and enter your
+                        Gmail app password there.
+                      </p>
+                    ) : (
+                      <p className="text-[10px] text-blue-300 leading-relaxed mt-2">
+                        To connect: open the Outmail desktop app and enter your Gmail app password
+                        in <strong>Agent &amp; Gmail Settings</strong> (menu bar, or Cmd/Ctrl+,).
+                      </p>
+                    )}
                     <a
                       href="https://myaccount.google.com/apppasswords"
                       target="_blank"
@@ -711,6 +726,14 @@ const SettingsTab = () => {
                       Create a Gmail App Password <ExternalLink size={10} />
                     </a>
                   </div>
+                  {canOpenAgentSettings && (
+                    <button
+                      onClick={() => window.outmail.openAgentSettings()}
+                      className="w-full py-2.5 rounded-lg bg-purple-600 hover:bg-purple-700 text-white text-xs font-semibold transition"
+                    >
+                      Open Agent &amp; Gmail Settings
+                    </button>
+                  )}
                 </div>
               ) : (
                 <div className="space-y-4">
@@ -732,9 +755,17 @@ const SettingsTab = () => {
                     </div>
                   )}
                   <p className="text-[10px] text-gray-400 leading-relaxed">
-                    Gmail is connected in your OutMail desktop app. To disconnect, open the
-                    desktop app and use &quot;Disconnect Gmail&quot; there.
+                    Gmail is connected in your Outmail desktop app. To disconnect, open
+                    <strong> Agent &amp; Gmail Settings</strong> and use &quot;Disconnect Gmail&quot; there.
                   </p>
+                  {canOpenAgentSettings && (
+                    <button
+                      onClick={() => window.outmail.openAgentSettings()}
+                      className="w-full py-2.5 rounded-lg bg-white/10 hover:bg-white/15 border border-white/15 text-white text-xs font-semibold transition"
+                    >
+                      Open Agent &amp; Gmail Settings
+                    </button>
+                  )}
                 </div>
               )}
             </div>
