@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useCallback } from "react";
-import { CalendarDays, CheckCircle2, ShieldCheck, Sparkles, Briefcase } from "lucide-react";
+import { CalendarDays, CheckCircle2, ShieldCheck, Sparkles, Briefcase, FileText } from "lucide-react";
 import { api } from "@/lib/api";
 import { toast } from "sonner";
 
@@ -196,6 +196,12 @@ const WeeklyPlan = () => {
                             <p className="text-xs text-gray-400 mt-0.5 flex items-start gap-1">
                               <Sparkles size={12} className="text-purple-400/70 mt-0.5 flex-shrink-0" />
                               <span className="truncate">{row.reason}</span>
+                            </p>
+                          )}
+                          {row.resume_name && (
+                            <p className="text-[11px] text-gray-500 mt-0.5 flex items-center gap-1">
+                              <FileText size={11} className="text-gray-500 flex-shrink-0" />
+                              <span className="truncate">Sending {row.resume_name}</span>
                             </p>
                           )}
                         </div>
