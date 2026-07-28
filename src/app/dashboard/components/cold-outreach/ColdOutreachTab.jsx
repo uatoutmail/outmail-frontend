@@ -108,7 +108,7 @@ const ColdOutreachTab = () => {
     }
 
     if (!user?.hasGmailConnected) {
-      toast.error('Please connect your Gmail in the OutMail desktop app first');
+      toast.error('Please connect your Gmail in the Outmail desktop app first');
       return;
     }
 
@@ -176,7 +176,7 @@ const ColdOutreachTab = () => {
           <span className="text-blue-300">Weekend — sending resumes Monday</span>
         )}
         {!agentStatus?.online && (
-          <span className="text-gray-400">Open the OutMail desktop app to send queued emails (link it from the Overview page).</span>
+          <span className="text-gray-400">Open the Outmail desktop app to send queued emails (link it from the Overview page).</span>
         )}
       </div>
 
