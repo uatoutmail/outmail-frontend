@@ -14,6 +14,25 @@ const MODES = [
   { value: "auto", label: "Automatic", hint: "The plan sends without asking" },
 ];
 
+// Mailbox-validation state per recipient (OUT-176). 'unknown' means the
+// validator hasn't run for this address — we say so plainly rather than
+// implying the mailbox was checked.
+const VALIDATION_UI = {
+  valid: { label: "Verified", className: "bg-green-500/10 border-green-500/20 text-green-300" },
+  risky: { label: "Risky", className: "bg-amber-500/10 border-amber-500/20 text-amber-300" },
+  invalid: { label: "Invalid", className: "bg-red-500/10 border-red-500/20 text-red-300" },
+  unknown: { label: "Validation pending", className: "bg-white/5 border-white/10 text-gray-400" },
+};
+
+const ValidationBadge = ({ status }) => {
+  const ui = VALIDATION_UI[status] || VALIDATION_UI.unknown;
+  return (
+    <span className={`px-1.5 py-0.5 rounded text-[10px] border ${ui.className}`}>
+      {ui.label}
+    </span>
+  );
+};
+
 const WeeklyPlan = () => {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -186,6 +205,7 @@ const WeeklyPlan = () => {
                               {Math.round(row.confidence_score * 100)}% match
                             </span>
                           )}
+                          <ValidationBadge status={row.validation_status} />
                           <span className="text-[11px] text-gray-500 capitalize">{row.status}</span>
                         </div>
                       </div>

@@ -24,7 +24,7 @@ const CustomOutreach = ({ resumes, hasResumes, user }) => {
     }
 
     if (!user?.hasGmailConnected) {
-      toast.error('Please connect your Gmail in the OutMail desktop app first.');
+      toast.error('Please connect your Gmail in the Outmail desktop app first.');
       return;
     }
 

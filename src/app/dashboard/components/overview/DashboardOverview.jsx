@@ -7,6 +7,7 @@ import HiringSpotlight from "./HiringSpotlight";
 import RecentOutreachFeed from "./RecentOutreachFeed";
 import HotHiringNews from "./HotHiringNews";
 import MailingAgentPanel from "./MailingAgentPanel";
+import WeeklyIntelligenceCard from "./WeeklyIntelligenceCard";
 
 const DashboardOverview = () => {
   const { user } = useAuth();
@@ -49,7 +50,13 @@ const DashboardOverview = () => {
         </div>
       </div>
 
-      {/* Row 3: Mailing Agent (desktop sending progress) full width */}
+      {/* Row 3: This Week's Market Read — the weekly intelligence that drives
+          each student's outreach batches (OUT-177) */}
+      <div style={{ minHeight: '260px' }}>
+        <WeeklyIntelligenceCard />
+      </div>
+
+      {/* Row 4: Mailing Agent (desktop sending progress) full width */}
       <div style={{ minHeight: '280px' }}>
         <MailingAgentPanel />
       </div>

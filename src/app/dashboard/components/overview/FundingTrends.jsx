@@ -12,54 +12,57 @@ import {
   Cell
 } from 'recharts';
 import { TrendingUp, MoreHorizontal } from "lucide-react";
+import { api } from "@/lib/api";
 
+// Palette reused across industries so the chart stays on-brand regardless of
+// which industries actually appear in the data.
+const INDUSTRY_COLORS = ['#8B5CF6', '#06B6D4', '#10B981', '#F59E0B', '#EF4444', '#A855F7', '#3B82F6'];
+
+// Real funding data (OUT-173): MarketSignal rows of kind 'funding' produced by
+// the funding ingestion adapter, aggregated by industry. Amounts are only what
+// was parsed from real headlines — nothing is invented.
 const FundingTrends = ({ selectedPeriod, onPeriodChange }) => {
   const [fundingData, setFundingData] = useState([]);
-  const [loading, setLoading] = useState(false);
+  const [totals, setTotals] = useState({ events: 0, amountM: 0 });
+  const [loading, setLoading] = useState(true);
   const [viewType, setViewType] = useState('bar');
 
-  const fetchFundingData = async (period) => {
-    setLoading(true);
-    const mockData = {
-      '7': [
-        { industry: 'FinTech', amount: 420, color: '#8B5CF6' },
-        { industry: 'HealthTech', amount: 380, color: '#06B6D4' },
-        { industry: 'EdTech', amount: 290, color: '#10B981' },
-        { industry: 'CleanTech', amount: 180, color: '#F59E0B' },
-        { industry: 'AI/ML', amount: 350, color: '#EF4444' },
-        { industry: 'SaaS', amount: 410, color: '#8B5CF6' }
-      ],
-      '15': [
-        { industry: 'FinTech', amount: 650, color: '#8B5CF6' },
-        { industry: 'HealthTech', amount: 580, color: '#06B6D4' },
-        { industry: 'EdTech', amount: 390, color: '#10B981' },
-        { industry: 'CleanTech', amount: 280, color: '#F59E0B' },
-        { industry: 'AI/ML', amount: 520, color: '#EF4444' },
-        { industry: 'SaaS', amount: 610, color: '#8B5CF6' }
-      ],
-      '30': [
-        { industry: 'FinTech', amount: 980, color: '#8B5CF6' },
-        { industry: 'HealthTech', amount: 840, color: '#06B6D4' },
-        { industry: 'EdTech', amount: 620, color: '#10B981' },
-        { industry: 'CleanTech', amount: 450, color: '#F59E0B' },
-        { industry: 'AI/ML', amount: 780, color: '#EF4444' },
-        { industry: 'SaaS', amount: 890, color: '#8B5CF6' }
-      ]
-    };
-    
-    setFundingData(mockData[period] || mockData['7']);
-    setLoading(false);
-  };
-
   useEffect(() => {
-    fetchFundingData(selectedPeriod);
+    let active = true;
+    const fetchFundingData = async () => {
+      setLoading(true);
+      try {
+        const res = await api.get(`/api/news/funding-trends?days=${selectedPeriod || 7}`);
+        if (!active) return;
+        const industries = (res.data?.industries || []).map((row, i) => ({
+          industry: row.industry,
+          amount: row.amountM,
+          events: row.events,
+          color: INDUSTRY_COLORS[i % INDUSTRY_COLORS.length],
+        }));
+        setFundingData(industries);
+        setTotals({ events: res.data?.totalEvents || 0, amountM: res.data?.totalAmountM || 0 });
+      } catch (err) {
+        console.error('[FundingTrends] Failed to load:', err);
+        if (active) {
+          setFundingData([]);
+          setTotals({ events: 0, amountM: 0 });
+        }
+      } finally {
+        if (active) setLoading(false);
+      }
+    };
+    fetchFundingData();
+    return () => {
+      active = false;
+    };
   }, [selectedPeriod]);
 
-  const formatAmount = (amount) => {
-    if (amount >= 1000) {
-      return `$${(amount / 1000).toFixed(1)}T`;
-    }
-    return `$${amount}B`;
+  // Values are in millions USD as parsed from headlines.
+  const formatAmount = (amountM) => {
+    if (!amountM) return '$0';
+    if (amountM >= 1000) return `$${(amountM / 1000).toFixed(1)}B`;
+    return `$${Math.round(amountM)}M`;
   };
 
   const CustomTooltip = ({ active, payload, label }) => {
@@ -80,8 +83,6 @@ const FundingTrends = ({ selectedPeriod, onPeriodChange }) => {
     .sort((a, b) => b.amount - a.amount)
     .slice(0, 3);
 
-  const totalFunding = fundingData.reduce((acc, d) => acc + d.amount, 0);
-
   return (
     <div className="bg-white/10 backdrop-blur-md rounded-xl p-3 text-white shadow-xl border border-white/20 h-full flex flex-col">
       <div className="flex justify-between items-start mb-2">
@@ -89,11 +90,14 @@ const FundingTrends = ({ selectedPeriod, onPeriodChange }) => {
           <h3 className="text-sm font-semibold flex items-center gap-1.5">
             <TrendingUp size={14} className="text-green-400" />
             Industry Funding Trends
-            <span className="text-[9px] px-1.5 py-0.5 rounded-full bg-white/10 text-white/50 font-semibold uppercase tracking-wide">Sample</span>
           </h3>
           <p className="text-[10px] text-white/50 mt-0.5">
-            Last {selectedPeriod} days · Total&nbsp;
-            <span className="text-green-400 font-bold">{formatAmount(totalFunding)}</span>
+            Last {selectedPeriod} days · {totals.events} round{totals.events === 1 ? '' : 's'}
+            {totals.amountM > 0 && (
+              <>
+                {' '}· <span className="text-green-400 font-bold">{formatAmount(totals.amountM)}</span> disclosed
+              </>
+            )}
           </p>
         </div>
         <button
@@ -108,6 +112,15 @@ const FundingTrends = ({ selectedPeriod, onPeriodChange }) => {
       {loading ? (
         <div className="flex-1 flex items-center justify-center">
           <div className="animate-spin rounded-full h-8 w-8 border-4 border-white/20 border-t-white"></div>
+        </div>
+      ) : fundingData.length === 0 ? (
+        <div className="flex-1 flex flex-col items-center justify-center gap-2 py-6">
+          <TrendingUp size={26} className="text-white/20" />
+          <p className="text-xs text-white/30 text-center">
+            No funding rounds tracked in this window.
+            <br />
+            Signals appear as the daily ingestion runs.
+          </p>
         </div>
       ) : (
         <>

@@ -1,6 +1,6 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import { Monitor, CheckCircle2, XCircle, Activity, Inbox, KeyRound } from "lucide-react";
+import { Monitor, CheckCircle2, XCircle, Inbox, KeyRound } from "lucide-react";
 import { api } from "@/lib/api";
 
 /** Convert an ISO timestamp to a relative "X ago" label. */
@@ -44,7 +44,7 @@ const MailingAgentPanel = () => {
   const total = today.sent + today.waiting + today.queued + today.failed;
   const progress = total > 0 ? Math.round((today.sent / total) * 100) : 0;
   const online = !!status?.online;
-  const usage = status?.usage || { dailyUsed: 0, dailyLimit: 50 };
+  const usage = status?.usage || { dailyUsed: 0, dailyLimit: null };
   const logs = status?.logs || [];
 
   const generateLinkCode = async () => {
@@ -68,7 +68,12 @@ const MailingAgentPanel = () => {
             <Monitor size={13} className="text-purple-400" />
             Mailing Agent
           </h3>
-          <p className="text-[11px] text-white/40">Sends from your desktop</p>
+          <p className="text-[11px] text-white/40">
+            Sends from your desktop
+            {status?.lastSeen && (
+              <span className="text-white/30"> · last check-in {timeAgo(status.lastSeen)}</span>
+            )}
+          </p>
         </div>
         <span
           className={`flex items-center gap-1.5 text-[11px] font-medium px-2 py-1 rounded-full border ${
@@ -106,7 +111,7 @@ const MailingAgentPanel = () => {
             <span className="text-red-400">{today.failed} failed</span>
           )}
           <span className="ml-auto">
-            Daily limit: {usage.dailyUsed}/{usage.dailyLimit}
+            Daily limit: {usage.dailyLimit ? `${usage.dailyUsed}/${usage.dailyLimit}` : "—"}
           </span>
         </div>
       </div>
@@ -117,7 +122,7 @@ const MailingAgentPanel = () => {
           {linkCode ? (
             <div className="text-center">
               <p className="text-[11px] text-white/50 mb-1">
-                Enter this code in the OutMail desktop app:
+                Enter this code in the Outmail desktop app:
               </p>
               <p className="text-lg font-bold tracking-widest text-purple-300">{linkCode}</p>
               <p className="text-[10px] text-white/30 mt-1">
@@ -147,14 +152,17 @@ const MailingAgentPanel = () => {
           <div className="flex flex-col items-center justify-center h-full gap-2 py-6">
             <Inbox size={28} className="text-white/20" />
             <p className="text-xs text-white/30 text-center">
-              No agent activity yet.
+              No sends yet.
               <br />
-              Open the OutMail desktop app to start sending.
+              {online
+                ? "Your agent is connected and waiting for today's batch."
+                : "Open the Outmail desktop app to start sending."}
             </p>
           </div>
         ) : (
+          /* Sends and failures only — heartbeats are liveness, not activity
+             (OUT-174); the header shows the single last-check-in line. */
           logs.map((log) => {
-            const isSend = log.worker === "agent/send-email";
             const ok = log.status === "success";
             return (
               <div
@@ -162,9 +170,7 @@ const MailingAgentPanel = () => {
                 className="flex items-center gap-2.5 py-1.5 border-b border-white/5 last:border-0"
               >
                 <div className="w-6 h-6 rounded-full bg-white/5 flex items-center justify-center flex-shrink-0">
-                  {!isSend ? (
-                    <Activity size={11} className="text-cyan-400" />
-                  ) : ok ? (
+                  {ok ? (
                     <CheckCircle2 size={11} className="text-green-400" />
                   ) : (
                     <XCircle size={11} className="text-red-400" />
@@ -172,11 +178,9 @@ const MailingAgentPanel = () => {
                 </div>
                 <div className="flex-1 min-w-0">
                   <p className="text-xs text-white truncate">
-                    {isSend
-                      ? ok
-                        ? `Sent to ${log.recipient || "recipient"}`
-                        : `Failed: ${log.recipient || "recipient"}`
-                      : "Agent heartbeat"}
+                    {ok
+                      ? `Sent to ${log.recipient || "recipient"}`
+                      : `Failed: ${log.recipient || "recipient"}`}
                   </p>
                   {log.error && (
                     <p className="text-[10px] text-red-400/70 truncate">{log.error}</p>
