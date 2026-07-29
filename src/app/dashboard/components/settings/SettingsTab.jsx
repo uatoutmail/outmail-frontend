@@ -243,6 +243,25 @@ const SettingsTab = () => {
       }
     };
     fetchStatus();
+
+    // Refetch the moment the desktop app reports a credential change, and when
+    // the user returns from the native settings panel — otherwise this card
+    // keeps showing "not connected" until a full page reload.
+    // (/api/user/gmail/status is capped at 20 req/h, so no polling here.)
+    let unsubscribe;
+    if (typeof window !== "undefined" && typeof window.outmail?.onAgentEvent === "function") {
+      unsubscribe = window.outmail.onAgentEvent((payload) => {
+        if (typeof payload?.credentialConnected === "boolean") {
+          setGmailStatus((prev) => ({ ...prev, connected: payload.credentialConnected }));
+        }
+      });
+    }
+    const onFocus = () => fetchStatus();
+    window.addEventListener("focus", onFocus);
+    return () => {
+      if (typeof unsubscribe === "function") unsubscribe();
+      window.removeEventListener("focus", onFocus);
+    };
   }, []);
 
   const handleChange = (e) => {

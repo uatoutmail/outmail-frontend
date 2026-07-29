@@ -3,7 +3,7 @@ import { Mail, AlertTriangle, ChevronRight, Send, FileText } from "lucide-react"
 import { api } from "@/lib/api";
 import { toast } from "sonner";
 
-const CustomOutreach = ({ resumes, hasResumes, user }) => {
+const CustomOutreach = ({ resumes, hasResumes, user, gmailConnected }) => {
   const [customTargetEmail, setCustomTargetEmail] = useState("");
   const [customSelectedResumeId, setCustomSelectedResumeId] = useState("");
   const [customJobDescription, setCustomJobDescription] = useState("");
@@ -23,7 +23,7 @@ const CustomOutreach = ({ resumes, hasResumes, user }) => {
       return;
     }
 
-    if (!user?.hasGmailConnected) {
+    if (!gmailConnected) {
       toast.error('Please connect your Gmail in the Outmail desktop app first.');
       return;
     }
@@ -76,7 +76,7 @@ const CustomOutreach = ({ resumes, hasResumes, user }) => {
           </div>
         )}
 
-        {!user?.hasGmailConnected && (
+        {!gmailConnected && (
           <div className="p-4 mb-6 rounded-lg bg-yellow-500/10 border border-yellow-500/20 flex items-start gap-3">
             <AlertTriangle size={18} className="text-yellow-400 mt-0.5 flex-shrink-0" />
             <div>
@@ -146,11 +146,11 @@ const CustomOutreach = ({ resumes, hasResumes, user }) => {
 
           <button
             type="submit"
-            disabled={isCustomSending || !hasResumes || !user?.hasGmailConnected}
+            disabled={isCustomSending || !hasResumes || !gmailConnected}
             className={`flex items-center justify-center gap-2 px-8 py-3.5 rounded-xl font-semibold shadow-md transition-all duration-300 w-full sm:w-auto ${
               isCustomSending
                 ? 'bg-purple-600/50 cursor-not-allowed border border-purple-500/30 text-white/70'
-                : !hasResumes || !user?.hasGmailConnected
+                : !hasResumes || !gmailConnected
                 ? 'bg-gray-800 text-gray-500 cursor-not-allowed border border-gray-700'
                 : 'bg-white/10 hover:bg-purple-600 border border-white/10 hover:border-purple-500 text-white hover:shadow-lg hover:shadow-purple-500/20'
             }`}

@@ -3,11 +3,15 @@ import { Mail, Zap, AlertTriangle, Building2, MapPin, Briefcase, ChevronRight, C
 import { api } from "@/lib/api";
 import { toast } from "sonner";
 import { useAuth } from "@/context/AuthContext";
+import { useGmailConnected } from "@/hooks/useGmailConnected";
 import CustomOutreach from "./CustomOutreach";
 import WeeklyPlan from "./WeeklyPlan";
 
 const ColdOutreachTab = () => {
   const { user } = useAuth();
+  // Live Gmail state (OUT-170 finding): the JWT's hasGmailConnected is frozen
+  // at login, so connecting Gmail in the desktop app never unblocked sending.
+  const { gmailConnected } = useGmailConnected();
   const [companies, setCompanies] = useState([]);
   const [pagination, setPagination] = useState(null);
   const [page, setPage] = useState(1);
@@ -107,7 +111,7 @@ const ColdOutreachTab = () => {
       return;
     }
 
-    if (!user?.hasGmailConnected) {
+    if (!gmailConnected) {
       toast.error('Please connect your Gmail in the Outmail desktop app first');
       return;
     }
@@ -163,9 +167,9 @@ const ColdOutreachTab = () => {
           <span className={`w-2 h-2 rounded-full ${agentStatus?.online ? 'bg-green-400' : 'bg-red-400'}`}></span>
           Desktop app {agentStatus?.online ? 'online' : 'offline'}
         </span>
-        <span className={`flex items-center gap-1.5 ${user?.hasGmailConnected ? 'text-gray-300' : 'text-yellow-400'}`}>
+        <span className={`flex items-center gap-1.5 ${gmailConnected ? 'text-gray-300' : 'text-yellow-400'}`}>
           <Mail size={12} />
-          Gmail {user?.hasGmailConnected ? 'connected' : 'not connected'}
+          Gmail {gmailConnected ? 'connected' : 'not connected'}
         </span>
         {agentStatus?.usage && (
           <span className="text-gray-300">
@@ -257,7 +261,7 @@ const ColdOutreachTab = () => {
               </div>
             )}
 
-            {!user?.hasGmailConnected && (
+            {!gmailConnected && (
               <div className="p-4 mb-6 rounded-lg bg-yellow-500/10 border border-yellow-500/20 flex items-start gap-3">
                 <AlertTriangle size={18} className="text-yellow-400 mt-0.5 flex-shrink-0" />
                 <div>
@@ -343,11 +347,11 @@ const ColdOutreachTab = () => {
                       ) : (
                         <button
                           onClick={() => handleRunTestPipeline(company)}
-                          disabled={isTestLoading || !hasResumes || !contact?.email || !user?.hasGmailConnected}
+                          disabled={isTestLoading || !hasResumes || !contact?.email || !gmailConnected}
                           className={`flex items-center justify-center gap-2 px-6 py-2.5 rounded-lg font-semibold shadow-md transition-all duration-300 w-full md:w-auto ${
                             isTestLoading && selectedCompany?.id === company.id
                               ? 'bg-purple-600/50 cursor-not-allowed border border-purple-500/30 text-white/70'
-                              : !hasResumes || isTestLoading || !contact?.email || !user?.hasGmailConnected
+                              : !hasResumes || isTestLoading || !contact?.email || !gmailConnected
                               ? 'bg-gray-800 text-gray-500 cursor-not-allowed border border-gray-700'
                               : 'bg-white/10 hover:bg-purple-600 border border-white/10 hover:border-purple-500 text-white hover:shadow-lg hover:shadow-purple-500/20'
                           }`}
@@ -443,7 +447,7 @@ const ColdOutreachTab = () => {
       )}
 
       {activeSubTab === "custom" && (
-        <CustomOutreach resumes={resumes} hasResumes={hasResumes} user={user} />
+        <CustomOutreach resumes={resumes} hasResumes={hasResumes} user={user} gmailConnected={gmailConnected} />
       )}
 
       {activeSubTab === "plan" && <WeeklyPlan />}
