@@ -835,12 +835,25 @@ const SettingsTab = () => {
                     <p className="text-[10px] text-white/40 mt-1">Intelligent daily outreach</p>
                   </div>
                   <button
-                    onClick={() => {
+                    onClick={async () => {
                       if (!gmailStatus.connected && !profileSettings.autoMailingEnabled) {
                         toast.error('Please connect your Gmail account before enabling Auto-Mailing');
                         return;
                       }
-                      setProfileSettings(prev => ({ ...prev, autoMailingEnabled: !prev.autoMailingEnabled }));
+                      // Persist immediately. This used to only set local state,
+                      // so the switch looked committed while the change was
+                      // silently discarded unless you also hit Save — and this
+                      // is the setting that decides whether the weekly planner
+                      // includes you at all.
+                      const next = !profileSettings.autoMailingEnabled;
+                      setProfileSettings(prev => ({ ...prev, autoMailingEnabled: next }));
+                      const result = await updateUser({ autoMailingEnabled: next });
+                      if (result?.success) {
+                        toast.success(next ? 'Auto-mailing enabled' : 'Auto-mailing disabled');
+                      } else {
+                        setProfileSettings(prev => ({ ...prev, autoMailingEnabled: !next }));
+                        toast.error('Could not update auto-mailing: ' + (result?.error || 'unknown error'));
+                      }
                     }}
                     className={`relative flex-shrink-0 w-10 h-5 rounded-full transition-colors duration-200 ${
                       profileSettings.autoMailingEnabled ? 'bg-purple-600' : 'bg-white/20'
