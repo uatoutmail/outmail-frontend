@@ -25,6 +25,8 @@ const JobPreferences = ({ onSaved }) => {
   const [remotePref, setRemotePref] = useState("any");
   const [minSalary, setMinSalary] = useState("");
   const [targetRoles, setTargetRoles] = useState("");
+  const [statedYears, setStatedYears] = useState("");
+  const [inferredYears, setInferredYears] = useState(null);
 
   useEffect(() => {
     (async () => {
@@ -35,6 +37,8 @@ const JobPreferences = ({ onSaved }) => {
         setRemotePref(data.remotePref || "any");
         setMinSalary(data.minSalary ?? "");
         setTargetRoles((data.targetRoles || []).join(", "));
+        setStatedYears(data.statedYearsExperience ?? "");
+        setInferredYears(data.yearsExperience ?? null);
       } catch (e) {
         console.error("Failed to load profile:", e);
       } finally {
@@ -52,6 +56,7 @@ const JobPreferences = ({ onSaved }) => {
         remotePref,
         minSalary: minSalary === "" ? null : Number(minSalary),
         targetRoles: targetRoles.split(",").map((r) => r.trim()).filter(Boolean),
+        statedYearsExperience: statedYears === "" ? null : Number(statedYears),
       });
       setSavedAt(Date.now());
       if (onSaved) onSaved();
@@ -125,6 +130,28 @@ const JobPreferences = ({ onSaved }) => {
                       <option key={o} value={o} className="bg-[#1a1a1a] capitalize">{o}</option>
                     ))}
                   </select>
+                </div>
+                <div>
+                  {/* Drives which roles are shown at all — we infer it from the
+                      résumé, but only the user knows about career changes,
+                      gap years, or experience their résumé doesn't date. */}
+                  <label className="block text-xs font-bold uppercase tracking-wider text-white/40 mb-2">
+                    Years of experience
+                  </label>
+                  <input
+                    type="number"
+                    min="0"
+                    max="50"
+                    step="0.5"
+                    value={statedYears}
+                    onChange={(e) => setStatedYears(e.target.value)}
+                    placeholder={inferredYears != null ? `We estimated ${inferredYears} from your resume` : "e.g. 1.5"}
+                    className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-sm text-white placeholder:text-white/25 focus:outline-none focus:border-purple-500/50"
+                  />
+                  <p className="text-[11px] text-white/35 mt-1.5 leading-relaxed">
+                    Full-time work only — exclude internships. This decides which roles you&apos;re shown, so
+                    setting it yourself beats our estimate. Leave blank to keep using the estimate.
+                  </p>
                 </div>
                 <div>
                   <label className="block text-xs font-bold uppercase tracking-wider text-white/40 mb-2">Min salary (annual)</label>
