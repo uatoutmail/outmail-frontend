@@ -502,6 +502,10 @@ const ColdOutreachTab = () => {
                   sent: 'bg-green-500/10 border-green-500/20 text-green-400',
                   failed: 'bg-red-500/10 border-red-500/20 text-red-400',
                   expired: 'bg-gray-500/10 border-gray-500/20 text-gray-400',
+                  // Only ever appears outside production: the send guard
+                  // refused this recipient (OUT-188). Orange rather than red —
+                  // nothing went wrong, the environment did its job.
+                  blocked: 'bg-orange-500/10 border-orange-500/20 text-orange-400',
                 };
                 const statusLabel = {
                   waiting: 'Queued',
@@ -509,6 +513,7 @@ const ColdOutreachTab = () => {
                   sent: 'Sent',
                   failed: 'Failed',
                   expired: 'Expired',
+                  blocked: 'Blocked (test env)',
                 }[email.status] || email.status;
                 const laneLabel = { planned: 'Auto', single: 'Company', custom: 'Custom' }[email.lane] || email.lane;
                 const when = email.sent_at || email.created_at;
