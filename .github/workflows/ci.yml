@@ -70,3 +70,26 @@ jobs:
       - uses: gitleaks/gitleaks-action@v2
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  verify-release-ancestry:
+    name: verify release traces back to main
+    if: github.ref == 'refs/heads/release' || github.base_ref == 'release'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+      - name: Verify this commit shares ancestry with main
+        run: |
+          git fetch origin main --quiet
+          MAIN_SHA=$(git rev-parse origin/main)
+          HERE_SHA=$(git rev-parse HEAD)
+          echo "release commit: $HERE_SHA"
+          echo "main tip:       $MAIN_SHA"
+          if git merge-base --is-ancestor "$HERE_SHA" "$MAIN_SHA" || git merge-base --is-ancestor "$MAIN_SHA" "$HERE_SHA"; then
+            echo "PASS: this commit and main share direct ancestry (fast-forward, main merged in, or release cut from an earlier point in main's history)."
+          else
+            echo "::error::This commit on/into 'release' shares NO ancestry with 'main'. release must only ever be promoted FROM main (fast-forward or a real merge commit — not squash/rebase, which break this link). Investigate before anything is allowed to deploy from this commit."
+            exit 1
+          fi
