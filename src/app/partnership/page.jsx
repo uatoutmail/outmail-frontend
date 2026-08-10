@@ -402,7 +402,7 @@ export default function PartnershipPage() {
           </h2>
           <p className="text-white/60 mt-4 max-w-2xl mx-auto">
             One institutional plan, tailored to your student count and the modules you need.
-            Book a call and we'll put together a quote for your placement cell.
+            Book a call and we&apos;ll put together a quote for your placement cell.
           </p>
           <div className="mt-8 flex flex-col sm:flex-row justify-center gap-4">
             <BookCallButton onClick={() => setIsBookCallOpen(true)}>
@@ -453,7 +453,7 @@ export default function PartnershipPage() {
 
               <h3 className="font-syne text-2xl font-bold mb-3">Book a Call</h3>
               <p className="text-white/70 leading-relaxed mb-6">
-                Email us at contact@outmail.in with your institution and a preferred time, and we'll get in touch to set up a call.
+                Email us at contact@outmail.in with your institution and a preferred time, and we&apos;ll get in touch to set up a call.
               </p>
 
               <a

@@ -5,6 +5,18 @@ import JobPreferences from "./JobPreferences";
 import { toast } from "sonner";
 import { api } from "@/lib/api";
 
+// Hoisted out of JobOpeningsTab (react-hooks/static-components) - a
+// component declared inside another component's body is recreated on
+// every render.
+const TierHeader = ({ label, color, dot, count }) => (
+  <div className="flex items-center gap-3 mt-8 mb-4">
+    <span className={`w-2.5 h-2.5 rounded-full ${dot} shrink-0`}></span>
+    <span className={`text-xs font-black uppercase tracking-[0.2em] ${color}`}>{label}</span>
+    <span className="text-white/20 text-xs font-medium">({count})</span>
+    <div className="flex-1 h-px bg-white/5"></div>
+  </div>
+);
+
 const JobOpeningsTab = () => {
   const [jobOpenings, setJobOpenings] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -30,6 +42,8 @@ const JobOpeningsTab = () => {
   };
 
   useEffect(() => {
+    // fetchJobs is async and only calls setState after its awaits resolve.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     fetchJobs(1);
   }, []);
 
@@ -128,15 +142,6 @@ const JobOpeningsTab = () => {
   const highPriority = visibleJobs.filter(j => j.matchScore >= 70);
   const mediumPriority = visibleJobs.filter(j => j.matchScore >= 55 && j.matchScore < 70);
   const standard = visibleJobs.filter(j => j.matchScore < 55);
-
-  const TierHeader = ({ label, color, dot, count }) => (
-    <div className="flex items-center gap-3 mt-8 mb-4">
-      <span className={`w-2.5 h-2.5 rounded-full ${dot} shrink-0`}></span>
-      <span className={`text-xs font-black uppercase tracking-[0.2em] ${color}`}>{label}</span>
-      <span className="text-white/20 text-xs font-medium">({count})</span>
-      <div className="flex-1 h-px bg-white/5"></div>
-    </div>
-  );
 
   const cardProps = {
     getPriorityTier,

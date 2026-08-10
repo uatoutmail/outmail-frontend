@@ -1,5 +1,5 @@
 "use client";
-import { createContext, useContext, useState, useEffect } from 'react';
+import { createContext, useContext, useState, useEffect, useRef } from 'react';
 import { api } from '@/lib/api';
 import { toast } from 'sonner';
 
@@ -51,6 +51,15 @@ export const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [userRole, setUserRole] = useState(null); // kept only for compatibility with backend payload
+
+  // Read inside the focus handler below instead of closing over `loading`
+  // directly - the effect intentionally has an empty dep array (it should
+  // attach the listener once, not re-run checkAuth on every loading flip),
+  // so a plain closure would see loading's stale value from mount forever.
+  const loadingRef = useRef(loading);
+  useEffect(() => {
+    loadingRef.current = loading;
+  }, [loading]);
 
   // Check authentication status
   const checkAuth = async () => {
@@ -133,11 +142,13 @@ export const AuthProvider = ({ children }) => {
 
   // Check auth on mount and when focus returns to window
   useEffect(() => {
+    // checkAuth is async and only calls setState after its awaits resolve.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     checkAuth();
 
     // Re-check auth when user returns to the tab
     const handleFocus = () => {
-      if (!loading) {
+      if (!loadingRef.current) {
         checkAuth();
       }
     };

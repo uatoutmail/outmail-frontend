@@ -52,6 +52,9 @@ const SettingsTab = () => {
   // the app's NATIVE settings panel — this lets us open it from here.
   const [canOpenAgentSettings, setCanOpenAgentSettings] = useState(false);
   useEffect(() => {
+    // window.outmail is only reachable client-side (desktop shell preload) -
+    // no async boundary to move this feature-detection past.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setCanOpenAgentSettings(typeof window !== "undefined" && typeof window.outmail?.openAgentSettings === "function");
   }, []);
 
@@ -209,6 +212,9 @@ const SettingsTab = () => {
 
   useEffect(() => {
     if (user) {
+      // Syncing local form state from the user prop when it changes - no
+      // async work, a controlled-form reset-on-prop-change pattern.
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setProfileSettings(prev => ({
         ...prev,
         name: user.display_name || user.name || "",
@@ -586,7 +592,7 @@ const SettingsTab = () => {
                   </div>
                 ) : (
                   <div className="p-4 rounded-xl bg-white/5 border border-white/10 text-center">
-                    <p className="text-sm text-white/40">You haven't joined an institution yet.</p>
+                    <p className="text-sm text-white/40">You haven&apos;t joined an institution yet.</p>
                   </div>
                 )}
 

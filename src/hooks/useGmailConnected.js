@@ -28,7 +28,9 @@ export function useGmailConnected() {
   const [connected, setConnected] = useState(!!user?.hasGmailConnected);
   const [loading, setLoading] = useState(true);
   const connectedRef = useRef(connected);
-  connectedRef.current = connected;
+  useEffect(() => {
+    connectedRef.current = connected;
+  }, [connected]);
 
   const refresh = useCallback(async () => {
     try {
@@ -44,6 +46,8 @@ export function useGmailConnected() {
   }, []);
 
   useEffect(() => {
+    // refresh is async and only calls setState after its awaits resolve.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     refresh();
 
     // 1. Instant update from the desktop shell.

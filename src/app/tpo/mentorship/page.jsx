@@ -159,7 +159,7 @@ export default function MentorshipPage() {
                   <div className="px-6 py-4 border-t border-gray-100 space-y-4">
                     <div>
                       <h4 className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Focus Area</h4>
-                      <p className="text-sm text-gray-600 italic">"{s.whyThisMentor}"</p>
+                      <p className="text-sm text-gray-600 italic">&quot;{s.whyThisMentor}&quot;</p>
                     </div>
                     
                     {s.reviews && s.reviews.length > 0 && (
@@ -172,7 +172,7 @@ export default function MentorshipPage() {
                                 <p className="text-xs font-bold text-gray-900 uppercase tracking-tight">{r.reviewerName || 'Student'}</p>
                                 <StarRow count={r.stars} />
                               </div>
-                              <p className="text-xs text-gray-500 leading-relaxed italic">"{r.reviewText}"</p>
+                              <p className="text-xs text-gray-500 leading-relaxed italic">&quot;{r.reviewText}&quot;</p>
                             </div>
                           ))}
                         </div>
