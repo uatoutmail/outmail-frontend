@@ -1,0 +1,72 @@
+name: CI
+
+on:
+  pull_request:
+    branches: [main, release]
+  push:
+    branches: [main, release]
+
+jobs:
+  lint:
+    name: lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run lint
+
+  build:
+    name: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Build
+        run: npm run build
+        env:
+          NODE_ENV: production
+          NEXT_PUBLIC_API_BASE_URL: https://ci-placeholder.example.com
+
+  audit-and-test:
+    name: audit + test (non-blocking)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: npm audit (report only)
+        run: npm audit --audit-level=high || echo "::warning::npm audit reported findings — non-blocking, review separately"
+        continue-on-error: true
+      - name: Test (runs only if a test script + test files exist)
+        run: |
+          if npm run | grep -qE '^  test$' && find . -path ./node_modules -prune -o \( -iname '*.test.*' -o -iname '*.spec.*' \) -print -quit | grep -q .; then
+            npm test || echo "::warning::tests failed but this step is non-blocking until OUT-192 test coverage lands"
+          else
+            echo "No test script/files yet — skipping (tracked separately under OUT-192)."
+          fi
+        continue-on-error: true
+
+  gitleaks:
+    name: secret scan
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
