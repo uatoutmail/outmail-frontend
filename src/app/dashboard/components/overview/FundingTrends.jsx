@@ -21,6 +21,30 @@ const INDUSTRY_COLORS = ['#8B5CF6', '#06B6D4', '#10B981', '#F59E0B', '#EF4444', 
 // Real funding data (OUT-173): MarketSignal rows of kind 'funding' produced by
 // the funding ingestion adapter, aggregated by industry. Amounts are only what
 // was parsed from real headlines — nothing is invented.
+// Values are in millions USD as parsed from headlines.
+const formatAmount = (amountM) => {
+  if (!amountM) return '$0';
+  if (amountM >= 1000) return `$${(amountM / 1000).toFixed(1)}B`;
+  return `$${Math.round(amountM)}M`;
+};
+
+// Hoisted out of FundingTrends (react-hooks/static-components) - a
+// component declared inside another component's body is recreated on
+// every render.
+const CustomTooltip = ({ active, payload, label }) => {
+  if (active && payload && payload.length) {
+    return (
+      <div className="bg-white/90 backdrop-blur-md p-3 rounded-lg shadow-lg border border-white/20">
+        <p className="text-gray-800 font-semibold">{label}</p>
+        <p className="text-purple-600 font-bold">
+          {formatAmount(payload[0].value)}
+        </p>
+      </div>
+    );
+  }
+  return null;
+};
+
 const FundingTrends = ({ selectedPeriod, onPeriodChange }) => {
   const [fundingData, setFundingData] = useState([]);
   const [totals, setTotals] = useState({ events: 0, amountM: 0 });
@@ -57,27 +81,6 @@ const FundingTrends = ({ selectedPeriod, onPeriodChange }) => {
       active = false;
     };
   }, [selectedPeriod]);
-
-  // Values are in millions USD as parsed from headlines.
-  const formatAmount = (amountM) => {
-    if (!amountM) return '$0';
-    if (amountM >= 1000) return `$${(amountM / 1000).toFixed(1)}B`;
-    return `$${Math.round(amountM)}M`;
-  };
-
-  const CustomTooltip = ({ active, payload, label }) => {
-    if (active && payload && payload.length) {
-      return (
-        <div className="bg-white/90 backdrop-blur-md p-3 rounded-lg shadow-lg border border-white/20">
-          <p className="text-gray-800 font-semibold">{label}</p>
-          <p className="text-purple-600 font-bold">
-            {formatAmount(payload[0].value)}
-          </p>
-        </div>
-      );
-    }
-    return null;
-  };
 
   const topThreeIndustries = [...fundingData]
     .sort((a, b) => b.amount - a.amount)

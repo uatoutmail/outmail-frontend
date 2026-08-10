@@ -12,6 +12,9 @@ const CustomOutreach = ({ resumes, hasResumes, user, gmailConnected }) => {
   // Default to the first resume once resumes are available
   useEffect(() => {
     if (!customSelectedResumeId && resumes.length > 0) {
+      // Sync from the resumes prop once it loads - no async work, this is
+      // a "default-select-first-item" derivation, not a render-time write.
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setCustomSelectedResumeId(resumes[0].id);
     }
   }, [resumes, customSelectedResumeId]);

@@ -125,6 +125,9 @@ export default function SettingsPage() {
             <div className="flex items-center gap-4">
               <div className="h-14 w-14 rounded-xl bg-purple-100 border-2 border-dashed border-purple-300 flex items-center justify-center text-purple-600 font-bold text-lg overflow-hidden">
                 {adminUser?.profile_picture ? (
+                  // Externally-hosted, user-uploaded URL - next/image would need the
+                  // real host allow-listed in next.config, which isn't known here.
+                  // eslint-disable-next-line @next/next/no-img-element
                   <img src={adminUser.profile_picture} alt="logo" className="w-full h-full object-cover" />
                 ) : (
                   (instName || "I")[0].toUpperCase()
@@ -231,7 +234,7 @@ export default function SettingsPage() {
             <div className="border-t border-gray-100 pt-3 flex items-center justify-between">
               <div>
                 <p className="text-sm font-medium text-gray-800">Single Sign-On (SSO)</p>
-                <p className="text-xs text-gray-400 mt-0.5">Connect your institution's Google Workspace or Azure AD</p>
+                <p className="text-xs text-gray-400 mt-0.5">Connect your institution&apos;s Google Workspace or Azure AD</p>
               </div>
               <button className="text-xs font-semibold text-gray-500 border border-gray-200 px-4 py-2 rounded-lg hover:bg-gray-50 transition">Configure</button>
             </div>

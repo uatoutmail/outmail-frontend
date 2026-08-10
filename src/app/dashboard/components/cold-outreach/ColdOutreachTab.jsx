@@ -55,6 +55,8 @@ const ColdOutreachTab = () => {
   }, []);
 
   useEffect(() => {
+    // fetchOutreachHistory is async and only calls setState after its awaits resolve.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     if (activeSubTab === 'history') fetchOutreachHistory();
   }, [activeSubTab, fetchOutreachHistory]);
 
