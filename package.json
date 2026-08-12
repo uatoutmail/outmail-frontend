@@ -6,7 +6,9 @@
     "dev": "next dev --turbopack",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "test": "NODE_OPTIONS=--localstorage-file=./.vitest-localstorage.json vitest run",
+    "test:watch": "NODE_OPTIONS=--localstorage-file=./.vitest-localstorage.json vitest"
   },
   "dependencies": {
     "@radix-ui/react-alert-dialog": "^1.1.16",
@@ -31,8 +33,15 @@
   "devDependencies": {
     "@eslint/eslintrc": "^3",
     "@tailwindcss/postcss": "^4",
+    "@testing-library/jest-dom": "^7.0.1",
+    "@testing-library/react": "^16.3.2",
+    "@testing-library/user-event": "^14.6.4",
+    "@vitejs/plugin-react": "^4.7.0",
+    "axios-mock-adapter": "^2.1.0",
     "eslint": "^9",
     "eslint-config-next": "16.2.9",
-    "tailwindcss": "^4"
+    "jsdom": "^25.0.1",
+    "tailwindcss": "^4",
+    "vitest": "^3.2.7"
   }
 }
