@@ -60,17 +60,16 @@ describe('TpoRegisterPage — failed registration', () => {
     expect(pushMock).not.toHaveBeenCalled();
   });
 
-  // Same root cause as OUT-199 (tpo/login) — `if (response.data.success)`
-  // has no else branch, so a 200-with-success:false response is silent
-  // here too. Not re-filed as a separate ticket; OUT-199 covers both call
-  // sites since the fix is the same shape in both files.
-  it('KNOWN BUG (OUT-199): shows no error when the backend returns success:false', async () => {
+  // Same root cause as OUT-199 (tpo/login), same fix — an else branch that
+  // toasts the backend's error instead of silently doing nothing.
+  it('OUT-199 fixed: shows the backend error when the response is success:false', async () => {
     api.post.mockResolvedValue({ data: { success: false, error: 'Institute already registered' } });
     render(<TpoRegisterPage />);
     await fillForm();
     await userEvent.click(screen.getByRole('button', { name: /create account/i }));
 
-    await waitFor(() => expect(api.post).toHaveBeenCalled());
+    const { toast } = await import('sonner');
+    await waitFor(() => expect(toast.error).toHaveBeenCalledWith('Institute already registered'));
     expect(pushMock).not.toHaveBeenCalled();
     expect(window.localStorage.getItem('authToken')).toBeNull();
   });
