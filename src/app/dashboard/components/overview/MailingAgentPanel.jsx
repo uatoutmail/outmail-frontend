@@ -2,6 +2,7 @@
 import React, { useEffect, useState } from "react";
 import { Monitor, CheckCircle2, XCircle, Inbox, KeyRound } from "lucide-react";
 import { api } from "@/lib/api";
+import { useNow } from "@/hooks/useNow";
 
 /** Convert an ISO timestamp to a relative "X ago" label. */
 function timeAgo(isoString) {
@@ -19,6 +20,7 @@ const MailingAgentPanel = () => {
   const [linkCode, setLinkCode] = useState(null);
   const [linkCodeExpiry, setLinkCodeExpiry] = useState(null);
   const [generatingCode, setGeneratingCode] = useState(false);
+  const now = useNow();
 
   useEffect(() => {
     let active = true;
@@ -94,7 +96,7 @@ const MailingAgentPanel = () => {
       {/* Today's progress */}
       <div className="mb-3">
         <div className="flex items-center justify-between mb-1">
-          <span className="text-[11px] text-white/50">Today's mailing</span>
+          <span className="text-[11px] text-white/50">Today&apos;s mailing</span>
           <span className="text-[11px] font-medium text-white">
             {today.sent} / {total} sent
           </span>
@@ -126,7 +128,7 @@ const MailingAgentPanel = () => {
               </p>
               <p className="text-lg font-bold tracking-widest text-purple-300">{linkCode}</p>
               <p className="text-[10px] text-white/30 mt-1">
-                Expires in {Math.max(0, Math.round((linkCodeExpiry - Date.now()) / 60000))} min
+                Expires in {Math.max(0, Math.round((linkCodeExpiry - now) / 60000))} min
               </p>
             </div>
           ) : (

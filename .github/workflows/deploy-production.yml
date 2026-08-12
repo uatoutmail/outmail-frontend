@@ -1,0 +1,94 @@
+name: Deploy to production
+
+# Production deploys happen ONLY when a version tag is pushed.
+#
+#   push to main     -> preview deployment only
+#   push to release  -> deploys NOTHING
+#   push tag v1.2.3  -> deploys production (this workflow)
+#
+# Two gates guard it, because GitHub's native tag protection is unavailable here:
+# rulesets are plan-gated on private repos (verified: HTTP 403 "Upgrade to GitHub Pro").
+#   1. actor  — only an authorized release manager's push can deploy.
+#   2. lineage — the tagged commit must be reachable from `release`, so a tag pushed
+#      against a random branch cannot reach production.
+#
+# The deploy uses the Vercel CLI rather than a deploy hook: hooks redeploy a *branch*,
+# and this pipeline must ship the exact commit the tag points at.
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+
+concurrency:
+  group: deploy-production-${{ github.repository }}
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  deploy:
+    name: deploy ${{ github.ref_name }} to production
+    if: contains(fromJSON('["NishantTomer5601","uatoutmail"]'), github.actor)
+    runs-on: ubuntu-latest
+    env:
+      # Not secrets — identifiers. Keeping them inline means one secret to configure, not three.
+      VERCEL_ORG_ID: team_5lAEpW2vdJPETnWI6WYSw1RX
+      VERCEL_PROJECT_ID: prj_B1mQ2K14on5LrkznDYFbvBmm1Gtl
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Verify the tagged commit is on release
+        run: |
+          set -euo pipefail
+          git fetch --no-tags --quiet origin +refs/heads/release:refs/remotes/origin/release
+          TAG_SHA=$(git rev-parse 'HEAD^{commit}')
+          RELEASE_SHA=$(git rev-parse origin/release)
+          echo "tag ${GITHUB_REF_NAME}: $TAG_SHA"
+          echo "release tip:            $RELEASE_SHA"
+          if git merge-base --is-ancestor "$TAG_SHA" "$RELEASE_SHA"; then
+            echo "PASS: the tagged commit is contained in 'release'."
+          else
+            echo "::error::Tag ${GITHUB_REF_NAME} points at a commit that is NOT reachable from 'release'. Production only ever deploys code promoted to release — tag the release branch, not a feature branch. Refusing to deploy."
+            exit 1
+          fi
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Build and deploy outmail-frontend to Vercel production
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+        run: |
+          set -euo pipefail
+          if [ -z "${VERCEL_TOKEN:-}" ]; then
+            echo "::error::VERCEL_TOKEN is not set on this repository. Add it under Settings -> Secrets and variables -> Actions."
+            exit 1
+          fi
+          npm install --global vercel@latest
+          # Pulls the project's PRODUCTION-scoped environment variables.
+          vercel pull --yes --environment=production --token="$VERCEL_TOKEN"
+          vercel build --prod --token="$VERCEL_TOKEN"
+          # --prebuilt uploads the output we just built from the tagged commit,
+          # so Vercel never re-resolves a branch to decide what ships.
+          vercel deploy --prebuilt --prod --token="$VERCEL_TOKEN" | tee deployment-url.txt
+          echo "Deployed ${GITHUB_REF_NAME}: $(tail -n1 deployment-url.txt)"
+
+  deny:
+    name: unauthorized deploy attempt
+    if: ${{ !contains(fromJSON('["NishantTomer5601","uatoutmail"]'), github.actor) }}
+    runs-on: ubuntu-latest
+    steps:
+      # A skipped job shows up green, which would make an unauthorized tag look fine.
+      # This fails loudly instead.
+      - name: Refuse and report
+        env:
+          ACTOR: ${{ github.actor }}
+          TAG: ${{ github.ref_name }}
+        run: |
+          echo "::error::Tag '$TAG' was pushed by '$ACTOR', who is not authorized to deploy production. Authorized: NishantTomer5601, uatoutmail. Nothing was deployed."
+          exit 1

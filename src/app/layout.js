@@ -132,6 +132,9 @@ export default function RootLayout({ children }) {
         {/* Google Analytics */}
         {process.env.NODE_ENV === "production" && (
           <>
+            {/* eslint-disable-next-line @next/next/next-script-for-ga -- migrating to
+                @next/third-parties/google is a real improvement but a new dependency;
+                out of scope for a lint-only pass, tracked separately */}
             <script
               async
               src="https://www.googletagmanager.com/gtag/js?id=G-EEWX3GK1NK"

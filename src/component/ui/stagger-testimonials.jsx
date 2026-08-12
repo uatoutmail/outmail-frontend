@@ -99,7 +99,10 @@ const TestimonialCard = ({ position, testimonial, handleMove, cardSize }) => {
 
 const StaggerTestimonials = () => {
   const [cardSize, setCardSize] = useState(365);
-  const [testimonialsList, setTestimonialsList] = useState(
+  // Lazy initializer - Math.random() is impure, so it must only run once on
+  // mount (the function form), not on every render (a bare value argument
+  // to useState is re-evaluated every render even though only used once).
+  const [testimonialsList, setTestimonialsList] = useState(() =>
     testimonials.map((t) => ({ ...t, tempId: Math.random() }))
   );
 

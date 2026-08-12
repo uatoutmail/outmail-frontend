@@ -24,6 +24,9 @@ export default function DashboardLayout({
   // Handle auto-collapse on small screens
   useEffect(() => {
     if (typeof window !== "undefined" && window.innerWidth < 1024) {
+      // window.innerWidth is only reachable client-side - no async boundary
+      // to move this viewport check past.
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setSidebarOpen(false);
     }
   }, []);
@@ -74,7 +77,7 @@ export default function DashboardLayout({
         <div className={`flex items-center justify-between px-4 py-5 border-b ${isLight ? "border-gray-100" : "border-white/10"}`}>
           <div className="flex items-center gap-3 overflow-hidden">
             <div className="flex-shrink-0">
-              <img src={logoSrc} alt="Logo" className="w-8 h-8 object-contain" />
+              <Image src={logoSrc} alt="Logo" width={32} height={32} className="w-8 h-8 object-contain" />
             </div>
             {sidebarOpen && (
               <div className="overflow-hidden">

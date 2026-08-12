@@ -1,4 +1,5 @@
 import React from 'react';
+import Image from 'next/image';
 import { Zap, Briefcase, Users, MousePointerClick } from 'lucide-react';
 
 export default function Features() {
@@ -55,11 +56,12 @@ export default function Features() {
 
         {/* Right Side - Dashboard image (mockup or actual image) */}
         <div className="w-full flex items-center justify-end">
-          <img
-            src="/dashboard_edited.png" 
+          <Image
+            src="/dashboard_edited.png"
             alt="Outmail Dashboard Preview"
             className="rounded-3xl border border-purple-400/40 shadow-[0_0_18px_rgba(108,0,255,0.28)] max-w-full transition-transform duration-300 ease-in-out transform hover:scale-105 hover:-translate-y-1 translate-x-12 md:translate-x-24 lg:translate-x-32"
             width={1000}
+            height={1203}
           />
         </div>
       </div>

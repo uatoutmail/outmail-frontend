@@ -50,6 +50,8 @@ const WeeklyPlan = () => {
   }, []);
 
   useEffect(() => {
+    // fetchPlan is async and only calls setState after its awaits resolve.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     fetchPlan();
   }, [fetchPlan]);
 

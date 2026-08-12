@@ -42,9 +42,9 @@ function RecruiterOutreachDemo() {
 				<div className="rounded-lg border border-white/10 bg-black/40 p-3">
 					<p className="text-[11px] text-white/60 mb-1">Doing it manually</p>
 					<div className="space-y-1.5">
-						<p className="rounded-md bg-red-500/10 px-2 py-1 text-red-100/90">"startup companies hiring"</p>
-						<p className="rounded-md bg-red-500/5 px-2 py-1 text-red-100/80">"companies hiring software engineers"</p>
-						<p className="rounded-md bg-red-500/5 px-2 py-1 text-red-100/70">"recruiter email HR manager"</p>
+						<p className="rounded-md bg-red-500/10 px-2 py-1 text-red-100/90">&quot;startup companies hiring&quot;</p>
+						<p className="rounded-md bg-red-500/5 px-2 py-1 text-red-100/80">&quot;companies hiring software engineers&quot;</p>
+						<p className="rounded-md bg-red-500/5 px-2 py-1 text-red-100/70">&quot;recruiter email HR manager&quot;</p>
 					</div>
 					<p className="mt-2 text-[11px] text-red-200">A few companies. No targeting. No signals.</p>
 				</div>

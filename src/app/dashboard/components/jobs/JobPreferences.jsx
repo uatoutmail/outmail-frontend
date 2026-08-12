@@ -115,7 +115,7 @@ const JobPreferences = ({ onSaved }) => {
                     <option key={c.code} value={c.code} className="bg-[#1a1a1a]">{c.label} ({c.code})</option>
                   ))}
                 </select>
-                <p className="text-white/25 text-[11px] mt-1.5">You'll only see openings in this country.</p>
+                <p className="text-white/25 text-[11px] mt-1.5">You&apos;ll only see openings in this country.</p>
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
