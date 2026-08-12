@@ -60,7 +60,7 @@ jobs:
         with:
           node-version: 22
 
-      - name: Build and deploy outmail-frontend to Vercel production
+      - name: Deploy outmail-frontend to Vercel production
         env:
           VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
         run: |
@@ -70,12 +70,16 @@ jobs:
             exit 1
           fi
           npm install --global vercel@latest
-          # Pulls the project's PRODUCTION-scoped environment variables.
-          vercel pull --yes --environment=production --token="$VERCEL_TOKEN"
-          vercel build --prod --token="$VERCEL_TOKEN"
-          # --prebuilt uploads the output we just built from the tagged commit,
-          # so Vercel never re-resolves a branch to decide what ships.
-          vercel deploy --prebuilt --prod --token="$VERCEL_TOKEN" | tee deployment-url.txt
+          # Builds on Vercel rather than here, deliberately: this project's env vars
+          # are type "sensitive", which are write-only. `vercel pull` returns their
+          # names but never their values, so a local `vercel build` sees them empty.
+          # outmail-pulse failed loudly on this (neon() rejects an empty URL);
+          # frontend/admin would have built "successfully" with undefined baked into
+          # the bundle and shipped broken OAuth links. Vercel's own builder is the
+          # only place sensitive values exist.
+          # Still ships the exact tagged commit: this uploads the checked-out working
+          # tree, so Vercel never re-resolves a branch to decide what to deploy.
+          vercel deploy --prod --yes --token="$VERCEL_TOKEN" | tee deployment-url.txt
           echo "Deployed ${GITHUB_REF_NAME}: $(tail -n1 deployment-url.txt)"
 
   deny:
