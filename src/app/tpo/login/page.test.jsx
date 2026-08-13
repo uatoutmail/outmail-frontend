@@ -56,23 +56,29 @@ describe('TpoLoginPage — failed login (network/HTTP error)', () => {
   });
 });
 
-describe('TpoLoginPage — KNOWN BUG: a 200 response with success:false is silently ignored', () => {
-  // The handler only branches on `if (response.data.success)` — there is no
-  // else. If the backend ever answers with HTTP 200 and `{ success: false,
-  // error: "..." }` (exactly the shape outmail-admin's AuthContext.login
-  // explicitly guards against for this same reason), this page shows
-  // NOTHING: no error toast, no redirect, the button just goes back to
-  // "Sign In" with zero feedback. Documenting current behavior rather than
-  // silently fixing it inline — filed as a real bug, see Linear.
-  it('shows no error and does not redirect when the backend returns success:false', async () => {
+describe('TpoLoginPage — a 200 response with success:false (OUT-199, fixed)', () => {
+  // Previously silently ignored: the handler only branched on
+  // `if (response.data.success)` with no else, so a 200 response carrying
+  // `{ success: false, error }` (a real shape — outmail-admin's
+  // AuthContext.login guards against exactly this) showed no error, no
+  // redirect, and left the button back on "Sign In" with zero feedback.
+  it('shows the backend error message and does not redirect', async () => {
     api.post.mockResolvedValue({ data: { success: false, error: 'Invalid credentials' } });
     render(<TpoLoginPage />);
     await fillAndSubmit();
 
-    await waitFor(() => expect(api.post).toHaveBeenCalled());
-    // Current (buggy) behavior: nothing happens. If this page is fixed to
-    // show an error, this assertion should be updated to expect one.
+    const { toast } = await import('sonner');
+    await waitFor(() => expect(toast.error).toHaveBeenCalledWith('Invalid credentials'));
     expect(pushMock).not.toHaveBeenCalled();
     expect(window.localStorage.getItem('authToken')).toBeNull();
+  });
+
+  it('falls back to a generic message when the backend gives no error field', async () => {
+    api.post.mockResolvedValue({ data: { success: false } });
+    render(<TpoLoginPage />);
+    await fillAndSubmit();
+
+    const { toast } = await import('sonner');
+    await waitFor(() => expect(toast.error).toHaveBeenCalledWith('Login failed. Please check your credentials.'));
   });
 });

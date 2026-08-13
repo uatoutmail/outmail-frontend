@@ -48,14 +48,19 @@ export default function TpoRegisterPage() {
         const token = response.data.token;
         localStorage.setItem('authToken', token);
         localStorage.setItem('userRole', 'TPO_ADMIN');
-        
+
         // Set cookie for middleware
         document.cookie = `outmail_auth=${token}; path=/; max-age=${7 * 24 * 60 * 60}; secure; samesite=strict`;
-        
+
         // Refresh session in context
         await login();
-        
+
         router.push('/tpo/dashboard');
+      } else {
+        // A 2xx response isn't necessarily a successful registration
+        // (OUT-199) — without this branch, a success:false body left the
+        // user staring at "Create Account" with zero feedback.
+        toast.error(response.data.error || "Registration failed. Please try again.");
       }
     } catch (error) {
       console.error('Register attempt failed:', error);
