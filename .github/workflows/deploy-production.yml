@@ -62,6 +62,9 @@ jobs:
 
       - name: Deploy outmail-frontend to Vercel production
         env:
+          # The Vercel CLI reads this from the environment. Do NOT pass it as
+          # --token=... : command-line arguments are visible in the runner's
+          # process list, environment variables are not.
           VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
         run: |
           set -euo pipefail
@@ -70,6 +73,7 @@ jobs:
             exit 1
           fi
           npm install --global vercel@latest
+          COMMIT=$(git rev-parse 'HEAD^{commit}')
           # Builds on Vercel rather than here, deliberately: this project's env vars
           # are type "sensitive", which are write-only. `vercel pull` returns their
           # names but never their values, so a local `vercel build` sees them empty.
@@ -79,8 +83,17 @@ jobs:
           # only place sensitive values exist.
           # Still ships the exact tagged commit: this uploads the checked-out working
           # tree, so Vercel never re-resolves a branch to decide what to deploy.
-          vercel deploy --prod --yes --token="$VERCEL_TOKEN" | tee deployment-url.txt
-          echo "Deployed ${GITHUB_REF_NAME}: $(tail -n1 deployment-url.txt)"
+          # --meta records which commit/tag this was: a CLI deploy uploads a tree
+          # rather than referencing a git ref, so without these the Vercel dashboard
+          # shows only "HEAD" and the deployment can't be traced back to a release.
+          # These are the same keys Vercel's own Git integration sets.
+          vercel deploy --prod --yes \
+            --meta githubCommitSha="$COMMIT" \
+            --meta githubCommitRef="$GITHUB_REF_NAME" \
+            --meta githubOrg="${GITHUB_REPOSITORY%%/*}" \
+            --meta githubRepo="${GITHUB_REPOSITORY##*/}" \
+            | tee deployment-url.txt
+          echo "Deployed ${GITHUB_REF_NAME} ($COMMIT): $(tail -n1 deployment-url.txt)"
 
   deny:
     name: unauthorized deploy attempt
