@@ -1,4 +1,4 @@
-import { defineConfig } from 'vitest/config';
+import { defineConfig, configDefaults } from 'vitest/config';
 import react from '@vitejs/plugin-react';
 import path from 'path';
 
@@ -20,6 +20,12 @@ export default defineConfig({
     },
   },
   test: {
+    // Without the e2e/ addition, Vitest's default file glob also picks up
+    // e2e/*.spec.js (Playwright specs) and fails trying to parse
+    // test.describe() outside a Playwright config — the two runners' spec
+    // files need to stay mutually exclusive. Spreads Vitest's own defaults
+    // (configDefaults.exclude) rather than replacing them outright.
+    exclude: [...configDefaults.exclude, '**/e2e/**'],
     environment: 'jsdom',
     // jsdom only provides localStorage/sessionStorage for a non-opaque
     // origin — without an explicit url it defaults to "about:blank" and
