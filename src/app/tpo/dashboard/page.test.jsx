@@ -40,6 +40,7 @@ describe('TPODashboard — authenticated', () => {
       user: { display_name: 'Jane TPO', institute_name: 'Big University' },
       isAuthenticated: true,
       loading: false,
+      userRole: 'TPO_ADMIN',
     });
     api.get.mockResolvedValue({ data: { stats: { totalStudents: 100 } } });
   });
