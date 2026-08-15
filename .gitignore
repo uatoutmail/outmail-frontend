@@ -48,3 +48,9 @@ yarn-error.log*
 next-env.d.ts
 
 .vitest-localstorage.json*
+
+# playwright
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/
