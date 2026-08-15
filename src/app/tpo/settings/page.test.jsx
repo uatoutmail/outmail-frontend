@@ -23,7 +23,7 @@ beforeEach(() => {
   // sidebar (useAuth) and the settings-fetched team member list are two
   // separate data sources, and giving them the same name here would make
   // "Jane TPO" ambiguous in every query below.
-  useAuth.mockReturnValue({ user: { display_name: 'Sidebar User' }, logout: vi.fn() });
+  useAuth.mockReturnValue({ user: { display_name: 'Sidebar User' }, isAuthenticated: true, loading: false, userRole: 'TPO_ADMIN', logout: vi.fn() });
 });
 
 describe('SettingsPage — loading and prefill', () => {

@@ -17,7 +17,7 @@ const students = [
 
 beforeEach(() => {
   vi.resetAllMocks();
-  useAuth.mockReturnValue({ user: { display_name: 'Jane TPO' }, logout: vi.fn() });
+  useAuth.mockReturnValue({ user: { display_name: 'Jane TPO' }, isAuthenticated: true, loading: false, userRole: 'TPO_ADMIN', logout: vi.fn() });
 });
 
 describe('StudentsPage — loading and summary', () => {
