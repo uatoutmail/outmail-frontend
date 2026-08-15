@@ -8,7 +8,9 @@
     "start": "next start",
     "lint": "eslint",
     "test": "NODE_OPTIONS=--localstorage-file=./.vitest-localstorage.json vitest run",
-    "test:watch": "NODE_OPTIONS=--localstorage-file=./.vitest-localstorage.json vitest"
+    "test:watch": "NODE_OPTIONS=--localstorage-file=./.vitest-localstorage.json vitest",
+    "test:e2e": "playwright test",
+    "test:e2e:ui": "playwright test --ui"
   },
   "dependencies": {
     "@radix-ui/react-alert-dialog": "^1.1.16",
@@ -32,6 +34,7 @@
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
+    "@playwright/test": "1.62.1",
     "@tailwindcss/postcss": "^4",
     "@testing-library/jest-dom": "^7.0.1",
     "@testing-library/react": "^16.3.2",
