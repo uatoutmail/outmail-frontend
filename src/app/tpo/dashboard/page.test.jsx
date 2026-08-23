@@ -20,19 +20,10 @@ beforeEach(() => {
   vi.resetAllMocks();
 });
 
-describe('TPODashboard — auth guard', () => {
-  it('redirects to home when not authenticated', async () => {
-    useAuth.mockReturnValue({ user: null, isAuthenticated: false, loading: false });
-    render(<TPODashboard />);
-    await waitFor(() => expect(replaceMock).toHaveBeenCalledWith('/'));
-  });
-
-  it('shows a loading spinner while auth is resolving, without redirecting', () => {
-    useAuth.mockReturnValue({ user: null, isAuthenticated: false, loading: true });
-    render(<TPODashboard />);
-    expect(replaceMock).not.toHaveBeenCalled();
-  });
-});
+// Auth/role gating (unauthenticated -> /tpo/login, wrong role -> /dashboard,
+// loading spinner) is owned by TPOPageShell, not this page — see
+// TPOPageShell.test.jsx. This page used to duplicate that check with its
+// own redirect to "/" instead, an inconsistency real E2E testing caught.
 
 describe('TPODashboard — authenticated', () => {
   beforeEach(() => {
@@ -40,6 +31,7 @@ describe('TPODashboard — authenticated', () => {
       user: { display_name: 'Jane TPO', institute_name: 'Big University' },
       isAuthenticated: true,
       loading: false,
+      userRole: 'TPO_ADMIN',
     });
     api.get.mockResolvedValue({ data: { stats: { totalStudents: 100 } } });
   });

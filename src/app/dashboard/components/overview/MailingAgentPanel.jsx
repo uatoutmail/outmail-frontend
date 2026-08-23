@@ -1,8 +1,10 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { Monitor, CheckCircle2, XCircle, Inbox, KeyRound } from "lucide-react";
 import { api } from "@/lib/api";
 import { useNow } from "@/hooks/useNow";
+import { usePolling } from "@/hooks/usePolling";
+import { POLL_MS } from "@/lib/polling";
 
 /** Convert an ISO timestamp to a relative "X ago" label. */
 function timeAgo(isoString) {
@@ -22,25 +24,23 @@ const MailingAgentPanel = () => {
   const [generatingCode, setGeneratingCode] = useState(false);
   const now = useNow();
 
-  useEffect(() => {
-    let active = true;
-    const fetchStatus = async () => {
-      try {
-        const res = await api.get("/api/agent/status");
-        if (active) setStatus(res.data);
-      } catch (err) {
-        console.error("[MailingAgentPanel] Failed to fetch status:", err);
-      } finally {
-        if (active) setLoading(false);
-      }
-    };
-    fetchStatus();
-    const interval = setInterval(fetchStatus, 10000);
-    return () => {
-      active = false;
-      clearInterval(interval);
-    };
+  const fetchStatus = useCallback(async () => {
+    try {
+      const res = await api.get("/api/agent/status");
+      setStatus(res.data);
+    } catch (err) {
+      console.error("[MailingAgentPanel] Failed to fetch status:", err);
+    } finally {
+      setLoading(false);
+    }
   }, []);
+
+  // 30s rather than the previous 10s, and only while the tab is visible.
+  // usePolling calls this immediately on mount, so it replaces the fetch-on-
+  // mount effect as well as the interval. Agent status changes on the order of
+  // minutes, so a 10-second poll bought nothing while keeping the database
+  // awake continuously (OUT-206).
+  usePolling(fetchStatus, POLL_MS);
 
   const today = status?.today || { sent: 0, waiting: 0, queued: 0, failed: 0 };
   const total = today.sent + today.waiting + today.queued + today.failed;

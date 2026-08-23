@@ -1,7 +1,6 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import { useAuth } from "@/context/AuthContext";
-import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import TPOPageShell from "@/component/tpo/TPOPageShell";
 import TPOOverviewCards from "@/component/tpo/TPOOverviewCards";
@@ -11,16 +10,15 @@ import TPOMentorshipPanel from "@/component/tpo/TPOMentorshipPanel";
 import { api } from "@/lib/api";
 
 export default function TPODashboard() {
-  const { user, isAuthenticated, loading } = useAuth();
-  const router = useRouter();
+  const { user, isAuthenticated } = useAuth();
   const [stats, setStats] = useState(null);
 
-  useEffect(() => {
-    if (!loading && !isAuthenticated) {
-      router.replace("/");
-    }
-  }, [isAuthenticated, loading, router]);
-
+  // Auth/role gating (loading spinner, unauthenticated -> /tpo/login,
+  // wrong role -> /dashboard) is owned entirely by TPOPageShell below —
+  // every /tpo/* page goes through it, so this used to duplicate that
+  // check with a DIFFERENT redirect target ("/" instead of "/tpo/login"),
+  // an inconsistency real E2E testing caught that the other 6 TPO pages
+  // (which never had their own copy of this check) didn't have.
   useEffect(() => {
     const fetchStats = async () => {
       try {
@@ -34,14 +32,6 @@ export default function TPODashboard() {
       fetchStats();
     }
   }, [isAuthenticated]);
-
-  if (loading || !isAuthenticated) {
-    return (
-      <div className="min-h-screen bg-gray-100 flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600"></div>
-      </div>
-    );
-  }
 
   const tpoUser = {
     name: user?.name || user?.display_name || "TPO Admin",

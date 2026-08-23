@@ -1,7 +1,9 @@
 "use client";
-import React from "react";
+import React, { useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { useAuth } from "@/context/AuthContext";
 import DashboardLayout from "@/component/DashboardLayout";
+import { Loader2 } from "lucide-react";
 import {
   LayoutDashboard,
   Users,
@@ -22,8 +24,35 @@ const navItems = [
   { label: "Settings", href: "/tpo/settings", icon: Settings },
 ];
 
+// OUT-201: every /tpo/* page goes through this shell, so the role gate lives
+// here rather than duplicated per-page. This is NOT the real security
+// boundary — every TPO-scoped API route already rejects a non-TPO_ADMIN
+// caller server-side regardless of what the frontend does — but before this
+// there was no client-side check at all, so a signed-in STUDENT could
+// navigate straight to /tpo/dashboard and see a broken/empty TPO shell
+// instead of being sent to their own dashboard.
 export default function TPOPageShell({ children, title, subtitle }) {
-  const { user, logout } = useAuth();
+  const { user, userRole, isAuthenticated, loading, logout } = useAuth();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (loading) return;
+    if (!isAuthenticated) {
+      router.replace("/tpo/login");
+      return;
+    }
+    if (userRole !== "TPO_ADMIN") {
+      router.replace("/dashboard");
+    }
+  }, [loading, isAuthenticated, userRole, router]);
+
+  if (loading || !isAuthenticated || userRole !== "TPO_ADMIN") {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-white">
+        <Loader2 className="animate-spin text-purple-500" size={28} />
+      </div>
+    );
+  }
 
   const tpoUser = {
     name: user?.name || user?.display_name || "TPO Admin",
