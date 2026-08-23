@@ -4,6 +4,7 @@ import { Monitor, CheckCircle2, XCircle, Inbox, KeyRound } from "lucide-react";
 import { api } from "@/lib/api";
 import { useNow } from "@/hooks/useNow";
 import { usePolling } from "@/hooks/usePolling";
+import { POLL_MS } from "@/lib/polling";
 
 /** Convert an ISO timestamp to a relative "X ago" label. */
 function timeAgo(isoString) {
@@ -39,7 +40,7 @@ const MailingAgentPanel = () => {
   // mount effect as well as the interval. Agent status changes on the order of
   // minutes, so a 10-second poll bought nothing while keeping the database
   // awake continuously (OUT-206).
-  usePolling(fetchStatus, 30000);
+  usePolling(fetchStatus, POLL_MS);
 
   const today = status?.today || { sent: 0, waiting: 0, queued: 0, failed: 0 };
   const total = today.sent + today.waiting + today.queued + today.failed;
