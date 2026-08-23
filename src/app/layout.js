@@ -2,6 +2,7 @@ import { Geist, Geist_Mono, Satisfy, Syne, Space_Grotesk, Bricolage_Grotesque } 
 import "./globals.css";
 import SmoothScrollWrapper from "@/component/SmoothScrollWrapper";
 import { AuthProvider } from "@/context/AuthContext";
+import { ServiceStatusProvider } from "@/context/ServiceStatusContext";
 import { Toaster } from "sonner";
 
 
@@ -155,12 +156,14 @@ export default function RootLayout({ children }) {
       <body
         className={`${geistSans.variable} ${geistMono.variable} ${syne.variable} ${satisfy.variable} ${spaceGrotesk.variable} ${bricolage.variable} antialiased`}
       >
-        <AuthProvider>
-          <SmoothScrollWrapper>
-            <Toaster position="top-center" richColors />
-            <div>{children}</div>
-          </SmoothScrollWrapper>
-        </AuthProvider>
+        <ServiceStatusProvider>
+          <AuthProvider>
+            <SmoothScrollWrapper>
+              <Toaster position="top-center" richColors />
+              <div>{children}</div>
+            </SmoothScrollWrapper>
+          </AuthProvider>
+        </ServiceStatusProvider>
       </body>
     </html>
   );
