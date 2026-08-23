@@ -1,109 +1,91 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 
 /**
- * The one Outmail-branded screen behind every error surface (OUT-205).
+ * The Outmail-branded screen behind every error surface (OUT-205).
  *
  * It exists because of a specific incident: while the database was down,
- * outmail.in rendered a raw error that included the production Neon hostname.
- * A visitor to the marketing site was shown part of our infrastructure. The
- * backend no longer sends that detail, and this makes sure the frontend has
- * nothing raw to render even if something else ever leaks.
+ * outmail.in rendered a raw error containing the production Neon hostname. A
+ * visitor to the marketing site was shown part of our infrastructure, on a
+ * screen that looked like a crash rather than a product.
  *
- * So the rule this component enforces: **never display a server-provided
- * message.** Callers pass a title and a line of copy we wrote. If there is a
- * correlation reference from the API it is shown as an opaque code — useful in
- * a support mail, meaningless to anyone else.
+ * The rule it enforces: **never display a server-provided message.** Callers
+ * pass a title and copy we wrote. A correlation reference is rendered as an
+ * opaque code — useful in a support email, meaningless to anyone else.
  *
- * Deliberately inline-styled and dependency-free apart from next/link: this has
- * to render when the app is broken, and reaching for the design system, a data
- * fetch or a context provider is exactly what fails in that situation.
+ * Uses the real design system rather than one-off styling — `gradient-hero`
+ * for the wordmark (the same treatment every hero heading uses), `glass-card`
+ * for the panel, `font-syne` for headings — so this reads as an Outmail page
+ * that happens to be apologising, not a separate error app. It renders inside
+ * the root layout, so globals.css and Tailwind are both available.
+ *
+ * `global-error.jsx` deliberately does NOT use this: it replaces the root
+ * layout, so it cannot rely on the stylesheet and has to be self-contained.
  */
 export default function ErrorScreen({
   title = "We'll be back shortly",
-  message = "Outmail is having a moment. We've been alerted and are already looking at it — please try again in a few minutes.",
+  message = "Outmail is having a moment. We've been alerted and are already looking into it — please try again in a few minutes.",
   reference,
   onRetry,
-  showHome = true,
+  homeHref = "/",
+  homeLabel = "Back to home",
 }) {
   return (
-    <main
-      style={{
-        minHeight: "100vh",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        background: "#050816",
-        color: "#e5e7eb",
-        fontFamily: "var(--font-sans), system-ui, -apple-system, Segoe UI, sans-serif",
-        padding: 24,
-      }}
-    >
-      <div style={{ textAlign: "center", maxWidth: 460 }}>
-        {/* Wordmark rather than an <img>: a broken deploy or a failed asset
-            fetch is one of the cases this screen has to survive. */}
-        <div
-          style={{
-            fontSize: 26,
-            fontWeight: 700,
-            letterSpacing: "-0.02em",
-            marginBottom: 28,
-            background: "linear-gradient(90deg, #c084fc, #a855f7)",
-            WebkitBackgroundClip: "text",
-            WebkitTextFillColor: "transparent",
-            backgroundClip: "text",
-          }}
-        >
-          Outmail
-        </div>
+    <main className="min-h-screen flex items-center justify-center px-6 py-16 bg-background">
+      {/* Same soft radial wash the hero uses, so the page still feels like the
+          product rather than a bare fallback. */}
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-0"
+        style={{
+          background:
+            "radial-gradient(circle at 50% 0%, rgba(176,108,255,0.16), transparent 60%)",
+        }}
+      />
 
-        <h1 style={{ fontSize: 22, fontWeight: 600, margin: "0 0 12px", color: "#f9fafb" }}>
+      <div className="relative w-full max-w-lg glass-card px-8 py-12 text-center">
+        <Image
+          src="/logo-nav.png"
+          alt=""
+          width={44}
+          height={44}
+          className="mx-auto mb-5"
+          // The logo is decorative here; the wordmark below carries the name,
+          // so a failed image fetch costs nothing a screen reader needs.
+          priority
+        />
+        <p className="font-syne text-2xl font-semibold tracking-tight gradient-hero mb-7">
+          Outmail
+        </p>
+
+        <h1 className="font-syne text-xl sm:text-2xl font-semibold tracking-tight text-foreground mb-3">
           {title}
         </h1>
-        <p style={{ color: "#94a3b8", fontSize: 15, lineHeight: 1.65, margin: "0 0 28px" }}>
+        <p className="text-muted-foreground text-[15px] leading-relaxed mb-8">
           {message}
         </p>
 
-        <div style={{ display: "flex", gap: 12, justifyContent: "center", flexWrap: "wrap" }}>
+        <div className="flex flex-wrap items-center justify-center gap-3">
           {onRetry && (
             <button
               onClick={onRetry}
-              style={{
-                background: "#a855f7",
-                color: "#fff",
-                border: "none",
-                borderRadius: 10,
-                padding: "12px 26px",
-                fontSize: 14,
-                fontWeight: 600,
-                cursor: "pointer",
-              }}
+              className="bg-gradient-brand text-white rounded-xl px-6 py-3 text-sm font-semibold hover:opacity-90 transition-opacity cursor-pointer"
             >
               Try again
             </button>
           )}
-          {showHome && (
-            <Link
-              href="/"
-              style={{
-                background: "transparent",
-                color: "#e5d4ff",
-                border: "1px solid #461c9a",
-                borderRadius: 10,
-                padding: "12px 26px",
-                fontSize: 14,
-                fontWeight: 600,
-                textDecoration: "none",
-              }}
-            >
-              Back to home
-            </Link>
-          )}
+          <Link
+            href={homeHref}
+            className="rounded-xl px-6 py-3 text-sm font-semibold text-primary-soft border border-border-subtle hover:bg-surface-2 transition-colors"
+          >
+            {homeLabel}
+          </Link>
         </div>
 
         {reference && (
-          <p style={{ color: "#4b5563", fontSize: 12, marginTop: 28, fontFamily: "var(--font-mono), monospace" }}>
+          <p className="mt-8 text-xs text-muted-foreground/70 font-mono">
             Reference: {reference}
           </p>
         )}
