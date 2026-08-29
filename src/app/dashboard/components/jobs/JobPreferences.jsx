@@ -11,12 +11,16 @@ const COUNTRIES = [
   { code: "CA", label: "Canada" },
 ];
 const REMOTE_OPTS = ["any", "remote", "hybrid", "onsite"];
+const SEEKING_OPTS = [
+  { value: "internship_only", label: "Internships only" },
+  { value: "internship_and_fresher", label: "Internships + entry-level full-time roles" },
+];
 
 // OUT-36: job-hunt intent + preferences. Reads/writes the candidate profile
 // (GET/PUT /api/profile, OUT-23); saving re-runs matching, so we notify the
 // parent feed to refresh.
-const JobPreferences = ({ onSaved }) => {
-  const [open, setOpen] = useState(false);
+const JobPreferences = ({ onSaved, forceOpen = false }) => {
+  const [open, setOpen] = useState(forceOpen);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [savedAt, setSavedAt] = useState(null);
@@ -27,6 +31,7 @@ const JobPreferences = ({ onSaved }) => {
   const [targetRoles, setTargetRoles] = useState("");
   const [statedYears, setStatedYears] = useState("");
   const [inferredYears, setInferredYears] = useState(null);
+  const [seekingType, setSeekingType] = useState("");
 
   useEffect(() => {
     (async () => {
@@ -39,6 +44,7 @@ const JobPreferences = ({ onSaved }) => {
         setTargetRoles((data.targetRoles || []).join(", "));
         setStatedYears(data.statedYearsExperience ?? "");
         setInferredYears(data.yearsExperience ?? null);
+        setSeekingType(data.seekingType || "");
       } catch (e) {
         console.error("Failed to load profile:", e);
       } finally {
@@ -57,6 +63,7 @@ const JobPreferences = ({ onSaved }) => {
         minSalary: minSalary === "" ? null : Number(minSalary),
         targetRoles: targetRoles.split(",").map((r) => r.trim()).filter(Boolean),
         statedYearsExperience: statedYears === "" ? null : Number(statedYears),
+        seekingType: seekingType || null,
       });
       setSavedAt(Date.now());
       if (onSaved) onSaved();
@@ -89,6 +96,41 @@ const JobPreferences = ({ onSaved }) => {
             </div>
           ) : (
             <>
+              <div>
+                <label className="block text-xs font-bold uppercase tracking-wider text-white/40 mb-2 flex items-center gap-2">
+                  I&apos;m looking for
+                  <span className="text-[10px] font-bold normal-case tracking-normal text-purple-300 bg-purple-500/10 border border-purple-500/20 rounded-full px-2 py-0.5">
+                    Required
+                  </span>
+                </label>
+                <div className="space-y-2">
+                  {SEEKING_OPTS.map((opt) => (
+                    <label
+                      key={opt.value}
+                      className={`flex items-center gap-3 px-4 py-3 rounded-xl border cursor-pointer transition-colors ${
+                        seekingType === opt.value
+                          ? "border-purple-500/60 bg-purple-500/10"
+                          : "border-white/10 bg-white/5 hover:border-white/20"
+                      }`}
+                    >
+                      <input
+                        type="radio"
+                        name="seekingType"
+                        value={opt.value}
+                        checked={seekingType === opt.value}
+                        onChange={(e) => setSeekingType(e.target.value)}
+                        className="accent-purple-500"
+                      />
+                      <span className="text-sm text-white">{opt.label}</span>
+                    </label>
+                  ))}
+                </div>
+                <p className="text-white/25 text-[11px] mt-1.5">
+                  Determines which roles you can see at all — not just how they&apos;re ranked. e.g. picking
+                  &quot;Internships only&quot; hides fresher full-time roles too, not just senior ones.
+                </p>
+              </div>
+
               <div>
                 <label className="block text-xs font-bold uppercase tracking-wider text-white/40 mb-2">
                   Job-hunt intent

@@ -57,6 +57,7 @@ describe('JobPreferences — saving', () => {
         minSalary: 1500000,
         targetRoles: ['Backend Engineer', 'ML Engineer'],
         statedYearsExperience: 2,
+        seekingType: null,
       })
     );
     expect(onSaved).toHaveBeenCalled();
@@ -88,5 +89,50 @@ describe('JobPreferences — saving', () => {
 
     await userEvent.click(screen.getByRole('button', { name: /save & refresh matches/i }));
     await waitFor(() => expect(api.put).toHaveBeenCalled());
+  });
+});
+
+// India-student launch: this is a hard eligibility gate (eligibility.js), not
+// just a ranking preference — the save payload has to carry the exact value
+// the backend hard-filters on, and an unset selection must send null, not an
+// empty string the backend would silently reject as invalid.
+describe('JobPreferences — seeking-type (required, hard-gates eligibility)', () => {
+  it('loads the saved seeking-type selection as a checked radio', async () => {
+    api.get.mockResolvedValue({ data: { ...profile, seekingType: 'internship_only' } });
+    render(<JobPreferences />);
+    await userEvent.click(screen.getByRole('button', { name: /what are you looking for/i }));
+
+    await waitFor(() => expect(screen.getByRole('radio', { name: /internships only/i })).toBeChecked());
+    expect(screen.getByRole('radio', { name: /internships \+ entry-level/i })).not.toBeChecked();
+  });
+
+  it('selecting a seeking-type option and saving sends the exact value', async () => {
+    api.put.mockResolvedValue({});
+    render(<JobPreferences />);
+    await userEvent.click(screen.getByRole('button', { name: /what are you looking for/i }));
+    await waitFor(() => expect(screen.getByDisplayValue('Backend roles at startups')).toBeInTheDocument());
+
+    await userEvent.click(screen.getByRole('radio', { name: /internships \+ entry-level/i }));
+    await userEvent.click(screen.getByRole('button', { name: /save & refresh matches/i }));
+
+    await waitFor(() =>
+      expect(api.put).toHaveBeenCalledWith(
+        '/api/profile',
+        expect.objectContaining({ seekingType: 'internship_and_fresher' })
+      )
+    );
+  });
+
+  it('an unset seeking-type saves as null, never an empty string', async () => {
+    api.put.mockResolvedValue({});
+    render(<JobPreferences />);
+    await userEvent.click(screen.getByRole('button', { name: /what are you looking for/i }));
+    await waitFor(() => expect(screen.getByDisplayValue('Backend roles at startups')).toBeInTheDocument());
+
+    await userEvent.click(screen.getByRole('button', { name: /save & refresh matches/i }));
+
+    await waitFor(() =>
+      expect(api.put).toHaveBeenCalledWith('/api/profile', expect.objectContaining({ seekingType: null }))
+    );
   });
 });
