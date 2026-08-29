@@ -42,6 +42,11 @@ export default function sitemap() {
       changeFrequency: "yearly",
       priority: 0.3,
     },
+    {
+      path: "/refund-and-cancellation",
+      changeFrequency: "yearly",
+      priority: 0.3,
+    },
   ];
 
   return routes.map(({ path, changeFrequency, priority }) => ({

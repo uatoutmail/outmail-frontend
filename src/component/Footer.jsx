@@ -91,6 +91,12 @@ export default function Footer({ variant = "gradient" }) {
             >
               Privacy Policy
             </Link>
+            <Link
+              href="/refund-and-cancellation"
+              className="hover:underline"
+            >
+              Refund and Cancellation
+            </Link>
             <Link href="/faq" className="hover:underline">
               FAQ
             </Link>
