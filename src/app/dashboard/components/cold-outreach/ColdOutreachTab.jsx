@@ -1,4 +1,6 @@
 import React, { useState, useEffect, useCallback } from "react";
+import { usePolling } from '@/hooks/usePolling';
+import { POLL_MS } from '@/lib/polling';
 import { Mail, Zap, AlertTriangle, Building2, MapPin, Briefcase, ChevronRight, ChevronLeft, User, CheckCircle2, Clock } from "lucide-react";
 import { api } from "@/lib/api";
 import { toast } from "sonner";
@@ -30,20 +32,17 @@ const ColdOutreachTab = () => {
 
   // Agent status strip (OUT-150): live view of the thing that actually sends.
   const [agentStatus, setAgentStatus] = useState(null);
-  useEffect(() => {
-    let timer;
-    const fetchAgent = async () => {
-      try {
-        const res = await api.get('/api/agent/status');
-        setAgentStatus(res.data);
-      } catch (error) {
-        console.warn('Error fetching agent status:', error.message);
-      }
-    };
-    fetchAgent();
-    timer = setInterval(fetchAgent, 30000);
-    return () => clearInterval(timer);
+  const fetchAgent = useCallback(async () => {
+    try {
+      const res = await api.get('/api/agent/status');
+      setAgentStatus(res.data);
+    } catch (error) {
+      console.warn('Error fetching agent status:', error.message);
+    }
   }, []);
+  // Visible-tab only (OUT-206): usePolling fetches immediately on mount, so
+  // this replaces the fetch-on-mount effect as well as the interval.
+  usePolling(fetchAgent, POLL_MS);
 
   const fetchOutreachHistory = useCallback(async () => {
     try {
