@@ -1,9 +1,74 @@
-import React, { useState, useEffect } from "react";
-import { Briefcase } from "lucide-react";
+import React, { useState, useEffect, useRef } from "react";
+import { Briefcase, UploadCloud, Loader2, FileText } from "lucide-react";
 import JobCard from "./JobCard";
 import JobPreferences from "./JobPreferences";
 import { toast } from "sonner";
 import { api } from "@/lib/api";
+
+// India-student launch: /api/jobs 403s with this shape when a résumé and/or
+// a seeking-type preference are missing — hard prerequisites, not just
+// "better matching if you fill this in". Renders in place of the job list
+// rather than routing the user away, so completing it is a single step.
+const JobPrerequisiteGate = ({ missing, onResumeUploaded, onPreferencesSaved }) => {
+  const fileInputRef = useRef(null);
+  const [uploading, setUploading] = useState(false);
+  const needsResume = missing.includes("resume");
+  const needsSeekingType = missing.includes("seekingType");
+
+  const handleFileChange = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setUploading(true);
+    try {
+      const formData = new FormData();
+      formData.append("file", file);
+      await api.post("/api/resumes/", formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
+      toast.success("Résumé uploaded.");
+      onResumeUploaded();
+    } catch (err) {
+      toast.error(`Upload failed: ${err.response?.data?.error || err.message}`);
+    } finally {
+      setUploading(false);
+      if (fileInputRef.current) fileInputRef.current.value = "";
+    }
+  };
+
+  return (
+    <div className="flex flex-col items-center py-16 px-6 bg-white/5 rounded-3xl border border-dashed border-purple-500/30 text-center">
+      <div className="w-16 h-16 bg-purple-500/10 rounded-2xl flex items-center justify-center mb-6">
+        <FileText size={32} className="text-purple-300" />
+      </div>
+      <p className="text-white text-xl font-bold mb-2">One more step before job openings unlock</p>
+      <p className="text-white/40 text-sm max-w-md mb-8">
+        We show every student a feed matched to their actual profile — that needs a résumé and to know what
+        you&apos;re looking for first.
+      </p>
+
+      {needsResume && (
+        <div className="w-full max-w-sm mb-6">
+          <input ref={fileInputRef} type="file" accept=".pdf,.doc,.docx,.jpg,.jpeg,.png" className="hidden" onChange={handleFileChange} />
+          <button
+            onClick={() => fileInputRef.current?.click()}
+            disabled={uploading}
+            className="w-full flex items-center justify-center gap-2 px-6 py-3.5 bg-purple-600 hover:bg-purple-500 disabled:opacity-50 text-white text-sm font-bold rounded-xl transition-all active:scale-95"
+          >
+            {uploading ? <Loader2 size={16} className="animate-spin" /> : <UploadCloud size={16} />}
+            {uploading ? "Uploading…" : "Upload your résumé"}
+          </button>
+          <p className="text-white/25 text-[11px] mt-2">PDF, DOC, DOCX, JPG or PNG — up to 5MB.</p>
+        </div>
+      )}
+
+      {!needsResume && needsSeekingType && (
+        <div className="w-full max-w-md text-left">
+          <JobPreferences forceOpen onSaved={onPreferencesSaved} />
+        </div>
+      )}
+    </div>
+  );
+};
 
 // Hoisted out of JobOpeningsTab (react-hooks/static-components) - a
 // component declared inside another component's body is recreated on
@@ -22,6 +87,10 @@ const JobOpeningsTab = () => {
   const [loading, setLoading] = useState(false);
   const [filter, setFilter] = useState('all');
   const [pagination, setPagination] = useState({ page: 1, limit: 10, total: 0, totalPages: 1 });
+  // { missing: ['resume'|'seekingType', ...] } when /api/jobs 403s on an
+  // incomplete prerequisite, null once cleared. Distinct from a plain fetch
+  // error — this isn't "something went wrong", it's "one more step".
+  const [prerequisiteBlock, setPrerequisiteBlock] = useState(null);
 
   // OUT-32: authenticated call to the personalized, scored feed. The backend
   // returns real matchScore + reasons per job — no client-side fabrication.
@@ -30,12 +99,18 @@ const JobOpeningsTab = () => {
     try {
       const { data } = await api.get('/api/jobs', { params: { page, limit: 10 } });
       if (data.success) {
+        setPrerequisiteBlock(null);
         setJobOpenings(data.data);
         setPagination(data.pagination);
       }
     } catch (error) {
-      console.error('Error fetching jobs:', error);
-      setJobOpenings([]);
+      if (error.response?.status === 403 && error.response?.data?.error === 'job_prerequisites_incomplete') {
+        setPrerequisiteBlock({ missing: error.response.data.missing || [] });
+        setJobOpenings([]);
+      } else {
+        console.error('Error fetching jobs:', error);
+        setJobOpenings([]);
+      }
     } finally {
       setLoading(false);
     }
@@ -189,9 +264,17 @@ const JobOpeningsTab = () => {
         </div>
       </div>
 
-      <JobPreferences onSaved={() => fetchJobs(1)} />
+      {prerequisiteBlock ? (
+        <JobPrerequisiteGate
+          missing={prerequisiteBlock.missing}
+          onResumeUploaded={() => fetchJobs(1)}
+          onPreferencesSaved={() => fetchJobs(1)}
+        />
+      ) : (
+        <>
+          <JobPreferences onSaved={() => fetchJobs(1)} />
 
-      {loading ? (
+          {loading ? (
         <div className="flex flex-col items-center justify-center h-96 gap-4">
           <div className="relative">
             <div className="w-12 h-12 rounded-full border-2 border-purple-500/20"></div>
@@ -264,6 +347,8 @@ const JobOpeningsTab = () => {
             Next
           </button>
         </div>
+      )}
+        </>
       )}
     </div>
   );
