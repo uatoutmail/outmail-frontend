@@ -37,11 +37,13 @@ export default function Page() {
   const [activeSection, setActiveSection] = useState("dashboard");
   // A plan that became active without the user ever seeing a confirmation —
   // the webhook-only path (OUT-228).
-  const [justActivated, setJustActivated] = useState(null);
-
-  useEffect(() => {
-    if (user) setJustActivated(pendingActivation(user));
-  }, [user]);
+  //
+  // DERIVED, not synced through an effect. pendingActivation is a pure read of
+  // localStorage against the current user, so computing it during render is
+  // both simpler and avoids the cascading re-render an effect would cause.
+  // Only the dismissal is state, because only that is a user action.
+  const [activationDismissed, setActivationDismissed] = useState(false);
+  const justActivated = activationDismissed ? null : pendingActivation(user);
 
   // Check if user has stored token
   const hasStoredToken = () => {
@@ -110,7 +112,7 @@ export default function Page() {
           <button
             type="button"
             aria-label="Dismiss"
-            onClick={() => { acknowledge(user); setJustActivated(null); }}
+            onClick={() => { acknowledge(user); setActivationDismissed(true); }}
             className="text-emerald-200/60 hover:text-emerald-200"
           >
             ×
