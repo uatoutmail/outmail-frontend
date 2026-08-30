@@ -46,7 +46,7 @@ const faqItems = [
     id: '6',
     question: 'How many emails can I send?',
     answer:
-      'Sending limits depend on your plan. Outmail automatically throttles sends to keep your Gmail account safe and compliant with Gmail guidelines — so you get maximum reach without risking your account.',
+      'Your daily limit starts small and grows as you keep sending — that warm-up is deliberate, and it is what keeps your Gmail account safe and out of spam folders. Outmail throttles automatically, so you get the most reach your account can carry without risking it.',
     category: 'pricing',
   },
   {
@@ -88,7 +88,44 @@ const faqItems = [
     id: '12',
     question: 'What plans does Outmail offer?',
     answer:
-      'Outmail is free to start — cold outreach is free, forever. Pro adds the resume-matched job feed and the Autofill extension; Elite adds live mentorship on top. See the pricing page for current details.',
+      'Two. Outreach & Jobs gives you recruiter outreach, the resume-matched job feed and the Autofill extension. Outreach, Jobs & Mentorship adds bi-weekly sessions with people who have navigated the path you are on, and is limited to 25 students. Both are a one-time payment for one year — see the pricing page for current prices.',
+    category: 'pricing',
+  },
+  // Questions a PAID product creates. A student spending their own money asks
+  // these before they buy, and leaving them unanswered costs a sale (OUT-233).
+  {
+    id: '13',
+    question: 'Is this a subscription? Will I be charged again?',
+    answer:
+      'No. You pay once for one year of access, and nothing renews automatically. We will never charge your card a second time unless you choose to buy another year.',
+    category: 'pricing',
+  },
+  {
+    id: '14',
+    question: 'What happens when my year ends?',
+    answer:
+      'Outreach sending stops and job openings are no longer shown, and we remind you before that happens. Nothing is deleted — your resume, your outreach history and your saved application answers stay exactly where they are and come back the moment you renew. Renewing early adds the days you have left rather than losing them.',
+    category: 'pricing',
+  },
+  {
+    id: '15',
+    question: 'What if it is not right for me?',
+    answer:
+      'Ask for a refund within 7 days of paying and we will refund in full, without asking you to justify it. We do not deduct for emails already sent.',
+    category: 'pricing',
+  },
+  {
+    id: '16',
+    question: 'Can I try it before paying?',
+    answer:
+      'Yes. Every account gets three free sends, which is enough to see that mail genuinely lands in a recruiter inbox. After that, a plan is needed to keep going — and the 7-day refund means buying is still risk-free.',
+    category: 'pricing',
+  },
+  {
+    id: '17',
+    question: 'Why is there no free plan?',
+    answer:
+      'Because every email Outmail sends costs us real money in AI and in verified recruiter data, and because a shared pool of recruiters only stays responsive if the people writing to them are serious. Charging keeps the product good for the students who use it, rather than spreading it thin. The 7-day refund carries the risk instead of you.',
     category: 'pricing',
   },
 ];

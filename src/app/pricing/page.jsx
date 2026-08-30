@@ -23,15 +23,17 @@ function page() {
         </p>
 
         <h1 className="text-4xl sm:text-5xl font-syne font-semibold tracking-tight leading-tight mt-3 text-white">
-          Start free.
+          Built for your placement year.
           <br />
           <span className="gradient-hero">
-            Upgrade when you&apos;re ready.
+            One payment. Twelve months.
           </span>
         </h1>
 
         <p className="text-white/60 text-base sm:text-lg mt-6 leading-relaxed max-w-2xl mx-auto">
-          Cold outreach is free, forever — add resume-matched jobs and mentorship whenever you want more.
+          Outmail emails real recruiters from your own inbox and puts matched openings in front of
+          you. Pay once — no subscription, nothing renews automatically. Not right for you? Full
+          refund within 7 days.
         </p>
 
         <div className="text-center mt-10">
