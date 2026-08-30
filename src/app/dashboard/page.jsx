@@ -19,6 +19,7 @@ import JobOpeningsTab from "./components/jobs/JobOpeningsTab";
 import SettingsTab from "./components/settings/SettingsTab";
 import AutofillDataTab from "./components/autofill/AutofillDataTab";
 import LockedFeatureOverlay from "./components/LockedFeatureOverlay";
+import { hasFeature, lockReason, UPGRADE_TARGET } from "@/lib/planAccess";
 
 const studentNavItems = [
   { label: "Dashboard", action: "dashboard", icon: LayoutDashboard },
@@ -80,15 +81,26 @@ export default function Page() {
       {/* Conditional rendering based on activeSection */}
       {activeSection === "dashboard" && <DashboardOverview />}
       {activeSection === "coldOutreach" && <ColdOutreachTab />}
+      {/* Gating comes from lib/planAccess so the ladder is defined once and
+          matches the server. It previously keyed off PLAN_C, which is retired,
+          and PLAN_B for jobs — neither matches what we sell (OUT-225). */}
       {activeSection === "mentorship" && (
-        user?.currentPlan?.code === 'PLAN_C'
+        hasFeature(user, 'mentorship')
           ? <MentorshipTab />
-          : <LockedFeatureOverlay feature="Expert Mentorship" />
+          : <LockedFeatureOverlay
+              feature="Expert Mentorship"
+              reason={lockReason(user, 'mentorship')}
+              targetPlan={UPGRADE_TARGET.mentorship}
+            />
       )}
       {activeSection === "jobOpenings" && (
-        ['PLAN_B', 'PLAN_C'].includes(user?.currentPlan?.code)
+        hasFeature(user, 'jobOpenings')
           ? <JobOpeningsTab />
-          : <LockedFeatureOverlay feature="Curated Job Openings" />
+          : <LockedFeatureOverlay
+              feature="Curated Job Openings"
+              reason={lockReason(user, 'jobOpenings')}
+              targetPlan={UPGRADE_TARGET.jobOpenings}
+            />
       )}
       {activeSection === "autofillData" && <AutofillDataTab />}
       {activeSection === "settings" && <SettingsTab />}

@@ -2,7 +2,21 @@ import React from 'react';
 import Link from 'next/link';
 import { Lock } from 'lucide-react';
 
-const LockedFeatureOverlay = ({ feature }) => {
+/**
+ * The teaser shown in place of a feature the user's plan does not include.
+ *
+ * `reason` decides the words, and the distinction matters: telling a paying
+ * customer to "subscribe" reads as a bug in something they already bought.
+ *   'none'    -> never paid, or the placement year lapsed
+ *   'upgrade' -> paying, but on a lower tier
+ *
+ * `targetPlan` deep-links to the plan that actually unlocks THIS feature
+ * instead of dropping the user on a generic pricing page — the old link went
+ * to /pricing, whose CTA sent them straight back to /dashboard (OUT-226).
+ */
+const LockedFeatureOverlay = ({ feature, reason = 'none', targetPlan }) => {
+  const upgrading = reason === 'upgrade';
+  const href = targetPlan ? `/pricing?plan=${targetPlan}` : '/pricing';
   return (
     <div className="relative w-full h-full min-h-[600px] overflow-hidden rounded-2xl">
       {/* Static teaser backdrop — no live component mounts here, so locked
@@ -24,15 +38,19 @@ const LockedFeatureOverlay = ({ feature }) => {
           <div className="w-16 h-16 bg-purple-600/20 rounded-full flex items-center justify-center mx-auto mb-6 border border-purple-500/30">
             <Lock className="w-8 h-8 text-purple-400" />
           </div>
-          <h2 className="text-2xl font-bold text-white mb-3">Unlock {feature}</h2>
+          <h2 className="text-2xl font-bold text-white mb-3">
+            {upgrading ? `${feature} is on a higher plan` : `Unlock ${feature}`}
+          </h2>
           <p className="text-white/60 mb-8 text-sm leading-relaxed">
-            Upgrade your plan to get full access to {feature} and accelerate your career.
+            {upgrading
+              ? `Your current plan doesn't include ${feature}. Upgrade to add it — you keep everything you already have.`
+              : `Get full access to ${feature} and everything else Outmail does, for one placement year.`}
           </p>
           <Link
-            href="/pricing"
+            href={href}
             className="inline-block bg-white text-black hover:bg-gray-100 font-bold py-3 px-8 rounded-full transition-colors w-full text-sm"
           >
-            Upgrade to Access
+            {upgrading ? 'Upgrade my plan' : 'See plans'}
           </Link>
         </div>
       </div>
