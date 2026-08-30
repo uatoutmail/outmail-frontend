@@ -1,5 +1,5 @@
 "use client";
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useAuth } from '@/context/AuthContext';
 import { getPlans, startCheckout, validateCoupon } from '@/lib/payments';
 import { rememberIntent, takeIntent } from '@/lib/checkoutIntent';
@@ -100,13 +100,22 @@ export default function ZPricing() {
     buy(plan);
   }, [isAuthenticated, buy]);
 
-  // Resume a checkout the user started before signing in.
+  // Resume a checkout the user started before signing in (OUT-227).
+  //
+  // Deferred to a microtask rather than called in the effect body. Opening
+  // Razorpay is an external side effect, not state synchronisation, and calling
+  // it synchronously here sets state mid-effect and cascades a re-render — which
+  // is what react-hooks/set-state-in-effect flags. The guard ref stops a second
+  // render from starting a second checkout before the first has set busyPlan.
+  const resumedRef = useRef(false);
   useEffect(() => {
-    if (!isAuthenticated || loading || !plans.length) return;
+    if (resumedRef.current || !isAuthenticated || loading || !plans.length) return;
     const intent = takeIntent();
     if (!intent) return;
     const plan = plans.find((p) => p.id === intent.planId || p.code === intent.planCode);
-    if (plan && !isSoldOut(plan)) buy(plan);
+    if (!plan || isSoldOut(plan)) return;
+    resumedRef.current = true;
+    queueMicrotask(() => buy(plan));
   }, [isAuthenticated, loading, plans, buy]);
 
   const applyCoupon = async () => {
