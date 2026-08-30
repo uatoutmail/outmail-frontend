@@ -3,16 +3,9 @@ import { api } from "./api";
 /**
  * Razorpay Checkout client for the customer-facing site.
  *
- * ⚠️ CURRENTLY UNREFERENCED. Nothing in the app imports this module: the
- * pricing page's CTA (src/component/pricing.jsx) sends the visitor to
- * /dashboard or to Google sign-in, never into startCheckout. There is
- * therefore no way for a customer to pay from the website today, even though
- * the backend endpoints and the Razorpay account are live.
- *
- * This is deliberately NOT deleted as dead code — it is unfinished wiring, not
- * an abandoned approach. It matches the current backend contract and is the
- * intended path; what is missing is a CTA that calls startCheckout({ planId }).
- * See the payments epic in Linear before removing or rewriting it.
+ * WIRED as of OUT-226. It was orphaned for a long time — the pricing CTA sent
+ * visitors to /dashboard and never reached startCheckout, so no customer could
+ * pay from the website at all. component/pricing.jsx now calls it per plan.
  *
  * Flow, and where each call lands on the backend:
  *   getPlans()      GET  /api/payments/plans           public
@@ -72,6 +65,10 @@ const loadRazorpayScript = () =>
 /**
  * The whole checkout, end to end: create order -> open Razorpay -> verify.
  *
+ * Resolves with the verify response, which carries `wasAlreadyPaid` so the
+ * caller can tell a first purchase from a re-verify and never imply a second
+ * charge.
+ *
  * Resolves with the verify response once the payment is confirmed, and rejects
  * on cancellation ("Payment cancelled"), on a Razorpay-reported failure, or if
  * verification fails — so a caller can tell "user changed their mind" from
@@ -79,7 +76,7 @@ const loadRazorpayScript = () =>
  *
  * `prefill` is optional { name, email } to save the user retyping.
  */
-export const startCheckout = async ({ planId, couponCode, prefill = {} } = {}) => {
+export const startCheckout = async ({ planId, couponCode, prefill = {}, onModalClosed } = {}) => {
   const ok = await loadRazorpayScript();
   if (!ok) throw new Error('Failed to load Razorpay. Check your connection.');
 
@@ -98,6 +95,10 @@ export const startCheckout = async ({ planId, couponCode, prefill = {} } = {}) =
       prefill,
       theme: { color: '#6c00ff' },
       handler: async (response) => {
+        // Razorpay's modal has closed and we are now waiting on our own /verify
+        // call. That gap is invisible without this callback, and an unexplained
+        // pause after paying is exactly when people click again.
+        onModalClosed?.();
         try {
           const result = await verifyPayment({
             razorpay_order_id: response.razorpay_order_id,
