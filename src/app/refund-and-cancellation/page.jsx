@@ -227,7 +227,31 @@ export default function RefundAndCancellation() {
 
           <section className="space-y-6">
             <h2 className="text-2xl font-bold text-slate-900 border-b border-slate-100 pb-2 font-syne">
-              10. Changes to this policy
+              10. If our prices change
+            </h2>
+            <div className="space-y-4">
+              <p>
+                <strong className="text-slate-900">
+                  A price change never affects a year you have already paid for.
+                </strong>{" "}
+                If you buy at our launch price, you keep the full year at that price. We will not
+                shorten your access, reduce what it includes, or ask you for the difference.
+              </p>
+              <p>
+                Where a plan is offered at a launch price, that price is a genuine discount against
+                the standard price shown alongside it, and it applies for a stated reason — for
+                example, to our first group of students. It is not a permanent “sale”.
+              </p>
+              <p>
+                When you renew, the price in force on the day you renew applies. It will be shown to
+                you before you pay.
+              </p>
+            </div>
+          </section>
+
+          <section className="space-y-6">
+            <h2 className="text-2xl font-bold text-slate-900 border-b border-slate-100 pb-2 font-syne">
+              11. Changes to this policy
             </h2>
             <p>
               We may update this policy from time to time. The version in force is the one published
@@ -237,7 +261,7 @@ export default function RefundAndCancellation() {
 
           <section className="space-y-6">
             <h2 className="text-2xl font-bold text-slate-900 border-b border-slate-100 pb-2 font-syne">
-              11. Contact us
+              12. Contact us
             </h2>
             <div className="space-y-2">
               <p>For anything relating to billing, cancellation or refunds:</p>
