@@ -810,9 +810,16 @@ const SettingsTab = () => {
                 <div className="w-16 h-16 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-full flex items-center justify-center mb-3 shadow-lg group hover:rotate-12 transition-transform duration-300">
                   <Zap className="text-white fill-current" size={32} />
                 </div>
-                <span className="text-lg font-bold text-white">{user?.currentPlan?.name || "Free Plan"}</span>
+                {/* There is no free plan (OUT-230). Calling an unpaid account
+                    "Free Plan" tells the user they are on something they are
+                    not, and makes the three-send limit look like a fault. */}
+                <span className="text-lg font-bold text-white">
+                  {user?.currentPlan?.name || "No active plan"}
+                </span>
                 <p className="text-xs text-white/40 mt-1">
-                  {user?.currentPlan ? "Active subscription" : "Upgrade to unlock premium features"}
+                  {user?.currentPlan
+                    ? "One placement year — see Billing for your end date"
+                    : `${user?.trial?.remaining ?? 3} free sends left · choose a plan to keep going`}
                 </p>
               </div>
               <ul className="mt-6 space-y-3">

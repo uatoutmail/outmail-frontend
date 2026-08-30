@@ -64,15 +64,20 @@ const softwareApplicationSchema = {
   url: "https://outmail.in",
   description:
     "Automate personalized recruiter outreach, track email opens, and get noticed by top companies using Outmail's cold outreach platform.",
+  // Structured data is machine-readable and is what search engines surface, so a
+  // stale price here is a public claim we cannot honour. It advertised a free
+  // plan at $9/month in USD; we sell one placement year for ₹999 in INR, and
+  // there is no free plan (OUT-233).
   offers: {
     "@type": "Offer",
-    price: "0",
-    priceCurrency: "USD",
+    price: "999",
+    priceCurrency: "INR",
+    url: "https://outmail.in/pricing",
     priceSpecification: {
       "@type": "UnitPriceSpecification",
-      price: "0",
-      priceCurrency: "USD",
-      unitText: "Free plan; paid plans from $9/month",
+      price: "999",
+      priceCurrency: "INR",
+      unitText: "One-time payment for one year of access",
     },
   },
   provider: {
