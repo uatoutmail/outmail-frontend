@@ -1,150 +1,295 @@
 "use client";
-import React from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { useAuth } from '@/context/AuthContext';
+import { getPlans, startCheckout, validateCoupon } from '@/lib/payments';
+import { rememberIntent, takeIntent } from '@/lib/checkoutIntent';
+import { OUTCOME, classify, message, formatPaise } from '@/lib/paymentOutcome';
 
-// Free-first pricing (USD). Free = Cold Outreach; paid tiers add the next two
-// pillars (Job Aggregator, then Mentorship). Cumulative.
-const plans = [
-  {
-    id: 'free',
-    badge: 'Free',
-    title: 'Cold Outreach',
-    price: '$0',
-    period: 'free forever',
-    tagline: 'Get seen by the right recruiters.',
-    description:
-      'Find the right companies and send AI-personalized cold emails from your own inbox — free, forever.',
+/**
+ * The pricing page, and the only place a customer can buy Outmail.
+ *
+ * EVERY NUMBER COMES FROM /api/payments/plans. Nothing here is hardcoded, on
+ * purpose: this page used to carry its own copy of the prices and drifted so far
+ * from the database that it advertised "$0 free forever" in USD for a plan the
+ * backend charged ₹499 for in INR, and its third card would have returned 400 on
+ * click. Copy that carries numbers is how that happens (OUT-232).
+ *
+ * What we sell: a one-time payment for one placement year. Not a subscription —
+ * nothing renews automatically.
+ */
+
+// Selling points per plan code. Deliberately NOT prices — those come from the
+// API. Kept here because feature copy is presentation, not billing data.
+const HIGHLIGHTS = {
+  PLAN_A: {
+    tagline: 'Everything you need to get interviews.',
     features: [
-      'AI-personalized cold emails from your own Gmail',
-      'Recruiter & company discovery',
-      'Hiring-signal targeting',
-      'Send scheduling & daily limits',
+      'AI-personalised cold emails, sent from your own Gmail',
+      'Verified recruiter and company discovery',
+      'Resume-matched job feed with an explainable Outmail Score',
+      'One-click Autofill browser extension',
+      'Hiring-signal targeting and send scheduling',
       'Outreach analytics',
     ],
-    cta: 'Get Started Free',
-    highlight: false,
+    popular: true,
   },
-  {
-    id: 'pro',
-    badge: 'Pro',
-    title: 'Outreach + Job Intelligence',
-    price: '$9',
-    period: 'per month',
-    tagline: 'Everything in Free, plus matched jobs.',
-    description:
-      'Add a resume- and intent-matched job feed with an explainable Outmail Score, plus the one-click Autofill browser extension.',
+  PLAN_B: {
+    tagline: 'Everything above, plus real mentors.',
     features: [
-      'Everything in Free',
-      'Resume & intent-matched job feed',
-      'Explainable Outmail Score + "why matched"',
-      'Autofill browser extension',
-      'Apply / save / discard tracking',
+      'Everything in Outreach & Jobs',
+      'Bi-weekly mentorship with people who have done it',
+      'Mentor Q&A and session recordings',
+      'Personalised career guidance',
       'Priority support',
     ],
-    cta: 'Get Started',
-    highlight: true,
+    popular: false,
   },
-  {
-    id: 'elite',
-    badge: 'Elite',
-    title: 'Everything + Mentorship',
-    price: '$19',
-    period: 'per month',
-    tagline: 'Outreach, jobs, and real mentors.',
-    description:
-      "Everything in Pro, plus bi-weekly mentorship sessions with people who've navigated the path you're on.",
-    features: [
-      'Everything in Pro',
-      'Bi-weekly mentorship sessions',
-      'Mentor Q&A + session recordings',
-      'Personalized career guidance',
-      'Priority support',
-    ],
-    cta: 'Get Started',
-    highlight: false,
-  },
-];
+};
 
 export default function ZPricing() {
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, refreshUser } = useAuth();
+  const [plans, setPlans] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState(false);
+  const [busyPlan, setBusyPlan] = useState(null);   // planId mid-checkout
+  const [phase, setPhase] = useState(null);         // 'opening' | 'verifying'
+  const [outcome, setOutcome] = useState(null);
+  const [coupon, setCoupon] = useState('');
+  const [couponState, setCouponState] = useState(null);
 
-  const handleCta = () => {
-    if (isAuthenticated) {
-      window.location.href = '/dashboard';
-    } else {
+  useEffect(() => {
+    let alive = true;
+    getPlans()
+      .then((data) => { if (alive) { setPlans(data || []); setLoadError(false); } })
+      .catch(() => { if (alive) setLoadError(true); })
+      .finally(() => { if (alive) setLoading(false); });
+    return () => { alive = false; };
+  }, []);
+
+  const buy = useCallback(async (plan) => {
+    setOutcome(null);
+    setBusyPlan(plan.id);
+    setPhase('opening');
+    try {
+      // The modal is Razorpay's; once it closes we are waiting on our own
+      // /verify call, and that gap needs its own state or people click twice.
+      const result = await startCheckout({
+        planId: plan.id,
+        couponCode: couponState?.valid ? couponState.code : undefined,
+        onModalClosed: () => setPhase('verifying'),
+      });
+      // A re-verify of an already-paid order must never read as a second charge.
+      setOutcome(result?.wasAlreadyPaid ? OUTCOME.ALREADY : OUTCOME.SUCCESS);
+      await refreshUser();
+    } catch (err) {
+      setOutcome(classify(err));
+    } finally {
+      setBusyPlan(null);
+      setPhase(null);
+    }
+  }, [couponState, refreshUser]);
+
+  const onCta = useCallback((plan) => {
+    if (!isAuthenticated) {
+      // Carry the choice through Google sign-in so it is not discarded at the
+      // highest-intent moment in the funnel (OUT-227).
+      rememberIntent(plan.id, plan.code);
       window.location.href = `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/auth/google`;
+      return;
+    }
+    buy(plan);
+  }, [isAuthenticated, buy]);
+
+  // Resume a checkout the user started before signing in.
+  useEffect(() => {
+    if (!isAuthenticated || loading || !plans.length) return;
+    const intent = takeIntent();
+    if (!intent) return;
+    const plan = plans.find((p) => p.id === intent.planId || p.code === intent.planCode);
+    if (plan && !isSoldOut(plan)) buy(plan);
+  }, [isAuthenticated, loading, plans, buy]);
+
+  const applyCoupon = async () => {
+    const code = coupon.trim();
+    if (!code) return;
+    setCouponState({ checking: true });
+    try {
+      const res = await validateCoupon({ code, planId: plans[0]?.id });
+      setCouponState({ ...res, code });
+    } catch {
+      setCouponState({ valid: false, error: 'We could not check that code. Try again.' });
     }
   };
 
   return (
     <div className="text-white py-20 px-4 bg-[#0a0b14]">
-      <div className="max-w-7xl mx-auto text-center">
-        <p className="text-xs font-display font-medium text-[#AD46FF] uppercase tracking-[4px] mb-3">
-          Pricing
+      <div className="max-w-5xl mx-auto text-center">
+        <p className="text-xs font-display font-medium text-[#AD46FF] uppercase tracking-[4px] mb-3">Pricing</p>
+        <h2 className="text-3xl md:text-4xl font-bold mb-4 tracking-tighter">One year. One payment.</h2>
+        <p className="text-white/60 mb-3 max-w-2xl mx-auto text-base">
+          Outmail is built for your placement year. Pay once, use it for twelve months —
+          no subscription, nothing renews automatically.
         </p>
-        <h2 className="text-3xl md:text-4xl font-bold mb-4 tracking-tighter">
-          Choose your plan
-        </h2>
-        <p className="text-white/60 mb-12 max-w-2xl mx-auto text-base">
-          Every plan includes the ones before it. Start with free cold outreach; add jobs, then mentorship.
+        <p className="text-white/40 mb-12 max-w-2xl mx-auto text-sm">
+          For comparison, LinkedIn Premium costs ₹1,400–2,800 <em>per month</em> in India.
         </p>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {plans.map((plan) => (
-            <div
-              key={plan.id}
-              className={`relative rounded-2xl p-8 text-left flex flex-col justify-between transition-all duration-300 hover:-translate-y-1 backdrop-blur-xl
-                ${plan.highlight
-                  ? 'bg-white/6 border-2 border-purple-500 shadow-[0_0_32px_rgba(108,0,255,0.25)]'
-                  : 'bg-white/5 border border-white/12 hover:border-purple-500/40'
-                }`}
-            >
-              {plan.highlight && (
-                <span className="absolute -top-3 left-1/2 -translate-x-1/2 text-[11px] uppercase tracking-[3px] bg-purple-600 text-white px-4 py-1 rounded-full">
-                  Most Popular
-                </span>
-              )}
+        {outcome && <OutcomeBanner outcome={outcome} onDismiss={() => setOutcome(null)} />}
 
-              <div className="mb-6">
-                <span className="text-xs uppercase tracking-[3px] text-purple-400 font-medium">
-                  {plan.badge}
-                </span>
-                <h3 className="text-2xl font-bold text-white mt-2 mb-1">{plan.title}</h3>
-                <p className="text-purple-300 text-sm font-medium mb-3">{plan.tagline}</p>
-                <div className="flex items-baseline gap-2 flex-wrap mb-3">
-                  <span className="text-4xl font-bold text-white">{plan.price}</span>
-                  <span className="text-white/50 text-sm">{plan.period}</span>
-                </div>
-                <p className="text-white/55 text-sm leading-relaxed">{plan.description}</p>
-              </div>
+        {loading && <p className="text-white/50 py-16">Loading plans…</p>}
 
-              <ul className="mb-8 space-y-3 flex-1">
-                {plan.features.map((feature, i) => (
-                  <li key={i} className="flex items-start gap-3 text-sm text-white/80">
-                    <span className="mt-0.5 flex-shrink-0 w-4 h-4 rounded-full bg-purple-600/50 border border-purple-500/60 flex items-center justify-center text-[10px] text-purple-300">✓</span>
-                    {feature}
-                  </li>
-                ))}
-              </ul>
+        {loadError && (
+          <div className="py-16">
+            <p className="text-white/70">We could not load our plans just now.</p>
+            <button type="button" onClick={() => window.location.reload()}
+              className="mt-4 underline text-[#AD46FF]">Try again</button>
+          </div>
+        )}
 
-              <button
-                type="button"
-                onClick={handleCta}
-                className={`w-full block text-center py-3 px-4 rounded-full font-semibold text-sm transition-all duration-200
-                  ${plan.highlight
-                    ? 'bg-white text-black hover:bg-gray-100'
-                    : 'bg-white/10 text-white border border-white/20 hover:bg-white/20'
-                  }`}
-              >
-                {plan.cta} →
+        {!loading && !loadError && (
+          <div className={`grid grid-cols-1 gap-6 ${plans.length > 1 ? 'md:grid-cols-2' : 'max-w-md mx-auto'}`}>
+            {plans.map((plan) => (
+              <PlanCard
+                key={plan.id}
+                plan={plan}
+                busy={busyPlan === plan.id}
+                phase={phase}
+                anyBusy={Boolean(busyPlan)}
+                onBuy={() => onCta(plan)}
+                isAuthenticated={isAuthenticated}
+              />
+            ))}
+          </div>
+        )}
+
+        {!loading && !loadError && plans.length > 0 && (
+          <div className="mt-10 max-w-md mx-auto text-left">
+            <label className="block text-white/50 text-xs uppercase tracking-[2px] mb-2">
+              Have a college code?
+            </label>
+            <div className="flex gap-2">
+              <input
+                value={coupon}
+                onChange={(e) => setCoupon(e.target.value.toUpperCase())}
+                placeholder="e.g. PESU999"
+                className="flex-1 bg-white/5 border border-white/15 rounded-full px-4 py-2 text-sm text-white placeholder:text-white/30 focus:outline-none focus:border-[#AD46FF]"
+              />
+              <button type="button" onClick={applyCoupon}
+                className="px-5 py-2 rounded-full bg-white/10 border border-white/20 text-sm hover:bg-white/20">
+                Apply
               </button>
             </div>
-          ))}
-        </div>
+            {couponState && !couponState.checking && (
+              <p className={`mt-2 text-sm ${couponState.valid ? 'text-emerald-400' : 'text-white/50'}`}>
+                {couponState.valid
+                  ? `Applied — ${formatPaise(couponState.finalAmount)} instead${
+                      couponState.spotsLeft != null ? `, ${couponState.spotsLeft} spots left` : ''}`
+                  : couponState.error || 'That code is not valid.'}
+              </p>
+            )}
+          </div>
+        )}
 
-        <p className="text-white/50 text-sm mt-10">
-          Prices in USD. Paid plans are billed monthly, cancel anytime.
+        <p className="text-white/40 text-sm mt-10">
+          Prices in INR and include everything — no hidden fees. Not right for you?
+          {' '}<a href="/refund-and-cancellation" className="underline hover:text-white/70">
+            Full refund within 7 days
+          </a>, no questions asked.
         </p>
+      </div>
+    </div>
+  );
+}
+
+function isSoldOut(plan) {
+  return plan.seatsRemaining != null && plan.seatsRemaining <= 0;
+}
+
+function PlanCard({ plan, busy, phase, anyBusy, onBuy, isAuthenticated }) {
+  const meta = HIGHLIGHTS[plan.code] || { tagline: plan.description, features: [], popular: false };
+  const soldOut = isSoldOut(plan);
+  const discounted = plan.list_amount && plan.list_amount > plan.amount;
+
+  const label = busy
+    ? (phase === 'verifying' ? 'Confirming your payment…' : 'Opening checkout…')
+    : soldOut ? 'Fully subscribed'
+    : isAuthenticated ? 'Get Outmail'
+    : 'Sign in to continue';
+
+  return (
+    <div className={`relative rounded-2xl p-8 text-left flex flex-col justify-between transition-all duration-300 hover:-translate-y-1 backdrop-blur-xl
+      ${meta.popular
+        ? 'bg-white/6 border-2 border-purple-500 shadow-[0_0_32px_rgba(108,0,255,0.25)]'
+        : 'bg-white/5 border border-white/12 hover:border-purple-500/40'}`}>
+
+      {meta.popular && (
+        <span className="absolute -top-3 left-1/2 -translate-x-1/2 text-[11px] uppercase tracking-[3px] bg-purple-600 text-white px-4 py-1 rounded-full">
+          Most Popular
+        </span>
+      )}
+      {plan.seatsRemaining != null && !soldOut && (
+        <span className="absolute -top-3 right-6 text-[11px] uppercase tracking-[2px] bg-white/10 border border-white/20 text-white/80 px-3 py-1 rounded-full">
+          {plan.seatsRemaining} of {plan.max_seats} seats left
+        </span>
+      )}
+
+      <div className="mb-6">
+        <h3 className="text-2xl font-bold text-white mt-2 mb-1">{plan.name}</h3>
+        <p className="text-purple-300 text-sm font-medium mb-3">{meta.tagline}</p>
+        <div className="flex items-baseline gap-2 flex-wrap mb-1">
+          <span className="text-4xl font-bold text-white">{formatPaise(plan.amount, plan.currency)}</span>
+          <span className="text-white/50 text-sm">for one year</span>
+        </div>
+        {/* The struck-through price is DATA (plan.list_amount), never hardcoded
+            copy — and it is a price we genuinely charge after the launch, which
+            is what keeps the discount claim honest (OUT-235). */}
+        {discounted && (
+          <p className="text-white/45 text-sm mb-3">
+            <span className="line-through">{formatPaise(plan.list_amount, plan.currency)}</span>
+            {' '}— launch price for our first 1,000 students
+          </p>
+        )}
+        <p className="text-white/55 text-sm leading-relaxed">{plan.description}</p>
+      </div>
+
+      <ul className="mb-8 space-y-3 flex-1">
+        {meta.features.map((f, i) => (
+          <li key={i} className="flex items-start gap-3 text-sm text-white/80">
+            <span className="mt-0.5 flex-shrink-0 w-4 h-4 rounded-full bg-purple-600/50 border border-purple-500/60 flex items-center justify-center text-[10px] text-purple-300">✓</span>
+            {f}
+          </li>
+        ))}
+      </ul>
+
+      <button
+        type="button"
+        onClick={onBuy}
+        disabled={busy || soldOut || anyBusy}
+        aria-busy={busy}
+        className={`w-full block text-center py-3 px-4 rounded-full font-semibold text-sm transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed
+          ${meta.popular ? 'bg-white text-black hover:bg-gray-100' : 'bg-white/10 text-white border border-white/20 hover:bg-white/20'}`}
+      >
+        {label}{!busy && !soldOut ? ' →' : ''}
+      </button>
+    </div>
+  );
+}
+
+function OutcomeBanner({ outcome, onDismiss }) {
+  const { tone, title, body } = message(outcome);
+  const styles = {
+    success: 'bg-emerald-500/10 border-emerald-500/40 text-emerald-200',
+    error: 'bg-red-500/10 border-red-500/40 text-red-200',
+    neutral: 'bg-white/5 border-white/20 text-white/70',
+  }[tone];
+  return (
+    <div className={`mb-10 mx-auto max-w-xl rounded-2xl border px-6 py-4 text-left ${styles}`} role="status">
+      <div className="flex items-start justify-between gap-4">
+        <div>
+          <p className="font-semibold">{title}</p>
+          <p className="text-sm opacity-80 mt-1">{body}</p>
+        </div>
+        <button type="button" onClick={onDismiss} aria-label="Dismiss" className="opacity-60 hover:opacity-100">×</button>
       </div>
     </div>
   );
