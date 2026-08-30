@@ -20,6 +20,7 @@ import SettingsTab from "./components/settings/SettingsTab";
 import AutofillDataTab from "./components/autofill/AutofillDataTab";
 import LockedFeatureOverlay from "./components/LockedFeatureOverlay";
 import { hasFeature, lockReason, UPGRADE_TARGET } from "@/lib/planAccess";
+import { pendingActivation, acknowledge } from "@/lib/planActivation";
 
 const studentNavItems = [
   { label: "Dashboard", action: "dashboard", icon: LayoutDashboard },
@@ -33,6 +34,13 @@ const studentNavItems = [
 export default function Page() {
   const { user, isAuthenticated, loading, logout } = useAuth();
   const [activeSection, setActiveSection] = useState("dashboard");
+  // A plan that became active without the user ever seeing a confirmation —
+  // the webhook-only path (OUT-228).
+  const [justActivated, setJustActivated] = useState(null);
+
+  useEffect(() => {
+    if (user) setJustActivated(pendingActivation(user));
+  }, [user]);
 
   // Check if user has stored token
   const hasStoredToken = () => {
@@ -78,6 +86,31 @@ export default function Page() {
       title=""
       subtitle=""
     >
+      {/* A user can pay, close the tab before /verify fires, and be activated by
+          the webhook seconds later — having seen no confirmation at all. They
+          would return to a dashboard that looks unchanged and reasonably pay
+          again. This catches that case on the next load (OUT-228). */}
+      {justActivated && (
+        <div className="mb-6 rounded-2xl border border-emerald-500/40 bg-emerald-500/10 px-6 py-4 flex items-start justify-between gap-4" role="status">
+          <div>
+            <p className="font-semibold text-emerald-200">
+              Your {justActivated.name} plan is active.
+            </p>
+            <p className="text-sm text-emerald-200/80 mt-1">
+              Your placement year has started — everything is unlocked. You have not been charged twice.
+            </p>
+          </div>
+          <button
+            type="button"
+            aria-label="Dismiss"
+            onClick={() => { acknowledge(user); setJustActivated(null); }}
+            className="text-emerald-200/60 hover:text-emerald-200"
+          >
+            ×
+          </button>
+        </div>
+      )}
+
       {/* Conditional rendering based on activeSection */}
       {activeSection === "dashboard" && <DashboardOverview />}
       {activeSection === "coldOutreach" && <ColdOutreachTab />}
