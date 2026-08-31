@@ -214,33 +214,67 @@ export default function PrivacyPolicy() {
                 numbers or any special category data about recruiters.
               </p>
               <p>
-                <strong className="text-slate-900">Where it comes from.</strong> Business contact
-                details that have been made publicly available — company careers and contact pages,
-                public professional profiles, and job postings. We verify that an address is
-                deliverable through a third-party verification service before it is used.
+                <strong className="text-slate-900">Where it comes from.</strong> We obtain business
+                contact details from a mix of sources:
               </p>
+              <ul className="list-disc pl-6 space-y-3">
+                <li>
+                  publicly available sources — company careers and contact pages, job advertisements,
+                  and public professional profiles;
+                </li>
+                <li>
+                  commercial business-contact data providers, who compile and license professional
+                  contact information;
+                </li>
+                <li>
+                  professional recruiting and hiring contact lists shared within the industry.
+                </li>
+              </ul>
               <p>
-                <strong className="text-slate-900">Why we are permitted to hold it.</strong> The DPDP
-                Act does not apply to personal data that the individual has themselves made publicly
-                available. A work email address published on a company website, a job advertisement or
-                a public professional profile falls into that category, and that is the only kind of
-                address we source.
+                We then check each address with a deliverability verification service before it is
+                used, and we discard those that fail.
               </p>
               <p>
                 <strong className="text-slate-900">
-                  We do not treat that as permission to do as we like.
+                  We will tell you where your specific address came from.
                 </strong>{" "}
-                An exemption from a statute is not the same as behaving well, and it stops applying the
-                moment we stray from public sources. So we hold ourselves to the limits below whether
-                or not the Act compels us to, and we extend the same rights to you — access,
-                correction, erasure and grievance redressal — that we give our own account holders,
-                even where the law may not require it.
+                Some of our sources compile data rather than publish it, and in those cases we may not
+                be able to identify an original publication. If you ask, we will tell you what we know
+                about the origin of your record, honestly, including where that answer is “a third-party
+                data provider”.
               </p>
               <p>
                 <strong className="text-slate-900">Why we hold it.</strong> To let a job-seeking
                 student send you a relevant, individually written application for a role you are
-                hiring for.
+                hiring for. That is the only use. We do not sell, license, publish or share recruiter
+                contact data with anyone, and our Terms forbid students from extracting it.
               </p>
+              <p>
+                <strong className="text-slate-900">
+                  The commitments we make, regardless of what the law requires.
+                </strong>{" "}
+                We are aware that not every source above is one you personally chose to publish. We do
+                not treat that as a technicality to hide behind. So:
+              </p>
+              <ul className="list-disc pl-6 space-y-3">
+                <li>
+                  we hold <strong className="text-slate-900">business contact details only</strong> —
+                  work email, name, job title and employer. Never a personal address, personal phone
+                  number, or anything about your private life;
+                </li>
+                <li>
+                  we honour <strong className="text-slate-900">every right</strong> in section 9 —
+                  access, correction, erasure and grievance redressal — for recruiters exactly as we do
+                  for our own account holders, and we do not ask you to prove the Act obliges us;
+                </li>
+                <li>
+                  one message stops it permanently, across every user, forever — see below;
+                </li>
+                <li>
+                  we cap how many students may contact any one recruiter in a week, and no student may
+                  contact the same recruiter twice.
+                </li>
+              </ul>
               <p>
                 <strong className="text-slate-900">Who actually emailed you.</strong> The email came
                 from the student’s own Gmail account. Outmail helped them find you and draft it. The
