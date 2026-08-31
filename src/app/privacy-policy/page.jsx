@@ -219,20 +219,31 @@ export default function PrivacyPolicy() {
               </p>
               <ul className="list-disc pl-6 space-y-3">
                 <li>
-                  publicly available sources — company careers and contact pages, job advertisements,
-                  and public professional profiles;
+                  <strong className="text-slate-900">Publicly available sources</strong> — company
+                  careers and contact pages, job advertisements, and public professional profiles such
+                  as LinkedIn.
                 </li>
                 <li>
-                  commercial business-contact data providers, who compile and license professional
-                  contact information;
+                  <strong className="text-slate-900">Commercial contact-data providers</strong>, such
+                  as Apollo and Hunter, which compile and license business contact information.
                 </li>
                 <li>
-                  professional recruiting and hiring contact lists shared within the industry.
+                  <strong className="text-slate-900">
+                    Recruiting and hiring contact lists circulated publicly
+                  </strong>{" "}
+                  — for example, lists of hiring contacts published or shared openly by people in the
+                  recruiting and careers community.
                 </li>
               </ul>
               <p>
-                We then check each address with a deliverability verification service before it is
-                used, and we discard those that fail.
+                These lists largely gather together addresses that are already published elsewhere — a
+                careers page, a job advertisement, a public profile. We are not able to verify that for
+                every individual entry, and we do not claim to. Where an address is one we could not
+                trace to a public source, the commitments below still apply in full.
+              </p>
+              <p>
+                We check every address with a deliverability verification service before it is used,
+                and discard the ones that fail.
               </p>
               <p>
                 <strong className="text-slate-900">
@@ -240,8 +251,8 @@ export default function PrivacyPolicy() {
                 </strong>{" "}
                 Some of our sources compile data rather than publish it, and in those cases we may not
                 be able to identify an original publication. If you ask, we will tell you what we know
-                about the origin of your record, honestly, including where that answer is “a third-party
-                data provider”.
+                about the origin of your record, honestly, including where the only answer we have is
+                the name of the provider we obtained it from.
               </p>
               <p>
                 <strong className="text-slate-900">Why we hold it.</strong> To let a job-seeking
