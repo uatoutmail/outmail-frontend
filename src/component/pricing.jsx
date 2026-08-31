@@ -200,7 +200,12 @@ export default function ZPricing() {
         )}
 
         <p className="text-white/40 text-sm mt-10">
-          Prices in INR and include everything — no hidden fees. Not right for you?
+          {/* The displayed price is the TOTAL. Showing ₹999 and charging more at
+              checkout is drip pricing, which the CCPA's 2023 dark-patterns
+              guidelines name directly — so the all-in claim is stated, not
+              implied (OUT-235). */}
+          Prices in INR, inclusive of all taxes. What you see is what you pay — no fees added at
+          checkout. Not right for you?
           {' '}<a href="/refund-and-cancellation" className="underline hover:text-white/70">
             Full refund within 7 days
           </a>, no questions asked.
