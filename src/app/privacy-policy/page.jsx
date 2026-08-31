@@ -147,13 +147,13 @@ export default function PrivacyPolicy() {
                 </thead>
                 <tbody className="align-top">
                   {[
-                    ["Name, email address and profile photo from Google Sign-In", "To create and secure your account", "Performance of our contract with you"],
+                    ["Name, email address and profile photo from Google Sign-In", "To create and secure your account", "You gave it to us to open the account"],
                     ["Your resume, and the skills, education and experience we extract from it", "To match you to companies and to write emails in your name", "Your consent, given when you upload it"],
                     ["Profile details you add — phone, LinkedIn, GitHub, portfolio, location, job preferences", "To improve matching and to include in your outreach where relevant", "Your consent"],
-                    ["A record of every email sent on your behalf — recipient, subject, body, time, outcome", "So you can see your history, and so the same recruiter is not contacted twice", "Performance of our contract with you"],
+                    ["A record of every email sent on your behalf — recipient, subject, body, time, outcome", "So you can see your history, and so the same recruiter is not contacted twice", "You gave it to us for this purpose"],
                     ["Saved answers you store for the Autofill extension", "To fill application forms on your instruction", "Your consent"],
-                    ["Payment records — plan, amount, date, Razorpay reference", "To give you access, issue receipts and meet accounting obligations", "Contract and legal obligation"],
-                    ["Technical data — IP address, browser and device type, session tokens", "To keep your account secure and to detect abuse", "Our legitimate interest in securing the service"],
+                    ["Payment records — plan, amount, date, Razorpay reference", "To give you access, issue receipts and meet accounting obligations", "Required of us by law"],
+                    ["Technical data — IP address, browser and device type, session tokens", "To keep your account secure and to detect abuse", "Necessary to provide the service you asked for"],
                   ].map(([d, w, b], i) => (
                     <tr key={i} className="border-b border-slate-100">
                       <td className="py-3 pr-4">{d}</td>
@@ -167,6 +167,12 @@ export default function PrivacyPolicy() {
             <p className="text-slate-600">
               We do not collect financial account details. Card and UPI details are entered directly
               with Razorpay and never reach us.
+            </p>
+            <p className="text-slate-600">
+              On lawful grounds: the DPDP Act allows personal data to be processed with your consent,
+              or where you have voluntarily provided it for a specified purpose and have not withdrawn
+              it, or where the law requires us to keep it. The right-hand column above says which
+              applies. Where we rely on consent you may withdraw it at any time — see section 9.
             </p>
           </Section>
 
@@ -208,15 +214,32 @@ export default function PrivacyPolicy() {
                 numbers or any special category data about recruiters.
               </p>
               <p>
-                <strong className="text-slate-900">Where it comes from.</strong> Publicly available
-                professional sources and company websites, and information supplied by our team. We
-                verify addresses through a third-party verification service before use.
+                <strong className="text-slate-900">Where it comes from.</strong> Business contact
+                details that have been made publicly available — company careers and contact pages,
+                public professional profiles, and job postings. We verify that an address is
+                deliverable through a third-party verification service before it is used.
+              </p>
+              <p>
+                <strong className="text-slate-900">Why we are permitted to hold it.</strong> The DPDP
+                Act does not apply to personal data that the individual has themselves made publicly
+                available. A work email address published on a company website, a job advertisement or
+                a public professional profile falls into that category, and that is the only kind of
+                address we source.
+              </p>
+              <p>
+                <strong className="text-slate-900">
+                  We do not treat that as permission to do as we like.
+                </strong>{" "}
+                An exemption from a statute is not the same as behaving well, and it stops applying the
+                moment we stray from public sources. So we hold ourselves to the limits below whether
+                or not the Act compels us to, and we extend the same rights to you — access,
+                correction, erasure and grievance redressal — that we give our own account holders,
+                even where the law may not require it.
               </p>
               <p>
                 <strong className="text-slate-900">Why we hold it.</strong> To let a job-seeking
-                student send you a relevant, individually written application. Our lawful basis is
-                legitimate interest in connecting candidates with employers, balanced by the limits
-                below.
+                student send you a relevant, individually written application for a role you are
+                hiring for.
               </p>
               <p>
                 <strong className="text-slate-900">Who actually emailed you.</strong> The email came
@@ -243,8 +266,10 @@ export default function PrivacyPolicy() {
                 </p>
               </div>
               <p>
-                You have the same rights as anyone else under section 9 — access, correction, erasure
-                and grievance redressal — and you may exercise them without having an account.
+                To exercise any of those rights, email{" "}
+                <A href="mailto:support@outmail.in">support@outmail.in</A>. You do not need an Outmail
+                account, and there is no charge. If you are not satisfied with our response, our
+                Grievance Officer is named in section 10.
               </p>
             </div>
           </Section>
