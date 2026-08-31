@@ -69,7 +69,11 @@ export default function RefundAndCancellation() {
                 </a>{" "}
                 page before you pay.
               </li>
-              <li>All prices are in Indian Rupees (INR).</li>
+              <li>
+                All prices are in Indian Rupees (INR) and are{" "}
+                <strong className="text-slate-900">inclusive of all applicable taxes</strong>. The
+                price shown is the total you pay — nothing is added at checkout.
+              </li>
               <li>
                 Payments are processed by Razorpay. We do not receive or store your card details.
               </li>
