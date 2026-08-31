@@ -78,8 +78,13 @@ export default function ZPricing() {
         couponCode: couponState?.valid ? couponState.code : undefined,
         onModalClosed: () => setPhase('verifying'),
       });
-      // A re-verify of an already-paid order must never read as a second charge.
-      setOutcome(result?.wasAlreadyPaid ? OUTCOME.ALREADY : OUTCOME.SUCCESS);
+      // isRepeatPurchase, NOT wasAlreadyPaid. Both confirmation paths race on
+      // every payment, and the webhook usually wins — observed at 11 seconds
+      // ahead in UAT. wasAlreadyPaid is therefore true for most FIRST purchases,
+      // and using it here told new customers "you already have this plan"
+      // moments after they bought it, which reads as a double charge.
+      // isRepeatPurchase is true only when the order was paid long ago.
+      setOutcome(result?.isRepeatPurchase ? OUTCOME.ALREADY : OUTCOME.SUCCESS);
       await refreshUser();
     } catch (err) {
       setOutcome(classify(err));
