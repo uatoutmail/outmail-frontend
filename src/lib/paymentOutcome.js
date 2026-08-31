@@ -50,7 +50,11 @@ export function message(outcome) {
     case OUTCOME.FAILED:
       return { tone: 'error', title: 'That payment did not go through', body: 'No money has been taken. You can try again, or use a different method.' };
     case OUTCOME.ALREADY:
-      return { tone: 'success', title: 'You already have this plan', body: 'This payment was already confirmed — you have not been charged twice.' };
+      // Shown only for a genuinely OLD payment — someone returning to a plan
+      // they already hold. A first purchase whose webhook simply landed first
+      // gets SUCCESS, because telling a new customer they already own it reads
+      // as a double charge.
+      return { tone: 'success', title: 'You already have this plan', body: 'Your existing plan is still active — you have not been charged again.' };
     case OUTCOME.SOLD_OUT:
       return { tone: 'error', title: 'That plan is full', body: 'All seats are taken right now. The other plan is still available.' };
     default:

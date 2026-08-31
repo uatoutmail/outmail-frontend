@@ -39,7 +39,10 @@ describe("message", () => {
   });
 
   it("a re-verify never implies a second charge", () => {
-    expect(message(OUTCOME.ALREADY).body).toMatch(/not been charged twice/i);
+    // Asserted on intent, not on exact wording — the copy changed once already
+    // (OUT-228 follow-up) and pinning the string made a copy edit look like a
+    // regression. What must never change is the reassurance.
+    expect(message(OUTCOME.ALREADY).body).toMatch(/not been charged (again|twice)/i);
   });
 
   it("NEVER leaks backend internals in any outcome", () => {
@@ -65,5 +68,21 @@ describe("formatPaise", () => {
 
   it("returns null for a quote-only plan rather than ₹0", () => {
     expect(formatPaise(null)).toBeNull();
+  });
+});
+
+// The UAT finding: on a real first purchase the webhook activated the customer
+// 11 seconds before their browser's verify call arrived, so the order was
+// already 'paid' by then. Keying the message off that told a brand-new customer
+// "you already have this plan" — which reads as having been charged twice.
+describe("the webhook race must not be reported as a repeat purchase", () => {
+  it("ALREADY reassures rather than alarms, since it now only means a genuinely old plan", () => {
+    const m = message(OUTCOME.ALREADY);
+    expect(m.tone).toBe("success");
+    expect(m.body).toMatch(/not been charged again/i);
+  });
+
+  it("SUCCESS is the message a first-time buyer sees, whichever path activated them", () => {
+    expect(message(OUTCOME.SUCCESS).title).toMatch(/you're in/i);
   });
 });
