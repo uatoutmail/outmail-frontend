@@ -162,8 +162,9 @@ export default function TermsAndConditions() {
               <li>misrepresent your identity, qualifications or experience;</li>
               <li>harass, threaten or repeatedly contact anyone who has asked you to stop;</li>
               <li>
-                extract, scrape, copy, resell or redistribute our recruiter contact data. It is
-                provided for your own applications and for nothing else;
+                extract, scrape, copy, export, resell or redistribute our recruiter contact data, or
+                use it for anything other than your own job applications. We promise recruiters that
+                their details go no further, and that promise depends on you;
               </li>
               <li>
                 share your account, resell access, or use the service on behalf of anyone other than
