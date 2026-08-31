@@ -162,6 +162,28 @@ const ColdOutreachTab = () => {
         )}
       </div>
 
+      {/* Trial allowance (OUT-230). There is no free tier: an unpaid account gets
+          three lifetime sends to prove mail actually lands. Showing the count is
+          the whole point — an unexplained block on the third send reads as a
+          fault in the product rather than a boundary the user was told about.
+          Hidden for anyone on a plan, who is bounded by their daily cap instead. */}
+      {user?.trial && !user.trial.paid && (
+        <div className={`mb-6 rounded-xl border px-4 py-3 flex flex-wrap items-center justify-between gap-3 text-sm ${
+          user.trial.remaining > 0
+            ? 'border-amber-500/40 bg-amber-500/10 text-amber-200'
+            : 'border-red-500/40 bg-red-500/10 text-red-200'
+        }`}>
+          <span>
+            {user.trial.remaining > 0
+              ? <>You have <strong>{user.trial.remaining} of {user.trial.allowance} free sends</strong> left. Enough to see a real recruiter reply land in your inbox.</>
+              : <>You have used all {user.trial.allowance} free sends. Choose a plan to keep reaching recruiters.</>}
+          </span>
+          <a href="/pricing" className="shrink-0 bg-white text-black font-bold py-1.5 px-4 rounded-full text-xs hover:bg-gray-100">
+            {user.trial.remaining > 0 ? 'See plans' : 'Get Outmail'}
+          </a>
+        </div>
+      )}
+
       {/* Agent status strip (OUT-150) */}
       <div className="flex flex-wrap items-center gap-x-5 gap-y-2 mb-6 px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-xs">
         <span className={`flex items-center gap-1.5 font-semibold ${agentStatus?.online ? 'text-green-400' : 'text-red-400'}`}>
