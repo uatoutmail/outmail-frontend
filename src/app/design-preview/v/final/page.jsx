@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useState } from "react";
 import { motion, useReducedMotion } from "framer-motion";
 import { Mail, Briefcase, Zap, Users, Check } from "lucide-react";
 import Navbar from "@/component/Navbar";
@@ -10,6 +10,7 @@ import { KineticBand } from "./sections";
 import StoryPanels from "./story-layouts";
 import ValidationThread from "./validation-layouts";
 import FaqTabbed from "./faq-layouts";
+import { PRICING_LAYOUTS } from "./pricing-layouts";
 
 /**
  * THE ASSEMBLED LANDING PAGE — proposal.
@@ -119,6 +120,9 @@ function Editorial() {
 }
 
 export default function FinalLanding() {
+  const [pricing, setPricing] = useState(0);
+  const Pricing = PRICING_LAYOUTS[pricing].C;
+
   return (
     <div className="min-h-screen bg-surface-page text-white">
       <Navbar variant="dark" />
@@ -128,6 +132,7 @@ export default function FinalLanding() {
 
       <StoryPanels />
       <ValidationThread />
+      <Pricing />
       <FaqTabbed />
 
       {/* CTA */}
@@ -148,10 +153,14 @@ export default function FinalLanding() {
           <Reveal delay={0.2}><p className="text-sm text-white/35 mb-9">No subscription. Nothing renews. Full refund within 7 days.</p></Reveal>
           <Reveal delay={0.3}><div><Cta /></div></Reveal>
           <Reveal delay={0.4}>
+            {/* Mentorship is deliberately absent: it is PLAN_B at ₹4,999, and
+                listing it under ₹999 is the kind of claim a refund request is
+                built on. */}
             <div className="flex flex-wrap justify-center gap-x-6 gap-y-2 mt-10 text-xs text-white/35">
-              {OFFERINGS.map((o) => (
+              {OFFERINGS.filter((o) => o.t !== "Mentorship").map((o) => (
                 <span key={o.t} className="inline-flex items-center gap-1.5"><Check size={11} className="text-primary" />{o.t}</span>
               ))}
+              <span className="inline-flex items-center gap-1.5 text-white/25">Mentorship from ₹4,999</span>
             </div>
           </Reveal>
         </div>
@@ -159,6 +168,22 @@ export default function FinalLanding() {
 
       <Footer variant="dark" />
 
+
+      {/* Preview-only: pricing is the one section still undecided. */}
+      <div className="fixed bottom-4 left-1/2 -translate-x-1/2 z-[60]">
+        <div className="rounded-2xl border border-white/15 bg-black/90 backdrop-blur-xl px-4 py-3 shadow-2xl flex items-center gap-3">
+          <span className="text-[10px] uppercase tracking-[1.5px] text-white/35">Pricing</span>
+          <div className="flex gap-1">
+            {PRICING_LAYOUTS.map((o, k) => (
+              <button key={o.label} onClick={() => setPricing(k)}
+                className={`text-[11px] px-2.5 py-1.5 rounded-lg transition-colors duration-200 ${
+                  pricing === k ? "bg-primary text-white" : "bg-white/8 text-white/50 hover:bg-white/15"}`}>
+                {o.label}
+              </button>
+            ))}
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
