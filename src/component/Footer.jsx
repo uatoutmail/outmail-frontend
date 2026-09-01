@@ -151,8 +151,11 @@ export default function Footer({ variant = "dark" }) {
 
         {/* One legal line */}
         <div className="mt-7 pt-5 border-t border-white/10 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 text-xs text-white/30">
+          {/* Entity and LLPIN stay — they say who is taking the money. The
+              registered address and phone live in the Terms and Privacy Policy
+              rather than on every page. */}
           <p>
-            © {new Date().getFullYear()} Outmail · PrimeWork Labs LLP · LLPIN ADB-2168 · Bhiwadi, Rajasthan, India
+            © {new Date().getFullYear()} Outmail · PrimeWork Labs LLP · LLPIN ADB-2168
           </p>
           <a href="mailto:support@outmail.in" className="hover:text-primary transition-colors">support@outmail.in</a>
         </div>

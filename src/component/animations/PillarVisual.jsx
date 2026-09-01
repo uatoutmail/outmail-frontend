@@ -62,7 +62,7 @@ function OutreachScene() {
           className="absolute anim-float-y"
           style={{ top: c.top, left: c.left, animationDelay: c.delay }}
         >
-          <div className="flex items-center gap-2 rounded-full border border-white/15 bg-white/10 px-3 py-1.5 backdrop-blur-md">
+          <div className="flex items-center gap-2 rounded-full border border-white/15 bg-white/10 px-3 py-1.5">
             <Building2 size={13} className="text-white/70" />
             <span className="text-[11px] font-medium text-white/80 whitespace-nowrap">{c.label}</span>
             <span className="relative flex h-2 w-2">
@@ -75,7 +75,7 @@ function OutreachScene() {
 
       {/* Center: a personalized compose card */}
       <div className="relative z-10 w-[min(340px,80%)] anim-float-y-lg">
-        <div className="rounded-2xl border border-white/15 bg-surface-page/80 p-4 shadow-2xl backdrop-blur-xl">
+        <div className="rounded-2xl border border-white/15 bg-[#150f24]/95 p-4 shadow-2xl">
           <div className="mb-3 flex items-center gap-2">
             <span
               className="flex h-7 w-7 items-center justify-center rounded-lg"
@@ -228,7 +228,7 @@ function MentorshipScene() {
 
       {/* Live session pill */}
       <div className="absolute bottom-[12%] left-1/2 z-10 -translate-x-1/2">
-        <div className="flex items-center gap-2 rounded-full border border-white/15 bg-white/10 px-3 py-1.5 backdrop-blur-md">
+        <div className="flex items-center gap-2 rounded-full border border-white/15 bg-white/10 px-3 py-1.5">
           <span className="relative flex h-2 w-2">
             <span className="anim-pulse-ring absolute inline-flex h-full w-full rounded-full bg-green-400" />
             <span className="relative inline-flex h-2 w-2 rounded-full bg-green-400" />
