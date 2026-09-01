@@ -4,6 +4,8 @@ import React from "react";
 import Link from "next/link";
 import Navbar from "@/component/Navbar";
 import PageHeader from "@/component/ui/PageHeader";
+import Story from "@/component/landing/Story";
+import Faq from "@/component/landing/Faq";
 import { Cta } from "@/component/motion/kit";
 import Footer from "@/component/Footer";
 import { motion } from "framer-motion";
@@ -402,6 +404,9 @@ function Page() {
 					<FeatureSection key={item.n} item={item} reverse={idx % 2 === 1} />
 				))}
 			</div>
+
+			<Story />
+			<Faq />
 
 			{/* Closing CTA */}
 			<section className="px-6 pb-24 pt-8 lg:px-8">

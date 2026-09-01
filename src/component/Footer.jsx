@@ -85,7 +85,8 @@ export default function Footer({ variant = "dark" }) {
       {/* one soft brand bloom, echoing the closing CTA above it */}
       {isDark && (
         <div aria-hidden
-          className="pointer-events-none absolute -top-28 left-1/2 -translate-x-1/2 w-[560px] h-[260px] rounded-full bg-primary/10 blur-[120px]" />
+          className="pointer-events-none absolute -top-28 left-1/2 -translate-x-1/2 w-[600px] h-[300px]"
+          style={{ background: "radial-gradient(ellipse at center, color-mix(in srgb, var(--brand-primary) 16%, transparent), transparent 70%)" }} />
       )}
 
       <div className="relative max-w-6xl mx-auto">

@@ -47,15 +47,28 @@ export function Words({ text, className = "", accentFrom = 999, delay = 0, as: T
   );
 }
 
-/** Lines sliding up from behind a mask. The house treatment for headings. */
+/**
+ * Lines sliding up from behind a mask. The house treatment for headings.
+ *
+ * THE OBSERVER GOES ON THE OUTER HEADING, NEVER ON THE MASKED SPAN.
+ * Each line sits inside an `overflow: hidden` wrapper and starts translated
+ * 110% down — which puts it entirely outside that wrapper's clip rect.
+ * IntersectionObserver clips a target against its ancestors' overflow, so an
+ * observer attached to the span sees an empty intersection and never fires:
+ * the line is hidden by the mask, so it can never come into view, so it is
+ * never un-hidden. That deadlock silently blanked every heading on the site.
+ */
 export function MaskLines({ lines, className = "", accentIdx = -1, as: Tag = "h2", delay = 0 }) {
   const reduce = useReducedMotion();
+  const ref = useRef(null);
+  const inView = useInView(ref, { once: true, margin: "-12%" });
   return (
-    <Tag className={className}>
+    <Tag ref={ref} className={className}>
       {lines.map((l, i) => (
         <span key={i} className="block overflow-hidden pb-[0.08em]">
           <motion.span className={`block ${i === accentIdx ? "bg-gradient-to-r from-primary to-accent-light bg-clip-text text-transparent" : ""}`}
-            initial={reduce ? false : { y: "110%" }} whileInView={{ y: 0 }} viewport={{ once: true, margin: "-60px" }}
+            initial={reduce ? false : { y: "110%" }}
+            animate={inView || reduce ? { y: 0 } : undefined}
             transition={{ duration: 0.8, delay: delay + i * 0.1, ease: EASE_OUT }}>{l}</motion.span>
         </span>
       ))}

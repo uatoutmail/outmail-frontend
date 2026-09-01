@@ -22,7 +22,8 @@ export default function PageHeader({ kicker, lines, sub, accentIdx = 1, children
       <motion.div aria-hidden
         initial={reduce ? false : { opacity: 0, scale: 0.85 }} animate={{ opacity: 1, scale: 1 }}
         transition={{ duration: 1.1, ease: [0.16, 1, 0.3, 1] }}
-        className="pointer-events-none absolute -top-40 left-1/2 -translate-x-1/2 w-[720px] h-[420px] rounded-full bg-primary/12 blur-[140px]" />
+        className="pointer-events-none absolute -top-40 left-1/2 -translate-x-1/2 w-[760px] h-[460px]"
+        style={{ background: "radial-gradient(ellipse at center, color-mix(in srgb, var(--brand-primary) 20%, transparent), transparent 70%)" }} />
       <div className="relative max-w-5xl mx-auto">
         {kicker && <Reveal><Kicker className="mb-5">{kicker}</Kicker></Reveal>}
         <MaskLines as="h1" lines={lines} accentIdx={accentIdx}
