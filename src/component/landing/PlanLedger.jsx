@@ -1,6 +1,6 @@
 "use client";
-import React from "react";
-import { motion } from "framer-motion";
+import React, { useRef } from "react";
+import { motion, useInView } from "framer-motion";
 import { Check, Minus, Users, Flame } from "lucide-react";
 import { formatPaise } from "@/lib/paymentOutcome";
 import { Reveal, EASE_OUT } from "@/component/motion/kit";
@@ -42,6 +42,13 @@ export const MATRIX = [
  * 2023 dark-pattern guidelines, and disproved by refreshing the page.
  */
 export function LaunchBanner({ plan }) {
+  // The observer lives on the banner, not on the bar. The bar starts at width
+  // 0 inside an overflow-hidden track — a zero-area target clipped by an
+  // ancestor is exactly the shape IntersectionObserver is least reliable
+  // about, and the same trap that blanked every masked heading.
+  const ref = useRef(null);
+  const inView = useInView(ref, { once: true, margin: "-10%" });
+
   if (!plan || !(plan.list_amount > plan.amount)) return null;
   if (plan.launchPlacesLeft === 0) return null;   // cohort full: the offer is over
 
@@ -54,7 +61,7 @@ export function LaunchBanner({ plan }) {
 
   return (
     <Reveal delay={0.06}>
-      <div className="rounded-2xl border border-primary/35 bg-gradient-to-r from-primary/15 via-primary/[0.07] to-transparent px-6 py-5 mb-4 text-left">
+      <div ref={ref} className="rounded-2xl border border-primary/35 bg-gradient-to-r from-primary/15 via-primary/[0.07] to-transparent px-6 py-5 mb-4 text-left">
         <div className="flex flex-wrap items-center gap-x-4 gap-y-3 justify-between">
           <div className="flex items-center gap-3">
             <span aria-hidden className="w-9 h-9 rounded-xl bg-primary/20 border border-primary/30 flex items-center justify-center shrink-0">
@@ -80,7 +87,7 @@ export function LaunchBanner({ plan }) {
                 </span>
               </div>
               <div className="h-1.5 rounded-full bg-white/10 overflow-hidden">
-                <motion.div initial={{ width: 0 }} whileInView={{ width: `${pct}%` }} viewport={{ once: true }}
+                <motion.div initial={{ width: 0 }} animate={inView ? { width: `${pct}%` } : undefined}
                   transition={{ duration: 0.9, ease: EASE_OUT }}
                   className="h-full bg-gradient-to-r from-primary to-accent-light" />
               </div>
