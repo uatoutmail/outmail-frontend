@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React from "react";
 import { motion, useReducedMotion } from "framer-motion";
 import { Mail, Briefcase, Zap, Users, Check } from "lucide-react";
 import Navbar from "@/component/Navbar";
@@ -7,9 +7,9 @@ import Footer from "@/component/Footer";
 import { Reveal, MaskLines, Tilt, Count, Cta, EASE_OUT } from "../kit";
 import HeroVisual from "./hero-visual";
 import { KineticBand } from "./sections";
-import { STORY_LAYOUTS } from "./story-layouts";
-import { VALIDATION_LAYOUTS } from "./validation-layouts";
-import { FAQ_LAYOUTS } from "./faq-layouts";
+import StoryPanels from "./story-layouts";
+import ValidationThread from "./validation-layouts";
+import FaqTabbed from "./faq-layouts";
 
 /**
  * THE ASSEMBLED LANDING PAGE — proposal.
@@ -119,15 +119,6 @@ function Editorial() {
 }
 
 export default function FinalLanding() {
-  // One index per swappable section. Defaults are the versions already agreed.
-  const [story, setStory] = useState(0);
-  const [valid, setValid] = useState(0);
-  const [faq, setFaq] = useState(0);
-
-  const Story = STORY_LAYOUTS[story].C;
-  const Validation = VALIDATION_LAYOUTS[valid].C;
-  const Faq = FAQ_LAYOUTS[faq].C;
-
   return (
     <div className="min-h-screen bg-surface-page text-white">
       <Navbar variant="dark" />
@@ -135,9 +126,9 @@ export default function FinalLanding() {
       <KineticBand />
       <Editorial />
 
-      <Story />
-      <Validation />
-      <Faq />
+      <StoryPanels />
+      <ValidationThread />
+      <FaqTabbed />
 
       {/* CTA */}
       <section className="relative max-w-4xl mx-auto px-6 py-28 text-center">
@@ -168,46 +159,6 @@ export default function FinalLanding() {
 
       <Footer variant="dark" />
 
-      {/* Preview-only control panel. Not part of the design — it exists so all
-          fifteen layouts can be compared in place rather than in isolation. */}
-      <LayoutLab groups={[
-        { name: "How it works", opts: STORY_LAYOUTS, i: story, set: setStory },
-        { name: "Early validation", opts: VALIDATION_LAYOUTS, i: valid, set: setValid },
-        { name: "FAQ", opts: FAQ_LAYOUTS, i: faq, set: setFaq },
-      ]} />
-    </div>
-  );
-}
-
-/* Preview-only. Collapsible so it never covers the section being judged. */
-function LayoutLab({ groups }) {
-  const [open, setOpen] = useState(true);
-  return (
-    <div className="fixed bottom-4 left-1/2 -translate-x-1/2 z-[60] print:hidden">
-      <div className="rounded-2xl border border-white/15 bg-black/90 backdrop-blur-xl shadow-2xl overflow-hidden">
-        <button onClick={() => setOpen((v) => !v)}
-          className="w-full flex items-center justify-center gap-2 px-4 py-2 text-[10px] uppercase tracking-[2px] text-white/45 hover:text-white transition-colors">
-          Layout lab {open ? "▾" : "▴"}
-        </button>
-        {open && (
-          <div className="px-4 pb-3.5 space-y-2.5">
-            {groups.map((g) => (
-              <div key={g.name} className="flex items-center gap-3">
-                <span className="w-[104px] shrink-0 text-[10px] uppercase tracking-[1.5px] text-white/35">{g.name}</span>
-                <div className="flex gap-1">
-                  {g.opts.map((o, k) => (
-                    <button key={o.label} onClick={() => g.set(k)}
-                      className={`text-[11px] px-2.5 py-1.5 rounded-lg transition-colors duration-200 ${
-                        g.i === k ? "bg-primary text-white" : "bg-white/8 text-white/50 hover:bg-white/15"}`}>
-                      {o.label}
-                    </button>
-                  ))}
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
-      </div>
     </div>
   );
 }

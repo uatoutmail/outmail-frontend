@@ -1,15 +1,15 @@
 "use client";
-import React, { useRef } from "react";
-import { motion, useScroll, useTransform, useReducedMotion } from "framer-motion";
+import React from "react";
+import { motion, useReducedMotion } from "framer-motion";
 import { Mail, Briefcase, Zap, MessageSquare, ArrowDown } from "lucide-react";
-import { Reveal, MaskLines, Cta, EASE_OUT } from "../kit";
+import { Reveal, MaskLines, EASE_OUT } from "../kit";
 
 /**
- * FIVE WAYS TO TELL THE SAME STORY.
+ * HOW IT WORKS — comic-strip panels. LOCKED.
  *
- * The content is identical in all five — one student, four problems, four
- * fixes. Only the telling changes. Written as one exported array so the copy
- * lives in exactly one place and a layout can never drift from the others.
+ * Four frames: a wall she hit, and the thing that got her over it. Chosen over
+ * the scrollytelling and before/after variants because it is unmistakably for
+ * students rather than for their placement office — which is who buys this.
  */
 export const STORY = [
   {
@@ -99,181 +99,6 @@ function SectionHead({ kicker = "How it works", lines, sub, className = "" }) {
   );
 }
 
-/* ═══ S1 · STICKY STORY — the baseline. Anchor on the left, chapters scroll past. ═══ */
-export function StoryStacked() {
-  const reduce = useReducedMotion();
-  return (
-    <section className="max-w-6xl mx-auto px-6 py-28">
-      <div className="grid md:grid-cols-12 gap-10">
-        <div className="md:col-span-4 md:sticky md:top-24 md:self-start">
-          <SectionHead lines={["Meet Ananya.", "Final year. No referrals."]}
-            sub="She is not short of effort. She is short of the four things that decide whether effort turns into interviews — and each one is a different problem." />
-          <div className="hidden md:block mt-6"><Cta label="Start your year" /></div>
-        </div>
-        <div className="md:col-span-8 space-y-4">
-          {STORY.map((s, i) => (
-            <Reveal key={s.n} delay={i * 0.05}>
-              <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-7 hover:border-primary/40 transition-colors duration-200">
-                <div className="flex items-center gap-3 mb-4 flex-wrap">
-                  <p className="font-syne text-3xl font-bold text-primary/30 leading-none">{s.n}</p>
-                  <span className="text-[9px] uppercase tracking-[2px] text-white/35 border border-white/15 rounded-full px-2.5 py-0.5">{s.pill}</span>
-                </div>
-                <p className="font-syne text-xl md:text-2xl font-bold mb-2 leading-snug">{s.problem}</p>
-                <p className="text-sm text-white/45 leading-relaxed mb-5">{s.detail}</p>
-                <div className="rounded-xl border-l-2 border-primary bg-primary/[0.07] pl-5 pr-4 py-4 mb-4">
-                  <div className="flex items-center gap-2 mb-2">
-                    <s.I size={14} className="text-primary" />
-                    <span className="text-[10px] uppercase tracking-[2px] text-primary font-medium">{s.offering}</span>
-                  </div>
-                  <p className="text-sm text-white/65 leading-relaxed">{s.fix}</p>
-                </div>
-                <StepVisual kind={s.visual} reduce={reduce} />
-              </div>
-            </Reveal>
-          ))}
-        </div>
-      </div>
-    </section>
-  );
-}
-
-/* ═══ S2 · CHAPTERS — scrollytelling. The chapter number is pinned and swaps
-       as each chapter takes the viewport, with a progress rail beside it. ═══ */
-function Chapter({ s, i, total }) {
-  const reduce = useReducedMotion();
-  const ref = useRef(null);
-  const { scrollYProgress } = useScroll({ target: ref, offset: ["start 85%", "end 40%"] });
-  const opacity = useTransform(scrollYProgress, [0, 0.35, 1], [0.25, 1, 1]);
-  const y = useTransform(scrollYProgress, [0, 0.35], [40, 0]);
-  return (
-    <motion.div ref={ref} style={reduce ? {} : { opacity, y }} className="min-h-[85vh] flex items-center">
-      <div className="w-full">
-        <div className="flex items-baseline gap-4 mb-6">
-          <span className="font-syne text-[13vw] md:text-[7vw] font-bold leading-none bg-gradient-to-b from-white/25 to-transparent bg-clip-text text-transparent">{s.n}</span>
-          <span className="text-[10px] uppercase tracking-[3px] text-primary">Chapter {i + 1} of {total} · {s.pill}</span>
-        </div>
-        <p className="font-syne text-3xl md:text-5xl font-bold leading-[1.06] tracking-tight max-w-2xl mb-5">{s.problem}</p>
-        <p className="text-white/45 leading-relaxed max-w-lg mb-8">{s.detail}</p>
-        <div className="max-w-lg rounded-2xl border border-primary/30 bg-primary/[0.07] p-6">
-          <div className="flex items-center gap-2 mb-3">
-            <s.I size={15} className="text-primary" />
-            <span className="text-[10px] uppercase tracking-[2px] text-primary font-medium">{s.offering}</span>
-          </div>
-          <p className="text-sm text-white/70 leading-relaxed mb-4">{s.fix}</p>
-          <StepVisual kind={s.visual} reduce={reduce} compact />
-        </div>
-      </div>
-    </motion.div>
-  );
-}
-
-export function StoryChapters() {
-  const reduce = useReducedMotion();
-  const track = useRef(null);
-  const { scrollYProgress } = useScroll({ target: track, offset: ["start start", "end end"] });
-  const railH = useTransform(scrollYProgress, [0, 1], ["0%", "100%"]);
-  return (
-    <section className="max-w-6xl mx-auto px-6 py-28">
-      <SectionHead lines={["Meet Ananya.", "This is her year."]}
-        sub="Four chapters. Each one a thing that stopped her, and the thing that unstuck it."
-        className="mb-16" />
-      <div ref={track} className="grid md:grid-cols-12 gap-8">
-        {/* the rail — a reading progress bar that belongs to the story, not the page */}
-        <div className="hidden md:block md:col-span-1 relative">
-          <div className="sticky top-1/3 h-[36vh] w-px bg-white/10 mx-auto">
-            <motion.div style={reduce ? { height: "100%" } : { height: railH }}
-              className="w-px bg-gradient-to-b from-primary to-accent-light" />
-          </div>
-        </div>
-        <div className="md:col-span-11">
-          {STORY.map((s, i) => <Chapter key={s.n} s={s} i={i} total={STORY.length} />)}
-        </div>
-      </div>
-    </section>
-  );
-}
-
-/* ═══ S3 · DIARY — a timeline with months down the middle. Reads as an
-       account of a year rather than a list of features. ═══ */
-export function StoryDiary() {
-  const reduce = useReducedMotion();
-  return (
-    <section className="max-w-5xl mx-auto px-6 py-28">
-      <SectionHead lines={["Ananya's year,", "in four entries."]}
-        sub="Placement season is not one decision, it is a sequence of small defeats. Here is the sequence, and where Outmail interrupts it."
-        className="text-center mx-auto mb-16 [&_p:last-child]:mx-auto" />
-      <div className="relative">
-        <div className="absolute left-[19px] md:left-1/2 md:-translate-x-1/2 top-2 bottom-2 w-px bg-gradient-to-b from-primary/60 via-white/12 to-transparent" />
-        <div className="space-y-14">
-          {STORY.map((s, i) => (
-            <Reveal key={s.n} delay={0.05}>
-              <div className={`md:flex items-start gap-10 ${i % 2 ? "md:flex-row-reverse" : ""}`}>
-                {/* the month marker sits on the rail */}
-                <div className="md:w-1/2 md:text-right relative pl-12 md:pl-0 md:pr-0">
-                  <span className={`absolute left-0 md:left-1/2 top-1 w-2.5 h-2.5 rounded-full bg-primary ring-4 ring-primary/15 ${i % 2 ? "md:-translate-x-1/2 md:left-auto md:-right-[5px]" : "md:left-auto md:-right-[5px]"}`} />
-                  <p className="text-[10px] uppercase tracking-[3px] text-primary mb-2">{s.when}</p>
-                  <p className={`font-syne text-2xl md:text-3xl font-bold leading-snug mb-2 ${i % 2 ? "md:text-left" : ""}`}>{s.problem}</p>
-                  <p className={`text-sm text-white/40 leading-relaxed ${i % 2 ? "md:text-left" : ""}`}>{s.detail}</p>
-                </div>
-                <div className="md:w-1/2 mt-5 md:mt-0 pl-12 md:pl-0">
-                  <div className="rounded-2xl border border-primary/25 bg-gradient-to-br from-primary/12 to-transparent p-6">
-                    <div className="flex items-center gap-2 mb-2.5">
-                      <s.I size={14} className="text-primary" />
-                      <span className="text-[10px] uppercase tracking-[2px] text-primary font-medium">{s.offering}</span>
-                    </div>
-                    <p className="text-sm text-white/65 leading-relaxed mb-4">{s.fix}</p>
-                    <StepVisual kind={s.visual} reduce={reduce} compact />
-                  </div>
-                </div>
-              </div>
-            </Reveal>
-          ))}
-        </div>
-      </div>
-    </section>
-  );
-}
-
-/* ═══ S4 · BEFORE / AFTER — one full-bleed pane per chapter, her side dimmed
-       and Outmail's side lit. The contrast carries the argument. ═══ */
-export function StoryBeforeAfter() {
-  const reduce = useReducedMotion();
-  return (
-    <section className="py-28">
-      <SectionHead lines={["Meet Ananya.", "Left is without. Right is with."]}
-        sub="Same student, same market, same four weeks. The only variable is Outmail."
-        className="max-w-5xl mx-auto px-6 mb-14" />
-      <div className="space-y-px">
-        {STORY.map((s, i) => (
-          <Reveal key={s.n} delay={0.04}>
-            <div className="grid md:grid-cols-2 border-y border-white/8">
-              {/* without */}
-              <div className="p-8 md:p-12 bg-white/[0.015] relative">
-                <span className="absolute top-5 right-6 text-[9px] uppercase tracking-[3px] text-white/20">Without</span>
-                <p className="font-syne text-5xl font-bold text-white/[0.07] leading-none mb-5">{s.n}</p>
-                <p className="font-syne text-xl md:text-2xl font-bold text-white/55 leading-snug mb-3">{s.problem}</p>
-                <p className="text-sm text-white/28 leading-relaxed max-w-sm">{s.detail}</p>
-              </div>
-              {/* with */}
-              <motion.div whileHover={reduce ? {} : { backgroundColor: "rgba(76,31,255,0.10)" }}
-                transition={{ duration: 0.25, ease: EASE_OUT }}
-                className="p-8 md:p-12 bg-primary/[0.06] border-l border-primary/20 relative">
-                <span className="absolute top-5 right-6 text-[9px] uppercase tracking-[3px] text-primary/70">With Outmail</span>
-                <div className="flex items-center gap-2 mb-5">
-                  <s.I size={16} className="text-primary" />
-                  <span className="text-[10px] uppercase tracking-[2px] text-primary font-medium">{s.offering}</span>
-                </div>
-                <p className="text-base md:text-lg text-white/80 leading-relaxed max-w-md mb-6">{s.fix}</p>
-                <div className="max-w-sm"><StepVisual kind={s.visual} reduce={reduce} compact /></div>
-              </motion.div>
-            </div>
-          </Reveal>
-        ))}
-      </div>
-    </section>
-  );
-}
-
 /* ═══ S5 · PANELS — comic-strip frames. Loud, staggered, unmistakably for
        students rather than for their placement office. ═══ */
 export function StoryPanels() {
@@ -312,10 +137,5 @@ export function StoryPanels() {
   );
 }
 
-export const STORY_LAYOUTS = [
-  { label: "Sticky story", C: StoryStacked },
-  { label: "Chapters", C: StoryChapters },
-  { label: "Diary", C: StoryDiary },
-  { label: "Before / after", C: StoryBeforeAfter },
-  { label: "Panels", C: StoryPanels },
-];
+
+export default StoryPanels;
