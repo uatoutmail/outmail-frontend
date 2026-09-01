@@ -26,7 +26,7 @@ const benefits = [
 
 const MembershipBenefits = () => {
   return (
-    <section className="bg-[#0a0b14] py-24 px-4 sm:px-6 lg:px-8">
+    <section className="bg-surface-page py-24 px-4 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
 
         {/* Left — Text Content */}
@@ -48,7 +48,7 @@ const MembershipBenefits = () => {
           <div className="flex flex-col gap-6">
             {benefits.map((b, i) => (
               <div key={i} className="flex items-start gap-4">
-                <span className="mt-1 flex-shrink-0 w-9 h-9 rounded-full bg-[#6c00ff]/40 border border-purple-500/40 flex items-center justify-center text-base">
+                <span className="mt-1 flex-shrink-0 w-9 h-9 rounded-full bg-primary/40 border border-purple-500/40 flex items-center justify-center text-base">
                   {b.icon}
                 </span>
                 <div>

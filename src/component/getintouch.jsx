@@ -56,7 +56,7 @@ export default function GetInTouch() {
   };
 
   return (
-    <div className="bg-[#0a0b14] py-24 px-4 sm:px-6 lg:px-8">
+    <div className="bg-surface-page py-24 px-4 sm:px-6 lg:px-8">
       <Toaster position="bottom-right" richColors />
       <div className="max-w-6xl mx-auto">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12">
@@ -191,7 +191,7 @@ export default function GetInTouch() {
                   <button
                     type="submit"
                     disabled={isSubmitting}
-                    className="w-full py-3 bg-gradient-to-r from-[#6c00ff] to-[#b06cff] text-white font-semibold rounded-lg hover:opacity-90 transition text-sm tracking-wide disabled:opacity-70"
+                    className="w-full py-3 bg-gradient-to-r from-primary to-glow text-white font-semibold rounded-lg hover:opacity-90 transition text-sm tracking-wide disabled:opacity-70"
                   >
                     {isSubmitting ? 'Sending...' : 'Send Message'}
                   </button>

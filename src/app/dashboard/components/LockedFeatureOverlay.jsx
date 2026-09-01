@@ -33,7 +33,7 @@ const LockedFeatureOverlay = ({ feature, reason = 'none', targetPlan }) => {
       </div>
 
       {/* Foreground locked overlay */}
-      <div className="absolute inset-0 z-10 flex flex-col items-center justify-center bg-[#0a0b14]/60 backdrop-blur-[4px]">
+      <div className="absolute inset-0 z-10 flex flex-col items-center justify-center bg-surface-page/60 backdrop-blur-[4px]">
         <div className="bg-white/5 border border-white/10 p-8 rounded-3xl shadow-2xl max-w-md w-full mx-4 text-center backdrop-blur-xl">
           <div className="w-16 h-16 bg-purple-600/20 rounded-full flex items-center justify-center mx-auto mb-6 border border-purple-500/30">
             <Lock className="w-8 h-8 text-purple-400" />

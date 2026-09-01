@@ -33,7 +33,7 @@ function RecruiterOutreachDemo() {
 		<div className="glass-card p-4 md:p-5">
 			<div className="flex items-center justify-between gap-2 text-xs md:text-sm text-white/70">
 				<div className="flex items-center gap-2">
-					<Send className="h-4 w-4 text-[#60a5fa]" />
+					<Send className="h-4 w-4 text-accent-soft" />
 					<span>Recruiter Outreach</span>
 				</div>
 				<span className="hidden sm:inline text-[11px]">Gmail-style outreach</span>
@@ -79,7 +79,7 @@ function OpportunityDiscoveryDemo() {
 		<div className="glass-card p-4 md:p-5">
 			<div className="flex items-center justify-between gap-2 text-xs md:text-sm text-white/70">
 				<div className="flex items-center gap-2">
-					<Search className="h-4 w-4 text-[#60a5fa]" />
+					<Search className="h-4 w-4 text-accent-soft" />
 					<span>Job Discovery Feed</span>
 				</div>
 				<span className="hidden sm:inline text-[11px]">Curated &amp; ranked</span>
@@ -125,7 +125,7 @@ function AutoApplyDemo() {
 		<div className="glass-card p-4 md:p-5">
 			<div className="flex items-center justify-between gap-2 text-xs md:text-sm text-white/70">
 				<div className="flex items-center gap-2">
-					<FileCheck className="h-4 w-4 text-[#60a5fa]" />
+					<FileCheck className="h-4 w-4 text-accent-soft" />
 					<span>One-Click Autofill</span>
 				</div>
 				<span className="hidden sm:inline text-[11px]">Form auto-fill preview</span>
@@ -158,7 +158,7 @@ function PlacementAnalyticsDemo() {
 		<div className="glass-card p-4 md:p-5">
 			<div className="flex items-center justify-between gap-2 text-xs md:text-sm text-white/70">
 				<div className="flex items-center gap-2">
-					<BarChart3 className="h-4 w-4 text-[#60a5fa]" />
+					<BarChart3 className="h-4 w-4 text-accent-soft" />
 					<span>Outreach Dashboard</span>
 				</div>
 				<span className="hidden sm:inline text-[11px]">Track everything</span>
@@ -183,7 +183,7 @@ function PlacementAnalyticsDemo() {
 					<div className="mt-1 flex items-end gap-1 h-20">
 						{[35, 42, 55, 48, 62, 70, 85].map((h, idx) => (
 							<div key={idx} className="flex-1 rounded-full bg-white/10 overflow-hidden flex items-end">
-								<div className="w-full rounded-full bg-gradient-to-t from-[#3b82f6] to-[#a855f7]" style={{ height: `${h}%` }} />
+								<div className="w-full rounded-full bg-gradient-to-t from-accent to-primary" style={{ height: `${h}%` }} />
 							</div>
 						))}
 					</div>
@@ -198,7 +198,7 @@ function MentorshipDemo() {
 		<div className="glass-card p-4 md:p-5">
 			<div className="flex items-center justify-between gap-2 text-xs md:text-sm text-white/70">
 				<div className="flex items-center gap-2">
-					<GraduationCap className="h-4 w-4 text-[#60a5fa]" />
+					<GraduationCap className="h-4 w-4 text-accent-soft" />
 					<span>Mentorship Sessions</span>
 				</div>
 				<span className="hidden sm:inline text-[11px]">Structured guidance</span>
@@ -323,10 +323,10 @@ function FeatureSection({ item, reverse }) {
 			<div className="grid items-center gap-10 lg:grid-cols-2 lg:gap-16">
 				<div className={reverse ? "lg:order-2" : ""}>
 					<div className="flex items-center gap-3 mb-4">
-						<span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-gradient-to-br from-[#3b82f6] to-[#a855f7] text-white shadow-lg shadow-[#3b82f6]/30">
+						<span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-gradient-to-br from-accent to-primary text-white shadow-lg shadow-accent/30">
 							<Icon className="h-5 w-5" />
 						</span>
-						<span className="font-display text-xs uppercase tracking-[0.25em] text-[#AD46FF]">
+						<span className="font-display text-xs uppercase tracking-[0.25em] text-accent-light">
 							{n} · {eyebrow}
 						</span>
 					</div>
@@ -337,7 +337,7 @@ function FeatureSection({ item, reverse }) {
 					<ul className="space-y-2.5 mb-6">
 						{features.map((f) => (
 							<li key={f} className="flex items-start gap-2.5 text-sm text-white/85">
-								<CheckCircle2 className="mt-[2px] h-4 w-4 flex-shrink-0 text-[#22c55e]" />
+								<CheckCircle2 className="mt-[2px] h-4 w-4 flex-shrink-0 text-success" />
 								<span>{f}</span>
 							</li>
 						))}
@@ -356,7 +356,7 @@ function FeatureSection({ item, reverse }) {
 
 function Page() {
 	return (
-		<div className="min-h-screen bg-[#0a0b14] text-white">
+		<div className="min-h-screen bg-surface-page text-white">
 			<Navbar variant="dark" />
 
 			{/* Hero — matches the Contact hero treatment (font-syne + gradient) */}
@@ -367,16 +367,16 @@ function Page() {
 				<motion.div
 					animate={{ y: [0, -18, 0] }}
 					transition={{ duration: 7, repeat: Infinity, ease: "easeInOut" }}
-					className="absolute top-24 left-[10%] w-36 h-36 rounded-2xl border border-white/10 bg-[#6c00ff]/20 rotate-12 blur-[1px]"
+					className="absolute top-24 left-[10%] w-36 h-36 rounded-2xl border border-white/10 bg-primary/20 rotate-12 blur-[1px]"
 				/>
 				<motion.div
 					animate={{ y: [0, 16, 0] }}
 					transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
-					className="absolute top-32 right-[12%] w-20 h-20 rounded-full border border-white/15 bg-[#ad46ff]/20"
+					className="absolute top-32 right-[12%] w-20 h-20 rounded-full border border-white/15 bg-accent-light/20"
 				/>
 
 				<div className="relative max-w-4xl mx-auto text-center">
-					<p className="text-xs uppercase tracking-[4px] text-[#AD46FF] font-display font-medium mb-5 inline-flex items-center gap-2 justify-center">
+					<p className="text-xs uppercase tracking-[4px] text-accent-light font-display font-medium mb-5 inline-flex items-center gap-2 justify-center">
 						<Rocket className="h-3.5 w-3.5" /> Core Features
 					</p>
 
@@ -394,7 +394,7 @@ function Page() {
 					<div className="flex flex-wrap items-center justify-center gap-4">
 						<a
 							href={oauthUrl}
-							className="inline-flex items-center justify-center rounded-full bg-gradient-to-r from-[#3b82f6] to-[#a855f7] px-6 py-2.5 text-sm sm:text-base font-display font-semibold text-white shadow-lg shadow-[#3b82f6]/40 hover:brightness-110 transition"
+							className="inline-flex items-center justify-center rounded-full bg-gradient-to-r from-accent to-primary px-6 py-2.5 text-sm sm:text-base font-display font-semibold text-white shadow-lg shadow-accent/40 hover:brightness-110 transition"
 						>
 							Get Started Free <ArrowRight className="ml-2 h-4 w-4" />
 						</a>
@@ -416,7 +416,7 @@ function Page() {
 							key={o.n}
 							className="flex flex-col items-center gap-2 rounded-xl border border-white/10 bg-white/[0.04] px-3 py-4 text-center backdrop-blur-sm"
 						>
-							<span className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#6c00ff]/25 border border-purple-500/30 text-purple-200">
+							<span className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary/25 border border-purple-500/30 text-purple-200">
 								<o.Icon className="h-4 w-4" />
 							</span>
 							<span className="font-display text-[11px] uppercase tracking-wider text-white/70">
@@ -446,7 +446,7 @@ function Page() {
 					<div className="flex flex-wrap items-center justify-center gap-4">
 						<a
 							href={oauthUrl}
-							className="inline-flex items-center justify-center rounded-full bg-gradient-to-r from-[#3b82f6] to-[#a855f7] px-6 py-2.5 text-sm sm:text-base font-display font-semibold text-white shadow-lg shadow-[#3b82f6]/40 hover:brightness-110 transition"
+							className="inline-flex items-center justify-center rounded-full bg-gradient-to-r from-accent to-primary px-6 py-2.5 text-sm sm:text-base font-display font-semibold text-white shadow-lg shadow-accent/40 hover:brightness-110 transition"
 						>
 							Get Started Free <ArrowRight className="ml-2 h-4 w-4" />
 						</a>

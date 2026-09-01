@@ -11,14 +11,14 @@ import MembershipBenefits from '@/component/membershipbenefits'
 
 function page() {
   return (
-    <div className="min-h-screen bg-[#0a0b14] text-white">
+    <div className="min-h-screen bg-surface-page text-white">
       <Navbar variant="dark"/>
 
-      <div className="bg-[#0a0b14] py-20 relative overflow-hidden">   
+      <div className="bg-surface-page py-20 relative overflow-hidden">   
       
 
       <div className="container mx-auto px-4 text-center">
-        <p className="text-xs uppercase tracking-[4px] text-[#AD46FF] font-display font-medium mb-4">
+        <p className="text-xs uppercase tracking-[4px] text-accent-light font-display font-medium mb-4">
           Pricing
         </p>
 
@@ -49,8 +49,8 @@ function page() {
         </div>
 
       </div>
-      <div className="absolute top-24 left-[10%] w-36 h-36 rounded-2xl border border-white/10 bg-[#6c00ff]/20 rotate-12 blur-[1px]" />
-      <div className="absolute top-32 right-[12%] w-20 h-20 rounded-full border border-white/15 bg-[#ad46ff]/20" />
+      <div className="absolute top-24 left-[10%] w-36 h-36 rounded-2xl border border-white/10 bg-primary/20 rotate-12 blur-[1px]" />
+      <div className="absolute top-32 right-[12%] w-20 h-20 rounded-full border border-white/15 bg-accent-light/20" />
       <div className="absolute bottom-8 left-[20%] w-24 h-24 rounded-lg border border-white/10 bg-[#2f1a7a]/40 -rotate-12" />
       </div>
       <div id="pricing"><MembershipBenefits/></div>

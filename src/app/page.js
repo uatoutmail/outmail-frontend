@@ -89,7 +89,7 @@ const softwareApplicationSchema = {
 
 export default function Home() {
   return (
-    <div className="min-h-screen bg-[#0a0b14] text-white">
+    <div className="min-h-screen bg-surface-page text-white">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationSchema) }}

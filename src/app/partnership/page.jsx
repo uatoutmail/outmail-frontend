@@ -150,7 +150,7 @@ function GradientWord({ children }) {
 
 function Eyebrow({ children }) {
   return (
-    <p className="text-xs uppercase tracking-[4px] text-[#AD46FF] font-display font-medium mb-4">
+    <p className="text-xs uppercase tracking-[4px] text-accent-light font-display font-medium mb-4">
       {children}
     </p>
   );
@@ -160,7 +160,7 @@ function BookCallButton({ onClick, className = "", children }) {
   return (
     <button
       onClick={onClick}
-      className={`inline-flex items-center justify-center gap-2 bg-gradient-to-r from-[#6c00ff] to-[#ad46ff] text-white px-6 py-3 rounded-xl font-display font-semibold shadow-[0_10px_30px_rgba(108,0,255,0.35)] hover:brightness-110 transition ${className}`}
+      className={`inline-flex items-center justify-center gap-2 bg-gradient-to-r from-primary to-accent-light text-white px-6 py-3 rounded-xl font-display font-semibold shadow-[0_10px_30px_rgba(108,0,255,0.35)] hover:brightness-110 transition ${className}`}
     >
       <Phone size={16} />
       <span>{children || "Book a Call"}</span>
@@ -173,7 +173,7 @@ export default function PartnershipPage() {
   const [isBookCallOpen, setIsBookCallOpen] = useState(false);
 
   return (
-    <div className="min-h-screen bg-[#0a0b14] text-white">
+    <div className="min-h-screen bg-surface-page text-white">
       <Navbar variant="dark" />
 
       {/* Hero — value-first, matches site hero typography */}
@@ -210,12 +210,12 @@ export default function PartnershipPage() {
         <motion.div
           animate={{ y: [0, -18, 0] }}
           transition={{ duration: 7, repeat: Infinity, ease: "easeInOut" }}
-          className="absolute top-24 left-[10%] w-36 h-36 rounded-2xl border border-white/10 bg-[#6c00ff]/20 rotate-12 blur-[1px]"
+          className="absolute top-24 left-[10%] w-36 h-36 rounded-2xl border border-white/10 bg-primary/20 rotate-12 blur-[1px]"
         />
         <motion.div
           animate={{ y: [0, 16, 0] }}
           transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
-          className="absolute top-32 right-[12%] w-20 h-20 rounded-full border border-white/15 bg-[#ad46ff]/20"
+          className="absolute top-32 right-[12%] w-20 h-20 rounded-full border border-white/15 bg-accent-light/20"
         />
       </section>
 
@@ -277,9 +277,9 @@ export default function PartnershipPage() {
               <motion.div
                 key={i}
                 variants={staggerItem}
-                className="rounded-2xl border border-white/12 bg-white/5 backdrop-blur-xl p-6 flex gap-4 hover:border-[#ad46ff]/40 transition"
+                className="rounded-2xl border border-white/12 bg-white/5 backdrop-blur-xl p-6 flex gap-4 hover:border-accent-light/40 transition"
               >
-                <div className="w-11 h-11 shrink-0 rounded-xl bg-gradient-to-r from-[#6c00ff] to-[#ad46ff] flex items-center justify-center">
+                <div className="w-11 h-11 shrink-0 rounded-xl bg-gradient-to-r from-primary to-accent-light flex items-center justify-center">
                   <Icon size={20} />
                 </div>
                 <div>
@@ -315,9 +315,9 @@ export default function PartnershipPage() {
               <motion.div
                 variants={staggerItem}
                 key={index}
-                className="rounded-2xl border border-white/12 bg-white/5 backdrop-blur-xl p-6 hover:border-[#ad46ff]/40 hover:shadow-[0_0_30px_rgba(108,0,255,0.2)] transition"
+                className="rounded-2xl border border-white/12 bg-white/5 backdrop-blur-xl p-6 hover:border-accent-light/40 hover:shadow-[0_0_30px_rgba(108,0,255,0.2)] transition"
               >
-                <div className="w-11 h-11 rounded-xl bg-gradient-to-r from-[#6c00ff] to-[#ad46ff] flex items-center justify-center mb-4">
+                <div className="w-11 h-11 rounded-xl bg-gradient-to-r from-primary to-accent-light flex items-center justify-center mb-4">
                   <Icon size={20} />
                 </div>
                 <h3 className="font-syne text-lg font-semibold mb-4">{card.title}</h3>
@@ -355,7 +355,7 @@ export default function PartnershipPage() {
             const Icon = item.icon;
             return (
               <motion.div key={i} variants={staggerItem} className="rounded-2xl border border-white/12 bg-white/5 backdrop-blur-xl p-6 text-left">
-                <div className="w-11 h-11 rounded-xl bg-gradient-to-r from-[#6c00ff] to-[#ad46ff] flex items-center justify-center mb-4">
+                <div className="w-11 h-11 rounded-xl bg-gradient-to-r from-primary to-accent-light flex items-center justify-center mb-4">
                   <Icon size={20} />
                 </div>
                 <h3 className="font-syne text-lg font-semibold mb-2">{item.title}</h3>
@@ -382,7 +382,7 @@ export default function PartnershipPage() {
               const Icon = opt.icon;
               return (
                 <div key={i} className="rounded-xl border border-white/12 bg-[#0f1222] p-4 flex items-start gap-3">
-                  <div className="w-9 h-9 rounded-lg bg-[#6c00ff]/25 border border-[#ad46ff]/30 flex items-center justify-center">
+                  <div className="w-9 h-9 rounded-lg bg-primary/25 border border-accent-light/30 flex items-center justify-center">
                     <Icon size={16} className="text-[#c387ff]" />
                   </div>
                   <p className="text-white/80 text-sm leading-relaxed">{opt.label}</p>
@@ -447,7 +447,7 @@ export default function PartnershipPage() {
                 <X size={18} />
               </button>
 
-              <div className="w-14 h-14 rounded-2xl bg-gradient-to-r from-[#6c00ff] to-[#ad46ff] flex items-center justify-center mb-5 shadow-[0_10px_25px_rgba(108,0,255,0.35)]">
+              <div className="w-14 h-14 rounded-2xl bg-gradient-to-r from-primary to-accent-light flex items-center justify-center mb-5 shadow-[0_10px_25px_rgba(108,0,255,0.35)]">
                 <Phone size={24} />
               </div>
 
@@ -458,7 +458,7 @@ export default function PartnershipPage() {
 
               <a
                 href="mailto:contact@outmail.in?subject=Outmail%20for%20our%20institution"
-                className="inline-flex w-full items-center justify-center gap-2 bg-gradient-to-r from-[#6c00ff] to-[#ad46ff] text-white px-5 py-3 rounded-xl font-display font-semibold hover:brightness-110 transition"
+                className="inline-flex w-full items-center justify-center gap-2 bg-gradient-to-r from-primary to-accent-light text-white px-5 py-3 rounded-xl font-display font-semibold hover:brightness-110 transition"
               >
                 <Mail size={16} />
                 Send Email

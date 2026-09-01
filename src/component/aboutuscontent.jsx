@@ -4,7 +4,7 @@ import PillarVisual from '@/component/animations/PillarVisual';
 
 export default function AboutUs() {
   return (
-    <section className="w-full px-4 sm:px-8 md:px-16 py-20 bg-[#0a0b14] text-white overflow-hidden">
+    <section className="w-full px-4 sm:px-8 md:px-16 py-20 bg-surface-page text-white overflow-hidden">
       <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-12">
         
         {/* LEFT: TEXT CONTENT */}
@@ -25,7 +25,7 @@ export default function AboutUs() {
 
           <div className="flex flex-col gap-7">
             <div className="flex items-start gap-4">
-              <span className="mt-1 flex-shrink-0 w-9 h-9 rounded-full bg-[#6c00ff]/40 border border-purple-500/40 flex items-center justify-center text-base">📡</span>
+              <span className="mt-1 flex-shrink-0 w-9 h-9 rounded-full bg-primary/40 border border-purple-500/40 flex items-center justify-center text-base">📡</span>
               <div>
                 <h4 className="text-white font-semibold text-base mb-1">Direct Recruiter Outreach</h4>
                 <p className="text-white/60 text-sm leading-relaxed">
@@ -35,7 +35,7 @@ export default function AboutUs() {
             </div>
 
             <div className="flex items-start gap-4">
-              <span className="mt-1 flex-shrink-0 w-9 h-9 rounded-full bg-[#6c00ff]/40 border border-purple-500/40 flex items-center justify-center text-base">🧠</span>
+              <span className="mt-1 flex-shrink-0 w-9 h-9 rounded-full bg-primary/40 border border-purple-500/40 flex items-center justify-center text-base">🧠</span>
               <div>
                 <h4 className="text-white font-semibold text-base mb-1">Built for the Hidden Job Market</h4>
                 <p className="text-white/60 text-sm leading-relaxed">
@@ -45,7 +45,7 @@ export default function AboutUs() {
             </div>
 
             <div className="flex items-start gap-4">
-              <span className="mt-1 flex-shrink-0 w-9 h-9 rounded-full bg-[#6c00ff]/40 border border-purple-500/40 flex items-center justify-center text-base">🎓</span>
+              <span className="mt-1 flex-shrink-0 w-9 h-9 rounded-full bg-primary/40 border border-purple-500/40 flex items-center justify-center text-base">🎓</span>
               <div>
                 <h4 className="text-white font-semibold text-base mb-1">Made for Students &amp; Early Careers</h4>
                 <p className="text-white/60 text-sm leading-relaxed">

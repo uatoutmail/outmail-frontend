@@ -152,9 +152,9 @@ const JobPreferences = ({ onSaved, forceOpen = false }) => {
                   onChange={(e) => setCountry(e.target.value)}
                   className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-purple-500/50"
                 >
-                  <option value="" className="bg-[#1a1a1a]">Select your country…</option>
+                  <option value="" className="bg-surface-solid">Select your country…</option>
                   {COUNTRIES.map((c) => (
-                    <option key={c.code} value={c.code} className="bg-[#1a1a1a]">{c.label} ({c.code})</option>
+                    <option key={c.code} value={c.code} className="bg-surface-solid">{c.label} ({c.code})</option>
                   ))}
                 </select>
                 <p className="text-white/25 text-[11px] mt-1.5">You&apos;ll only see openings in this country.</p>
@@ -169,7 +169,7 @@ const JobPreferences = ({ onSaved, forceOpen = false }) => {
                     className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-purple-500/50 capitalize"
                   >
                     {REMOTE_OPTS.map((o) => (
-                      <option key={o} value={o} className="bg-[#1a1a1a] capitalize">{o}</option>
+                      <option key={o} value={o} className="bg-surface-solid capitalize">{o}</option>
                     ))}
                   </select>
                 </div>

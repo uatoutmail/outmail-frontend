@@ -182,7 +182,7 @@ const Card = ({
         <div className="absolute bottom-0 left-0 right-0 z-20 p-6 md:p-10 flex items-end justify-between gap-6">
           <div className="flex-1">
             {/* Badge */}
-            <span className="inline-block text-[10px] uppercase tracking-[3px] bg-[#6c00ff]/60 border border-white/20 text-white/80 px-3 py-1 rounded-full mb-3">
+            <span className="inline-block text-[10px] uppercase tracking-[3px] bg-primary/60 border border-white/20 text-white/80 px-3 py-1 rounded-full mb-3">
               {`0${i + 1}`}
             </span>
             <h2 className={`${responsive.titleSize} font-bold text-white mb-2 leading-tight`}>

@@ -152,7 +152,7 @@ export default function Faq2() {
   };
 
   return (
-    <section id="faq-section" className="min-h-screen bg-[#0a0b14] text-white font-syne py-16 pb-24">
+    <section id="faq-section" className="min-h-screen bg-surface-page text-white font-syne py-16 pb-24">
       <div className="container mx-auto max-w-6xl px-4 md:px-6">
         <div className="mb-12 flex flex-col items-center">
           <Badge
@@ -226,7 +226,7 @@ export default function Faq2() {
           <p className="mb-4 text-white">Can’t find what you’re looking for?</p>
           <Link
             href="/contactus"
-            className="inline-block px-6 py-3 bg-gradient-to-r from-[#6c00ff] to-[#ad46ff] text-white font-display font-medium tracking-wide rounded-xl hover:brightness-110 transition"
+            className="inline-block px-6 py-3 bg-gradient-to-r from-primary to-accent-light text-white font-display font-medium tracking-wide rounded-xl hover:brightness-110 transition"
           >
             Contact Support
           </Link>

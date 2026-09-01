@@ -36,7 +36,7 @@ export default function DashboardLayout({
   // Sidebar container styles
   const sidebarClass = isLight
     ? `bg-white border-r border-gray-200 text-gray-700`
-    : `bg-[#0f0f2d]/90 backdrop-blur-xl border-r border-white/10 text-white`;
+    : `bg-surface-deep/90 backdrop-blur-xl border-r border-white/10 text-white`;
 
   // Main container styles
   const mainContainerClass = isLight
@@ -46,13 +46,13 @@ export default function DashboardLayout({
   const containerStyle = isLight
     ? {}
     : {
-        background: "radial-gradient(ellipse at center, #6c00ff 0%, #0f0f2d 60%, #000 100%)",
+        background: "radial-gradient(ellipse at center, var(--brand-primary) 0%, var(--surface-deep) 60%, #000 100%)",
       };
 
   // Topbar styles
   const topbarClass = isLight
     ? `bg-white border-b border-gray-200 text-gray-900`
-    : `bg-[#0f0f2d]/50 backdrop-blur-md border-b border-white/5 text-white`;
+    : `bg-surface-deep/50 backdrop-blur-md border-b border-white/5 text-white`;
 
   return (
     <div

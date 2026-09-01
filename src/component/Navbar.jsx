@@ -24,8 +24,8 @@ function Navbar({ variant = "gradient" }) {
     <header
       className={`w-full ${
         isDark
-          ? "sticky top-0 z-50 border-b border-white/10 bg-[#0a0b14]/70 backdrop-blur-xl"
-          : "bg-gradient-to-l from-black via-[#6c00ff] to-black"
+          ? "sticky top-0 z-50 border-b border-white/10 bg-surface-page/70 backdrop-blur-xl"
+          : "bg-gradient-to-l from-black via-primary to-black"
       }`}
     >
       <nav className="relative max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between">
@@ -38,11 +38,11 @@ function Navbar({ variant = "gradient" }) {
 
         {/* Desktop Links */}
         <div className="hidden md:flex space-x-7 text-white text-[15px] font-medium font-display tracking-wide">
-          <Link href="/" className="hover:text-[#AD46FF] transition">Home</Link>
-          <Link href="/features" className="hover:text-[#AD46FF] transition">Features</Link>
-          <Link href="/pricing" className="hover:text-[#AD46FF] transition">Pricing</Link>
-          <Link href="/contactus" className="hover:text-[#AD46FF] transition">Contact Us</Link>
-          <Link href="/partnership" className="hover:text-[#AD46FF] transition">Partnership</Link>
+          <Link href="/" className="hover:text-accent-light transition">Home</Link>
+          <Link href="/features" className="hover:text-accent-light transition">Features</Link>
+          <Link href="/pricing" className="hover:text-accent-light transition">Pricing</Link>
+          <Link href="/contactus" className="hover:text-accent-light transition">Contact Us</Link>
+          <Link href="/partnership" className="hover:text-accent-light transition">Partnership</Link>
         </div>
 
         {/* User Section - Desktop */}
@@ -95,7 +95,7 @@ function Navbar({ variant = "gradient" }) {
             <div className="relative">
               <button
                 onClick={() => setIsLoginDropdownOpen(!isLoginDropdownOpen)}
-                className="text-white bg-[#AD46FF] font-semibold rounded-full px-5 py-2 hover:bg-[#c289f0] transition-all flex items-center gap-2 shadow-lg shadow-purple-500/20 active:scale-95"
+                className="text-white bg-accent-light font-semibold rounded-full px-5 py-2 hover:bg-primary-soft transition-all flex items-center gap-2 shadow-lg shadow-purple-500/20 active:scale-95"
               >
                 <span>Login</span>
                 <ChevronDown 
@@ -111,7 +111,7 @@ function Navbar({ variant = "gradient" }) {
                     animate={{ opacity: 1, y: 0, scale: 1 }}
                     exit={{ opacity: 0, y: 10, scale: 0.95 }}
                     transition={{ duration: 0.2 }}
-                    className="absolute right-0 mt-3 w-56 bg-[#0a0b14]/95 backdrop-blur-xl rounded-2xl shadow-2xl border border-white/10 py-2 z-50 overflow-hidden ring-1 ring-white/5"
+                    className="absolute right-0 mt-3 w-56 bg-surface-page/95 backdrop-blur-xl rounded-2xl shadow-2xl border border-white/10 py-2 z-50 overflow-hidden ring-1 ring-white/5"
                   >
                     <Link
                       href={`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/auth/google`}
@@ -166,11 +166,11 @@ function Navbar({ variant = "gradient" }) {
               <X size={24} />
             </button>
             <div className="flex flex-col space-y-8 text-white text-xl font-medium font-display tracking-wide">
-              <Link href="/" className="hover:text-[#AD46FF] transition text-center">Home</Link>
-              <Link href="/features" className="hover:text-[#AD46FF] transition text-center">Features</Link>
-              <Link href="/pricing" className="hover:text-[#AD46FF] transition text-center">Pricing</Link>
-              <Link href="/contactus" className="hover:text-[#AD46FF] transition text-center">Contact Us</Link>
-              <Link href="/partnership" className="hover:text-[#AD46FF] transition text-center">Partnership</Link>
+              <Link href="/" className="hover:text-accent-light transition text-center">Home</Link>
+              <Link href="/features" className="hover:text-accent-light transition text-center">Features</Link>
+              <Link href="/pricing" className="hover:text-accent-light transition text-center">Pricing</Link>
+              <Link href="/contactus" className="hover:text-accent-light transition text-center">Contact Us</Link>
+              <Link href="/partnership" className="hover:text-accent-light transition text-center">Partnership</Link>
               
               {/* Mobile Auth Section */}
               {loading ? (
@@ -199,7 +199,7 @@ function Navbar({ variant = "gradient" }) {
                   {/* Dashboard Link */}
                   <Link
                     href={user?.role === "TPO_ADMIN" ? "/tpo/dashboard" : "/dashboard"}
-                    className="text-center text-white bg-[#AD46FF] font-semibold rounded-full px-8 py-3 hover:bg-[#c289f0] transition-colors"
+                    className="text-center text-white bg-accent-light font-semibold rounded-full px-8 py-3 hover:bg-primary-soft transition-colors"
                     onClick={() => setIsOpen(false)}
                   >
                     Dashboard
@@ -226,7 +226,7 @@ function Navbar({ variant = "gradient" }) {
                   </Link>
                   <Link
                     href="/tpo/login"
-                    className="flex flex-col items-center justify-center w-full bg-[#AD46FF] text-white font-semibold rounded-2xl p-4 hover:bg-[#c289f0] transition-all shadow-lg shadow-purple-500/20 active:scale-[0.98]"
+                    className="flex flex-col items-center justify-center w-full bg-accent-light text-white font-semibold rounded-2xl p-4 hover:bg-primary-soft transition-all shadow-lg shadow-purple-500/20 active:scale-[0.98]"
                     onClick={() => setIsOpen(false)}
                   >
                     <span className="text-lg">Login as TPO Admin</span>

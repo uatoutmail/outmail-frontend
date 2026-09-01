@@ -11,7 +11,7 @@ function Hero() {
   const [demoOpen, setDemoOpen] = useState(false);
 
   return (
-    <div className="relative overflow-x-clip bg-[#0a0b14]">
+    <div className="relative overflow-x-clip bg-surface-page">
       {/* Hero text block — reduced height so first stacked card is more visible */}
       <div className="relative z-10 min-h-[46vh] flex flex-col justify-center pt-16 pb-10 px-4">
         <div className="max-w-3xl mx-auto text-center">
@@ -27,7 +27,7 @@ function Hero() {
             <WrapButton href={oauthUrl} />
             <button
               onClick={() => setDemoOpen(true)}
-              className="text-white/80 font-medium text-sm hover:text-[#b06cff] transition-colors duration-200"
+              className="text-white/80 font-medium text-sm hover:text-glow transition-colors duration-200"
             >
               Watch Demo →
             </button>
@@ -38,17 +38,17 @@ function Hero() {
       <motion.div
         animate={{ y: [0, -18, 0] }}
         transition={{ duration: 7, repeat: Infinity, ease: "easeInOut" }}
-        className="absolute top-24 left-[8%] w-32 h-32 rounded-2xl border border-white/10 bg-[#6c00ff]/20 rotate-12 blur-[1px]"
+        className="absolute top-24 left-[8%] w-32 h-32 rounded-2xl border border-white/10 bg-primary/20 rotate-12 blur-[1px]"
       />
       <motion.div
         animate={{ y: [0, 16, 0] }}
         transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
-        className="absolute top-28 right-[10%] w-20 h-20 rounded-full border border-white/15 bg-[#ad46ff]/20"
+        className="absolute top-28 right-[10%] w-20 h-20 rounded-full border border-white/15 bg-accent-light/20"
       />
       <motion.div
         animate={{ y: [0, -14, 0] }}
         transition={{ duration: 6.5, repeat: Infinity, ease: "easeInOut" }}
-        className="absolute bottom-[28%] left-[6%] w-16 h-16 rounded-lg border border-white/10 bg-[#6c00ff]/10 -rotate-12"
+        className="absolute bottom-[28%] left-[6%] w-16 h-16 rounded-lg border border-white/10 bg-primary/10 -rotate-12"
       />
 
       {/* Stacking cards — first card visible on initial load */}

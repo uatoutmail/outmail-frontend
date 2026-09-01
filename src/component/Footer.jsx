@@ -47,7 +47,7 @@ export default function Footer({ variant = "gradient" }) {
       className={`text-white px-6 pt-20 pb-10 relative ${
         isDark
           ? "border-t border-white/10 bg-[#090b16]"
-          : "bg-gradient-to-l from-black via-[#6c00ff] to-black"
+          : "bg-gradient-to-l from-black via-primary to-black"
       }`}
     >
       <div className="max-w-7xl mx-auto grid gap-12 md:grid-cols-2">
@@ -131,7 +131,7 @@ export default function Footer({ variant = "gradient" }) {
               className={`px-6 py-3 rounded-full font-semibold transition duration-200 relative overflow-hidden focus:outline-none
                         ${
                           subscribed
-                            ? "animate-pop bg-gradient-to-r from-[#6c00ff] via-[#a100ff] to-[#6c00ff] text-white scale-110 shadow-lg"
+                            ? "animate-pop bg-gradient-to-r from-primary via-[#a100ff] to-primary text-white scale-110 shadow-lg"
                             : "bg-white text-black hover:bg-gray-200"
                         }
                       `}

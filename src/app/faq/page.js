@@ -20,7 +20,7 @@ export const metadata = {
 
 export default function FAQPage() {
   return (
-    <div className="min-h-screen bg-[#0a0b14] text-white">
+    <div className="min-h-screen bg-surface-page text-white">
       <Navbar variant="dark" />
       <main className="pt-20">
         <Faq />

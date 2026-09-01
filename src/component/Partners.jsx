@@ -65,7 +65,7 @@ function CompanyItem({ company }) {
 
 export default function Partners() {
   return (
-    <div className="w-full overflow-hidden py-12 bg-[#0a0b14]">
+    <div className="w-full overflow-hidden py-12 bg-surface-page">
       <h2 className="text-2xl font-bold text-white text-center mb-3 mt-10">
         Get in front of recruiters at companies like these
       </h2>

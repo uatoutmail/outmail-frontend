@@ -14,13 +14,13 @@ export const metadata = {
 
 export default function RefundAndCancellation() {
   return (
-    <div className="min-h-screen bg-white text-slate-900 selection:bg-[#AD46FF]/30">
+    <div className="min-h-screen bg-white text-slate-900 selection:bg-accent-light/30">
       <main className="max-w-4xl mx-auto px-6 py-20 lg:py-32">
         <div className="space-y-4 mb-12">
           <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold font-syne tracking-tight text-slate-900">
             Refund and Cancellation Policy
           </h1>
-          <p className="text-[#AD46FF] font-semibold tracking-wide text-sm md:text-base uppercase">
+          <p className="text-accent-light font-semibold tracking-wide text-sm md:text-base uppercase">
             Effective Date: 31st August 2026
           </p>
         </div>
@@ -31,11 +31,11 @@ export default function RefundAndCancellation() {
               This policy explains what you get when you buy Outmail (“Outmail,” “we,” “our,” or
               “us”), when refunds are available, how long they take, and what happens when your year
               ends. It applies to all plans purchased through{" "}
-              <a href="https://outmail.in" className="text-[#AD46FF] hover:underline font-medium">
+              <a href="https://outmail.in" className="text-accent-light hover:underline font-medium">
                 https://outmail.in
               </a>
               . It should be read alongside our{" "}
-              <a href="/terms-and-conditions" className="text-[#AD46FF] hover:underline">
+              <a href="/terms-and-conditions" className="text-accent-light hover:underline">
                 Terms and Conditions
               </a>
               .
@@ -64,7 +64,7 @@ export default function RefundAndCancellation() {
               </li>
               <li>
                 The price and inclusions of each plan are shown on our{" "}
-                <a href="/pricing" className="text-[#AD46FF] hover:underline">
+                <a href="/pricing" className="text-accent-light hover:underline">
                   Pricing
                 </a>{" "}
                 page before you pay.
@@ -145,7 +145,7 @@ export default function RefundAndCancellation() {
             <ul className="list-disc pl-6 space-y-3">
               <li>
                 Email{" "}
-                <a href="mailto:support@outmail.in" className="text-[#AD46FF] hover:underline">
+                <a href="mailto:support@outmail.in" className="text-accent-light hover:underline">
                   support@outmail.in
                 </a>{" "}
                 from the address registered to your account, stating the plan and the approximate
@@ -221,7 +221,7 @@ export default function RefundAndCancellation() {
             </h2>
             <p>
               If we suspend or terminate an account for a breach of our{" "}
-              <a href="/terms-and-conditions" className="text-[#AD46FF] hover:underline">
+              <a href="/terms-and-conditions" className="text-accent-light hover:underline">
                 Terms and Conditions
               </a>
               , including sending unsolicited bulk email, no refund is due for the remainder of your
@@ -271,13 +271,13 @@ export default function RefundAndCancellation() {
               <p>For anything relating to billing, cancellation or refunds:</p>
               <p>
                 Email:{" "}
-                <a href="mailto:support@outmail.in" className="text-[#AD46FF] hover:underline">
+                <a href="mailto:support@outmail.in" className="text-accent-light hover:underline">
                   support@outmail.in
                 </a>
               </p>
               <p>
                 Or use our{" "}
-                <a href="/contactus" className="text-[#AD46FF] hover:underline">
+                <a href="/contactus" className="text-accent-light hover:underline">
                   Contact
                 </a>{" "}
                 page.

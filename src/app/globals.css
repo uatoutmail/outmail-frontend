@@ -11,12 +11,18 @@
    rounded-card, …) instead of hardcoded hexes, so re-skinning is one edit.
    ============================================================ */
 :root {
-  /* Brand palette — the ONLY place raw brand hexes should live */
-  --brand-primary: #a855f7;          /* main purple */
-  --brand-primary-hover: #9333ea;    /* deeper purple for hovers/active */
-  --brand-primary-soft: #c084fc;     /* light purple accent */
-  --brand-glow: #b06cff;             /* hero gradient purple (edit to retune all hero headings) */
-  --brand-accent: #3b82f6;           /* blue — gradient start */
+  /* Brand palette — the ONLY place raw brand hexes should live.
+     Decided 2026-09-01. Before this, THREE purples were in use across the
+     codebase and the one declared here (#a855f7, Tailwind's stock purple-500)
+     was the least used of the three — so changing this token altered almost
+     nothing. These values are now what the components actually render. */
+  --brand-primary: #6c00ff;          /* main purple — the brand */
+  --brand-primary-hover: #5800d6;    /* deeper, for hover/active */
+  --brand-accent-light: #ad46ff;     /* lighter purple — links, accents on dark */
+  --brand-primary-soft: #c289f0;     /* softest purple — subtle highlights */
+  --brand-glow: #b06cff;             /* hero gradient purple */
+  --brand-accent: #3b82f6;           /* blue — gradient start only, never primary */
+  --brand-accent-soft: #60a5fa;      /* lighter blue */
   --brand-primary-foreground: #ffffff;
 
   /* Surfaces & lines (dark glass theme) */
@@ -25,9 +31,19 @@
   --surface-3: rgba(255, 255, 255, 0.10);
   --border-subtle: rgba(148, 163, 184, 0.35);
 
-  --background: #050816;
+  --background: #050816;             /* html/body */
+  --surface-page: #0a0b14;           /* section backgrounds — the most-used dark in components */
+  --surface-panel: #0f172a;          /* solid panels */
+  --surface-solid: #1a1a1a;          /* opaque surfaces — native <option>, menus */
+  --surface-deep: #0f0f2d;           /* deep purple-black, gradient stops */
   --foreground: #f9fafb;
   --muted-foreground: #94a3b8;
+  --muted-strong: #6b7280;           /* dimmer body text */
+
+  /* Semantic — status only, never decoration */
+  --success: #22c55e;
+  --warning: #f59e0b;
+  --danger: #ef4444;
 
   --gradient-brand: linear-gradient(135deg, var(--brand-accent), var(--brand-primary));
   /* Fonts come from next/font as --font-*-var (see layout.js) */
@@ -43,7 +59,18 @@
   --color-primary-hover: var(--brand-primary-hover);
   --color-primary-soft: var(--brand-primary-soft);
   --color-primary-foreground: var(--brand-primary-foreground);
+  --color-accent-light: var(--brand-accent-light);
   --color-accent: var(--brand-accent);
+  --color-accent-soft: var(--brand-accent-soft);
+  --color-glow: var(--brand-glow);
+  --color-surface-page: var(--surface-page);
+  --color-surface-panel: var(--surface-panel);
+  --color-surface-solid: var(--surface-solid);
+  --color-surface-deep: var(--surface-deep);
+  --color-muted-strong: var(--muted-strong);
+  --color-success: var(--success);
+  --color-warning: var(--warning);
+  --color-danger: var(--danger);
   --color-surface: var(--surface);
   --color-surface-2: var(--surface-2);
   --color-surface-3: var(--surface-3);

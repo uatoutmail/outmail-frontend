@@ -5,13 +5,13 @@ import Wordmark from '@/component/ui/wordmark';
 
 export default function CtaOne() {
   return (
-    <div className="relative overflow-hidden bg-[#0a0b14] text-white py-20 px-4">
-      <div className="absolute top-10 left-[10%] w-16 h-16 rounded-full border border-white/10 bg-[#6c00ff]/12" />
-      <div className="absolute bottom-16 right-[8%] w-20 h-20 rounded-xl border border-white/10 bg-[#ad46ff]/10 -rotate-12" />
+    <div className="relative overflow-hidden bg-surface-page text-white py-20 px-4">
+      <div className="absolute top-10 left-[10%] w-16 h-16 rounded-full border border-white/10 bg-primary/12" />
+      <div className="absolute bottom-16 right-[8%] w-20 h-20 rounded-xl border border-white/10 bg-accent-light/10 -rotate-12" />
 
       {/* Insights Section */}
       <div className="max-w-6xl mx-auto text-center mt-16">
-        <p className="text-xs font-display font-medium text-[#AD46FF] uppercase tracking-[4px] mb-2">Why Visibility Matters</p>
+        <p className="text-xs font-display font-medium text-accent-light uppercase tracking-[4px] mb-2">Why Visibility Matters</p>
         <h2 className="text-3xl text-white md:text-4xl font-bold mb-4">Most Resumes Never Get Seen. <Wordmark variant="gradient" /> Changes That.</h2>
         <p className="text-white mb-8 max-w-2xl mx-auto">
           Outmail doesn’t just send emails — it gets you seen. Start today and maximize your chances of landing interviews faster.
@@ -40,7 +40,7 @@ export default function CtaOne() {
             </p>
             <a
               href={`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/auth/google`}
-              className="inline-block bg-gradient-to-r from-[#6c00ff] to-[#ad46ff] text-white px-6 py-2 rounded-full font-medium hover:brightness-110 transition"
+              className="inline-block bg-gradient-to-r from-primary to-accent-light text-white px-6 py-2 rounded-full font-medium hover:brightness-110 transition"
             >
               Get Started Now
             </a>
