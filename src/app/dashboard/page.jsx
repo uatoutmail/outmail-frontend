@@ -63,7 +63,7 @@ export default function Page() {
   // Show loading screen while checking auth
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-screen bg-gradient-to-l from-black via-[#6c00ff] to-black">
+      <div className="flex items-center justify-center min-h-screen bg-gradient-to-l from-black via-primary to-black">
         <div className="text-white text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-4 border-white/20 border-t-white mx-auto mb-4"></div>
           <p className="text-lg">Loading...</p>

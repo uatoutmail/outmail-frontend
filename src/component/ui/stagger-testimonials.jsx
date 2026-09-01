@@ -74,7 +74,7 @@ const TestimonialCard = ({ position, testimonial, handleMove, cardSize }) => {
           height: 2,
         }}
       />
-      <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-br from-[#3b82f6] to-[#a855f7] text-white">
+      <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-br from-accent to-primary text-white">
         <GraduationCap className="h-6 w-6" />
       </div>
       <h3
@@ -155,14 +155,14 @@ const StaggerTestimonials = () => {
       <div className="absolute bottom-4 left-1/2 flex -translate-x-1/2 gap-60">
   <button
     onClick={() => handleMove(-1)}
-    className="flex h-14 w-14 items-center justify-center text-2xl bg-background border-2 border-border text-[#6c00ff] rounded-full transition hover:bg-gray-300"
+    className="flex h-14 w-14 items-center justify-center text-2xl bg-background border-2 border-border text-primary rounded-full transition hover:bg-gray-300"
     aria-label="Previous testimonial"
   >
     <ChevronLeft />
   </button>
   <button
     onClick={() => handleMove(1)}
-    className="flex h-14 w-14 items-center justify-center text-2xl bg-background border-2 border-border text-[#6c00ff] rounded-full transition hover:bg-gray-300"
+    className="flex h-14 w-14 items-center justify-center text-2xl bg-background border-2 border-border text-primary rounded-full transition hover:bg-gray-300"
     aria-label="Next testimonial"
   >
     <ChevronRight />

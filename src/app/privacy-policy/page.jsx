@@ -16,18 +16,18 @@ const H2 = ({ children }) => (
 );
 const Section = ({ children }) => <section className="space-y-6">{children}</section>;
 const A = ({ href, children }) => (
-  <a href={href} className="text-[#AD46FF] hover:underline">{children}</a>
+  <a href={href} className="text-accent-light hover:underline">{children}</a>
 );
 
 export default function PrivacyPolicy() {
   return (
-    <div className="min-h-screen bg-white text-slate-900 selection:bg-[#AD46FF]/30">
+    <div className="min-h-screen bg-white text-slate-900 selection:bg-accent-light/30">
       <main className="max-w-4xl mx-auto px-6 py-20 lg:py-32">
         <div className="space-y-4 mb-12">
           <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold font-syne tracking-tight text-slate-900">
             Privacy Policy
           </h1>
-          <p className="text-[#AD46FF] font-semibold tracking-wide text-sm md:text-base uppercase">
+          <p className="text-accent-light font-semibold tracking-wide text-sm md:text-base uppercase">
             Effective Date: 31st August 2026
           </p>
         </div>

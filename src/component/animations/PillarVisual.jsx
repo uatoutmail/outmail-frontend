@@ -75,7 +75,7 @@ function OutreachScene() {
 
       {/* Center: a personalized compose card */}
       <div className="relative z-10 w-[min(340px,80%)] anim-float-y-lg">
-        <div className="rounded-2xl border border-white/15 bg-[#0d0f1e]/80 p-4 shadow-2xl backdrop-blur-xl">
+        <div className="rounded-2xl border border-white/15 bg-surface-page/80 p-4 shadow-2xl backdrop-blur-xl">
           <div className="mb-3 flex items-center gap-2">
             <span
               className="flex h-7 w-7 items-center justify-center rounded-lg"
@@ -142,7 +142,7 @@ function JobsScene() {
           return (
             <div
               key={i}
-              className="rounded-xl border border-white/12 bg-[#0d0f1e]/80 p-3.5 backdrop-blur-xl shadow-xl"
+              className="rounded-xl border border-white/12 bg-surface-page/80 p-3.5 backdrop-blur-xl shadow-xl"
             >
               <div className="flex items-start justify-between gap-3">
                 <div className="min-w-0 flex-1 space-y-2 pt-0.5">
@@ -218,7 +218,7 @@ function MentorshipScene() {
               className="absolute left-1/2 top-1/2"
               style={{ transform: `rotate(${angle}deg) translateX(110px) rotate(-${angle}deg)` }}
             >
-              <div className="anim-orbit-rev -ml-5 -mt-5 flex h-10 w-10 items-center justify-center rounded-full border border-white/20 bg-[#0d0f1e]/85 backdrop-blur-md">
+              <div className="anim-orbit-rev -ml-5 -mt-5 flex h-10 w-10 items-center justify-center rounded-full border border-white/20 bg-surface-page/85 backdrop-blur-md">
                 <Icon size={16} className="text-white/80" />
               </div>
             </div>

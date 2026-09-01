@@ -59,7 +59,7 @@ const Select = ({ label, value, onChange, options }) => (
       className="w-full p-3 rounded-lg border border-gray-600 bg-white/5 text-white focus:outline-none focus:ring-2 focus:ring-purple-500 transition-colors"
     >
       {options.map((o) => (
-        <option key={o.value} value={o.value} className="bg-[#0f172a]">{o.label}</option>
+        <option key={o.value} value={o.value} className="bg-surface-panel">{o.label}</option>
       ))}
     </select>
   </div>

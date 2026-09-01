@@ -136,9 +136,9 @@ export default function ZPricing() {
   };
 
   return (
-    <div className="text-white py-20 px-4 bg-[#0a0b14]">
+    <div className="text-white py-20 px-4 bg-surface-page">
       <div className="max-w-5xl mx-auto text-center">
-        <p className="text-xs font-display font-medium text-[#AD46FF] uppercase tracking-[4px] mb-3">Pricing</p>
+        <p className="text-xs font-syne font-medium text-accent-light uppercase tracking-[4px] mb-3">Pricing</p>
         <h2 className="text-3xl md:text-4xl font-bold mb-4 tracking-tighter">One year. One payment.</h2>
         <p className="text-white/60 mb-3 max-w-2xl mx-auto text-base">
           Outmail is built for your placement year. Pay once, use it for twelve months —
@@ -156,7 +156,7 @@ export default function ZPricing() {
           <div className="py-16">
             <p className="text-white/70">We could not load our plans just now.</p>
             <button type="button" onClick={() => window.location.reload()}
-              className="mt-4 underline text-[#AD46FF]">Try again</button>
+              className="mt-4 underline text-accent-light">Try again</button>
           </div>
         )}
 
@@ -186,7 +186,7 @@ export default function ZPricing() {
                 value={coupon}
                 onChange={(e) => setCoupon(e.target.value.toUpperCase())}
                 placeholder="e.g. PESU999"
-                className="flex-1 bg-white/5 border border-white/15 rounded-full px-4 py-2 text-sm text-white placeholder:text-white/30 focus:outline-none focus:border-[#AD46FF]"
+                className="flex-1 bg-white/5 border border-white/15 rounded-full px-4 py-2 text-sm text-white placeholder:text-white/30 focus:outline-none focus:border-accent-light"
               />
               <button type="button" onClick={applyCoupon}
                 className="px-5 py-2 rounded-full bg-white/10 border border-white/20 text-sm hover:bg-white/20">
@@ -239,7 +239,7 @@ function PlanCard({ plan, busy, phase, anyBusy, onBuy, isAuthenticated }) {
     <div className={`relative rounded-2xl p-8 text-left flex flex-col justify-between transition-all duration-300 hover:-translate-y-1 backdrop-blur-xl
       ${meta.popular
         ? 'bg-white/6 border-2 border-purple-500 shadow-[0_0_32px_rgba(108,0,255,0.25)]'
-        : 'bg-white/5 border border-white/12 hover:border-purple-500/40'}`}>
+        : 'bg-white/5 border border-white/12 hover:border-primary/40'}`}>
 
       {meta.popular && (
         <span className="absolute -top-3 left-1/2 -translate-x-1/2 text-[11px] uppercase tracking-[3px] bg-purple-600 text-white px-4 py-1 rounded-full">

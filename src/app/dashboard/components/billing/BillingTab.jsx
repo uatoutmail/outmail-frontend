@@ -224,7 +224,7 @@ function RefundNotice({ orders }) {
           ? `Your 7-day refund window is open for another ${REFUND_WINDOW_DAYS - daysSince} day${REFUND_WINDOW_DAYS - daysSince === 1 ? "" : "s"}. Email support@outmail.in and we will refund in full, no questions asked.`
           : "Your 7-day refund window has closed."}
       </p>
-      <a href="/refund-and-cancellation" className="inline-block mt-3 text-sm text-[#AD46FF] underline">
+      <a href="/refund-and-cancellation" className="inline-block mt-3 text-sm text-accent-light underline">
         Read the full policy
       </a>
     </Card>
