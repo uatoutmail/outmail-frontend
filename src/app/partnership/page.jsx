@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Navbar from "@/component/Navbar";
 import PageHeader from "@/component/ui/PageHeader";
+import Story from "@/component/landing/Story";
 import { Kicker } from "@/component/motion/kit";
 import Footer from "@/component/Footer";
 import { motion, AnimatePresence } from "framer-motion";
@@ -189,6 +190,8 @@ export default function PartnershipPage() {
           </a>
         </div>
       </PageHeader>
+
+      <Story />
 
       {/* The gap (problem) */}
       <section className="px-6 pb-20">

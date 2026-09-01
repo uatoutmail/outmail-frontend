@@ -4,6 +4,8 @@ import { useAuth } from '@/context/AuthContext';
 import { getPlans, startCheckout, validateCoupon } from '@/lib/payments';
 import { rememberIntent, takeIntent } from '@/lib/checkoutIntent';
 import { OUTCOME, classify, message, formatPaise } from '@/lib/paymentOutcome';
+import { Reveal, MaskLines, Kicker } from '@/component/motion/kit';
+import PlanLedger, { LaunchBanner } from '@/component/landing/PlanLedger';
 
 /**
  * The pricing page, and the only place a customer can buy Outmail.
@@ -18,33 +20,9 @@ import { OUTCOME, classify, message, formatPaise } from '@/lib/paymentOutcome';
  * nothing renews automatically.
  */
 
-// Selling points per plan code. Deliberately NOT prices — those come from the
-// API. Kept here because feature copy is presentation, not billing data.
-const HIGHLIGHTS = {
-  PLAN_A: {
-    tagline: 'Everything you need to get interviews.',
-    features: [
-      'AI-personalised cold emails, sent from your own Gmail',
-      'Verified recruiter and company discovery',
-      'Resume-matched job feed with an explainable Outmail Score',
-      'One-click Autofill browser extension',
-      'Hiring-signal targeting and send scheduling',
-      'Outreach analytics',
-    ],
-    popular: true,
-  },
-  PLAN_B: {
-    tagline: 'Everything above, plus real mentors.',
-    features: [
-      'Everything in Outreach & Jobs',
-      'Bi-weekly mentorship with people who have done it',
-      'Mentor Q&A and session recordings',
-      'Personalised career guidance',
-      'Priority support',
-    ],
-    popular: false,
-  },
-};
+// Feature copy moved to PlanLedger's MATRIX when this page adopted the ledger
+// layout — it is presentation, and keeping one copy is what stops the landing
+// page and the pricing page from disagreeing about what a plan includes.
 
 export default function ZPricing() {
   const { isAuthenticated, refreshUser } = useAuth();
@@ -135,86 +113,116 @@ export default function ZPricing() {
     }
   };
 
+  const planA = plans.find((p) => p.code === 'PLAN_A');
+  const planB = plans.find((p) => p.code === 'PLAN_B');
+
+  // One CTA renderer for both columns: the label carries every state the
+  // button can be in, so a disabled button always says why it is disabled.
+  const cta = (plan, primary) => {
+    if (!plan) return null;
+    const soldOut = isSoldOut(plan);
+    const busy = busyPlan === plan.id;
+    const label = busy
+      ? (phase === 'verifying' ? 'Confirming…' : 'Opening…')
+      : soldOut ? 'Fully subscribed'
+      : isAuthenticated ? 'Get it'
+      : 'Sign in to continue';
+    return (
+      <button
+        type="button"
+        onClick={() => onCta(plan)}
+        disabled={busy || soldOut || Boolean(busyPlan)}
+        aria-busy={busy}
+        className={`font-syne font-semibold text-sm rounded-btn px-5 py-2.5 transition-colors whitespace-nowrap disabled:opacity-45 disabled:cursor-not-allowed ${
+          primary
+            ? 'bg-primary hover:bg-primary-hover text-white'
+            : 'border border-white/20 hover:border-accent-light hover:text-accent-light text-white'
+        }`}>
+        {label}
+      </button>
+    );
+  };
+
   return (
     <div className="text-white py-20 px-4 bg-surface-page">
-      <div className="max-w-5xl mx-auto text-center">
-        <p className="text-xs font-syne font-medium text-accent-light uppercase tracking-[4px] mb-3">Pricing</p>
-        <h2 className="text-3xl md:text-4xl font-bold mb-4 tracking-tighter">One year. One payment.</h2>
-        <p className="text-white/60 mb-3 max-w-2xl mx-auto text-base">
-          Outmail is built for your placement year. Pay once, use it for twelve months —
-          no subscription, nothing renews automatically.
-        </p>
-        <p className="text-white/40 mb-12 max-w-2xl mx-auto text-sm">
-          For comparison, LinkedIn Premium costs ₹1,400–2,800 <em>per month</em> in India.
-        </p>
+      <div className="max-w-4xl mx-auto">
+        <Reveal>
+          <Kicker className="mb-4">Pricing</Kicker>
+          <MaskLines lines={['What each plan', 'actually includes.']}
+            className="font-syne text-4xl md:text-5xl font-bold tracking-tight leading-[1.05]" />
+          <p className="text-white/45 mt-4 max-w-lg">
+            The only difference is mentorship. One payment either way — nothing renews.
+            For comparison, LinkedIn Premium is ₹1,400–2,800 <em>per month</em> in India.
+          </p>
+        </Reveal>
 
-        {outcome && <OutcomeBanner outcome={outcome} onDismiss={() => setOutcome(null)} />}
+        <div className="mt-12">
+          {outcome && <OutcomeBanner outcome={outcome} onDismiss={() => setOutcome(null)} />}
 
-        {loading && <p className="text-white/50 py-16">Loading plans…</p>}
+          {loading && (
+            <p className="text-white/40 py-16 text-center" role="status">Loading plans…</p>
+          )}
 
-        {loadError && (
-          <div className="py-16">
-            <p className="text-white/70">We could not load our plans just now.</p>
-            <button type="button" onClick={() => window.location.reload()}
-              className="mt-4 underline text-accent-light">Try again</button>
-          </div>
-        )}
-
-        {!loading && !loadError && (
-          <div className={`grid grid-cols-1 gap-6 ${plans.length > 1 ? 'md:grid-cols-2' : 'max-w-md mx-auto'}`}>
-            {plans.map((plan) => (
-              <PlanCard
-                key={plan.id}
-                plan={plan}
-                busy={busyPlan === plan.id}
-                phase={phase}
-                anyBusy={Boolean(busyPlan)}
-                onBuy={() => onCta(plan)}
-                isAuthenticated={isAuthenticated}
-              />
-            ))}
-          </div>
-        )}
-
-        {!loading && !loadError && plans.length > 0 && (
-          <div className="mt-10 max-w-md mx-auto text-left">
-            <label className="block text-white/50 text-xs uppercase tracking-[2px] mb-2">
-              Have a college code?
-            </label>
-            <div className="flex gap-2">
-              <input
-                value={coupon}
-                onChange={(e) => setCoupon(e.target.value.toUpperCase())}
-                placeholder="e.g. PESU999"
-                className="flex-1 bg-white/5 border border-white/15 rounded-full px-4 py-2 text-sm text-white placeholder:text-white/30 focus:outline-none focus:border-accent-light"
-              />
-              <button type="button" onClick={applyCoupon}
-                className="px-5 py-2 rounded-full bg-white/10 border border-white/20 text-sm hover:bg-white/20">
-                Apply
-              </button>
+          {loadError && (
+            <div className="py-16 text-center rounded-2xl border border-white/10 bg-white/[0.02]">
+              <p className="text-white/70">We could not load our plans just now.</p>
+              <button type="button" onClick={() => window.location.reload()}
+                className="mt-4 underline text-primary">Try again</button>
             </div>
-            {couponState && !couponState.checking && (
-              <p className={`mt-2 text-sm ${couponState.valid ? 'text-emerald-400' : 'text-white/50'}`}>
-                {couponState.valid
-                  ? `Applied — ${formatPaise(couponState.finalAmount)} instead${
-                      couponState.spotsLeft != null ? `, ${couponState.spotsLeft} spots left` : ''}`
-                  : couponState.error || 'That code is not valid.'}
-              </p>
-            )}
-          </div>
-        )}
+          )}
 
-        <p className="text-white/40 text-sm mt-10">
-          {/* The displayed price is the TOTAL. Showing ₹999 and charging more at
-              checkout is drip pricing, which the CCPA's 2023 dark-patterns
-              guidelines name directly — so the all-in claim is stated, not
-              implied (OUT-235). */}
-          Prices in INR, inclusive of all taxes. What you see is what you pay — no fees added at
-          checkout. Not right for you?
-          {' '}<a href="/refund-and-cancellation" className="underline hover:text-white/70">
-            Full refund within 7 days
-          </a>, no questions asked.
-        </p>
+          {!loading && !loadError && (
+            <>
+              <LaunchBanner plan={planA} />
+              <PlanLedger
+                a={planA} b={planB}
+                renderCtaA={(p) => cta(p, true)}
+                renderCtaB={(p) => cta(p, false)}
+              />
+            </>
+          )}
+
+          {!loading && !loadError && plans.length > 0 && (
+            <div className="mt-8 max-w-md">
+              <label htmlFor="coupon" className="block text-white/40 text-[10px] uppercase tracking-[2px] mb-2">
+                Have a college code?
+              </label>
+              <div className="flex gap-2">
+                <input
+                  id="coupon"
+                  value={coupon}
+                  onChange={(e) => setCoupon(e.target.value.toUpperCase())}
+                  placeholder="e.g. PESU999"
+                  className="flex-1 bg-white/[0.04] border border-white/12 rounded-btn px-4 py-2.5 text-sm text-white placeholder:text-white/25 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-colors"
+                />
+                <button type="button" onClick={applyCoupon}
+                  className="px-5 py-2.5 rounded-btn border border-white/20 text-sm font-syne font-semibold hover:border-primary hover:text-primary transition-colors">
+                  Apply
+                </button>
+              </div>
+              {couponState && !couponState.checking && (
+                <p className={`mt-2 text-sm ${couponState.valid ? 'text-emerald-400' : 'text-white/45'}`} role="status">
+                  {couponState.valid
+                    ? `Applied — ${formatPaise(couponState.finalAmount)} instead${
+                        couponState.spotsLeft != null ? `, ${couponState.spotsLeft} spots left` : ''}`
+                    : couponState.error || 'That code is not valid.'}
+                </p>
+              )}
+            </div>
+          )}
+
+          <p className="text-white/35 text-sm mt-10 max-w-2xl">
+            {/* The displayed price is the TOTAL. Showing ₹999 and charging more at
+                checkout is drip pricing, which the CCPA's 2023 dark-patterns
+                guidelines name directly — so the all-in claim is stated, not
+                implied (OUT-235). */}
+            Prices in INR, inclusive of all taxes. What you see is what you pay — no fees added at
+            checkout. Not right for you?
+            {' '}<a href="/refund-and-cancellation" className="underline hover:text-white/70">
+              Full refund within 7 days
+            </a>, no questions asked.
+          </p>
+        </div>
       </div>
     </div>
   );
@@ -222,76 +230,6 @@ export default function ZPricing() {
 
 function isSoldOut(plan) {
   return plan.seatsRemaining != null && plan.seatsRemaining <= 0;
-}
-
-function PlanCard({ plan, busy, phase, anyBusy, onBuy, isAuthenticated }) {
-  const meta = HIGHLIGHTS[plan.code] || { tagline: plan.description, features: [], popular: false };
-  const soldOut = isSoldOut(plan);
-  const discounted = plan.list_amount && plan.list_amount > plan.amount;
-
-  const label = busy
-    ? (phase === 'verifying' ? 'Confirming your payment…' : 'Opening checkout…')
-    : soldOut ? 'Fully subscribed'
-    : isAuthenticated ? 'Get Outmail'
-    : 'Sign in to continue';
-
-  return (
-    <div className={`relative rounded-2xl p-8 text-left flex flex-col justify-between transition-all duration-300 hover:-translate-y-1 backdrop-blur-xl
-      ${meta.popular
-        ? 'bg-white/6 border-2 border-purple-500 shadow-[0_0_32px_rgba(108,0,255,0.25)]'
-        : 'bg-white/5 border border-white/12 hover:border-primary/40'}`}>
-
-      {meta.popular && (
-        <span className="absolute -top-3 left-1/2 -translate-x-1/2 text-[11px] uppercase tracking-[3px] bg-purple-600 text-white px-4 py-1 rounded-full">
-          Most Popular
-        </span>
-      )}
-      {plan.seatsRemaining != null && !soldOut && (
-        <span className="absolute -top-3 right-6 text-[11px] uppercase tracking-[2px] bg-white/10 border border-white/20 text-white/80 px-3 py-1 rounded-full">
-          {plan.seatsRemaining} of {plan.max_seats} seats left
-        </span>
-      )}
-
-      <div className="mb-6">
-        <h3 className="text-2xl font-bold text-white mt-2 mb-1">{plan.name}</h3>
-        <p className="text-purple-300 text-sm font-medium mb-3">{meta.tagline}</p>
-        <div className="flex items-baseline gap-2 flex-wrap mb-1">
-          <span className="text-4xl font-bold text-white">{formatPaise(plan.amount, plan.currency)}</span>
-          <span className="text-white/50 text-sm">for one year</span>
-        </div>
-        {/* The struck-through price is DATA (plan.list_amount), never hardcoded
-            copy — and it is a price we genuinely charge after the launch, which
-            is what keeps the discount claim honest (OUT-235). */}
-        {discounted && (
-          <p className="text-white/45 text-sm mb-3">
-            <span className="line-through">{formatPaise(plan.list_amount, plan.currency)}</span>
-            {' '}— launch price for our first 1,000 students
-          </p>
-        )}
-        <p className="text-white/55 text-sm leading-relaxed">{plan.description}</p>
-      </div>
-
-      <ul className="mb-8 space-y-3 flex-1">
-        {meta.features.map((f, i) => (
-          <li key={i} className="flex items-start gap-3 text-sm text-white/80">
-            <span className="mt-0.5 flex-shrink-0 w-4 h-4 rounded-full bg-purple-600/50 border border-purple-500/60 flex items-center justify-center text-[10px] text-purple-300">✓</span>
-            {f}
-          </li>
-        ))}
-      </ul>
-
-      <button
-        type="button"
-        onClick={onBuy}
-        disabled={busy || soldOut || anyBusy}
-        aria-busy={busy}
-        className={`w-full block text-center py-3 px-4 rounded-full font-semibold text-sm transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed
-          ${meta.popular ? 'bg-white text-black hover:bg-gray-100' : 'bg-white/10 text-white border border-white/20 hover:bg-white/20'}`}
-      >
-        {label}{!busy && !soldOut ? ' →' : ''}
-      </button>
-    </div>
-  );
 }
 
 function OutcomeBanner({ outcome, onDismiss }) {
