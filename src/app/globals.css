@@ -12,13 +12,18 @@
    ============================================================ */
 :root {
   /* Brand palette — the ONLY place raw brand hexes should live.
-     Decided 2026-09-01. Before this, THREE purples were in use across the
-     codebase and the one declared here (#a855f7, Tailwind's stock purple-500)
-     was the least used of the three — so changing this token altered almost
-     nothing. These values are now what the components actually render. */
-  --brand-primary: #6c00ff;          /* main purple — the brand */
-  --brand-primary-hover: #5800d6;    /* deeper, for hover/active */
-  --brand-accent-light: #ad46ff;     /* lighter purple — links, accents on dark */
+     Decided 2026-09-01: DEEP INDIGO + LAVENDER. Reads more premium and more
+     serious than the previous violet — closer to a fintech than a student tool,
+     which is the trade we chose knowingly.
+
+     This palette change was ONE EDIT to this block. Before the token migration
+     it would have meant 231 hardcoded values across the codebase, and the
+     declared brand colour was the least-used of three competing purples — so
+     editing it changed almost nothing on screen. That is what the migration
+     bought. */
+  --brand-primary: #4c1fff;          /* deep indigo — the brand */
+  --brand-primary-hover: #3d19cc;    /* deeper, for hover/active */
+  --brand-accent-light: #a78bfa;     /* lavender — links, accents, gradient partner */
   --brand-primary-soft: #c289f0;     /* softest purple — subtle highlights */
   --brand-glow: #b06cff;             /* hero gradient purple */
   --brand-accent: #3b82f6;           /* blue — gradient start only, never primary */
@@ -31,8 +36,8 @@
   --surface-3: rgba(255, 255, 255, 0.10);
   --border-subtle: rgba(148, 163, 184, 0.35);
 
-  --background: #050816;             /* html/body */
-  --surface-page: #0a0b14;           /* section backgrounds — the most-used dark in components */
+  --background: #07070f;             /* html/body — deeper, cooler than before */
+  --surface-page: #07070f;           /* section backgrounds */
   --surface-panel: #0f172a;          /* solid panels */
   --surface-solid: #1a1a1a;          /* opaque surfaces — native <option>, menus */
   --surface-deep: #0f0f2d;           /* deep purple-black, gradient stops */
