@@ -6,7 +6,12 @@ import { OFFERINGS } from "./Editorial";
 export default function ClosingCta() {
   return (
     <section className="relative max-w-4xl mx-auto px-6 py-28 text-center">
-      <div aria-hidden className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[520px] h-[520px] rounded-full bg-primary/18 blur-[130px] pointer-events-none" />
+      {/* A radial-gradient, not `blur-[130px]` on a filled circle. A 520px blur
+          forces the compositor to re-rasterise that whole square every paint —
+          on a scrolling page that is a dropped frame you can feel. The gradient
+          is free and looks the same. */}
+      <div aria-hidden className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[560px] h-[560px] pointer-events-none"
+        style={{ background: "radial-gradient(circle at center, color-mix(in srgb, var(--brand-primary) 26%, transparent), transparent 68%)" }} />
       <div className="relative">
         <Reveal>
           <p className="font-syne text-4xl md:text-6xl font-bold tracking-tight mb-5">

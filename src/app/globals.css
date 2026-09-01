@@ -101,6 +101,14 @@
   --radius-pill: 9999px;
 }
 
+/* ---- Smooth scrolling (Lenis) ----
+   Lenis drives the real window scroll rather than transforming a container, so
+   position:sticky and Framer's useScroll both keep working. These three rules
+   are what stop the browser's own scroll anchoring from fighting it. */
+html.lenis, html.lenis body { height: auto; }
+.lenis.lenis-smooth { scroll-behavior: auto !important; }
+.lenis.lenis-stopped { overflow: hidden; }
+
 /* ---- Base ---- */
 html,
 body {
@@ -171,7 +179,7 @@ body {
   content: "";
   position: absolute;
   inset: -40%;
-  background: radial-gradient(circle at top, rgba(59, 130, 246, 0.2), transparent 60%);
+  background: radial-gradient(circle at top, rgba(192, 38, 211, 0.2), transparent 60%);
   opacity: 0;
   transition: opacity 0.4s ease;
   pointer-events: none;
@@ -193,9 +201,11 @@ body {
   width: 520px;
   height: 520px;
   transform: translateX(-50%);
-  background: radial-gradient(circle at center, rgba(59, 130, 246, 0.35), transparent 60%);
-  opacity: 0.75;
-  filter: blur(10px);
+  /* Was rgba(59,130,246) — blue, left over from the pre-rotation palette.
+     The blur() is gone too: a radial-gradient is already soft, and blurring
+     one only adds a full-size rasterisation on every paint. */
+  background: radial-gradient(circle at center, rgba(127, 34, 255, 0.30), transparent 62%);
+  opacity: 0.8;
   pointer-events: none;
 }
 

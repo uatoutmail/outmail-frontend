@@ -17,15 +17,21 @@ const EASE_BACK = [0.34, 1.56, 0.64, 1];
  */
 export default function HeroVisual() {
   const reduce = useReducedMotion();
+  // Solid translucent panels, not backdrop-blur: these two cards float
+  // continuously, and a backdrop-filter on a permanently-animating element is
+  // re-sampled every single frame. Over a near-black page the visual
+  // difference is nil and the frame cost is gone.
   const float = (dur, amp) => reduce ? {} : {
     animate: { y: [0, -amp, 0] },
     transition: { duration: dur, repeat: Infinity, ease: "easeInOut" },
+    style: { willChange: "transform" },
   };
 
   return (
     <div className="relative w-full h-[380px] hidden lg:block" style={{ transformStyle: "preserve-3d" }}>
       {/* glow behind, so the cards read as lit rather than pasted on */}
-      <div className="absolute right-8 top-16 w-[300px] h-[300px] rounded-full bg-primary/25 blur-[100px]" />
+      <div className="absolute right-8 top-16 w-[340px] h-[340px]"
+        style={{ background: "radial-gradient(circle at center, color-mix(in srgb, var(--brand-primary) 32%, transparent), transparent 68%)" }} />
 
       {/* card 1 — the recruiter */}
       <motion.div
@@ -35,7 +41,7 @@ export default function HeroVisual() {
         style={{ transform: "translateZ(90px)" }}
         className="absolute right-16 top-4 w-[260px]">
         <motion.div {...float(5.5, 10)}
-          className="rounded-2xl border border-white/15 bg-white/[0.06] backdrop-blur-xl p-5 shadow-2xl">
+          className="rounded-2xl border border-white/15 bg-[#171029]/90 p-5 shadow-2xl">
           <div className="flex items-center gap-3 mb-4">
             <div className="w-10 h-10 rounded-full bg-gradient-to-br from-primary to-accent-light shrink-0" />
             <div className="min-w-0">
@@ -62,7 +68,7 @@ export default function HeroVisual() {
         style={{ transform: "translateZ(40px)" }}
         className="absolute right-4 top-48 w-[250px]">
         <motion.div {...float(7, 13)}
-          className="rounded-2xl border border-white/12 bg-white/[0.04] backdrop-blur-xl p-5 shadow-2xl">
+          className="rounded-2xl border border-white/12 bg-[#140e24]/90 p-5 shadow-2xl">
           <div className="flex items-center justify-between mb-3">
             <Briefcase size={15} className="text-accent-light" />
             <span className="font-mono text-sm text-primary font-semibold">94</span>

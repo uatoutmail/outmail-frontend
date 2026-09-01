@@ -75,10 +75,10 @@ function Navbar({ variant = "dark" }) {
 
   return (
     <header
-      className={`w-full sticky top-0 z-50 transition-[background-color,border-color,backdrop-filter] duration-300 ${
+      className={`w-full sticky top-0 z-50 transition-[background-color,border-color] duration-300 ${
         isDark
           ? scrolled
-            ? "border-b border-white/10 bg-surface-page/80 backdrop-blur-xl"
+            ? "border-b border-white/10 bg-surface-page/85 backdrop-blur-md"
             : "border-b border-transparent bg-transparent"
           : "bg-gradient-to-l from-black via-primary to-black border-b border-white/10"
       }`}
