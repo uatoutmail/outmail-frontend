@@ -160,7 +160,12 @@ function ExpiryNotice({ user, onGoToBilling }) {
   const days = daysUntilExpiry(user);
   if (days == null || days > 30) return null;
 
-  const expired = days < 0;
+  // Lapsed is decided by the SERVER's view, not by arithmetic here. user.lapsedPlan
+  // is set only when the latest paid order has expired, which is the same rule
+  // the API gates on — so the banner can never disagree with what is actually
+  // locked. Clock skew on the user's machine cannot flip it either.
+  const expired = Boolean(user?.lapsedPlan) || days < 0;
+  const planName = user?.lapsedPlan?.name || user?.currentPlan?.name;
   return (
     <div
       className={`mb-6 rounded-2xl border px-6 py-4 flex items-start justify-between gap-4 ${
@@ -171,7 +176,7 @@ function ExpiryNotice({ user, onGoToBilling }) {
       <div>
         <p className={`font-semibold ${expired ? "text-red-200" : "text-amber-200"}`}>
           {expired
-            ? "Your placement year has ended"
+            ? `Your ${planName || "Outmail"} year has ended`
             : `Your placement year ends in ${days} day${days === 1 ? "" : "s"}`}
         </p>
         <p className={`text-sm mt-1 ${expired ? "text-red-200/80" : "text-amber-200/80"}`}>
