@@ -127,9 +127,6 @@ body {
 }
 
 /* ---- Reusable utility classes (kept for existing markup) ---- */
-.font-satisfy {
-  font-family: var(--font-satisfy), cursive !important;
-}
 
 .glass-card {
   border-radius: var(--radius-card);

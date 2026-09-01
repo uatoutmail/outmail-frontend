@@ -32,8 +32,6 @@ const MATRIX = [
   { label: "Priority support", a: false, b: true },
 ];
 
-const LAUNCH_TOTAL = 1000;
-
 /**
  * The launch offer.
  *
@@ -46,9 +44,10 @@ const LAUNCH_TOTAL = 1000;
  * Inventing one would be a false scarcity claim, which is actionable under the
  * CCPA 2023 dark-pattern guidelines and trivially disproved by refreshing.
  */
-function LaunchBanner({ price, listPrice, placesLeft }) {
-  const showBar = typeof placesLeft === "number" && placesLeft >= 0;
-  const pct = showBar ? Math.max(2, Math.round(((LAUNCH_TOTAL - placesLeft) / LAUNCH_TOTAL) * 100)) : 0;
+function LaunchBanner({ price, listPrice, placesLeft, placesTotal }) {
+  const known = typeof placesLeft === "number" && typeof placesTotal === "number" && placesTotal > 0;
+  const pct = known ? Math.max(2, Math.round(((placesTotal - placesLeft) / placesTotal) * 100)) : 0;
+  const total = known ? placesTotal.toLocaleString("en-IN") : null;
   return (
     <Reveal delay={0.06}>
       <div className="rounded-2xl border border-primary/35 bg-gradient-to-r from-primary/15 via-primary/[0.07] to-transparent px-6 py-5 mb-4">
@@ -63,16 +62,17 @@ function LaunchBanner({ price, listPrice, placesLeft }) {
                 <span className="text-white/35 line-through font-normal">{listPrice}</span>
               </p>
               <p className="text-xs text-white/45 mt-0.5">
-                For the first {LAUNCH_TOTAL.toLocaleString("en-IN")} students in India. After that it is {listPrice}.
+                {total ? `For the first ${total} students in India. ` : ""}
+                After that it is {listPrice}.
               </p>
             </div>
           </div>
-          {showBar && (
+          {known && (
             <div className="w-full sm:w-56">
               <div className="flex items-center justify-between text-[11px] mb-1.5">
                 <span className="text-white/45">Launch places</span>
                 <span className="font-mono text-primary">
-                  {placesLeft.toLocaleString("en-IN")} of {LAUNCH_TOTAL.toLocaleString("en-IN")} left
+                  {placesLeft.toLocaleString("en-IN")} of {total} left
                 </span>
               </div>
               <div className="h-1.5 rounded-full bg-white/10 overflow-hidden">
@@ -130,11 +130,17 @@ export default function PricingLedger() {
           </Reveal>
         ) : (
           <>
-            {a && (
+            {/* The banner only appears while the offer is genuinely live: there
+                must be a real list price above the current one, and places must
+                remain. When the cohort fills it disappears rather than counting
+                down to "0 left", which would be an offer we are still taking
+                money on. */}
+            {a && a.list_amount > a.amount && a.launchPlacesLeft !== 0 && (
               <LaunchBanner
                 price={formatPaise(a.amount, a.currency)}
-                listPrice={a.list_amount ? formatPaise(a.list_amount, a.currency) : null}
+                listPrice={formatPaise(a.list_amount, a.currency)}
                 placesLeft={a.launchPlacesLeft}
+                placesTotal={a.launchPlacesTotal}
               />
             )}
 
