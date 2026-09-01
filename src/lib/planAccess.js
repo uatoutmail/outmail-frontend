@@ -52,8 +52,23 @@ export function lockReason(user, feature) {
   return user?.currentPlan?.code ? 'upgrade' : 'none';
 }
 
-/** Days until the placement year ends; null if unknown, negative if lapsed. */
+/**
+ * Days until the placement year ends; null if unknown, negative once lapsed.
+ *
+ * accessExpiresAt is the LATEST paid order's expiry whether or not it has
+ * passed. It used to come from active access, which meant it went null the
+ * instant a year lapsed — so this returned null and the warning disappeared at
+ * exactly the moment it became true (OUT-236).
+ */
 export function daysUntilExpiry(user) {
   if (!user?.accessExpiresAt) return null;
   return Math.ceil((new Date(user.accessExpiresAt) - Date.now()) / 86400000);
+}
+
+/**
+ * True when the user HAD a plan and it has run out — as opposed to never having
+ * bought one. The two need different words: "renew" versus "see plans".
+ */
+export function hasLapsed(user) {
+  return Boolean(user?.lapsedPlan) && !user?.currentPlan;
 }
