@@ -16,33 +16,40 @@
      serious than the previous violet — closer to a fintech than a student tool,
      which is the trade we chose knowingly.
 
+     Revised 2026-09-01: ROTATED TO THE LOGO'S HUE. The mark in logo-nav.png is
+     #8329d9 — hue 271, a true violet. The indigo primary was hue 253 and
+     --brand-accent was literal blue at hue 217, so every gradient on the site
+     ran blue-to-indigo underneath a violet logo. Primary and both accents now
+     sit in the 268-292 band with the mark, and the neutral surfaces lost their
+     slate-blue cast for the same reason. Nothing outside this block changed.
+
      This palette change was ONE EDIT to this block. Before the token migration
      it would have meant 231 hardcoded values across the codebase, and the
      declared brand colour was the least-used of three competing purples — so
      editing it changed almost nothing on screen. That is what the migration
      bought. */
-  --brand-primary: #4c1fff;          /* deep indigo — the brand */
-  --brand-primary-hover: #3d19cc;    /* deeper, for hover/active */
-  --brand-accent-light: #a78bfa;     /* lavender — links, accents, gradient partner */
-  --brand-primary-soft: #c289f0;     /* softest purple — subtle highlights */
+  --brand-primary: #7f22ff;          /* violet — the brand */
+  --brand-primary-hover: #6516d6;    /* deeper, for hover/active */
+  --brand-accent-light: #c084fc;     /* light violet — links, accents, gradient partner */
+  --brand-primary-soft: #d8b4fe;     /* softest violet — subtle highlights */
   --brand-glow: #b06cff;             /* hero gradient purple */
-  --brand-accent: #3b82f6;           /* blue — gradient start only, never primary */
-  --brand-accent-soft: #60a5fa;      /* lighter blue */
+  --brand-accent: #c026d3;           /* fuchsia — gradient start only, never primary */
+  --brand-accent-soft: #e879f9;      /* lighter fuchsia */
   --brand-primary-foreground: #ffffff;
 
   /* Surfaces & lines (dark glass theme) */
   --surface: rgba(15, 23, 42, 0.7);
   --surface-2: rgba(255, 255, 255, 0.05);
   --surface-3: rgba(255, 255, 255, 0.10);
-  --border-subtle: rgba(148, 163, 184, 0.35);
+  --border-subtle: rgba(168, 158, 190, 0.35);
 
-  --background: #07070f;             /* html/body — deeper, cooler than before */
-  --surface-page: #07070f;           /* section backgrounds */
-  --surface-panel: #0f172a;          /* solid panels */
+  --background: #09060f;             /* html/body — near-black with a violet cast */
+  --surface-page: #09060f;           /* section backgrounds */
+  --surface-panel: #150f24;          /* solid panels — violet-black, was slate */
   --surface-solid: #1a1a1a;          /* opaque surfaces — native <option>, menus */
-  --surface-deep: #0f0f2d;           /* deep purple-black, gradient stops */
+  --surface-deep: #140d2b;           /* deep violet-black, gradient stops */
   --foreground: #f9fafb;
-  --muted-foreground: #94a3b8;
+  --muted-foreground: #a39fb3;
   --muted-strong: #6b7280;           /* dimmer body text */
 
   /* Semantic — status only, never decoration */
