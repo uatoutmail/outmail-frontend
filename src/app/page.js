@@ -1,13 +1,13 @@
-import AboutUs from "@/component/aboutuscontent";
-import Hero from "@/component/Hero";
 import Navbar from "@/component/Navbar";
-import Partners from "@/component/Partners";
-import Features from "@/component/Features";
-import CtaOne from "@/component/ctaone";
-import Pricing from "@/component/pricing";
-import Testimonials from "@/component/Testimonials";
 import Footer from "@/component/Footer";
-import Faq from "@/component/faq";
+import Hero from "@/component/landing/Hero";
+import KineticBand from "@/component/landing/KineticBand";
+import Editorial from "@/component/landing/Editorial";
+import Story from "@/component/landing/Story";
+import Validation from "@/component/landing/Validation";
+import PricingLedger from "@/component/landing/PricingLedger";
+import Faq from "@/component/landing/Faq";
+import ClosingCta from "@/component/landing/ClosingCta";
 export const metadata = {
   title: "Outmail | Personalized Cold Outreach & Recruiter Search at Scale",
   description:
@@ -89,7 +89,7 @@ const softwareApplicationSchema = {
 
 export default function Home() {
   return (
-    <div className="min-h-screen bg-[#0a0b14] text-white">
+    <div className="min-h-screen bg-surface-page text-white">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationSchema) }}
@@ -101,16 +101,17 @@ export default function Home() {
         }}
       />
       <Navbar variant="dark" />
+      {/* Order is the argument: promise, capabilities, proof of the problem,
+          price, objections, ask. Pricing sits BEFORE the FAQ because the FAQ
+          exists to answer what the price makes people wonder. */}
       <Hero />
-      <Features />
-      <Partners />
-      <CtaOne />
-      <AboutUs />
-      <Pricing />
-      <Testimonials />
-
+      <KineticBand />
+      <Editorial />
+      <Story />
+      <Validation />
+      <PricingLedger />
       <Faq />
-
+      <ClosingCta />
       <Footer variant="dark" />
     </div>
   );

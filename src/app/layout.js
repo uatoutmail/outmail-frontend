@@ -1,4 +1,4 @@
-import { Geist, Geist_Mono, Satisfy, Syne, Space_Grotesk, Bricolage_Grotesque } from "next/font/google";
+import { Geist, Geist_Mono, Syne } from "next/font/google";
 import "./globals.css";
 import SmoothScrollWrapper from "@/component/SmoothScrollWrapper";
 import { AuthProvider } from "@/context/AuthContext";
@@ -8,9 +8,11 @@ import { Toaster } from "sonner";
 
 // Font CSS variables are consumed by the design tokens in globals.css:
 //   --font-syne-var  -> --font-sans / font-syne (app default)
+// Bricolage Grotesque, Space Grotesk and Satisfy were removed on 2026-09-01:
+// the redesign put every heading, nav label and the wordmark on Syne, so all
+// three families were downloaded on every page load and used by nothing.
 //   --font-geist-var -> font-geist
 //   --font-geist-mono-var -> font-mono
-//   --font-satisfy   -> .font-satisfy
 const geistSans = Geist({
   variable: "--font-geist-var",
   subsets: ["latin"],
@@ -25,28 +27,6 @@ const syne = Syne({
   subsets: ["latin"],
   weight: ["400", "500", "600", "700", "800"],
   variable: "--font-syne-var",
-});
-
-const satisfy = Satisfy({
-  subsets: ["latin"],
-  weight: ["400"],
-  variable: "--font-satisfy",
-});
-
-// Nav / UI accent typeface — modern, geometric, "savvy" (--font-nav / font-nav)
-const spaceGrotesk = Space_Grotesk({
-  subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
-  variable: "--font-nav-var",
-});
-
-// Display / accent typeface — sharp, contemporary, "Gen-Z" (--font-display / font-display).
-// Used for nav, hero headline, and prominent CTAs. Swap this one import to
-// restyle the whole accent voice of the site.
-const bricolage = Bricolage_Grotesque({
-  subsets: ["latin"],
-  weight: ["400", "500", "600", "700", "800"],
-  variable: "--font-display-var",
 });
 
 export const metadata = {
@@ -129,7 +109,7 @@ export default function RootLayout({ children }) {
         />
         <link rel="shortcut icon" href="/favicon-32.png" />
         <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
-        {/* Fonts are self-hosted via next/font (Geist, Syne, Satisfy) — no external font CSS needed. */}
+        {/* Fonts are self-hosted via next/font (Syne, Geist) — no external font CSS needed. */}
         {/* Google Analytics */}
         {process.env.NODE_ENV === "production" && (
           <>
@@ -154,7 +134,7 @@ export default function RootLayout({ children }) {
         )}
       </head>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} ${syne.variable} ${satisfy.variable} ${spaceGrotesk.variable} ${bricolage.variable} antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} ${syne.variable} antialiased`}
       >
         <ServiceStatusProvider>
           <AuthProvider>

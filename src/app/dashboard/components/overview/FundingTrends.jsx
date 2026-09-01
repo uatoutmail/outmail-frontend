@@ -16,7 +16,11 @@ import { api } from "@/lib/api";
 
 // Palette reused across industries so the chart stays on-brand regardless of
 // which industries actually appear in the data.
-const INDUSTRY_COLORS = ['#8B5CF6', '#06B6D4', '#10B981', '#F59E0B', '#EF4444', '#A855F7', '#3B82F6'];
+// Data-visualisation palette, NOT brand colours. Chart series must be
+// distinguishable from each other, so these deliberately stay a spread rather
+// than folding into the two brand purples — a chart where every line is the
+// same purple is unreadable. Only the first series is brand-anchored.
+const INDUSTRY_COLORS = ['#6C00FF', '#06B6D4', '#10B981', '#F59E0B', '#EF4444', '#AD46FF', '#3B82F6'];
 
 // Real funding data (OUT-173): MarketSignal rows of kind 'funding' produced by
 // the funding ingestion adapter, aggregated by industry. Amounts are only what

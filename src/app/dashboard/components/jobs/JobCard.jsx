@@ -35,7 +35,7 @@ const JobCard = ({ job, getPriorityTier, getPriorityScoreColor, getStatusColor, 
         <div className="flex-1 min-w-0">
           <div className="flex flex-wrap items-center gap-2 mb-2">
             <span className="w-7 h-7 rounded-full bg-white/20 flex items-center justify-center mr-1">
-              <Briefcase size={18} className="text-[#6c00ff]" />
+              <Briefcase size={18} className="text-primary" />
             </span>
             <h3 className="text-lg font-bold text-white leading-tight">{job.title}</h3>
             <span className={`text-xs font-medium px-2 py-0.5 rounded-full bg-white/5 ${getStatusColor(job.userAction)}`}>

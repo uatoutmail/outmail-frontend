@@ -29,7 +29,7 @@ export default function TpoLoginPage() {
   const googleLoginUrl = `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/auth/google`;
 
   return (
-    <main className="min-h-screen bg-[#050816] text-white font-syne flex flex-col items-center justify-center p-4 relative overflow-hidden">
+    <main className="min-h-screen bg-background text-white font-syne flex flex-col items-center justify-center p-4 relative overflow-hidden">
       <div className="absolute top-[10%] left-[5%] w-64 h-64 bg-purple-600/20 blur-[120px] rounded-full pointer-events-none" />
       <div className="absolute bottom-[10%] right-[5%] w-64 h-64 bg-blue-600/20 blur-[120px] rounded-full pointer-events-none" />
 
@@ -46,7 +46,7 @@ export default function TpoLoginPage() {
       </div>
 
       <div className="w-full max-w-md z-10">
-        <div className="glass-card p-8 md:p-10 border border-white/10 bg-[#0f172a]/40 backdrop-blur-2xl shadow-2xl relative overflow-hidden text-center">
+        <div className="glass-card p-8 md:p-10 border border-white/10 bg-surface-panel/40 backdrop-blur-2xl shadow-2xl relative overflow-hidden text-center">
           <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-purple-500 to-transparent opacity-50" />
 
           {loading ? (
@@ -72,7 +72,7 @@ export default function TpoLoginPage() {
               <p className="text-white/50 mb-8 text-sm">Sign in with the Google account your institution registered with Outmail.</p>
               <a
                 href={googleLoginUrl}
-                className="w-full inline-flex items-center justify-center gap-3 bg-white text-[#0f172a] font-semibold rounded-xl py-3.5 hover:bg-white/90 transition-colors"
+                className="w-full inline-flex items-center justify-center gap-3 bg-white text-surface-panel font-semibold rounded-xl py-3.5 hover:bg-white/90 transition-colors"
               >
                 Continue with Google
               </a>

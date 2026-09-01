@@ -14,7 +14,7 @@ export function Select({ label, options = [], className, id, ...props }) {
       {...props}
     >
       {options.map((o) => (
-        <option key={o.value} value={o.value} className="bg-[#0f172a]">
+        <option key={o.value} value={o.value} className="bg-surface-panel">
           {o.label}
         </option>
       ))}

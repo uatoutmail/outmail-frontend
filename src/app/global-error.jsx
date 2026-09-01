@@ -76,7 +76,7 @@ export default function GlobalError({ error, reset }) {
           <button
             onClick={() => reset()}
             style={{
-              backgroundImage: "linear-gradient(135deg, #3b82f6, #a855f7)", // --gradient-brand
+              backgroundImage: "linear-gradient(135deg, #c026d3, #7f22ff)", // --gradient-brand
               color: "#fff",
               border: "none",
               borderRadius: 12,
