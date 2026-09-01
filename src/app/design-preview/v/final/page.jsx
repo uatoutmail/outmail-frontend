@@ -2,9 +2,14 @@
 import React, { useState } from "react";
 import { motion, useReducedMotion } from "framer-motion";
 import { Mail, Briefcase, Zap, Users, Check } from "lucide-react";
+import Navbar from "@/component/Navbar";
+import Footer from "@/component/Footer";
 import { Reveal, MaskLines, Tilt, Count, Cta, EASE_OUT } from "../kit";
 import HeroVisual from "./hero-visual";
-import { KineticBand, StorySection, StoryHorizontal, StorySplit, Testimonials, Faq } from "./sections";
+import { KineticBand } from "./sections";
+import { STORY_LAYOUTS } from "./story-layouts";
+import { VALIDATION_LAYOUTS } from "./validation-layouts";
+import { FAQ_LAYOUTS } from "./faq-layouts";
 
 /**
  * THE ASSEMBLED LANDING PAGE — proposal.
@@ -32,7 +37,7 @@ const OFFERINGS = [
 function Hero() {
   const reduce = useReducedMotion();
   return (
-    <section className="min-h-screen flex items-center px-6 relative" style={{ perspective: 1200 }}>
+    <section className="min-h-[calc(100vh-76px)] flex items-center px-6 py-16 relative" style={{ perspective: 1200 }}>
       <div className="max-w-6xl mx-auto w-full grid lg:grid-cols-12 gap-10 items-center">
         <Tilt max={9} z={60} className="lg:col-span-7">
           <p className="text-[10px] uppercase tracking-[4px] text-primary mb-6">Built for your placement year</p>
@@ -114,19 +119,24 @@ function Editorial() {
 }
 
 export default function FinalLanding() {
-  const [story, setStory] = useState(0); // default: sticky story
+  // One index per swappable section. Defaults are the versions already agreed.
+  const [story, setStory] = useState(0);
+  const [valid, setValid] = useState(0);
+  const [faq, setFaq] = useState(0);
+
+  const Story = STORY_LAYOUTS[story].C;
+  const Validation = VALIDATION_LAYOUTS[valid].C;
+  const Faq = FAQ_LAYOUTS[faq].C;
 
   return (
     <div className="min-h-screen bg-surface-page text-white">
+      <Navbar variant="dark" />
       <Hero />
       <KineticBand />
       <Editorial />
 
-      {story === 0 && <StorySection />}
-      {story === 1 && <StorySplit />}
-      {story === 2 && <StoryHorizontal />}
-
-      <Testimonials />
+      <Story />
+      <Validation />
       <Faq />
 
       {/* CTA */}
@@ -156,18 +166,47 @@ export default function FinalLanding() {
         </div>
       </section>
 
-      {/* section-level switcher for the story layout only */}
-      <div className="fixed bottom-4 left-1/2 -translate-x-1/2 z-50">
-        <div className="rounded-2xl border border-white/15 bg-black/85 backdrop-blur-xl px-4 py-2.5 shadow-2xl">
-          <p className="text-[10px] uppercase tracking-[2px] text-white/40 text-center mb-2">&ldquo;How it works&rdquo; layout</p>
-          <div className="flex gap-1.5">
-            {["Sticky story", "Problem / fix", "Horizontal"].map((l, i) => (
-              <button key={l} onClick={() => setStory(i)}
-                className={`text-xs px-3.5 py-1.5 rounded-lg transition-colors duration-200 ${
-                  story === i ? "bg-primary text-white" : "bg-white/8 text-white/50 hover:bg-white/15"}`}>{l}</button>
+      <Footer variant="dark" />
+
+      {/* Preview-only control panel. Not part of the design — it exists so all
+          fifteen layouts can be compared in place rather than in isolation. */}
+      <LayoutLab groups={[
+        { name: "How it works", opts: STORY_LAYOUTS, i: story, set: setStory },
+        { name: "Early validation", opts: VALIDATION_LAYOUTS, i: valid, set: setValid },
+        { name: "FAQ", opts: FAQ_LAYOUTS, i: faq, set: setFaq },
+      ]} />
+    </div>
+  );
+}
+
+/* Preview-only. Collapsible so it never covers the section being judged. */
+function LayoutLab({ groups }) {
+  const [open, setOpen] = useState(true);
+  return (
+    <div className="fixed bottom-4 left-1/2 -translate-x-1/2 z-[60] print:hidden">
+      <div className="rounded-2xl border border-white/15 bg-black/90 backdrop-blur-xl shadow-2xl overflow-hidden">
+        <button onClick={() => setOpen((v) => !v)}
+          className="w-full flex items-center justify-center gap-2 px-4 py-2 text-[10px] uppercase tracking-[2px] text-white/45 hover:text-white transition-colors">
+          Layout lab {open ? "▾" : "▴"}
+        </button>
+        {open && (
+          <div className="px-4 pb-3.5 space-y-2.5">
+            {groups.map((g) => (
+              <div key={g.name} className="flex items-center gap-3">
+                <span className="w-[104px] shrink-0 text-[10px] uppercase tracking-[1.5px] text-white/35">{g.name}</span>
+                <div className="flex gap-1">
+                  {g.opts.map((o, k) => (
+                    <button key={o.label} onClick={() => g.set(k)}
+                      className={`text-[11px] px-2.5 py-1.5 rounded-lg transition-colors duration-200 ${
+                        g.i === k ? "bg-primary text-white" : "bg-white/8 text-white/50 hover:bg-white/15"}`}>
+                      {o.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
             ))}
           </div>
-        </div>
+        )}
       </div>
     </div>
   );
