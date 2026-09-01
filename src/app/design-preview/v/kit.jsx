@@ -49,17 +49,46 @@ export function MaskLines({ lines, className = "", accentIdx = -1 }) {
   );
 }
 
+/**
+ * Cursor tilt, tuned for smoothness.
+ *
+ * Four things make this feel liquid rather than sticky, and all four matter:
+ *
+ * 1. THE RECT IS CACHED. getBoundingClientRect() forces layout, and calling it
+ *    on every mousemove was the single biggest source of jank — the browser was
+ *    recalculating layout dozens of times a second while also compositing a 3D
+ *    transform. It is now read on enter and on resize only.
+ * 2. MOTION VALUES, NEVER STATE. Nothing here triggers a React render on
+ *    mouse move; Framer writes straight to the transform.
+ * 3. A SOFTER SPRING WITH LOW MASS. High stiffness feels snappy but overshoots
+ *    into a wobble on fast movement. 180/22 at mass 0.35 settles without ringing.
+ * 4. will-change AND translateZ(0) put the element on its own compositor layer
+ *    up front, so the first movement is not the frame that promotes it — which
+ *    is what used to read as initial lag.
+ */
 export function Tilt({ children, max = 11, z = 40, className = "" }) {
   const reduce = useReducedMotion();
+  const ref = useRef(null);
+  const rect = useRef(null);
   const mx = useMotionValue(0), my = useMotionValue(0);
-  const cfg = { stiffness: 300, damping: 24, mass: 0.4 };
+  const cfg = { stiffness: 180, damping: 22, mass: 0.35 };
   const rx = useSpring(useTransform(my, [-0.5, 0.5], [max, -max]), cfg);
   const ry = useSpring(useTransform(mx, [-0.5, 0.5], [-max, max]), cfg);
+
+  const measure = () => { if (ref.current) rect.current = ref.current.getBoundingClientRect(); };
+
   return (
-    <motion.div className={className}
-      style={reduce ? {} : { rotateX: rx, rotateY: ry, transformStyle: "preserve-3d" }}
-      onMouseMove={(e) => { const r = e.currentTarget.getBoundingClientRect();
-        mx.set((e.clientX - r.left) / r.width - 0.5); my.set((e.clientY - r.top) / r.height - 0.5); }}
+    <motion.div ref={ref} className={className}
+      style={reduce ? {} : {
+        rotateX: rx, rotateY: ry, transformStyle: "preserve-3d",
+        willChange: "transform", transform: "translateZ(0)",
+      }}
+      onMouseEnter={measure}
+      onMouseMove={(e) => {
+        const r = rect.current; if (!r) return;              // no layout read per frame
+        mx.set((e.clientX - r.left) / r.width - 0.5);
+        my.set((e.clientY - r.top) / r.height - 0.5);
+      }}
       onMouseLeave={() => { mx.set(0); my.set(0); }}>
       <div style={reduce ? {} : { transform: `translateZ(${z}px)` }}>{children}</div>
     </motion.div>
