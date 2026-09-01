@@ -64,7 +64,7 @@ export default function GetInTouch() {
           {/* Left — Contact Info */}
           <div className="flex flex-col gap-6">
             <div>
-              <p className="text-xs uppercase tracking-[4px] text-purple-400 font-medium mb-3">Reach Out</p>
+              <p className="text-xs uppercase tracking-[4px] text-primary font-medium mb-3">Reach Out</p>
               <h2 className="text-3xl lg:text-4xl font-bold text-white leading-tight mb-3">
                 Let&apos;s Talk.
               </h2>

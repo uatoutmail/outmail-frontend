@@ -126,7 +126,7 @@ export default function DashboardLayout({
                 {user?.name || user?.display_name || "User"}
               </p>
               {user?.currentPlan ? (
-                <span className="text-[10px] bg-purple-500/10 text-purple-400 px-2 py-0.5 rounded font-medium uppercase mt-0.5 inline-block">
+                <span className="text-[10px] bg-primary/10 text-primary px-2 py-0.5 rounded font-medium uppercase mt-0.5 inline-block">
                   {user.currentPlan?.name || "Free"}
                 </span>
               ) : user?.college ? (
@@ -147,7 +147,7 @@ export default function DashboardLayout({
               isActive
                 ? isLight
                   ? "bg-purple-50 text-purple-700 font-semibold"
-                  : "bg-purple-600/20 text-purple-400 border-l-2 border-purple-500 font-semibold"
+                  : "bg-purple-600/20 text-primary border-l-2 border-purple-500 font-semibold"
                 : isLight
                   ? "text-gray-600 hover:bg-gray-50 hover:text-purple-700"
                   : "text-white/70 hover:bg-white/5 hover:text-white"
@@ -255,7 +255,7 @@ export default function DashboardLayout({
           <div className="flex items-center gap-4">
             {user && (
               <div className="flex items-center gap-2.5">
-                <div className={`w-8 h-8 rounded-full flex items-center justify-center ${isLight ? "bg-purple-100 text-purple-600" : "bg-purple-600/20 text-purple-400"}`}>
+                <div className={`w-8 h-8 rounded-full flex items-center justify-center ${isLight ? "bg-purple-100 text-purple-600" : "bg-purple-600/20 text-primary"}`}>
                   <CircleUserRound size={16} />
                 </div>
                 <div className="hidden md:block text-left">

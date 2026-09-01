@@ -1,7 +1,7 @@
 "use client";
 import React, { useRef } from "react";
 import { motion, useScroll, useTransform, useReducedMotion } from "framer-motion";
-import { Reveal } from "../kit";
+import { Reveal } from "@/component/motion/kit";
 
 /**
  * KINETIC BAND — the four offerings, in product order.
@@ -41,3 +41,5 @@ export function KineticBand() {
     </section>
   );
 }
+
+export default KineticBand;

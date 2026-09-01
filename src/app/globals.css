@@ -94,8 +94,6 @@
   --font-syne: var(--font-syne-var);
   --font-geist: var(--font-geist-var);
   --font-mono: var(--font-geist-mono-var);
-  --font-nav: var(--font-nav-var);   /* nav / UI accent font (Space Grotesk) */
-  --font-display: var(--font-display-var);  /* sharp display/accent font (Bricolage Grotesque) → font-display */
 
   /* Radius scale → rounded-btn / rounded-card / rounded-pill */
   --radius-btn: 0.625rem;

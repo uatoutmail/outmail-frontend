@@ -2,7 +2,7 @@
 import React from "react";
 import { motion, useReducedMotion } from "framer-motion";
 import { Mail, Briefcase, Zap, MessageSquare, ArrowDown } from "lucide-react";
-import { Reveal, MaskLines, EASE_OUT } from "../kit";
+import { Reveal, MaskLines, EASE_OUT } from "@/component/motion/kit";
 
 /**
  * HOW IT WORKS — comic-strip panels. LOCKED.

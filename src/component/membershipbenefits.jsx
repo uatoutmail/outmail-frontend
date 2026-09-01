@@ -1,24 +1,27 @@
+"use client";
 import React from 'react';
+import { Radio, Search, GraduationCap, BarChart3 } from 'lucide-react';
+import { Reveal, MaskLines, Kicker } from '@/component/motion/kit';
 import PillarVisual from '@/component/animations/PillarVisual';
 
 const benefits = [
   {
-    icon: '📡',
+    Icon: Radio,
     title: 'Direct Recruiter Outreach',
     desc: "Bypass ATS filters and land straight in a recruiter's inbox — powered by live hiring signals and smart company targeting.",
   },
   {
-    icon: '🔍',
+    Icon: Search,
     title: 'Curated Job Intelligence',
     desc: 'Browse roles ranked by hiring urgency, funding momentum, and company growth — not just whatever was posted publicly.',
   },
   {
-    icon: '🎓',
+    Icon: GraduationCap,
     title: 'Expert Mentorship Sessions',
     desc: "Book live sessions with professionals and alumni who've navigated the exact path you're on. Real advice, not generic tips.",
   },
   {
-    icon: '📊',
+    Icon: BarChart3,
     title: 'Campaign Analytics',
     desc: "Track opens, replies, and outreach performance in real time — so you know what's working and where to double down.",
   },
@@ -31,31 +34,26 @@ const MembershipBenefits = () => {
 
         {/* Left — Text Content */}
         <div className="flex flex-col justify-center">
-          <p className="text-xs uppercase tracking-[4px] text-purple-400 font-medium mb-4">
-            What You Get
-          </p>
-          <h2 className="text-4xl sm:text-5xl font-bold text-white leading-tight mb-6">
-            Every Edge You Need,
-            <br />
-            <span className="gradient-hero">
-              All in One Place.
-            </span>
-          </h2>
+          <Reveal><Kicker className="mb-5">What you get</Kicker></Reveal>
+          <MaskLines lines={["Every edge you need,", "in one place."]} accentIdx={1}
+            className="font-syne text-4xl sm:text-5xl font-bold tracking-tight leading-[1.05] mb-6" />
           <p className="text-white/60 text-base mb-10 max-w-lg leading-relaxed">
             Outmail combines proactive outreach, hiring intelligence, and expert guidance — so you&apos;re not just applying, you&apos;re strategically positioning yourself ahead of the crowd.
           </p>
 
           <div className="flex flex-col gap-6">
             {benefits.map((b, i) => (
-              <div key={i} className="flex items-start gap-4">
-                <span className="mt-1 flex-shrink-0 w-9 h-9 rounded-full bg-primary/40 border border-purple-500/40 flex items-center justify-center text-base">
-                  {b.icon}
-                </span>
-                <div>
-                  <h4 className="text-white font-semibold text-base mb-1">{b.title}</h4>
-                  <p className="text-white/55 text-sm leading-relaxed">{b.desc}</p>
+              <Reveal key={b.title} delay={i * 0.06}>
+                <div className="flex items-start gap-4">
+                  <span className="mt-0.5 shrink-0 w-9 h-9 rounded-xl bg-primary/15 border border-primary/30 flex items-center justify-center">
+                    <b.Icon size={16} className="text-primary" />
+                  </span>
+                  <div>
+                    <h3 className="font-syne text-white font-bold text-base mb-1">{b.title}</h3>
+                    <p className="text-white/50 text-sm leading-relaxed">{b.desc}</p>
+                  </div>
                 </div>
-              </div>
+              </Reveal>
             ))}
           </div>
         </div>

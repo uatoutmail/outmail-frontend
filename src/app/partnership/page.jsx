@@ -2,6 +2,8 @@
 
 import { useState } from "react";
 import Navbar from "@/component/Navbar";
+import PageHeader from "@/component/ui/PageHeader";
+import { Kicker } from "@/component/motion/kit";
 import Footer from "@/component/Footer";
 import { motion, AnimatePresence } from "framer-motion";
 import {
@@ -148,19 +150,17 @@ function GradientWord({ children }) {
   return <span className="gradient-hero">{children}</span>;
 }
 
+/* Kept as a thin wrapper so the ~10 call sites below keep working; the look
+   now comes from the shared Kicker, like every other page. */
 function Eyebrow({ children }) {
-  return (
-    <p className="text-xs uppercase tracking-[4px] text-accent-light font-display font-medium mb-4">
-      {children}
-    </p>
-  );
+  return <Kicker className="mb-4">{children}</Kicker>;
 }
 
 function BookCallButton({ onClick, className = "", children }) {
   return (
     <button
       onClick={onClick}
-      className={`inline-flex items-center justify-center gap-2 bg-gradient-to-r from-primary to-accent-light text-white px-6 py-3 rounded-xl font-display font-semibold shadow-[0_10px_30px_rgba(108,0,255,0.35)] hover:brightness-110 transition ${className}`}
+      className={`inline-flex items-center justify-center gap-2 bg-gradient-to-r from-primary to-accent-light text-white px-6 py-3 font-syne font-semibold rounded-btn shadow-[0_10px_30px_-6px_var(--brand-primary)] hover:brightness-110 transition ${className}`}
     >
       <Phone size={16} />
       <span>{children || "Book a Call"}</span>
@@ -176,48 +176,19 @@ export default function PartnershipPage() {
     <div className="min-h-screen bg-surface-page text-white">
       <Navbar variant="dark" />
 
-      {/* Hero — value-first, matches site hero typography */}
-      <section className="relative overflow-hidden">
-        <div className="max-w-4xl mx-auto px-6 pt-28 pb-16 text-center relative z-10">
-          <motion.div {...fadeUp}>
-            <Eyebrow>For Universities &amp; Placement Cells</Eyebrow>
-          </motion.div>
-
-          <motion.h1 {...fadeUp} className="font-syne text-4xl sm:text-5xl font-semibold leading-tight">
-            Help more of your students get placed —{" "}
-            <GradientWord>off campus.</GradientWord>
-          </motion.h1>
-
-          <motion.p {...fadeUp} className="mt-6 text-white/60 max-w-2xl mx-auto text-base sm:text-lg leading-relaxed">
-            Outmail extends your placement cell beyond campus drives — giving every student
-            structured recruiter outreach, resume-matched opportunities, and mentorship,
-            with full visibility for your team.
-          </motion.p>
-
-          <motion.div {...fadeUp} className="mt-9 flex flex-col sm:flex-row items-center justify-center gap-4">
-            <BookCallButton onClick={() => setIsBookCallOpen(true)} />
-            <a
-              href="mailto:contact@outmail.in"
-              className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl border border-white/20 font-display text-white/85 hover:bg-white/10 transition"
-            >
-              <Mail size={16} />
-              Contact Us
-            </a>
-          </motion.div>
+      <PageHeader
+        kicker="For universities & placement cells"
+        lines={["Help more students", "get placed off campus."]}
+        sub="Outmail extends your placement cell beyond campus drives — structured recruiter outreach, resume-matched openings and mentorship for every student, with full visibility for your team."
+      >
+        <div className="flex flex-col sm:flex-row items-start gap-4">
+          <BookCallButton onClick={() => setIsBookCallOpen(true)} />
+          <a href="mailto:contact@outmail.in"
+            className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-btn border border-white/20 font-syne text-sm text-white/80 hover:text-white hover:bg-white/10 transition-colors">
+            <Mail size={16} /> Contact us
+          </a>
         </div>
-
-        {/* Floating shapes */}
-        <motion.div
-          animate={{ y: [0, -18, 0] }}
-          transition={{ duration: 7, repeat: Infinity, ease: "easeInOut" }}
-          className="absolute top-24 left-[10%] w-36 h-36 rounded-2xl border border-white/10 bg-primary/20 rotate-12 blur-[1px]"
-        />
-        <motion.div
-          animate={{ y: [0, 16, 0] }}
-          transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
-          className="absolute top-32 right-[12%] w-20 h-20 rounded-full border border-white/15 bg-accent-light/20"
-        />
-      </section>
+      </PageHeader>
 
       {/* The gap (problem) */}
       <section className="px-6 pb-20">
@@ -410,7 +381,7 @@ export default function PartnershipPage() {
             </BookCallButton>
             <a
               href="mailto:contact@outmail.in"
-              className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl border border-white/20 font-display text-white/85 hover:bg-white/10 transition"
+              className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl border border-white/20 font-syne text-white/85 hover:bg-white/10 transition"
             >
               <Mail size={16} />
               Contact Us
@@ -458,7 +429,7 @@ export default function PartnershipPage() {
 
               <a
                 href="mailto:contact@outmail.in?subject=Outmail%20for%20our%20institution"
-                className="inline-flex w-full items-center justify-center gap-2 bg-gradient-to-r from-primary to-accent-light text-white px-5 py-3 rounded-xl font-display font-semibold hover:brightness-110 transition"
+                className="inline-flex w-full items-center justify-center gap-2 bg-gradient-to-r from-primary to-accent-light text-white px-5 py-3 rounded-xl font-syne font-semibold hover:brightness-110 transition"
               >
                 <Mail size={16} />
                 Send Email

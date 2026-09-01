@@ -1,7 +1,7 @@
 "use client";
 import React from "react";
 import { motion, useReducedMotion } from "framer-motion";
-import { Reveal, MaskLines, EASE_OUT } from "../kit";
+import { Reveal, MaskLines, EASE_OUT } from "@/component/motion/kit";
 
 /**
  * EARLY VALIDATION — the conversation thread. LOCKED.

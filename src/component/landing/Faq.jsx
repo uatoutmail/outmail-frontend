@@ -2,7 +2,7 @@
 import React, { useState } from "react";
 import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
 import { Plus, CreditCard, Shield, Sparkles } from "lucide-react";
-import { Reveal, MaskLines, EASE_OUT } from "../kit";
+import { Reveal, MaskLines, EASE_OUT } from "@/component/motion/kit";
 
 /**
  * FAQ — grouped by worry. LOCKED.
