@@ -175,7 +175,7 @@ const ColdOutreachTab = () => {
         }`}>
           <span>
             {user.trial.remaining > 0
-              ? <>You have <strong>{user.trial.remaining} of {user.trial.allowance} free sends</strong> left. Enough to see a real recruiter reply land in your inbox.</>
+              ? <>You have <strong>{user.trial.remaining} of {user.trial.allowance} free sends</strong> left — enough to reach real recruiters and see how it works.</>
               : <>You have used all {user.trial.allowance} free sends. Choose a plan to keep reaching recruiters.</>}
           </span>
           <a href="/pricing" className="shrink-0 bg-white text-black font-bold py-1.5 px-4 rounded-full text-xs hover:bg-gray-100">
