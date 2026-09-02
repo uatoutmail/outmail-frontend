@@ -1,6 +1,7 @@
 "use client";
-import { Check, Minus, Phone, ArrowRight } from "lucide-react";
+import { Check, Minus } from "lucide-react";
 import React from "react";
+import BookCallDialog from "./BookCallDialog";
 import { Reveal, MaskLines, Kicker } from "@/component/motion/kit";
 
 export function OfficeLedger() {
@@ -56,7 +57,7 @@ export function OfficeLedger() {
   );
 }
 
-export function CtaBandCentred({ onBook }) {
+export function CtaBandCentred() {
   return (
     <section className="max-w-4xl mx-auto px-6 py-24 text-center relative">
       <div
@@ -78,12 +79,7 @@ export function CtaBandCentred({ onBook }) {
             Institutional pricing depends on cohort size and what reporting you need, so it is a
             conversation rather than a number on a page.
           </p>
-          <button
-            onClick={onBook}
-            className="font-syne font-semibold bg-primary hover:bg-primary-hover text-white rounded-pill px-8 py-3.5 inline-flex items-center gap-2 transition-colors"
-          >
-            <Phone size={16} /> Book a call <ArrowRight size={15} />
-          </button>
+          <BookCallDialog triggerClassName="font-syne font-semibold bg-primary hover:bg-primary-hover text-white rounded-pill px-8 py-3.5 inline-flex items-center gap-2 transition-colors" />
         </Reveal>
       </div>
     </section>

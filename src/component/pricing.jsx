@@ -1,4 +1,5 @@
 "use client";
+import Link from "next/link";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import PlanLedger, { LaunchBanner } from "@/component/landing/PlanLedger";
 import { Reveal, MaskLines, Kicker } from "@/component/motion/kit";
@@ -260,9 +261,9 @@ export default function ZPricing() {
                 implied (OUT-235). */}
             Prices in INR, inclusive of all taxes. What you see is what you pay — no fees added at
             checkout. Not right for you?{" "}
-            <a href="/refund-and-cancellation" className="underline hover:text-white/70">
+            <Link href="/refund-and-cancellation" className="underline hover:text-white/70">
               Full refund within 7 days
-            </a>
+            </Link>
             , no questions asked.
           </p>
         </div>

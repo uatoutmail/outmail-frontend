@@ -1,6 +1,7 @@
 "use client";
 import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
 import { Plus, CreditCard, Shield, Sparkles } from "lucide-react";
+import Link from "next/link";
 import React, { useState } from "react";
 import { Reveal, MaskLines, EASE_OUT } from "@/component/motion/kit";
 
@@ -80,9 +81,9 @@ function Head({ lines, center = false, sub }) {
 const Ask = ({ className = "" }) => (
   <p className={`text-center text-sm text-white/40 ${className}`}>
     Something else?{" "}
-    <a href="/contactus" className="text-primary hover:underline">
+    <Link href="/contactus" className="text-primary hover:underline">
       Ask us directly
-    </a>{" "}
+    </Link>{" "}
     — a person replies.
   </p>
 );

@@ -1,5 +1,6 @@
 "use client";
 import { Target, Users, ShieldCheck, Compass } from "lucide-react";
+import Link from "next/link";
 import React from "react";
 import { Reveal, MaskLines, Count, Kicker } from "@/component/motion/kit";
 
@@ -121,9 +122,9 @@ export function EntityLetter() {
             support@outmail.in
           </a>
           {" · "}
-          <a href="/privacy-policy" className="text-primary hover:underline">
+          <Link href="/privacy-policy" className="text-primary hover:underline">
             Privacy Policy
-          </a>
+          </Link>
         </p>
       </Reveal>
     </section>

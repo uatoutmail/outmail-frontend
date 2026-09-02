@@ -1,3 +1,5 @@
+import { Suspense } from "react";
+import AuthErrorNotice from "@/component/auth/AuthErrorNotice";
 import Footer from "@/component/Footer";
 import ClosingCta from "@/component/landing/ClosingCta";
 import Editorial from "@/component/landing/Editorial";
@@ -100,6 +102,9 @@ export default function Home() {
           __html: JSON.stringify(softwareApplicationSchema),
         }}
       />
+      <Suspense fallback={null}>
+        <AuthErrorNotice />
+      </Suspense>
       <Navbar variant="dark" />
       {/* Order is the argument: promise, capabilities, proof of the problem,
           price, objections, ask. Pricing sits BEFORE the FAQ because the FAQ

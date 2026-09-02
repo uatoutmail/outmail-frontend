@@ -1,3 +1,4 @@
+import Link from "next/link";
 export const metadata = {
   title: "Refund and Cancellation Policy",
   description:
@@ -37,9 +38,9 @@ export default function RefundAndCancellation() {
                 https://outmail.in
               </a>
               . It should be read alongside our{" "}
-              <a href="/terms-and-conditions" className="text-accent-light hover:underline">
+              <Link href="/terms-and-conditions" className="text-accent-light hover:underline">
                 Terms and Conditions
-              </a>
+              </Link>
               .
             </p>
           </section>
@@ -66,9 +67,9 @@ export default function RefundAndCancellation() {
               </li>
               <li>
                 The price and inclusions of each plan are shown on our{" "}
-                <a href="/pricing" className="text-accent-light hover:underline">
+                <Link href="/pricing" className="text-accent-light hover:underline">
                   Pricing
-                </a>{" "}
+                </Link>{" "}
                 page before you pay.
               </li>
               <li>
@@ -227,9 +228,9 @@ export default function RefundAndCancellation() {
             </h2>
             <p>
               If we suspend or terminate an account for a breach of our{" "}
-              <a href="/terms-and-conditions" className="text-accent-light hover:underline">
+              <Link href="/terms-and-conditions" className="text-accent-light hover:underline">
                 Terms and Conditions
-              </a>
+              </Link>
               , including sending unsolicited bulk email, no refund is due for the remainder of your
               year.
             </p>
@@ -283,9 +284,9 @@ export default function RefundAndCancellation() {
               </p>
               <p>
                 Or use our{" "}
-                <a href="/contactus" className="text-accent-light hover:underline">
+                <Link href="/contactus" className="text-accent-light hover:underline">
                   Contact
-                </a>{" "}
+                </Link>{" "}
                 page.
               </p>
             </div>
