@@ -78,7 +78,7 @@ export default function ContactRouter() {
         email: form.email || "",
         role: a.role,
         message: extra ? `${extra}\n\n${form.message || ""}` : form.message || "",
-      });
+      }, { quiet: true });
       setSent(true);
     } catch (err) {
       // Never surface backend internals — the user only needs to know it failed

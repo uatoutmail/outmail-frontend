@@ -52,7 +52,7 @@ export default function Footer({ variant = "dark" }) {
   const subscribeNewsletter = async (value) => {
     // Let failures propagate so handleSubmit surfaces a real error instead of
     // always reporting success.
-    await api.post(`/api/newsletter/subscribe`, { email: value });
+    await api.post(`/api/newsletter/subscribe`, { email: value }, { quiet: true });
     toast.success("Subscribed successfully.");
   };
 

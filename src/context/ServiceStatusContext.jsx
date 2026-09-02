@@ -1,6 +1,7 @@
 "use client";
 
 import { createContext, useContext, useEffect, useState } from "react";
+import { usePathname } from "next/navigation";
 import ErrorScreen from "@/components/error/ErrorScreen";
 
 /**
@@ -27,6 +28,15 @@ import ErrorScreen from "@/components/error/ErrorScreen";
  * Recovery is manual, not polled: a retry loop against a database that is down
  * is exactly the traffic that keeps a Neon compute awake and burns the quota we
  * spent OUT-206 protecting. "Try again" reloads.
+ *
+ * WHERE IT APPLIES, AND WHERE IT MUST NOT
+ *   Only on signed-in surfaces. In the dashboard nothing works without the
+ *   backend, so one honest screen beats a page of dead buttons. On the
+ *   marketing site the opposite is true: those pages are almost entirely
+ *   static, and blanking them during a blip hides the pricing, the policies
+ *   and the sign-up from someone who came to buy. It was doing exactly that —
+ *   every public page fires /api/user/me for anonymous visitors, so any
+ *   backend hiccup replaced the whole site, privacy policy included.
  */
 const ServiceStatusContext = createContext({ unavailable: false });
 
@@ -36,8 +46,14 @@ export const useServiceStatus = () => useContext(ServiceStatusContext);
 // window and this provider listens. Exported so api.js has one name to fire.
 export const SERVICE_UNAVAILABLE_EVENT = "outmail:service-unavailable";
 
+// Surfaces that genuinely cannot function without the backend.
+const APP_ROUTES = ["/dashboard", "/admin", "/student", "/tpo"];
+export const takesOverOn = (pathname) =>
+  APP_ROUTES.some((r) => pathname === r || pathname?.startsWith(`${r}/`));
+
 export function ServiceStatusProvider({ children }) {
   const [unavailable, setUnavailable] = useState(false);
+  const pathname = usePathname();
 
   useEffect(() => {
     const onDown = () => setUnavailable(true);
@@ -45,7 +61,7 @@ export function ServiceStatusProvider({ children }) {
     return () => window.removeEventListener(SERVICE_UNAVAILABLE_EVENT, onDown);
   }, []);
 
-  if (unavailable) {
+  if (unavailable && takesOverOn(pathname)) {
     return (
       <ErrorScreen
         title="We'll be back shortly"
