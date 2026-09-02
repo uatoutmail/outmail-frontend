@@ -1,4 +1,5 @@
 import { api } from "./api";
+import { PlansSchema, parseOrReport } from "./contracts";
 
 /**
  * Razorpay Checkout client for the customer-facing site.
@@ -23,7 +24,9 @@ export const getPlans = async () => {
   // place. Blanking the whole site would hide the very content someone is
   // there to read.
   const response = await api.get("/api/payments/plans", { quiet: true });
-  return response.data;
+  // Validated, not trusted. If the shape drifts we hear about it in Sentry
+  // rather than discovering it from a customer who saw the wrong price.
+  return parseOrReport(PlansSchema, response.data, "GET /api/payments/plans");
 };
 
 // Preview a coupon's price before checkout (auth). Read-only: usage is counted
