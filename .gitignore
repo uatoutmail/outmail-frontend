@@ -47,7 +47,11 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
+# jsdom localStorage backing file for vitest. Lives under node_modules/.cache
+# so the Next dev server's watcher never sees it change — when it sat in the
+# repo root, every test run triggered a recompile and reloaded localhost.
 .vitest-localstorage.json*
+node_modules/.cache/vitest-localstorage.json*
 
 # playwright
 /test-results/

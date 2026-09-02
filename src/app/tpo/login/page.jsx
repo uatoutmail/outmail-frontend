@@ -30,12 +30,12 @@ export default function TpoLoginPage() {
 
   return (
     <main className="min-h-screen bg-background text-white font-syne flex flex-col items-center justify-center p-4 relative overflow-hidden">
-      <div className="absolute top-[10%] left-[5%] w-64 h-64 bg-purple-600/20 blur-[120px] rounded-full pointer-events-none" />
-      <div className="absolute bottom-[10%] right-[5%] w-64 h-64 bg-blue-600/20 blur-[120px] rounded-full pointer-events-none" />
+      <div aria-hidden className="absolute top-[10%] left-[5%] w-72 h-72 pointer-events-none" style={{ background: "radial-gradient(circle at center, color-mix(in srgb, var(--brand-primary) 24%, transparent), transparent 70%)" }} />
+      <div aria-hidden className="absolute bottom-[10%] right-[5%] w-72 h-72 pointer-events-none" style={{ background: "radial-gradient(circle at center, color-mix(in srgb, var(--brand-accent) 20%, transparent), transparent 70%)" }} />
 
       <div className="mb-8 z-10 flex flex-col items-center">
         <Link href="/" className="flex items-center gap-3 group transition-transform hover:scale-105">
-          <Image src="/logo-nav.png" alt="Outmail Logo" width={50} height={50} className="drop-shadow-[0_0_15px_rgba(108,0,255,0.5)]" />
+          <Image src="/logo-nav.png" alt="Outmail Logo" width={50} height={50} className="drop-shadow-[0_0_15px_var(--brand-primary)]" />
           <Wordmark className="text-white text-3xl" />
         </Link>
         <div className="mt-4 flex items-center gap-2">
