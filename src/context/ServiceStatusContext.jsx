@@ -2,7 +2,7 @@
 
 import { createContext, useContext, useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
-import ErrorScreen from "@/components/error/ErrorScreen";
+import ErrorScreen from "@/component/error/ErrorScreen";
 
 /**
  * Replaces the whole app with one "we'll be back shortly" screen whenever the
