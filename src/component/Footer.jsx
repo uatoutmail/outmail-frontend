@@ -26,6 +26,11 @@ import { api } from "@/lib/api";
  *    everything else.
  *  · The newsletter field uses --radius-btn rather than a full pill, so it
  *    matches form controls elsewhere instead of looking like a search bar.
+ *  · No seam. It had a `border-t` and its own background, which drew a hard
+ *    line across the page and made the footer read as a separate panel bolted
+ *    to the bottom. It is transparent now, sitting on the page background,
+ *    with a long gradient that only starts to darken well below where the
+ *    content above ends — so the eye never finds an edge to catch on.
  */
 
 const LINKS = [
@@ -76,17 +81,24 @@ export default function Footer({ variant = "dark" }) {
 
   return (
     <footer
-      className={`relative text-white px-6 pt-14 pb-8 overflow-hidden ${
-        isDark
-          ? "border-t border-white/10 bg-surface-page"
-          : "bg-gradient-to-l from-black via-primary to-black"
+      className={`relative text-white px-6 pt-28 pb-8 overflow-hidden ${
+        isDark ? "" : "bg-gradient-to-l from-black via-primary to-black"
       }`}
     >
       {/* one soft brand bloom, echoing the closing CTA above it */}
       {isDark && (
-        <div aria-hidden
-          className="pointer-events-none absolute -top-28 left-1/2 -translate-x-1/2 w-[600px] h-[300px]"
-          style={{ background: "radial-gradient(ellipse at center, color-mix(in srgb, var(--brand-primary) 16%, transparent), transparent 70%)" }} />
+        <>
+          {/* A long, low-contrast settle rather than a border. Starting fully
+              transparent means there is no line where the section above ends;
+              the page simply gets quieter towards the bottom. */}
+          <div aria-hidden className="pointer-events-none absolute inset-x-0 top-0 h-full"
+            style={{ background: "linear-gradient(to bottom, transparent 0%, rgba(0,0,0,0.18) 45%, rgba(0,0,0,0.42) 100%)" }} />
+          {/* The brand bloom sits low and wide, so it reads as depth under the
+              footer rather than as a band drawn across its top edge. */}
+          <div aria-hidden
+            className="pointer-events-none absolute left-1/2 -translate-x-1/2 bottom-[-140px] w-[900px] h-[420px]"
+            style={{ background: "radial-gradient(ellipse at center, color-mix(in srgb, var(--brand-primary) 13%, transparent), transparent 72%)" }} />
+        </>
       )}
 
       <div className="relative max-w-6xl mx-auto">
@@ -150,7 +162,7 @@ export default function Footer({ variant = "dark" }) {
         </nav>
 
         {/* One legal line */}
-        <div className="mt-7 pt-5 border-t border-white/10 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 text-xs text-white/30">
+        <div className="mt-7 pt-5 border-t border-white/[0.06] flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 text-xs text-white/30">
           {/* Entity and LLPIN stay — they say who is taking the money. The
               registered address and phone live in the Terms and Privacy Policy
               rather than on every page. */}
