@@ -1,12 +1,12 @@
-'use client';
+"use client";
 
-import { useRouter } from 'next/navigation';
-import Link from 'next/link';
-import Image from 'next/image';
-import Wordmark from '@/component/ui/wordmark';
-import { Loader2 } from 'lucide-react';
-import { useAuth } from '@/context/AuthContext';
-import { useEffect } from 'react';
+import { Loader2 } from "lucide-react";
+import Image from "next/image";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useEffect } from "react";
+import Wordmark from "@/component/ui/wordmark";
+import { useAuth } from "@/context/AuthContext";
 
 // OUT-201: replaces the old password-based /tpo/login. There is no password
 // form anymore — a TPO's access is granted only by claiming an emailed
@@ -21,8 +21,8 @@ export default function TpoLoginPage() {
   const router = useRouter();
 
   useEffect(() => {
-    if (!loading && isAuthenticated && userRole === 'TPO_ADMIN') {
-      router.replace('/tpo/dashboard');
+    if (!loading && isAuthenticated && userRole === "TPO_ADMIN") {
+      router.replace("/tpo/dashboard");
     }
   }, [loading, isAuthenticated, userRole, router]);
 
@@ -30,17 +30,42 @@ export default function TpoLoginPage() {
 
   return (
     <main className="min-h-screen bg-background text-white font-syne flex flex-col items-center justify-center p-4 relative overflow-hidden">
-      <div aria-hidden className="absolute top-[10%] left-[5%] w-72 h-72 pointer-events-none" style={{ background: "radial-gradient(circle at center, color-mix(in srgb, var(--brand-primary) 24%, transparent), transparent 70%)" }} />
-      <div aria-hidden className="absolute bottom-[10%] right-[5%] w-72 h-72 pointer-events-none" style={{ background: "radial-gradient(circle at center, color-mix(in srgb, var(--brand-accent) 20%, transparent), transparent 70%)" }} />
+      <div
+        aria-hidden
+        className="absolute top-[10%] left-[5%] w-72 h-72 pointer-events-none"
+        style={{
+          background:
+            "radial-gradient(circle at center, color-mix(in srgb, var(--brand-primary) 24%, transparent), transparent 70%)",
+        }}
+      />
+      <div
+        aria-hidden
+        className="absolute bottom-[10%] right-[5%] w-72 h-72 pointer-events-none"
+        style={{
+          background:
+            "radial-gradient(circle at center, color-mix(in srgb, var(--brand-accent) 20%, transparent), transparent 70%)",
+        }}
+      />
 
       <div className="mb-8 z-10 flex flex-col items-center">
-        <Link href="/" className="flex items-center gap-3 group transition-transform hover:scale-105">
-          <Image src="/logo-nav.png" alt="Outmail Logo" width={50} height={50} className="drop-shadow-[0_0_15px_var(--brand-primary)]" />
+        <Link
+          href="/"
+          className="flex items-center gap-3 group transition-transform hover:scale-105"
+        >
+          <Image
+            src="/logo-nav.png"
+            alt="Outmail Logo"
+            width={50}
+            height={50}
+            className="drop-shadow-[0_0_15px_var(--brand-primary)]"
+          />
           <Wordmark className="text-white text-3xl" />
         </Link>
         <div className="mt-4 flex items-center gap-2">
           <div className="h-px w-8 bg-purple-500/30" />
-          <span className="text-sm font-medium tracking-widest text-purple-400 uppercase">TPO Portal</span>
+          <span className="text-sm font-medium tracking-widest text-purple-400 uppercase">
+            TPO Portal
+          </span>
           <div className="h-px w-8 bg-purple-500/30" />
         </div>
       </div>
@@ -54,13 +79,18 @@ export default function TpoLoginPage() {
               <Loader2 className="animate-spin" size={28} />
               <p>Checking your session…</p>
             </div>
-          ) : isAuthenticated && userRole !== 'TPO_ADMIN' ? (
+          ) : isAuthenticated && userRole !== "TPO_ADMIN" ? (
             <>
               <h1 className="text-2xl font-bold mb-3">No TPO access on this account</h1>
               <p className="text-white/60 mb-6 text-sm">
-                This Google account isn&apos;t linked to a TPO portal yet. If your institution has partnered with Outmail, check your inbox for an invite email — or ask your Outmail contact to send one.
+                This Google account isn&apos;t linked to a TPO portal yet. If your institution has
+                partnered with Outmail, check your inbox for an invite email — or ask your Outmail
+                contact to send one.
               </p>
-              <Link href="/dashboard" className="text-purple-400 hover:text-purple-300 text-sm font-medium">
+              <Link
+                href="/dashboard"
+                className="text-purple-400 hover:text-purple-300 text-sm font-medium"
+              >
                 Go to my dashboard instead →
               </Link>
             </>
@@ -69,7 +99,9 @@ export default function TpoLoginPage() {
               <h1 className="text-3xl font-bold text-center mb-2 bg-gradient-to-r from-white to-white/70 bg-clip-text text-transparent">
                 Welcome back
               </h1>
-              <p className="text-white/50 mb-8 text-sm">Sign in with the Google account your institution registered with Outmail.</p>
+              <p className="text-white/50 mb-8 text-sm">
+                Sign in with the Google account your institution registered with Outmail.
+              </p>
               <a
                 href={googleLoginUrl}
                 className="w-full inline-flex items-center justify-center gap-3 bg-white text-surface-panel font-semibold rounded-xl py-3.5 hover:bg-white/90 transition-colors"
@@ -77,10 +109,10 @@ export default function TpoLoginPage() {
                 Continue with Google
               </a>
               <p className="text-white/40 text-xs mt-6">
-                First time? You&apos;ll need an invite from your Outmail contact — check{' '}
+                First time? You&apos;ll need an invite from your Outmail contact — check{" "}
                 <Link href="/tpo/claim" className="text-purple-400 hover:text-purple-300">
                   your invite link
-                </Link>{' '}
+                </Link>{" "}
                 instead of signing in here directly.
               </p>
             </>

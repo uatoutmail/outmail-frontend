@@ -17,18 +17,18 @@
  */
 
 export const FEATURE_PLANS = {
-  coldOutreach: ['PLAN_A', 'PLAN_B'],
-  jobOpenings: ['PLAN_A', 'PLAN_B'],
-  autofill: ['PLAN_A', 'PLAN_B'],
-  mentorship: ['PLAN_B'],
+  coldOutreach: ["PLAN_A", "PLAN_B"],
+  jobOpenings: ["PLAN_A", "PLAN_B"],
+  autofill: ["PLAN_A", "PLAN_B"],
+  mentorship: ["PLAN_B"],
 };
 
 /** Which plan a locked feature should send the user to buy. */
 export const UPGRADE_TARGET = {
-  coldOutreach: 'PLAN_A',
-  jobOpenings: 'PLAN_A',
-  autofill: 'PLAN_A',
-  mentorship: 'PLAN_B',
+  coldOutreach: "PLAN_A",
+  jobOpenings: "PLAN_A",
+  autofill: "PLAN_A",
+  mentorship: "PLAN_B",
 };
 
 /** Whether the user's live plan includes a feature. */
@@ -49,7 +49,7 @@ export function hasFeature(user, feature) {
  */
 export function lockReason(user, feature) {
   if (hasFeature(user, feature)) return null;
-  return user?.currentPlan?.code ? 'upgrade' : 'none';
+  return user?.currentPlan?.code ? "upgrade" : "none";
 }
 
 /**

@@ -1,6 +1,6 @@
 "use client";
-import { useEffect } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 
 /**
  * Where Google sign-in returns to.
@@ -20,11 +20,11 @@ export default function AuthSuccess() {
   useEffect(() => {
     let hasIntent = false;
     try {
-      hasIntent = Boolean(sessionStorage.getItem('outmail.checkoutIntent'));
+      hasIntent = Boolean(sessionStorage.getItem("outmail.checkoutIntent"));
     } catch {
       // Private browsing — fall through to the dashboard.
     }
-    router.replace(hasIntent ? '/pricing' : '/dashboard');
+    router.replace(hasIntent ? "/pricing" : "/dashboard");
   }, [router]);
 
   // No state here on purpose. Branching the message would mean setting state

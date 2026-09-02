@@ -1,9 +1,10 @@
 "use client";
-import React, { useCallback, useEffect, useState } from "react";
 import { Monitor, CheckCircle2, XCircle, Inbox, KeyRound } from "lucide-react";
-import { api } from "@/lib/api";
+import React, { useCallback, useState } from "react";
 import { useNow } from "@/hooks/useNow";
 import { usePolling } from "@/hooks/usePolling";
+import { api } from "@/lib/api";
+import { logger } from "@/lib/logger";
 import { POLL_MS } from "@/lib/polling";
 
 /** Convert an ISO timestamp to a relative "X ago" label. */
@@ -29,7 +30,7 @@ const MailingAgentPanel = () => {
       const res = await api.get("/api/agent/status");
       setStatus(res.data);
     } catch (err) {
-      console.error("[MailingAgentPanel] Failed to fetch status:", err);
+      logger.error("[MailingAgentPanel] Failed to fetch status:", err);
     } finally {
       setLoading(false);
     }
@@ -56,7 +57,7 @@ const MailingAgentPanel = () => {
       setLinkCode(res.data.code);
       setLinkCodeExpiry(Date.now() + res.data.expiresInSeconds * 1000);
     } catch (err) {
-      console.error("[MailingAgentPanel] Failed to generate link code:", err);
+      logger.error("[MailingAgentPanel] Failed to generate link code:", err);
     } finally {
       setGeneratingCode(false);
     }
@@ -109,9 +110,7 @@ const MailingAgentPanel = () => {
         </div>
         <div className="flex gap-3 mt-1.5 text-[10px] text-white/40">
           <span>{today.queued + today.waiting} pending</span>
-          {today.failed > 0 && (
-            <span className="text-red-400">{today.failed} failed</span>
-          )}
+          {today.failed > 0 && <span className="text-red-400">{today.failed} failed</span>}
           <span className="ml-auto">
             Daily limit: {usage.dailyLimit ? `${usage.dailyUsed}/${usage.dailyLimit}` : "—"}
           </span>
@@ -184,9 +183,7 @@ const MailingAgentPanel = () => {
                       ? `Sent to ${log.recipient || "recipient"}`
                       : `Failed: ${log.recipient || "recipient"}`}
                   </p>
-                  {log.error && (
-                    <p className="text-[10px] text-red-400/70 truncate">{log.error}</p>
-                  )}
+                  {log.error && <p className="text-[10px] text-red-400/70 truncate">{log.error}</p>}
                 </div>
                 <span className="text-[10px] text-white/35 flex-shrink-0">
                   {timeAgo(log.createdAt)}

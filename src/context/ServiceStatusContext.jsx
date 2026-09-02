@@ -1,7 +1,7 @@
 "use client";
 
-import { createContext, useContext, useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
+import { createContext, useContext, useEffect, useState } from "react";
 import ErrorScreen from "@/component/error/ErrorScreen";
 
 /**

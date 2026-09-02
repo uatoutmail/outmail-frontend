@@ -1,11 +1,11 @@
+import { Mail, TrendingUp, Building, FileText } from "lucide-react";
 import React, { useState, useEffect } from "react";
-import { Mail, TrendingUp, Building, FileText, Loader2 } from "lucide-react";
 import { api } from "@/lib/api";
+import { logger } from "@/lib/logger";
 
-const OutreachStatPills = ({ selectedPeriod = '7' }) => {
+const OutreachStatPills = ({ selectedPeriod = "7" }) => {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
 
   useEffect(() => {
     const fetchStats = async () => {
@@ -13,10 +13,12 @@ const OutreachStatPills = ({ selectedPeriod = '7' }) => {
         setLoading(true);
         const response = await api.get(`/api/analytics/outreach?period=${selectedPeriod}`);
         setData(response.data);
-        setError(null);
       } catch (err) {
-        console.error("Error fetching outreach stats:", err);
-        setError("Failed to load");
+        // Deliberately falls through to the "0"/"None" defaults below, which
+        // is the behaviour the test pins. Showing a number we do not have is
+        // arguably wrong, but changing it is a product decision — raised, not
+        // taken here.
+        logger.error("Failed to load outreach stats", err);
       } finally {
         setLoading(false);
       }
@@ -28,35 +30,35 @@ const OutreachStatPills = ({ selectedPeriod = '7' }) => {
   const stats = [
     {
       label: `Emails Sent (${selectedPeriod}d)`,
-      value: loading ? null : data?.emailsSentPeriod ?? '0',
+      value: loading ? null : (data?.emailsSentPeriod ?? "0"),
       icon: Mail,
-      color: 'text-purple-400',
-      bg: 'bg-purple-500/15',
-      border: 'border-purple-500/25',
+      color: "text-purple-400",
+      bg: "bg-purple-500/15",
+      border: "border-purple-500/25",
     },
     {
-      label: 'Total Emails Sent',
-      value: loading ? null : data?.totalEmailsSent ?? '0',
+      label: "Total Emails Sent",
+      value: loading ? null : (data?.totalEmailsSent ?? "0"),
       icon: TrendingUp,
-      color: 'text-green-400',
-      bg: 'bg-green-500/15',
-      border: 'border-green-500/25',
+      color: "text-green-400",
+      bg: "bg-green-500/15",
+      border: "border-green-500/25",
     },
     {
-      label: 'Companies Targeted',
-      value: loading ? null : data?.companiesTargeted ?? '0',
+      label: "Companies Targeted",
+      value: loading ? null : (data?.companiesTargeted ?? "0"),
       icon: Building,
-      color: 'text-cyan-400',
-      bg: 'bg-cyan-500/15',
-      border: 'border-cyan-500/25',
+      color: "text-cyan-400",
+      bg: "bg-cyan-500/15",
+      border: "border-cyan-500/25",
     },
     {
-      label: 'Active Outreach',
-      value: loading ? null : data?.activeOutreach ?? 'None',
+      label: "Active Outreach",
+      value: loading ? null : (data?.activeOutreach ?? "None"),
       icon: FileText,
-      color: 'text-amber-400',
-      bg: 'bg-amber-500/15',
-      border: 'border-amber-500/25',
+      color: "text-amber-400",
+      bg: "bg-amber-500/15",
+      border: "border-amber-500/25",
       truncate: true,
     },
   ];
@@ -72,18 +74,20 @@ const OutreachStatPills = ({ selectedPeriod = '7' }) => {
             <stat.icon size={15} className={stat.color} />
           </div>
           <div className="min-w-0 relative z-10 flex-1">
-            <p className="text-[10px] text-white/50 uppercase tracking-wide leading-tight">{stat.label}</p>
+            <p className="text-[10px] text-white/50 uppercase tracking-wide leading-tight">
+              {stat.label}
+            </p>
             {stat.value === null ? (
               <div className="h-4 w-12 bg-white/10 animate-pulse rounded mt-1"></div>
             ) : (
-              <p className={`text-sm font-bold mt-0.5 ${stat.color} ${stat.truncate ? 'truncate' : ''}`}>
+              <p
+                className={`text-sm font-bold mt-0.5 ${stat.color} ${stat.truncate ? "truncate" : ""}`}
+              >
                 {stat.value}
               </p>
             )}
           </div>
-          {loading && (
-            <div className="absolute inset-0 bg-white/5 animate-pulse"></div>
-          )}
+          {loading && <div className="absolute inset-0 bg-white/5 animate-pulse"></div>}
         </div>
       ))}
     </div>

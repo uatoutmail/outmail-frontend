@@ -1,13 +1,13 @@
-import Navbar from "@/component/Navbar";
 import Footer from "@/component/Footer";
+import ClosingCta from "@/component/landing/ClosingCta";
+import Editorial from "@/component/landing/Editorial";
+import Faq from "@/component/landing/Faq";
 import Hero from "@/component/landing/Hero";
 import KineticBand from "@/component/landing/KineticBand";
-import Editorial from "@/component/landing/Editorial";
+import PricingLedger from "@/component/landing/PricingLedger";
 import Story from "@/component/landing/Story";
 import Validation from "@/component/landing/Validation";
-import PricingLedger from "@/component/landing/PricingLedger";
-import Faq from "@/component/landing/Faq";
-import ClosingCta from "@/component/landing/ClosingCta";
+import Navbar from "@/component/Navbar";
 export const metadata = {
   title: "Outmail | Personalized Cold Outreach & Recruiter Search at Scale",
   description:

@@ -7,15 +7,15 @@ export const api = axios.create({
   baseURL: BASE_URL,
   withCredentials: true,
   headers: {
-    'Content-Type': 'application/json',
-  }
-})
+    "Content-Type": "application/json",
+  },
+});
 
 // Add request interceptor for tokens
 api.interceptors.request.use(
   (config) => {
-    if (typeof window !== 'undefined') {
-      const token = localStorage.getItem('authToken');
+    if (typeof window !== "undefined") {
+      const token = localStorage.getItem("authToken");
       if (token) {
         config.headers.Authorization = `Bearer ${token}`;
       }
@@ -50,8 +50,8 @@ api.interceptors.response.use(
     const status = error?.response?.status;
     const ourFault = !error?.response || status >= 500;
     const quiet = error?.config?.quiet === true;
-    if (ourFault && !quiet && typeof window !== 'undefined') {
-      window.dispatchEvent(new Event('outmail:service-unavailable'));
+    if (ourFault && !quiet && typeof window !== "undefined") {
+      window.dispatchEvent(new Event("outmail:service-unavailable"));
     }
     return Promise.reject(error);
   }

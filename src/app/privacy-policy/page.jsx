@@ -12,11 +12,15 @@ export const metadata = {
 };
 
 const H2 = ({ children }) => (
-  <h2 className="text-2xl font-bold text-slate-900 border-b border-slate-100 pb-2 font-syne">{children}</h2>
+  <h2 className="text-2xl font-bold text-slate-900 border-b border-slate-100 pb-2 font-syne">
+    {children}
+  </h2>
 );
 const Section = ({ children }) => <section className="space-y-6">{children}</section>;
 const A = ({ href, children }) => (
-  <a href={href} className="text-accent-light hover:underline">{children}</a>
+  <a href={href} className="text-accent-light hover:underline">
+    {children}
+  </a>
 );
 
 export default function PrivacyPolicy() {
@@ -35,18 +39,16 @@ export default function PrivacyPolicy() {
         <div className="prose prose-slate max-w-none space-y-12 text-slate-700 leading-relaxed font-geist">
           <Section>
             <p className="text-lg text-slate-800">
-              This policy explains what personal data Outmail collects, why, who we share it with, and
-              the rights you have over it. It is written to meet India’s{" "}
+              This policy explains what personal data Outmail collects, why, who we share it with,
+              and the rights you have over it. It is written to meet India’s{" "}
               <strong className="text-slate-900">Digital Personal Data Protection Act, 2023</strong>{" "}
               (“DPDP Act”).
             </p>
-            <p>
-              It covers two different groups of people, and their rights are not the same:
-            </p>
+            <p>It covers two different groups of people, and their rights are not the same:</p>
             <ul className="list-disc pl-6 space-y-3">
               <li>
-                <strong className="text-slate-900">Students</strong> who create an Outmail account and
-                use the service.
+                <strong className="text-slate-900">Students</strong> who create an Outmail account
+                and use the service.
               </li>
               <li>
                 <strong className="text-slate-900">Recruiters and hiring contacts</strong> whose
@@ -61,9 +63,10 @@ export default function PrivacyPolicy() {
             <H2>1. Who we are</H2>
             <div className="space-y-2">
               <p>
-                Outmail is operated by <strong className="text-slate-900">PrimeWork Labs LLP</strong>,
-                a limited liability partnership registered in India. For the purposes of the DPDP Act,
-                PrimeWork Labs LLP is the <strong className="text-slate-900">Data Fiduciary</strong>.
+                Outmail is operated by{" "}
+                <strong className="text-slate-900">PrimeWork Labs LLP</strong>, a limited liability
+                partnership registered in India. For the purposes of the DPDP Act, PrimeWork Labs
+                LLP is the <strong className="text-slate-900">Data Fiduciary</strong>.
               </p>
               <p className="pt-2">LLPIN: ADB-2168</p>
               <p>Registered address: 1/400, UIT, Bhiwadi, Alwar, Rajasthan 301019, India</p>
@@ -77,8 +80,8 @@ export default function PrivacyPolicy() {
           <Section>
             <H2>2. How Outmail works, in plain terms</H2>
             <p>
-              You cannot judge a privacy policy without knowing what the product does, so here is the
-              mechanism:
+              You cannot judge a privacy policy without knowing what the product does, so here is
+              the mechanism:
             </p>
             <ul className="list-disc pl-6 space-y-3">
               <li>
@@ -86,8 +89,8 @@ export default function PrivacyPolicy() {
                 write emails in your name.
               </li>
               <li>
-                We hold a pool of recruiter and hiring-team business email addresses, which we source
-                and verify ourselves.
+                We hold a pool of recruiter and hiring-team business email addresses, which we
+                source and verify ourselves.
               </li>
               <li>
                 Each week we choose companies and contacts that fit your profile, and draft
@@ -98,8 +101,8 @@ export default function PrivacyPolicy() {
                   The emails are sent from your own Gmail account, by you, using our desktop
                   application.
                 </strong>{" "}
-                They are not sent from Outmail’s servers and do not come from an Outmail address. You
-                are the sender.
+                They are not sent from Outmail’s servers and do not come from an Outmail address.
+                You are the sender.
               </li>
               <li>
                 We record which emails were sent so you can see your own history and so we do not
@@ -121,9 +124,9 @@ export default function PrivacyPolicy() {
               </p>
               <p>
                 <strong className="text-slate-900">
-                  That password is stored only in your computer’s own operating-system keychain. It is
-                  never transmitted to Outmail, never stored on our servers, and never visible to our
-                  staff.
+                  That password is stored only in your computer’s own operating-system keychain. It
+                  is never transmitted to Outmail, never stored on our servers, and never visible to
+                  our staff.
                 </strong>{" "}
                 Our servers receive only the outcome of a send — whether it succeeded, and when.
               </p>
@@ -147,13 +150,41 @@ export default function PrivacyPolicy() {
                 </thead>
                 <tbody className="align-top">
                   {[
-                    ["Name, email address and profile photo from Google Sign-In", "To create and secure your account", "You gave it to us to open the account"],
-                    ["Your resume, and the skills, education and experience we extract from it", "To match you to companies and to write emails in your name", "Your consent, given when you upload it"],
-                    ["Profile details you add — phone, LinkedIn, GitHub, portfolio, location, job preferences", "To improve matching and to include in your outreach where relevant", "Your consent"],
-                    ["A record of every email sent on your behalf — recipient, subject, body, time, outcome", "So you can see your history, and so the same recruiter is not contacted twice", "You gave it to us for this purpose"],
-                    ["Saved answers you store for the Autofill extension", "To fill application forms on your instruction", "Your consent"],
-                    ["Payment records — plan, amount, date, Razorpay reference", "To give you access, issue receipts and meet accounting obligations", "Required of us by law"],
-                    ["Technical data — IP address, browser and device type, session tokens", "To keep your account secure and to detect abuse", "Necessary to provide the service you asked for"],
+                    [
+                      "Name, email address and profile photo from Google Sign-In",
+                      "To create and secure your account",
+                      "You gave it to us to open the account",
+                    ],
+                    [
+                      "Your resume, and the skills, education and experience we extract from it",
+                      "To match you to companies and to write emails in your name",
+                      "Your consent, given when you upload it",
+                    ],
+                    [
+                      "Profile details you add — phone, LinkedIn, GitHub, portfolio, location, job preferences",
+                      "To improve matching and to include in your outreach where relevant",
+                      "Your consent",
+                    ],
+                    [
+                      "A record of every email sent on your behalf — recipient, subject, body, time, outcome",
+                      "So you can see your history, and so the same recruiter is not contacted twice",
+                      "You gave it to us for this purpose",
+                    ],
+                    [
+                      "Saved answers you store for the Autofill extension",
+                      "To fill application forms on your instruction",
+                      "Your consent",
+                    ],
+                    [
+                      "Payment records — plan, amount, date, Razorpay reference",
+                      "To give you access, issue receipts and meet accounting obligations",
+                      "Required of us by law",
+                    ],
+                    [
+                      "Technical data — IP address, browser and device type, session tokens",
+                      "To keep your account secure and to detect abuse",
+                      "Necessary to provide the service you asked for",
+                    ],
                   ].map(([d, w, b], i) => (
                     <tr key={i} className="border-b border-slate-100">
                       <td className="py-3 pr-4">{d}</td>
@@ -169,10 +200,11 @@ export default function PrivacyPolicy() {
               with Razorpay and never reach us.
             </p>
             <p className="text-slate-600">
-              On lawful grounds: the DPDP Act allows personal data to be processed with your consent,
-              or where you have voluntarily provided it for a specified purpose and have not withdrawn
-              it, or where the law requires us to keep it. The right-hand column above says which
-              applies. Where we rely on consent you may withdraw it at any time — see section 9.
+              On lawful grounds: the DPDP Act allows personal data to be processed with your
+              consent, or where you have voluntarily provided it for a specified purpose and have
+              not withdrawn it, or where the law requires us to keep it. The right-hand column above
+              says which applies. Where we rely on consent you may withdraw it at any time — see
+              section 9.
             </p>
           </Section>
 
@@ -209,9 +241,9 @@ export default function PrivacyPolicy() {
               </p>
               <p>
                 <strong className="text-slate-900">What we hold.</strong> Business contact details
-                only: work email address, name where known, job title, employer, and whether previous
-                messages were delivered or bounced. We do not hold personal addresses, personal phone
-                numbers or any special category data about recruiters.
+                only: work email address, name where known, job title, employer, and whether
+                previous messages were delivered or bounced. We do not hold personal addresses,
+                personal phone numbers or any special category data about recruiters.
               </p>
               <p>
                 <strong className="text-slate-900">Where it comes from.</strong> We obtain business
@@ -220,26 +252,26 @@ export default function PrivacyPolicy() {
               <ul className="list-disc pl-6 space-y-3">
                 <li>
                   <strong className="text-slate-900">Publicly available sources</strong> — company
-                  careers and contact pages, job advertisements, and public professional profiles such
-                  as LinkedIn.
+                  careers and contact pages, job advertisements, and public professional profiles
+                  such as LinkedIn.
                 </li>
                 <li>
-                  <strong className="text-slate-900">Commercial contact-data providers</strong>, such
-                  as Apollo and Hunter, which compile and license business contact information.
+                  <strong className="text-slate-900">Commercial contact-data providers</strong>,
+                  such as Apollo and Hunter, which compile and license business contact information.
                 </li>
                 <li>
                   <strong className="text-slate-900">
                     Recruiting and hiring contact lists circulated publicly
                   </strong>{" "}
-                  — for example, lists of hiring contacts published or shared openly by people in the
-                  recruiting and careers community.
+                  — for example, lists of hiring contacts published or shared openly by people in
+                  the recruiting and careers community.
                 </li>
               </ul>
               <p>
-                These lists largely gather together addresses that are already published elsewhere — a
-                careers page, a job advertisement, a public profile. We are not able to verify that for
-                every individual entry, and we do not claim to. Where an address is one we could not
-                trace to a public source, the commitments below still apply in full.
+                These lists largely gather together addresses that are already published elsewhere —
+                a careers page, a job advertisement, a public profile. We are not able to verify
+                that for every individual entry, and we do not claim to. Where an address is one we
+                could not trace to a public source, the commitments below still apply in full.
               </p>
               <p>
                 We check every address with a deliverability verification service before it is used,
@@ -249,41 +281,40 @@ export default function PrivacyPolicy() {
                 <strong className="text-slate-900">
                   We will tell you where your specific address came from.
                 </strong>{" "}
-                Some of our sources compile data rather than publish it, and in those cases we may not
-                be able to identify an original publication. If you ask, we will tell you what we know
-                about the origin of your record, honestly, including where the only answer we have is
-                the name of the provider we obtained it from.
+                Some of our sources compile data rather than publish it, and in those cases we may
+                not be able to identify an original publication. If you ask, we will tell you what
+                we know about the origin of your record, honestly, including where the only answer
+                we have is the name of the provider we obtained it from.
               </p>
               <p>
                 <strong className="text-slate-900">Why we hold it.</strong> To let a job-seeking
                 student send you a relevant, individually written application for a role you are
-                hiring for. That is the only use. We do not sell, license, publish or share recruiter
-                contact data with anyone, and our Terms forbid students from extracting it.
+                hiring for. That is the only use. We do not sell, license, publish or share
+                recruiter contact data with anyone, and our Terms forbid students from extracting
+                it.
               </p>
               <p>
                 <strong className="text-slate-900">
                   The commitments we make, regardless of what the law requires.
                 </strong>{" "}
-                We are aware that not every source above is one you personally chose to publish. We do
-                not treat that as a technicality to hide behind. So:
+                We are aware that not every source above is one you personally chose to publish. We
+                do not treat that as a technicality to hide behind. So:
               </p>
               <ul className="list-disc pl-6 space-y-3">
                 <li>
-                  we hold <strong className="text-slate-900">business contact details only</strong> —
-                  work email, name, job title and employer. Never a personal address, personal phone
-                  number, or anything about your private life;
+                  we hold <strong className="text-slate-900">business contact details only</strong>{" "}
+                  — work email, name, job title and employer. Never a personal address, personal
+                  phone number, or anything about your private life;
                 </li>
                 <li>
                   we honour <strong className="text-slate-900">every right</strong> in section 9 —
-                  access, correction, erasure and grievance redressal — for recruiters exactly as we do
-                  for our own account holders, and we do not ask you to prove the Act obliges us;
+                  access, correction, erasure and grievance redressal — for recruiters exactly as we
+                  do for our own account holders, and we do not ask you to prove the Act obliges us;
                 </li>
+                <li>one message stops it permanently, across every user, forever — see below;</li>
                 <li>
-                  one message stops it permanently, across every user, forever — see below;
-                </li>
-                <li>
-                  we cap how many students may contact any one recruiter in a week, and no student may
-                  contact the same recruiter twice.
+                  we cap how many students may contact any one recruiter in a week, and no student
+                  may contact the same recruiter twice.
                 </li>
               </ul>
               <p>
@@ -292,29 +323,29 @@ export default function PrivacyPolicy() {
                 student is the sender; replying goes to them, not to us.
               </p>
               <p>
-                <strong className="text-slate-900">The limits we place on ourselves.</strong> A given
-                recruiter is contacted by only a small number of students in any week, and never twice
-                by the same student. Every message carries an unsubscribe link.
+                <strong className="text-slate-900">The limits we place on ourselves.</strong> A
+                given recruiter is contacted by only a small number of students in any week, and
+                never twice by the same student. Every message carries an unsubscribe link.
               </p>
               <div className="bg-slate-50 border border-slate-200 rounded-xl p-6 space-y-3">
                 <p className="font-semibold text-slate-900">To stop receiving these emails</p>
                 <p>
-                  Use the unsubscribe link in any message you received. It works immediately and needs
-                  no account or reply. You can also email{" "}
-                  <A href="mailto:support@outmail.in">support@outmail.in</A> and we will remove you and
-                  confirm.
+                  Use the unsubscribe link in any message you received. It works immediately and
+                  needs no account or reply. You can also email{" "}
+                  <A href="mailto:support@outmail.in">support@outmail.in</A> and we will remove you
+                  and confirm.
                 </p>
                 <p>
                   Once removed, your address is added to a permanent suppression list so that{" "}
-                  <strong className="text-slate-900">no student</strong> using Outmail can contact you
-                  again. We keep only the minimum needed to enforce that.
+                  <strong className="text-slate-900">no student</strong> using Outmail can contact
+                  you again. We keep only the minimum needed to enforce that.
                 </p>
               </div>
               <p>
                 To exercise any of those rights, email{" "}
-                <A href="mailto:support@outmail.in">support@outmail.in</A>. You do not need an Outmail
-                account, and there is no charge. If you are not satisfied with our response, our
-                Grievance Officer is named in section 10.
+                <A href="mailto:support@outmail.in">support@outmail.in</A>. You do not need an
+                Outmail account, and there is no charge. If you are not satisfied with our response,
+                our Grievance Officer is named in section 10.
               </p>
             </div>
           </Section>
@@ -336,16 +367,40 @@ export default function PrivacyPolicy() {
                 </thead>
                 <tbody className="align-top">
                   {[
-                    ["Google (Sign-In, Gemini)", "Authentication; resume parsing, matching and email drafting", "Account identity; resume and profile content"],
+                    [
+                      "Google (Sign-In, Gemini)",
+                      "Authentication; resume parsing, matching and email drafting",
+                      "Account identity; resume and profile content",
+                    ],
                     ["Razorpay", "Payment processing", "Name, email, payment amount and reference"],
                     ["Amazon Web Services (S3)", "Resume file storage", "Your uploaded resume"],
                     ["Neon", "Database hosting", "All account and application data"],
-                    ["Render, Vercel", "Application and website hosting", "Data in transit and in use"],
-                    ["Resend", "Transactional email from Outmail to you", "Your name and email address"],
-                    ["MillionVerifier", "Checking that a recruiter address is deliverable", "Recruiter business email addresses only"],
-                    ["Adzuna and other job sources", "Sourcing job openings", "No personal data is sent"],
+                    [
+                      "Render, Vercel",
+                      "Application and website hosting",
+                      "Data in transit and in use",
+                    ],
+                    [
+                      "Resend",
+                      "Transactional email from Outmail to you",
+                      "Your name and email address",
+                    ],
+                    [
+                      "MillionVerifier",
+                      "Checking that a recruiter address is deliverable",
+                      "Recruiter business email addresses only",
+                    ],
+                    [
+                      "Adzuna and other job sources",
+                      "Sourcing job openings",
+                      "No personal data is sent",
+                    ],
                     ["Upstash (QStash)", "Scheduling background work", "Internal job identifiers"],
-                    ["Sentry", "Error monitoring", "Technical diagnostics; configured to redact personal data"],
+                    [
+                      "Sentry",
+                      "Error monitoring",
+                      "Technical diagnostics; configured to redact personal data",
+                    ],
                   ].map(([s, p, d], i) => (
                     <tr key={i} className="border-b border-slate-100">
                       <td className="py-3 pr-4 font-medium text-slate-900">{s}</td>
@@ -357,8 +412,8 @@ export default function PrivacyPolicy() {
               </table>
             </div>
             <p>
-              We may also disclose data where we are legally required to, or to establish or defend a
-              legal claim.
+              We may also disclose data where we are legally required to, or to establish or defend
+              a legal claim.
             </p>
           </Section>
 
@@ -366,30 +421,31 @@ export default function PrivacyPolicy() {
             <H2>8. Where data is stored, and for how long</H2>
             <div className="space-y-4">
               <p>
-                Our primary database is hosted in Singapore, and some processors listed above operate
-                outside India. Transfers are made only to countries not restricted by the Central
-                Government under section 16 of the DPDP Act, and are covered by contractual protections
-                with each processor.
+                Our primary database is hosted in Singapore, and some processors listed above
+                operate outside India. Transfers are made only to countries not restricted by the
+                Central Government under section 16 of the DPDP Act, and are covered by contractual
+                protections with each processor.
               </p>
               <ul className="list-disc pl-6 space-y-3">
                 <li>
-                  <strong className="text-slate-900">Your resume and profile</strong> — kept while your
-                  account is open. Deleted within 30 days of you deleting your account or asking us to
-                  remove them.
+                  <strong className="text-slate-900">Your resume and profile</strong> — kept while
+                  your account is open. Deleted within 30 days of you deleting your account or
+                  asking us to remove them.
                 </li>
                 <li>
-                  <strong className="text-slate-900">Your outreach history</strong> — kept while your
-                  account is open, so you can see what you sent and we can avoid repeat contacts.
+                  <strong className="text-slate-900">Your outreach history</strong> — kept while
+                  your account is open, so you can see what you sent and we can avoid repeat
+                  contacts.
                 </li>
                 <li>
-                  <strong className="text-slate-900">Payment records</strong> — kept for eight years,
-                  as required by Indian accounting and tax law. This is the one category we cannot
-                  delete on request.
+                  <strong className="text-slate-900">Payment records</strong> — kept for eight
+                  years, as required by Indian accounting and tax law. This is the one category we
+                  cannot delete on request.
                 </li>
                 <li>
-                  <strong className="text-slate-900">Unsubscribe records</strong> — kept indefinitely,
-                  in minimal form. If we deleted these we would be unable to keep honouring the
-                  unsubscribe.
+                  <strong className="text-slate-900">Unsubscribe records</strong> — kept
+                  indefinitely, in minimal form. If we deleted these we would be unable to keep
+                  honouring the unsubscribe.
                 </li>
                 <li>
                   <strong className="text-slate-900">Technical logs</strong> — up to 30 days.
@@ -409,8 +465,8 @@ export default function PrivacyPolicy() {
                 above.
               </li>
               <li>
-                Withdraw consent at any time, as easily as you gave it. Withdrawing consent for us to
-                use your resume means we can no longer generate outreach for you.
+                Withdraw consent at any time, as easily as you gave it. Withdrawing consent for us
+                to use your resume means we can no longer generate outreach for you.
               </li>
               <li>Nominate someone to exercise your rights if you die or become incapacitated.</li>
               <li>Raise a grievance with us, and escalate it — see section 10.</li>
@@ -440,8 +496,8 @@ export default function PrivacyPolicy() {
               <p>1/400, UIT, Bhiwadi, Alwar, Rajasthan 301019, India</p>
             </div>
             <p>
-              We acknowledge grievances within 48 hours and aim to resolve them within 30 days. If you
-              remain dissatisfied, you may complain to the{" "}
+              We acknowledge grievances within 48 hours and aim to resolve them within 30 days. If
+              you remain dissatisfied, you may complain to the{" "}
               <strong className="text-slate-900">Data Protection Board of India</strong>.
             </p>
           </Section>
@@ -461,17 +517,19 @@ export default function PrivacyPolicy() {
               </li>
             </ul>
             <p>
-              No system is perfectly secure. If a breach occurs that is likely to affect you, we will
-              notify you and the Data Protection Board of India as the DPDP Act requires.
+              No system is perfectly secure. If a breach occurs that is likely to affect you, we
+              will notify you and the Data Protection Board of India as the DPDP Act requires.
             </p>
           </Section>
 
           <Section>
             <H2>12. Age requirement</H2>
             <p>
-              <strong className="text-slate-900">Outmail is only for people aged 18 or over.</strong>{" "}
-              We do not knowingly collect data about children. If we learn that an account belongs to
-              someone under 18 we will close it and delete the associated data.
+              <strong className="text-slate-900">
+                Outmail is only for people aged 18 or over.
+              </strong>{" "}
+              We do not knowingly collect data about children. If we learn that an account belongs
+              to someone under 18 we will close it and delete the associated data.
             </p>
           </Section>
 

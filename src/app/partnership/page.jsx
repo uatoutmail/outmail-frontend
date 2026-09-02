@@ -1,14 +1,14 @@
 "use client";
 
-import { useState } from "react";
-import Navbar from "@/component/Navbar";
-import Footer from "@/component/Footer";
-import PageHeader from "@/component/ui/PageHeader";
-import Story from "@/component/landing/Story";
 import { motion, AnimatePresence } from "framer-motion";
 import { Phone, ArrowRight, X, Mail } from "lucide-react";
+import { useState } from "react";
+import Footer from "@/component/Footer";
+import Story from "@/component/landing/Story";
+import Navbar from "@/component/Navbar";
 import GapFlip from "@/component/pages/GapFlip";
 import { OfficeLedger, CtaBandCentred } from "@/component/pages/PartnershipSections";
+import PageHeader from "@/component/ui/PageHeader";
 
 export default function PartnershipPage() {
   const [isBookCallOpen, setIsBookCallOpen] = useState(false);
@@ -23,12 +23,16 @@ export default function PartnershipPage() {
           sub="Outmail extends your placement cell beyond campus drives — structured recruiter outreach, resume-matched openings and mentorship for every student, with full visibility for your team."
         >
           <div className="flex flex-col sm:flex-row items-start gap-4">
-            <button onClick={() => setIsBookCallOpen(true)}
-              className="inline-flex items-center justify-center gap-2 bg-primary hover:bg-primary-hover text-white px-6 py-3 font-syne font-semibold rounded-btn transition-colors">
+            <button
+              onClick={() => setIsBookCallOpen(true)}
+              className="inline-flex items-center justify-center gap-2 bg-primary hover:bg-primary-hover text-white px-6 py-3 font-syne font-semibold rounded-btn transition-colors"
+            >
               <Phone size={16} /> Book a call <ArrowRight size={16} />
             </button>
-            <a href="mailto:contact@outmail.in"
-              className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-btn border border-white/20 font-syne text-sm text-white/80 hover:text-white hover:bg-white/10 transition-colors">
+            <a
+              href="mailto:contact@outmail.in"
+              className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-btn border border-white/20 font-syne text-sm text-white/80 hover:text-white hover:bg-white/10 transition-colors"
+            >
               <Mail size={16} /> Contact us
             </a>
           </div>
@@ -74,7 +78,8 @@ export default function PartnershipPage() {
 
               <h3 className="font-syne text-2xl font-bold mb-3">Book a Call</h3>
               <p className="text-white/70 leading-relaxed mb-6">
-                Email us at contact@outmail.in with your institution and a preferred time, and we&apos;ll get in touch to set up a call.
+                Email us at contact@outmail.in with your institution and a preferred time, and
+                we&apos;ll get in touch to set up a call.
               </p>
 
               <a

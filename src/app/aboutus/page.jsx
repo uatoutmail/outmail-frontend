@@ -1,8 +1,8 @@
-import Navbar from "@/component/Navbar";
 import Footer from "@/component/Footer";
-import PageHeader from "@/component/ui/PageHeader";
-import { ProblemSplit, PrinciplesManifesto, EntityLetter } from "@/component/pages/AboutSections";
 import Validation from "@/component/landing/Validation";
+import Navbar from "@/component/Navbar";
+import { ProblemSplit, PrinciplesManifesto, EntityLetter } from "@/component/pages/AboutSections";
+import PageHeader from "@/component/ui/PageHeader";
 
 export const metadata = {
   title: "About Us",

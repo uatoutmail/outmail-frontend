@@ -1,8 +1,8 @@
 "use client";
-import React, { useState, useEffect } from "react";
-import { api } from "@/lib/api";
-import { toast } from "sonner";
 import { Puzzle, Copy, RefreshCw } from "lucide-react";
+import React, { useState, useEffect } from "react";
+import { toast } from "sonner";
+import { api } from "@/lib/api";
 
 // Generates a one-time code the user pastes into the Outmail Autofiller browser
 // extension to link it to their account (OUT-40 / OUT-48).
@@ -25,7 +25,9 @@ const AutofillExtensionCard = () => {
       setExpiresIn(data.expiresInSeconds || 600);
       toast.success("Link code generated");
     } catch (e) {
-      toast.error(e.response?.data?.error || "Failed to generate code (an active plan is required).");
+      toast.error(
+        e.response?.data?.error || "Failed to generate code (an active plan is required)."
+      );
     } finally {
       setLoading(false);
     }
@@ -45,8 +47,8 @@ const AutofillExtensionCard = () => {
         <h2 className="text-lg font-semibold text-white">Autofill Extension</h2>
       </div>
       <p className="text-xs text-white/50 mb-4 leading-relaxed">
-        Install the Outmail Autofiller browser extension, then paste a link code
-        to sync your resume profile for one-click job-application autofill.
+        Install the Outmail Autofiller browser extension, then paste a link code to sync your resume
+        profile for one-click job-application autofill.
       </p>
 
       {code && expiresIn > 0 ? (

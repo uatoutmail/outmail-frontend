@@ -1,9 +1,9 @@
 "use client";
-import React, { useState, useEffect } from "react";
-import Link from "next/link";
-import Image from "next/image";
-import { usePathname } from "next/navigation";
 import { Menu, X, ChevronRight, LogOut, CircleUserRound } from "lucide-react";
+import Image from "next/image";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import React, { useState, useEffect } from "react";
 
 export default function DashboardLayout({
   theme = "light",
@@ -16,7 +16,7 @@ export default function DashboardLayout({
   logout,
   title,
   subtitle,
-  children
+  children,
 }) {
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const pathname = usePathname();
@@ -46,7 +46,8 @@ export default function DashboardLayout({
   const containerStyle = isLight
     ? {}
     : {
-        background: "radial-gradient(ellipse at center, var(--brand-primary) 0%, var(--surface-deep) 60%, #000 100%)",
+        background:
+          "radial-gradient(ellipse at center, var(--brand-primary) 0%, var(--surface-deep) 60%, #000 100%)",
       };
 
   // Topbar styles
@@ -55,13 +56,12 @@ export default function DashboardLayout({
     : `bg-surface-deep/50 backdrop-blur-md border-b border-white/5 text-white`;
 
   return (
-    <div
-      className={`min-h-screen flex ${mainContainerClass}`}
-      style={containerStyle}
-    >
+    <div className={`min-h-screen flex ${mainContainerClass}`} style={containerStyle}>
       {/* Sidebar Overlay (Mobile) */}
       {sidebarOpen && (
-        <div
+        <button
+          type="button"
+          aria-label="Close sidebar"
           className="lg:hidden fixed inset-0 bg-black/40 backdrop-blur-xs z-40 transition-opacity"
           onClick={() => setSidebarOpen(false)}
         />
@@ -74,14 +74,26 @@ export default function DashboardLayout({
         }`}
       >
         {/* Logo and Header */}
-        <div className={`flex items-center justify-between px-4 py-5 border-b ${isLight ? "border-gray-100" : "border-white/10"}`}>
+        <div
+          className={`flex items-center justify-between px-4 py-5 border-b ${isLight ? "border-gray-100" : "border-white/10"}`}
+        >
           <div className="flex items-center gap-3 overflow-hidden">
             <div className="flex-shrink-0">
-              <Image src={logoSrc} alt="Logo" width={32} height={32} className="w-8 h-8 object-contain" />
+              <Image
+                src={logoSrc}
+                alt="Logo"
+                width={32}
+                height={32}
+                className="w-8 h-8 object-contain"
+              />
             </div>
             {sidebarOpen && (
               <div className="overflow-hidden">
-                <p className={`font-bold text-sm leading-none ${isLight ? "text-gray-900" : "text-white"}`}>Outmail</p>
+                <p
+                  className={`font-bold text-sm leading-none ${isLight ? "text-gray-900" : "text-white"}`}
+                >
+                  Outmail
+                </p>
                 {portalName && (
                   <p className="text-xs text-purple-500 font-medium mt-0.5">{portalName}</p>
                 )}
@@ -91,7 +103,9 @@ export default function DashboardLayout({
           <button
             onClick={() => setSidebarOpen(!sidebarOpen)}
             className={`lg:hidden p-1.5 rounded-md transition ${
-              isLight ? "text-gray-400 hover:text-gray-600 hover:bg-gray-100" : "text-white/60 hover:text-white hover:bg-white/10"
+              isLight
+                ? "text-gray-400 hover:text-gray-600 hover:bg-gray-100"
+                : "text-white/60 hover:text-white hover:bg-white/10"
             }`}
           >
             {sidebarOpen ? <X size={18} /> : <ChevronRight size={16} />}
@@ -100,8 +114,9 @@ export default function DashboardLayout({
 
         {/* User Info Card */}
         {sidebarOpen && user && (
-          <div
-            className={`mx-3 mt-4 p-3 rounded-xl flex items-center gap-3 cursor-pointer transition ${
+          <button
+            type="button"
+            className={`mx-3 mt-4 p-3 rounded-xl flex items-center gap-3 cursor-pointer transition w-[calc(100%-1.5rem)] text-left ${
               isLight ? "hover:bg-gray-50" : "hover:bg-white/5"
             }`}
             onClick={() => {
@@ -119,10 +134,14 @@ export default function DashboardLayout({
                 className="rounded-full flex-shrink-0"
               />
             ) : (
-              <CircleUserRound className={`w-9 h-9 flex-shrink-0 ${isLight ? "text-gray-400" : "text-white/70"}`} />
+              <CircleUserRound
+                className={`w-9 h-9 flex-shrink-0 ${isLight ? "text-gray-400" : "text-white/70"}`}
+              />
             )}
             <div className="overflow-hidden">
-              <p className={`font-semibold text-sm truncate ${isLight ? "text-gray-800" : "text-white"}`}>
+              <p
+                className={`font-semibold text-sm truncate ${isLight ? "text-gray-800" : "text-white"}`}
+              >
                 {user?.name || user?.display_name || "User"}
               </p>
               {user?.currentPlan ? (
@@ -130,10 +149,12 @@ export default function DashboardLayout({
                   {user.currentPlan?.name || "Free"}
                 </span>
               ) : user?.college ? (
-                <p className={`text-xs truncate ${isLight ? "text-gray-400" : "text-white/50"}`}>{user.college}</p>
+                <p className={`text-xs truncate ${isLight ? "text-gray-400" : "text-white/50"}`}>
+                  {user.college}
+                </p>
               ) : null}
             </div>
-          </div>
+          </button>
         )}
 
         {/* Navigation Items */}
@@ -200,9 +221,7 @@ export default function DashboardLayout({
         <div className={`p-4 border-t ${isLight ? "border-gray-100" : "border-white/10"}`}>
           {sidebarOpen ? (
             <div className="flex items-center justify-between gap-2">
-              {!user && (
-                <span className="text-xs text-gray-400">Not logged in</span>
-              )}
+              {!user && <span className="text-xs text-gray-400">Not logged in</span>}
               {logout && (
                 <button
                   onClick={logout}
@@ -236,31 +255,45 @@ export default function DashboardLayout({
         }`}
       >
         {/* Top Header */}
-        <header className={`sticky top-0 z-30 px-6 py-4 flex items-center justify-between ${topbarClass}`}>
+        <header
+          className={`sticky top-0 z-30 px-6 py-4 flex items-center justify-between ${topbarClass}`}
+        >
           <div className="flex items-center gap-4">
             <button
               onClick={() => setSidebarOpen(!sidebarOpen)}
               className={`p-2 rounded-md transition ${
-                isLight ? "text-gray-400 hover:text-gray-600 hover:bg-gray-100" : "text-white/60 hover:text-white hover:bg-white/10"
+                isLight
+                  ? "text-gray-400 hover:text-gray-600 hover:bg-gray-100"
+                  : "text-white/60 hover:text-white hover:bg-white/10"
               }`}
             >
               <Menu size={20} />
             </button>
             <div>
               {title && <h1 className="text-sm font-semibold leading-tight">{title}</h1>}
-              {subtitle && <p className={`text-xs mt-0.5 ${isLight ? "text-gray-400" : "text-white/50"}`}>{subtitle}</p>}
+              {subtitle && (
+                <p className={`text-xs mt-0.5 ${isLight ? "text-gray-400" : "text-white/50"}`}>
+                  {subtitle}
+                </p>
+              )}
             </div>
           </div>
 
           <div className="flex items-center gap-4">
             {user && (
               <div className="flex items-center gap-2.5">
-                <div className={`w-8 h-8 rounded-full flex items-center justify-center ${isLight ? "bg-purple-100 text-purple-600" : "bg-purple-600/20 text-primary"}`}>
+                <div
+                  className={`w-8 h-8 rounded-full flex items-center justify-center ${isLight ? "bg-purple-100 text-purple-600" : "bg-purple-600/20 text-primary"}`}
+                >
                   <CircleUserRound size={16} />
                 </div>
                 <div className="hidden md:block text-left">
-                  <p className="text-xs font-semibold leading-none">{user.name || user.display_name}</p>
-                  <p className={`text-[10px] mt-0.5 ${isLight ? "text-gray-400" : "text-white/40"}`}>
+                  <p className="text-xs font-semibold leading-none">
+                    {user.name || user.display_name}
+                  </p>
+                  <p
+                    className={`text-[10px] mt-0.5 ${isLight ? "text-gray-400" : "text-white/40"}`}
+                  >
                     {user.role === "TPO" ? "Placement Officer" : "Candidate"}
                   </p>
                 </div>
@@ -270,9 +303,7 @@ export default function DashboardLayout({
         </header>
 
         {/* Content Page Body */}
-        <main className="flex-1 p-6 overflow-y-auto">
-          {children}
-        </main>
+        <main className="flex-1 p-6 overflow-y-auto">{children}</main>
       </div>
     </div>
   );

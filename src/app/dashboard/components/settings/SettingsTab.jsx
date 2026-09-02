@@ -1,35 +1,36 @@
 "use client";
-import React, { useState, useEffect, useRef } from "react";
-import Image from "next/image";
-import { useAuth } from "@/context/AuthContext";
-import { api } from "@/lib/api";
-import { toast } from "sonner";
-import { ConfirmDialog } from "@/component/ui/alert-dialog";
-import AutofillExtensionCard from "./AutofillExtensionCard";
-import { 
-  Check, 
-  X, 
-  User, 
-  Mail, 
-  Phone, 
+import {
+  Check,
+  X,
+  User,
+  Mail,
+  Phone,
   Link,
-  Save, 
-  FileText, 
-  Upload, 
-  Eye, 
-  Trash2, 
-  Globe, 
-  Zap, 
+  Save,
+  FileText,
+  Upload,
+  Eye,
+  Trash2,
+  Globe,
+  Zap,
   AlertTriangle,
   Briefcase,
   MapPin,
   ExternalLink,
-  School
+  School,
 } from "lucide-react";
+import Image from "next/image";
+import React, { useState, useEffect, useRef } from "react";
+import { toast } from "sonner";
+import AutofillExtensionCard from "./AutofillExtensionCard";
+import { ConfirmDialog } from "@/component/ui/alert-dialog";
+import { useAuth } from "@/context/AuthContext";
+import { api } from "@/lib/api";
+import { logger } from "@/lib/logger";
 
 const SettingsTab = () => {
-  const { user, updateUser, checkAuth } = useAuth();
-  
+  const { user, updateUser } = useAuth();
+
   const [profileSettings, setProfileSettings] = useState({
     name: user?.display_name || user?.name || "",
     email: user?.email || "",
@@ -55,7 +56,9 @@ const SettingsTab = () => {
     // window.outmail is only reachable client-side (desktop shell preload) -
     // no async boundary to move this feature-detection past.
     // eslint-disable-next-line react-hooks/set-state-in-effect
-    setCanOpenAgentSettings(typeof window !== "undefined" && typeof window.outmail?.openAgentSettings === "function");
+    setCanOpenAgentSettings(
+      typeof window !== "undefined" && typeof window.outmail?.openAgentSettings === "function"
+    );
   }, []);
 
   const [isLoading, setIsLoading] = useState(false);
@@ -71,12 +74,12 @@ const SettingsTab = () => {
   const ATTACHMENT_LIMIT = 3;
 
   const ALLOWED_FILE_TYPES = {
-    'application/pdf': 'PDF',
-    'application/msword': 'DOC',
-    'application/vnd.openxmlformats-officedocument.wordprocessingml.document': 'DOCX',
-    'image/jpeg': 'JPEG',
-    'image/jpg': 'JPG', 
-    'image/png': 'PNG'
+    "application/pdf": "PDF",
+    "application/msword": "DOC",
+    "application/vnd.openxmlformats-officedocument.wordprocessingml.document": "DOCX",
+    "image/jpeg": "JPEG",
+    "image/jpg": "JPG",
+    "image/png": "PNG",
   };
   const MAX_FILE_SIZE = 10 * 1024 * 1024;
 
@@ -86,7 +89,9 @@ const SettingsTab = () => {
       errors.push(`File size must be less than ${MAX_FILE_SIZE / 1024 / 1024}MB`);
     }
     if (!ALLOWED_FILE_TYPES[file.type]) {
-      errors.push(`File type not supported. Allowed: ${Object.values(ALLOWED_FILE_TYPES).join(', ')}`);
+      errors.push(
+        `File type not supported. Allowed: ${Object.values(ALLOWED_FILE_TYPES).join(", ")}`
+      );
     }
     return errors;
   };
@@ -95,24 +100,26 @@ const SettingsTab = () => {
     const loadUserFiles = async () => {
       if (!user) return;
       try {
-        const response = await api.get('/api/resumes');
-        
+        const response = await api.get("/api/resumes");
+
         if (response.data && Array.isArray(response.data)) {
-          const formattedAttachments = response.data.map(item => {
+          const formattedAttachments = response.data.map((item) => {
             return {
               id: item.id,
-              name: item.filename || item.original_filename || item.name || 'Unknown File',
-              type: item.mimeType || item.type || item.fileType || 'Unknown',
+              name: item.filename || item.original_filename || item.name || "Unknown File",
+              type: item.mimeType || item.type || item.fileType || "Unknown",
               size: item.size || item.fileSize || null,
-              uploadDate: item.uploaded_at ? new Date(item.uploaded_at).toISOString().slice(0, 10) : new Date().toISOString().slice(0, 10),
+              uploadDate: item.uploaded_at
+                ? new Date(item.uploaded_at).toISOString().slice(0, 10)
+                : new Date().toISOString().slice(0, 10),
               url: item.s3_path,
-              uploaded: true
+              uploaded: true,
             };
           });
           setAttachments(formattedAttachments);
         }
       } catch (error) {
-        console.warn('Error loading user files:', error.message);
+        logger.warn("Error loading user files:", error.message);
       }
     };
     loadUserFiles();
@@ -121,7 +128,7 @@ const SettingsTab = () => {
   const handleUploadAttachment = async (file) => {
     const validationErrors = validateFile(file);
     if (validationErrors.length > 0) {
-      toast.error(`Upload failed: ${validationErrors.join(', ')}`);
+      toast.error(`Upload failed: ${validationErrors.join(", ")}`);
       return;
     }
 
@@ -131,43 +138,45 @@ const SettingsTab = () => {
     }
 
     const fileId = `upload_${Date.now()}`;
-    setUploadingFiles(prev => new Set(prev).add(fileId));
+    setUploadingFiles((prev) => new Set(prev).add(fileId));
 
     try {
       const formData = new FormData();
-      formData.append('file', file);
+      formData.append("file", file);
 
-      const response = await api.post('/api/resumes/', formData, {
+      const response = await api.post("/api/resumes/", formData, {
         headers: {
-          'Content-Type': 'multipart/form-data'
-        }
+          "Content-Type": "multipart/form-data",
+        },
       });
 
       const result = response.data;
-      
+
       const fileSizeKB = file.size / 1024;
-      const formattedSize = fileSizeKB >= 1024 
-        ? `${(fileSizeKB / 1024).toFixed(2)} MB` 
-        : `${Math.round(fileSizeKB)} KB`;
+      const formattedSize =
+        fileSizeKB >= 1024
+          ? `${(fileSizeKB / 1024).toFixed(2)} MB`
+          : `${Math.round(fileSizeKB)} KB`;
 
       const newAttachment = {
         id: result.id || `temp-${Date.now()}`,
-        name: result.filename || result.original_filename || result.name || file.name || 'Unknown File',
-        type: file.type || 'application/pdf',
+        name:
+          result.filename || result.original_filename || result.name || file.name || "Unknown File",
+        type: file.type || "application/pdf",
         size: formattedSize,
         uploadDate: new Date().toISOString().slice(0, 10),
-        url: result.s3Url || result.s3_path || '',
+        url: result.s3Url || result.s3_path || "",
         file: null,
-        uploaded: true
+        uploaded: true,
       };
-      
-      setAttachments(prev => [...prev, newAttachment]);
-      toast.success('Resume uploaded successfully!');
+
+      setAttachments((prev) => [...prev, newAttachment]);
+      toast.success("Resume uploaded successfully!");
     } catch (error) {
-      console.error('Upload error:', error);
+      logger.error("Upload error:", error);
       toast.error(`Upload failed: ${error.response?.data?.error || error.message}`);
     } finally {
-      setUploadingFiles(prev => {
+      setUploadingFiles((prev) => {
         const newSet = new Set(prev);
         newSet.delete(fileId);
         return newSet;
@@ -187,26 +196,26 @@ const SettingsTab = () => {
     if (attachment.uploaded && attachment.id) {
       try {
         await api.delete(`/api/resumes/${attachment.id}`);
-        setAttachments(prev => prev.filter((att) => att.id !== attachment.id));
+        setAttachments((prev) => prev.filter((att) => att.id !== attachment.id));
       } catch (error) {
-        console.error('Delete error:', error);
+        logger.error("Delete error:", error);
         toast.error(`Delete failed: ${error.response?.data?.error || error.message}`);
       }
     } else {
-      setAttachments(prev => prev.filter((att) => att.id !== attachment.id));
+      setAttachments((prev) => prev.filter((att) => att.id !== attachment.id));
     }
     setAttachmentToDelete(null);
   };
 
   const handleViewAttachment = (attachment) => {
     if (!attachment) {
-      toast.error('Attachment data not found.');
+      toast.error("Attachment data not found.");
       return;
     }
     if (attachment.url) {
-      window.open(attachment.url, '_blank');
+      window.open(attachment.url, "_blank");
     } else {
-      toast.error('File URL not available. Please check console for details or contact support.');
+      toast.error("File URL not available. Please check console for details or contact support.");
     }
   };
 
@@ -215,7 +224,7 @@ const SettingsTab = () => {
       // Syncing local form state from the user prop when it changes - no
       // async work, a controlled-form reset-on-prop-change pattern.
       // eslint-disable-next-line react-hooks/set-state-in-effect
-      setProfileSettings(prev => ({
+      setProfileSettings((prev) => ({
         ...prev,
         name: user.display_name || user.name || "",
         email: user.email || "",
@@ -226,7 +235,7 @@ const SettingsTab = () => {
         location: user.location || "",
         portfolio_url: user.portfolio_url || "",
         bio: user.bio || "",
-        autoMailingEnabled: user.autoMailingEnabled || false
+        autoMailingEnabled: user.autoMailingEnabled || false,
       }));
     }
   }, [user]);
@@ -234,18 +243,18 @@ const SettingsTab = () => {
   useEffect(() => {
     const fetchStatus = async () => {
       try {
-        const response = await api.get('/api/user/gmail/status');
+        const response = await api.get("/api/user/gmail/status");
         setGmailStatus(response.data);
         if (response.data.connected) {
           try {
-            const usageRes = await api.get('/api/user/gmail/usage');
+            const usageRes = await api.get("/api/user/gmail/usage");
             setEmailUsage(usageRes.data);
           } catch (err) {
-            console.error('Error fetching email usage:', err);
+            logger.error("Error fetching email usage:", err);
           }
         }
       } catch (error) {
-        console.error('Error fetching Gmail status:', error);
+        logger.error("Error fetching Gmail status:", error);
       }
     };
     fetchStatus();
@@ -287,12 +296,12 @@ const SettingsTab = () => {
 
   const handleSave = async () => {
     if (!profileSettings.name.trim()) {
-      toast.error('Name cannot be empty');
+      toast.error("Name cannot be empty");
       return;
     }
     const now = Date.now();
     if (now - lastSaveTime < 2000) {
-      toast.error('Please wait a moment before saving again');
+      toast.error("Please wait a moment before saving again");
       return;
     }
     setIsLoading(true);
@@ -308,21 +317,20 @@ const SettingsTab = () => {
         location: profileSettings.location,
         portfolio_url: profileSettings.portfolio_url,
         bio: profileSettings.bio,
-        autoMailingEnabled: profileSettings.autoMailingEnabled
+        autoMailingEnabled: profileSettings.autoMailingEnabled,
       });
       if (result.success) {
-        toast.success('Profile updated successfully!');
+        toast.success("Profile updated successfully!");
       } else {
-        toast.error('Failed to update profile: ' + result.error);
+        toast.error("Failed to update profile: " + result.error);
       }
     } catch (error) {
-      console.error('Error updating profile:', error);
-      toast.error('An error occurred while updating your profile.');
+      logger.error("Error updating profile:", error);
+      toast.error("An error occurred while updating your profile.");
     } finally {
       setIsLoading(false);
     }
   };
-
 
   const deleteUser = () => {
     setIsDeleteAccountConfirmOpen(true);
@@ -330,15 +338,14 @@ const SettingsTab = () => {
 
   const confirmDeleteUser = async () => {
     try {
-      await api.delete('/api/user');
-      toast.success('Your account has been deleted.');
+      await api.delete("/api/user");
+      toast.success("Your account has been deleted.");
       // Full reload clears client auth state and returns to the public site.
-      window.location.href = '/';
+      window.location.href = "/";
     } catch (error) {
-      console.error('Error deleting user:', error);
+      logger.error("Error deleting user:", error);
       toast.error(
-        error?.message ||
-          'Could not delete your account. Please try again or contact support.'
+        error?.message || "Could not delete your account. Please try again or contact support."
       );
     } finally {
       setIsDeleteAccountConfirmOpen(false);
@@ -362,9 +369,7 @@ const SettingsTab = () => {
             <div className="bg-white/10 backdrop-blur-md rounded-2xl shadow-lg p-6 border border-white/20">
               <div className="flex items-center gap-4 mb-6">
                 <User className="text-purple-600" size={24} />
-                <h2 className="text-xl font-semibold text-white">
-                  Profile Information
-                </h2>
+                <h2 className="text-xl font-semibold text-white">Profile Information</h2>
               </div>
               <div className="space-y-4">
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -422,7 +427,10 @@ const SettingsTab = () => {
                     </div>
                   </div>
                   <div>
-                    <label htmlFor="linkedin_url" className="block text-sm font-medium text-gray-300 mb-1">
+                    <label
+                      htmlFor="linkedin_url"
+                      className="block text-sm font-medium text-gray-300 mb-1"
+                    >
                       LinkedIn Profile
                     </label>
                     <div className="relative">
@@ -442,110 +450,122 @@ const SettingsTab = () => {
                   </div>
                 </div>
 
-                  <div>
-                    <label htmlFor="github_url" className="block text-sm font-medium text-gray-300 mb-1">
-                      GitHub Link
-                    </label>
-                    <div className="relative">
-                      <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-                        <Link className="text-gray-400" size={18} />
-                      </div>
-                      <input
-                        type="text"
-                        id="github_url"
-                        name="github_url"
-                        value={profileSettings.github_url}
-                        onChange={handleChange}
-                        placeholder="github.com/..."
-                        className="w-full pl-10 pr-3 py-3 rounded-lg border border-gray-600 bg-white/5 text-white focus:outline-none focus:ring-2 focus:ring-purple-500 transition-colors"
-                      />
+                <div>
+                  <label
+                    htmlFor="github_url"
+                    className="block text-sm font-medium text-gray-300 mb-1"
+                  >
+                    GitHub Link
+                  </label>
+                  <div className="relative">
+                    <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                      <Link className="text-gray-400" size={18} />
                     </div>
-                  </div>
-
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4">
-                    <div>
-                      <label htmlFor="job_title" className="block text-sm font-medium text-gray-300 mb-1">
-                        Current Job Title / Role
-                      </label>
-                      <div className="relative">
-                        <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-                          <Briefcase className="text-gray-400" size={18} />
-                        </div>
-                        <input
-                          type="text"
-                          id="job_title"
-                          name="job_title"
-                          value={profileSettings.job_title}
-                          onChange={handleChange}
-                          placeholder="e.g. Software Engineer"
-                          className="w-full pl-10 pr-3 py-3 rounded-lg border border-gray-600 bg-white/5 text-white focus:outline-none focus:ring-2 focus:ring-purple-500 transition-colors"
-                        />
-                      </div>
-                    </div>
-                    <div>
-                      <label htmlFor="location" className="block text-sm font-medium text-gray-300 mb-1">
-                        Location
-                      </label>
-                      <div className="relative">
-                        <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-                          <MapPin className="text-gray-400" size={18} />
-                        </div>
-                        <input
-                          type="text"
-                          id="location"
-                          name="location"
-                          value={profileSettings.location}
-                          onChange={handleChange}
-                          placeholder="e.g. Bangalore, India"
-                          className="w-full pl-10 pr-3 py-3 rounded-lg border border-gray-600 bg-white/5 text-white focus:outline-none focus:ring-2 focus:ring-purple-500 transition-colors"
-                        />
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="mt-4">
-                    <label htmlFor="portfolio_url" className="block text-sm font-medium text-gray-300 mb-1">
-                      Portfolio / Website
-                    </label>
-                    <div className="relative">
-                      <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-                        <ExternalLink className="text-gray-400" size={18} />
-                      </div>
-                      <input
-                        type="text"
-                        id="portfolio_url"
-                        name="portfolio_url"
-                        value={profileSettings.portfolio_url}
-                        onChange={handleChange}
-                        placeholder="https://yourportfolio.com"
-                        className="w-full pl-10 pr-3 py-3 rounded-lg border border-gray-600 bg-white/5 text-white focus:outline-none focus:ring-2 focus:ring-purple-500 transition-colors"
-                      />
-                    </div>
-                  </div>
-
-                  <div className="mt-4">
-                    <label htmlFor="bio" className="block text-sm font-medium text-gray-300 mb-1">
-                      Bio / About You
-                    </label>
-                    <textarea
-                      id="bio"
-                      name="bio"
-                      rows="4"
-                      value={profileSettings.bio}
+                    <input
+                      type="text"
+                      id="github_url"
+                      name="github_url"
+                      value={profileSettings.github_url}
                       onChange={handleChange}
-                      placeholder="Write a short bio about yourself..."
-                      className="w-full p-3 rounded-lg border border-gray-600 bg-white/5 text-white focus:outline-none focus:ring-2 focus:ring-purple-500 transition-colors resize-none"
-                    ></textarea>
+                      placeholder="github.com/..."
+                      className="w-full pl-10 pr-3 py-3 rounded-lg border border-gray-600 bg-white/5 text-white focus:outline-none focus:ring-2 focus:ring-purple-500 transition-colors"
+                    />
                   </div>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4">
+                  <div>
+                    <label
+                      htmlFor="job_title"
+                      className="block text-sm font-medium text-gray-300 mb-1"
+                    >
+                      Current Job Title / Role
+                    </label>
+                    <div className="relative">
+                      <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                        <Briefcase className="text-gray-400" size={18} />
+                      </div>
+                      <input
+                        type="text"
+                        id="job_title"
+                        name="job_title"
+                        value={profileSettings.job_title}
+                        onChange={handleChange}
+                        placeholder="e.g. Software Engineer"
+                        className="w-full pl-10 pr-3 py-3 rounded-lg border border-gray-600 bg-white/5 text-white focus:outline-none focus:ring-2 focus:ring-purple-500 transition-colors"
+                      />
+                    </div>
+                  </div>
+                  <div>
+                    <label
+                      htmlFor="location"
+                      className="block text-sm font-medium text-gray-300 mb-1"
+                    >
+                      Location
+                    </label>
+                    <div className="relative">
+                      <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                        <MapPin className="text-gray-400" size={18} />
+                      </div>
+                      <input
+                        type="text"
+                        id="location"
+                        name="location"
+                        value={profileSettings.location}
+                        onChange={handleChange}
+                        placeholder="e.g. Bangalore, India"
+                        className="w-full pl-10 pr-3 py-3 rounded-lg border border-gray-600 bg-white/5 text-white focus:outline-none focus:ring-2 focus:ring-purple-500 transition-colors"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <div className="mt-4">
+                  <label
+                    htmlFor="portfolio_url"
+                    className="block text-sm font-medium text-gray-300 mb-1"
+                  >
+                    Portfolio / Website
+                  </label>
+                  <div className="relative">
+                    <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                      <ExternalLink className="text-gray-400" size={18} />
+                    </div>
+                    <input
+                      type="text"
+                      id="portfolio_url"
+                      name="portfolio_url"
+                      value={profileSettings.portfolio_url}
+                      onChange={handleChange}
+                      placeholder="https://yourportfolio.com"
+                      className="w-full pl-10 pr-3 py-3 rounded-lg border border-gray-600 bg-white/5 text-white focus:outline-none focus:ring-2 focus:ring-purple-500 transition-colors"
+                    />
+                  </div>
+                </div>
+
+                <div className="mt-4">
+                  <label htmlFor="bio" className="block text-sm font-medium text-gray-300 mb-1">
+                    Bio / About You
+                  </label>
+                  <textarea
+                    id="bio"
+                    name="bio"
+                    rows="4"
+                    value={profileSettings.bio}
+                    onChange={handleChange}
+                    placeholder="Write a short bio about yourself..."
+                    className="w-full p-3 rounded-lg border border-gray-600 bg-white/5 text-white focus:outline-none focus:ring-2 focus:ring-purple-500 transition-colors resize-none"
+                  ></textarea>
+                </div>
 
                 <div className="flex justify-end pt-2">
                   <button
                     onClick={handleSave}
                     disabled={isLoading}
                     className={`flex items-center gap-2 px-6 py-2.5 rounded-lg font-semibold shadow-lg transition-all duration-300 hover:scale-105 active:scale-95 ${
-                      isLoading 
-                        ? 'bg-gray-500 cursor-not-allowed' 
-                        : 'bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500'
+                      isLoading
+                        ? "bg-gray-500 cursor-not-allowed"
+                        : "bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500"
                     } text-white`}
                   >
                     {isLoading ? (
@@ -567,17 +587,17 @@ const SettingsTab = () => {
             <div className="bg-white/10 backdrop-blur-md rounded-2xl shadow-lg p-6 border border-white/20">
               <div className="flex items-center gap-4 mb-6">
                 <School className="text-emerald-500" size={24} />
-                <h2 className="text-xl font-semibold text-white">
-                  Institution Settings
-                </h2>
+                <h2 className="text-xl font-semibold text-white">Institution Settings</h2>
               </div>
-              
+
               <div className="space-y-6">
                 {user?.institution ? (
                   <div className="p-4 rounded-xl bg-emerald-500/10 border border-emerald-500/20">
                     <div className="flex items-start justify-between">
                       <div>
-                        <p className="text-xs font-medium text-emerald-400 uppercase tracking-wider mb-1">Joined Institution</p>
+                        <p className="text-xs font-medium text-emerald-400 uppercase tracking-wider mb-1">
+                          Joined Institution
+                        </p>
                         <h3 className="text-lg font-bold text-white">{user.institution.name}</h3>
                         <p className="text-sm text-white/60 mt-1 flex items-center gap-2">
                           <span className="px-2 py-0.5 rounded bg-white/5 border border-white/10 text-xs font-mono">
@@ -592,10 +612,11 @@ const SettingsTab = () => {
                   </div>
                 ) : (
                   <div className="p-4 rounded-xl bg-white/5 border border-white/10 text-center">
-                    <p className="text-sm text-white/40">You haven&apos;t joined an institution yet.</p>
+                    <p className="text-sm text-white/40">
+                      You haven&apos;t joined an institution yet.
+                    </p>
                   </div>
                 )}
-
               </div>
             </div>
 
@@ -603,17 +624,15 @@ const SettingsTab = () => {
               <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
                 <div className="flex items-center gap-4">
                   <FileText className="text-blue-500" size={24} />
-                  <h2 className="text-xl font-semibold text-white">
-                    Manage Resumes
-                  </h2>
+                  <h2 className="text-xl font-semibold text-white">Manage Resumes</h2>
                 </div>
                 <button
                   onClick={() => fileInputRef.current?.click()}
                   disabled={attachments.length >= 3 || uploadingFiles.size > 0}
                   className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold transition-all shadow-md ${
                     attachments.length >= 3 || uploadingFiles.size > 0
-                      ? 'bg-gray-600 cursor-not-allowed text-gray-400'
-                      : 'bg-white text-black hover:bg-white/90'
+                      ? "bg-gray-600 cursor-not-allowed text-gray-400"
+                      : "bg-white text-black hover:bg-white/90"
                   }`}
                 >
                   {uploadingFiles.size > 0 ? (
@@ -621,7 +640,7 @@ const SettingsTab = () => {
                   ) : (
                     <Upload size={16} />
                   )}
-                  {uploadingFiles.size > 0 ? 'Uploading...' : 'Upload New'}
+                  {uploadingFiles.size > 0 ? "Uploading..." : "Upload New"}
                 </button>
                 <input
                   type="file"
@@ -635,8 +654,8 @@ const SettingsTab = () => {
               {attachments.length > 0 ? (
                 <div className="space-y-3">
                   {attachments.map((file) => (
-                    <div 
-                      key={file.id} 
+                    <div
+                      key={file.id}
                       className="flex items-center justify-between p-4 rounded-xl bg-white/5 border border-white/10 hover:border-white/20 transition-all group"
                     >
                       <div className="flex items-center gap-3 min-w-0">
@@ -645,7 +664,9 @@ const SettingsTab = () => {
                         </div>
                         <div className="min-w-0">
                           <p className="text-sm font-medium text-white truncate">{file.name}</p>
-                          <p className="text-xs text-white/40 mt-0.5">{file.size ? `${file.size} • ` : ''}Uploaded on {file.uploadDate}</p>
+                          <p className="text-xs text-white/40 mt-0.5">
+                            {file.size ? `${file.size} • ` : ""}Uploaded on {file.uploadDate}
+                          </p>
                         </div>
                       </div>
                       <div className="flex items-center gap-2 ml-4">
@@ -673,7 +694,9 @@ const SettingsTab = () => {
                     <Upload size={20} className="text-white/20" />
                   </div>
                   <p className="text-sm text-white/40 mb-1">No resumes uploaded yet.</p>
-                  <p className="text-xs text-white/20">Upload up to 3 resumes to use in your outreach.</p>
+                  <p className="text-xs text-white/20">
+                    Upload up to 3 resumes to use in your outreach.
+                  </p>
                 </div>
               )}
               <div className="mt-4 p-3 rounded-lg bg-blue-500/10 border border-blue-500/20">
@@ -706,15 +729,19 @@ const SettingsTab = () => {
                   </div>
                 )}
                 <div className="min-w-0">
-                  <p className="text-sm font-semibold text-white truncate">{user?.display_name || user?.name || 'User'}</p>
-                  <p className="text-xs text-white/50 truncate">{user?.email || '—'}</p>
+                  <p className="text-sm font-semibold text-white truncate">
+                    {user?.display_name || user?.name || "User"}
+                  </p>
+                  <p className="text-xs text-white/50 truncate">{user?.email || "—"}</p>
                 </div>
               </div>
               <div className="flex items-center gap-2 mb-5">
                 {gmailStatus.connected ? (
                   <>
                     <span className="w-2 h-2 rounded-full bg-green-400"></span>
-                    <span className="text-xs text-green-400 font-medium">Gmail connected via SMTP</span>
+                    <span className="text-xs text-green-400 font-medium">
+                      Gmail connected via SMTP
+                    </span>
                   </>
                 ) : (
                   <>
@@ -728,8 +755,9 @@ const SettingsTab = () => {
                 <div className="space-y-4">
                   <div className="p-3 rounded-lg bg-blue-500/10 border border-blue-500/20 mb-4">
                     <p className="text-[10px] text-blue-300 leading-relaxed">
-                      Emails are sent by the <strong>Outmail desktop app</strong> from your own computer.
-                      Your Gmail app password is stored only on your machine — it never touches Outmail&apos;s servers.
+                      Emails are sent by the <strong>Outmail desktop app</strong> from your own
+                      computer. Your Gmail app password is stored only on your machine — it never
+                      touches Outmail&apos;s servers.
                     </p>
                     {canOpenAgentSettings ? (
                       <p className="text-[10px] text-blue-300 leading-relaxed mt-2">
@@ -764,24 +792,35 @@ const SettingsTab = () => {
                 <div className="space-y-4">
                   {emailUsage && (
                     <div className="p-4 rounded-xl bg-white/5 border border-white/10">
-                      <h3 className="text-sm font-semibold text-white mb-3">Email Sending Limits</h3>
+                      <h3 className="text-sm font-semibold text-white mb-3">
+                        Email Sending Limits
+                      </h3>
                       <div>
                         <div className="flex justify-between items-center mb-1.5">
                           <span className="text-xs text-gray-400">Daily Usage</span>
-                          <span className="text-xs font-medium text-white">{emailUsage.dailyUsed} / {emailUsage.dailyLimit}</span>
+                          <span className="text-xs font-medium text-white">
+                            {emailUsage.dailyUsed} / {emailUsage.dailyLimit}
+                          </span>
                         </div>
                         <div className="w-full bg-gray-700/50 rounded-full h-2">
-                          <div className={`h-2 rounded-full ${emailUsage.dailyUsed >= emailUsage.dailyLimit ? 'bg-red-500' : 'bg-purple-500'}`} style={{ width: `${Math.min(100, (emailUsage.dailyUsed / emailUsage.dailyLimit) * 100)}%` }}></div>
+                          <div
+                            className={`h-2 rounded-full ${emailUsage.dailyUsed >= emailUsage.dailyLimit ? "bg-red-500" : "bg-purple-500"}`}
+                            style={{
+                              width: `${Math.min(100, (emailUsage.dailyUsed / emailUsage.dailyLimit) * 100)}%`,
+                            }}
+                          ></div>
                         </div>
                         <p className="text-[10px] text-gray-500 mt-2 leading-relaxed">
-                          Your daily limit starts small and grows automatically as you send consistently — this protects your Gmail account&apos;s reputation.
+                          Your daily limit starts small and grows automatically as you send
+                          consistently — this protects your Gmail account&apos;s reputation.
                         </p>
                       </div>
                     </div>
                   )}
                   <p className="text-[10px] text-gray-400 leading-relaxed">
                     Gmail is connected in your Outmail desktop app. To disconnect, open
-                    <strong> Agent &amp; Gmail Settings</strong> and use &quot;Disconnect Gmail&quot; there.
+                    <strong> Agent &amp; Gmail Settings</strong> and use &quot;Disconnect
+                    Gmail&quot; there.
                   </p>
                   {canOpenAgentSettings && (
                     <button
@@ -802,9 +841,7 @@ const SettingsTab = () => {
                 <div className="p-2 bg-white/5 rounded-full">
                   <Zap className="text-yellow-400" size={20} />
                 </div>
-                <h2 className="text-xl font-semibold text-white">
-                  Account Status
-                </h2>
+                <h2 className="text-xl font-semibold text-white">Account Status</h2>
               </div>
               <div className="flex flex-col items-center text-center">
                 <div className="w-16 h-16 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-full flex items-center justify-center mb-3 shadow-lg group hover:rotate-12 transition-transform duration-300">
@@ -836,21 +873,25 @@ const SettingsTab = () => {
                   <span>Priority job recommendations</span>
                 </li>
               </ul>
-              
+
               <div className="mt-8 pt-6 border-t border-white/10">
                 <div className="flex items-center justify-between gap-4">
                   <div className="min-w-0">
                     <div className="flex items-center gap-2">
                       <Zap size={14} className="text-purple-400" />
                       <p className="text-sm font-bold text-white">Auto-Mailing</p>
-                      <span className="text-[10px] bg-purple-500/20 text-purple-300 px-1.5 py-0.5 rounded-full font-bold animate-pulse">BETA</span>
+                      <span className="text-[10px] bg-purple-500/20 text-purple-300 px-1.5 py-0.5 rounded-full font-bold animate-pulse">
+                        BETA
+                      </span>
                     </div>
                     <p className="text-[10px] text-white/40 mt-1">Intelligent daily outreach</p>
                   </div>
                   <button
                     onClick={async () => {
                       if (!gmailStatus.connected && !profileSettings.autoMailingEnabled) {
-                        toast.error('Please connect your Gmail account before enabling Auto-Mailing');
+                        toast.error(
+                          "Please connect your Gmail account before enabling Auto-Mailing"
+                        );
                         return;
                       }
                       // Persist immediately. This used to only set local state,
@@ -859,22 +900,24 @@ const SettingsTab = () => {
                       // is the setting that decides whether the weekly planner
                       // includes you at all.
                       const next = !profileSettings.autoMailingEnabled;
-                      setProfileSettings(prev => ({ ...prev, autoMailingEnabled: next }));
+                      setProfileSettings((prev) => ({ ...prev, autoMailingEnabled: next }));
                       const result = await updateUser({ autoMailingEnabled: next });
                       if (result?.success) {
-                        toast.success(next ? 'Auto-mailing enabled' : 'Auto-mailing disabled');
+                        toast.success(next ? "Auto-mailing enabled" : "Auto-mailing disabled");
                       } else {
-                        setProfileSettings(prev => ({ ...prev, autoMailingEnabled: !next }));
-                        toast.error('Could not update auto-mailing: ' + (result?.error || 'unknown error'));
+                        setProfileSettings((prev) => ({ ...prev, autoMailingEnabled: !next }));
+                        toast.error(
+                          "Could not update auto-mailing: " + (result?.error || "unknown error")
+                        );
                       }
                     }}
                     className={`relative flex-shrink-0 w-10 h-5 rounded-full transition-colors duration-200 ${
-                      profileSettings.autoMailingEnabled ? 'bg-purple-600' : 'bg-white/20'
+                      profileSettings.autoMailingEnabled ? "bg-purple-600" : "bg-white/20"
                     }`}
                   >
                     <span
                       className={`absolute top-0.5 left-0.5 w-4 h-4 rounded-full bg-white shadow transition-transform duration-200 ${
-                        profileSettings.autoMailingEnabled ? 'translate-x-5' : 'translate-x-0'
+                        profileSettings.autoMailingEnabled ? "translate-x-5" : "translate-x-0"
                       }`}
                     />
                   </button>
@@ -889,7 +932,9 @@ const SettingsTab = () => {
             <AlertTriangle className="text-red-400" size={18} />
             <h2 className="text-base font-semibold text-red-400">Danger Zone</h2>
           </div>
-          <p className="text-xs text-white/40 mb-5">These actions are permanent and cannot be undone. Proceed with caution.</p>
+          <p className="text-xs text-white/40 mb-5">
+            These actions are permanent and cannot be undone. Proceed with caution.
+          </p>
           <div className="flex flex-col sm:flex-row gap-3">
             <button
               onClick={deleteUser}
@@ -901,8 +946,8 @@ const SettingsTab = () => {
           </div>
         </div>
       </div>
-      
-      <ConfirmDialog 
+
+      <ConfirmDialog
         isOpen={isDeleteAttachmentConfirmOpen}
         onClose={() => {
           setIsDeleteAttachmentConfirmOpen(false);
@@ -915,7 +960,7 @@ const SettingsTab = () => {
         cancelText="Cancel"
       />
 
-      <ConfirmDialog 
+      <ConfirmDialog
         isOpen={isDeleteAccountConfirmOpen}
         onClose={() => setIsDeleteAccountConfirmOpen(false)}
         onConfirm={confirmDeleteUser}

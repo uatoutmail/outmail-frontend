@@ -1,7 +1,8 @@
 "use client";
-import { useState, useEffect } from "react";
 import { Search } from "lucide-react";
+import { useState, useEffect } from "react";
 import { api } from "@/lib/api";
+import { logger } from "@/lib/logger";
 
 export default function TPOStudentTable() {
   const [search, setSearch] = useState("");
@@ -14,7 +15,7 @@ export default function TPOStudentTable() {
         const res = await api.get("/api/admin/students");
         setStudents(res.data.students || []);
       } catch (err) {
-        console.error("Failed to fetch students", err);
+        logger.error("Failed to fetch students", err);
       } finally {
         setLoading(false);
       }
@@ -25,12 +26,18 @@ export default function TPOStudentTable() {
   const filtered = students.filter((s) => {
     const nameStr = s.display_name || "";
     const emailStr = s.email || "";
-    return nameStr.toLowerCase().includes(search.toLowerCase()) || 
-           emailStr.toLowerCase().includes(search.toLowerCase());
+    return (
+      nameStr.toLowerCase().includes(search.toLowerCase()) ||
+      emailStr.toLowerCase().includes(search.toLowerCase())
+    );
   });
 
   if (loading) {
-    return <div className="p-6 bg-white rounded-xl border border-gray-200 shadow-sm text-sm text-gray-500">Loading students...</div>;
+    return (
+      <div className="p-6 bg-white rounded-xl border border-gray-200 shadow-sm text-sm text-gray-500">
+        Loading students...
+      </div>
+    );
   }
 
   return (
@@ -60,7 +67,10 @@ export default function TPOStudentTable() {
           <thead className="bg-gray-50">
             <tr>
               {["Student", "Email", "Joined On", "Last Login"].map((h) => (
-                <th key={h} className="text-left text-xs font-medium text-gray-500 px-5 py-3 whitespace-nowrap">
+                <th
+                  key={h}
+                  className="text-left text-xs font-medium text-gray-500 px-5 py-3 whitespace-nowrap"
+                >
                   {h}
                 </th>
               ))}
@@ -72,9 +82,16 @@ export default function TPOStudentTable() {
                 <td className="px-5 py-3">
                   <div className="flex items-center gap-2.5">
                     <div className="w-7 h-7 rounded-full bg-purple-100 text-purple-700 text-xs font-bold flex items-center justify-center flex-shrink-0">
-                      {(s.display_name ? s.display_name.split(" ").map((n) => n[0]).join("") : "?")}
+                      {s.display_name
+                        ? s.display_name
+                            .split(" ")
+                            .map((n) => n[0])
+                            .join("")
+                        : "?"}
                     </div>
-                    <span className="font-medium text-gray-800 whitespace-nowrap">{s.display_name || "Unknown"}</span>
+                    <span className="font-medium text-gray-800 whitespace-nowrap">
+                      {s.display_name || "Unknown"}
+                    </span>
                   </div>
                 </td>
                 <td className="px-5 py-3 text-gray-500 text-xs">{s.email}</td>
@@ -88,7 +105,9 @@ export default function TPOStudentTable() {
             ))}
             {filtered.length === 0 && (
               <tr>
-                <td colSpan={4} className="px-5 py-4 text-center text-sm text-gray-400">No students found.</td>
+                <td colSpan={4} className="px-5 py-4 text-center text-sm text-gray-400">
+                  No students found.
+                </td>
               </tr>
             )}
           </tbody>
@@ -97,7 +116,9 @@ export default function TPOStudentTable() {
 
       {/* Footer */}
       <div className="px-6 py-3 border-t border-gray-100 flex items-center justify-between">
-        <p className="text-xs text-gray-400">Showing {filtered.length} of {students.length} students</p>
+        <p className="text-xs text-gray-400">
+          Showing {filtered.length} of {students.length} students
+        </p>
       </div>
     </div>
   );

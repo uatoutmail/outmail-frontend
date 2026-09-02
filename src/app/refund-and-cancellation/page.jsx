@@ -5,8 +5,7 @@ export const metadata = {
   alternates: { canonical: "https://outmail.in/refund-and-cancellation" },
   openGraph: {
     title: "Refund and Cancellation Policy | Outmail",
-    description:
-      "How refunds work at Outmail, and what one year of access includes.",
+    description: "How refunds work at Outmail, and what one year of access includes.",
     url: "https://outmail.in/refund-and-cancellation",
     type: "website",
   },
@@ -31,7 +30,10 @@ export default function RefundAndCancellation() {
               This policy explains what you get when you buy Outmail (“Outmail,” “we,” “our,” or
               “us”), when refunds are available, how long they take, and what happens when your year
               ends. It applies to all plans purchased through{" "}
-              <a href="https://outmail.in" className="text-accent-light hover:underline font-medium">
+              <a
+                href="https://outmail.in"
+                className="text-accent-light hover:underline font-medium"
+              >
                 https://outmail.in
               </a>
               . It should be read alongside our{" "}
@@ -131,9 +133,9 @@ export default function RefundAndCancellation() {
                 represent has already been delivered.
               </p>
               <p>
-                Where a refund is issued under the 7-day window above, we issue it in full and do not
-                deduct for emails already sent. We mention this only so the position is clear rather
-                than left to interpretation.
+                Where a refund is issued under the 7-day window above, we issue it in full and do
+                not deduct for emails already sent. We mention this only so the position is clear
+                rather than left to interpretation.
               </p>
             </div>
           </section>
@@ -183,14 +185,16 @@ export default function RefundAndCancellation() {
             </h2>
             <ul className="list-disc pl-6 space-y-3">
               <li>
-                If money is debited but your plan is not activated, the amount is normally
-                reversed automatically by your bank within 5 to 7 business days.
+                If money is debited but your plan is not activated, the amount is normally reversed
+                automatically by your bank within 5 to 7 business days.
               </li>
               <li>
                 If it is not, contact us with the transaction reference and we will trace and refund
                 it.
               </li>
-              <li>If you are charged twice for the same year, the duplicate is refunded in full.</li>
+              <li>
+                If you are charged twice for the same year, the duplicate is refunded in full.
+              </li>
             </ul>
           </section>
 
@@ -200,11 +204,13 @@ export default function RefundAndCancellation() {
             </h2>
             <div className="space-y-4">
               <p>
-                When your year ends, outreach sending stops and job openings are no longer shown.
-                We will remind you before this happens.
+                When your year ends, outreach sending stops and job openings are no longer shown. We
+                will remind you before this happens.
               </p>
               <p>
-                <strong className="text-slate-900">Your account and your data are not deleted.</strong>{" "}
+                <strong className="text-slate-900">
+                  Your account and your data are not deleted.
+                </strong>{" "}
                 Your resume, your outreach history and your saved application answers remain, and
                 become available again the moment you buy another year.
               </p>

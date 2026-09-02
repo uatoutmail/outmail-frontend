@@ -1,10 +1,9 @@
 import { Geist, Geist_Mono, Syne } from "next/font/google";
 import "./globals.css";
+import { Toaster } from "sonner";
 import SmoothScrollWrapper from "@/component/SmoothScrollWrapper";
 import { AuthProvider } from "@/context/AuthContext";
 import { ServiceStatusProvider } from "@/context/ServiceStatusContext";
-import { Toaster } from "sonner";
-
 
 // Font CSS variables are consumed by the design tokens in globals.css:
 //   --font-syne-var  -> --font-sans / font-syne (app default)
@@ -101,12 +100,7 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <head>
-        <link
-          rel="icon"
-          href="/favicon-32.png"
-          type="image/png"
-          sizes="32x32"
-        />
+        <link rel="icon" href="/favicon-32.png" type="image/png" sizes="32x32" />
         <link rel="shortcut icon" href="/favicon-32.png" />
         <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
         {/* Fonts are self-hosted via next/font (Syne, Geist) — no external font CSS needed. */}
@@ -116,10 +110,7 @@ export default function RootLayout({ children }) {
             {/* eslint-disable-next-line @next/next/next-script-for-ga -- migrating to
                 @next/third-parties/google is a real improvement but a new dependency;
                 out of scope for a lint-only pass, tracked separately */}
-            <script
-              async
-              src="https://www.googletagmanager.com/gtag/js?id=G-EEWX3GK1NK"
-            />
+            <script async src="https://www.googletagmanager.com/gtag/js?id=G-EEWX3GK1NK" />
             <script
               dangerouslySetInnerHTML={{
                 __html: `
@@ -133,9 +124,7 @@ export default function RootLayout({ children }) {
           </>
         )}
       </head>
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} ${syne.variable} antialiased`}
-      >
+      <body className={`${geistSans.variable} ${geistMono.variable} ${syne.variable} antialiased`}>
         <ServiceStatusProvider>
           <AuthProvider>
             <SmoothScrollWrapper>

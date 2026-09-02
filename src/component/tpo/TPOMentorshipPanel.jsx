@@ -1,7 +1,8 @@
 "use client";
-import { useState, useEffect } from "react";
 import { Star, GraduationCap, CalendarCheck, Users } from "lucide-react";
+import { useState, useEffect } from "react";
 import { api } from "@/lib/api";
+import { logger } from "@/lib/logger";
 
 function StarRow({ count }) {
   return (
@@ -10,7 +11,11 @@ function StarRow({ count }) {
         <Star
           key={i}
           size={11}
-          className={i <= Math.round(count) ? "text-yellow-400 fill-yellow-400" : "text-gray-200 fill-gray-200"}
+          className={
+            i <= Math.round(count)
+              ? "text-yellow-400 fill-yellow-400"
+              : "text-gray-200 fill-gray-200"
+          }
         />
       ))}
     </div>
@@ -27,7 +32,7 @@ export default function TPOMentorshipPanel() {
         const res = await api.get("/api/mentorship/sessions");
         setSessions(res.data || []);
       } catch (err) {
-        console.error("Failed to fetch mentorship sessions", err);
+        logger.error("Failed to fetch mentorship sessions", err);
       } finally {
         setLoading(false);
       }
@@ -37,9 +42,10 @@ export default function TPOMentorshipPanel() {
 
   const totalSessions = sessions.length;
   const totalAttended = sessions.reduce((acc, s) => acc + (s.attendees || 0), 0);
-  const avgRating = totalSessions > 0 
-    ? (sessions.reduce((acc, s) => acc + (s.rating || 0), 0) / totalSessions).toFixed(1)
-    : "0.0";
+  const avgRating =
+    totalSessions > 0
+      ? (sessions.reduce((acc, s) => acc + (s.rating || 0), 0) / totalSessions).toFixed(1)
+      : "0.0";
 
   return (
     <div className="bg-white rounded-xl border border-gray-200 shadow-sm flex flex-col h-full max-h-[800px]">
@@ -56,8 +62,8 @@ export default function TPOMentorshipPanel() {
       <div className="grid grid-cols-3 divide-x divide-gray-100 border-b border-gray-100">
         {[
           { icon: CalendarCheck, label: "Sessions", value: totalSessions },
-          { icon: Users,         label: "Attended",  value: totalAttended },
-          { icon: Star,          label: "Avg Rating", value: avgRating },
+          { icon: Users, label: "Attended", value: totalAttended },
+          { icon: Star, label: "Avg Rating", value: avgRating },
         ].map(({ icon: Icon, label, value }) => (
           <div key={label} className="flex flex-col items-center py-4 gap-1">
             <Icon size={14} className="text-purple-500" />
@@ -80,7 +86,13 @@ export default function TPOMentorshipPanel() {
               <div className="flex items-start justify-between mb-2">
                 <div className="flex items-center gap-2.5">
                   <div className="w-8 h-8 rounded-full bg-purple-100 text-purple-700 text-xs font-bold flex items-center justify-center flex-shrink-0">
-                    {s.mentorName ? s.mentorName.split(" ").map((n) => n[0]).join("").substring(0, 2) : "M"}
+                    {s.mentorName
+                      ? s.mentorName
+                          .split(" ")
+                          .map((n) => n[0])
+                          .join("")
+                          .substring(0, 2)
+                      : "M"}
                   </div>
                   <div>
                     <p className="text-xs font-semibold text-gray-800">{s.mentorName}</p>
@@ -98,8 +110,16 @@ export default function TPOMentorshipPanel() {
 
               {/* Topic + Date */}
               <div className="flex items-center gap-2 mb-3">
-                <span className="bg-purple-50 text-purple-700 text-xs px-2 py-0.5 rounded-md font-medium">{s.topic}</span>
-                <span className="text-xs text-gray-400">{new Date(s.date).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}</span>
+                <span className="bg-purple-50 text-purple-700 text-xs px-2 py-0.5 rounded-md font-medium">
+                  {s.topic}
+                </span>
+                <span className="text-xs text-gray-400">
+                  {new Date(s.date).toLocaleDateString("en-GB", {
+                    day: "numeric",
+                    month: "short",
+                    year: "numeric",
+                  })}
+                </span>
               </div>
 
               {/* Reviews */}
@@ -111,7 +131,9 @@ export default function TPOMentorshipPanel() {
                         <p className="text-xs font-medium text-gray-700">{r.reviewerName}</p>
                         <StarRow count={r.stars} />
                       </div>
-                      <p className="text-xs text-gray-500 leading-relaxed">&ldquo;{r.reviewText}&rdquo;</p>
+                      <p className="text-xs text-gray-500 leading-relaxed">
+                        &ldquo;{r.reviewText}&rdquo;
+                      </p>
                     </div>
                   ))}
                 </div>
@@ -123,7 +145,9 @@ export default function TPOMentorshipPanel() {
 
       {/* Footer */}
       <div className="px-6 py-3 border-t border-gray-100">
-        <button className="text-xs text-purple-600 font-medium hover:underline">View all sessions →</button>
+        <button className="text-xs text-purple-600 font-medium hover:underline">
+          View all sessions →
+        </button>
       </div>
     </div>
   );

@@ -1,8 +1,8 @@
-'use client';
+"use client";
 
-import { useEffect, useRef } from 'react';
-import { usePathname } from 'next/navigation';
-import Lenis from 'lenis';
+import Lenis from "lenis";
+import { usePathname } from "next/navigation";
+import { useEffect, useRef } from "react";
 
 /**
  * Smooth scrolling for the marketing site.
@@ -34,18 +34,18 @@ export default function SmoothScrollWrapper({ children }) {
 
   // App routes manage their own scroll containers.
   const isAppRoute =
-    pathname?.startsWith('/dashboard') ||
-    pathname?.startsWith('/admin') ||
-    pathname?.startsWith('/student') ||
-    pathname?.startsWith('/tpo') ||
-    pathname?.startsWith('/auth');
+    pathname?.startsWith("/dashboard") ||
+    pathname?.startsWith("/admin") ||
+    pathname?.startsWith("/student") ||
+    pathname?.startsWith("/tpo") ||
+    pathname?.startsWith("/auth");
 
   const raf = useRef(null);
 
   useEffect(() => {
     if (isAppRoute) return;
-    if (typeof window === 'undefined') return;
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    if (typeof window === "undefined") return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
 
     const lenis = new Lenis({
       lerp: 0.09,
@@ -65,17 +65,17 @@ export default function SmoothScrollWrapper({ children }) {
     const onAnchorClick = (e) => {
       const link = e.target.closest?.('a[href^="#"]');
       if (!link) return;
-      const id = link.getAttribute('href');
-      if (!id || id === '#') return;
+      const id = link.getAttribute("href");
+      if (!id || id === "#") return;
       const el = document.querySelector(id);
       if (!el) return;
       e.preventDefault();
       lenis.scrollTo(el, { offset: -80 });
     };
-    document.addEventListener('click', onAnchorClick);
+    document.addEventListener("click", onAnchorClick);
 
     return () => {
-      document.removeEventListener('click', onAnchorClick);
+      document.removeEventListener("click", onAnchorClick);
       if (raf.current) cancelAnimationFrame(raf.current);
       lenis.destroy();
     };

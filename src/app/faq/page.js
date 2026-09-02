@@ -1,6 +1,6 @@
-import Navbar from "@/component/Navbar";
 import Footer from "@/component/Footer";
 import Faq from "@/component/landing/Faq";
+import Navbar from "@/component/Navbar";
 import PageHeader from "@/component/ui/PageHeader";
 
 export const metadata = {

@@ -1,33 +1,43 @@
 "use client";
-import { createContext, useContext, useState, useEffect, useRef } from 'react';
-import { api } from '@/lib/api';
-import { toast } from 'sonner';
+import { createContext, useContext, useState, useEffect, useRef } from "react";
+import { toast } from "sonner";
+import { api } from "@/lib/api";
+import { logger } from "@/lib/logger";
 
 const AuthContext = createContext({});
 
 // Token management utilities for cross-domain authentication
 const getAuthToken = () => {
-  if (typeof window !== 'undefined') {
-    return localStorage.getItem('authToken');
+  if (typeof window !== "undefined") {
+    return localStorage.getItem("authToken");
   }
   return null;
 };
 
+/**
+ * Whether a token exists locally, regardless of whether it is still valid.
+ *
+ * Exported because /dashboard had its own copy of this three-line helper. Two
+ * implementations of "are we probably signed in" is how a redirect ends up
+ * firing on one route and not another.
+ */
+export const hasStoredToken = () => Boolean(getAuthToken());
+
 const setAuthToken = (token) => {
-  if (typeof window !== 'undefined') {
+  if (typeof window !== "undefined") {
     if (token) {
-      localStorage.setItem('authToken', token);
+      localStorage.setItem("authToken", token);
     } else {
-      localStorage.removeItem('authToken');
-      document.cookie = 'outmail_auth=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT';
+      localStorage.removeItem("authToken");
+      document.cookie = "outmail_auth=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT";
     }
   }
 };
 
 const captureTokenFromURL = () => {
-  if (typeof window !== 'undefined') {
+  if (typeof window !== "undefined") {
     const urlParams = new URLSearchParams(window.location.search);
-    const token = urlParams.get('token');
+    const token = urlParams.get("token");
     if (token) {
       setAuthToken(token);
       document.cookie = `outmail_auth=${token}; path=/; max-age=${7 * 24 * 60 * 60}; secure; samesite=strict`;
@@ -41,7 +51,7 @@ const captureTokenFromURL = () => {
 export const useAuth = () => {
   const context = useContext(AuthContext);
   if (!context) {
-    throw new Error('useAuth must be used within an AuthProvider');
+    throw new Error("useAuth must be used within an AuthProvider");
   }
   return context;
 };
@@ -65,21 +75,20 @@ export const AuthProvider = ({ children }) => {
   const checkAuth = async () => {
     try {
       setLoading(true);
-      
+
       // Check for token in URL first (OAuth redirect)
       captureTokenFromURL();
-      
+
       // Get stored token
-      const token = getAuthToken();
-      
+
       // Add timeout to prevent infinite loading
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), 10000);
-      
+
       // quiet: this fires on every public page for anonymous visitors too, and
       // a failure here already means "logged out" — it must never blank the
       // marketing site.
-      const response = await api.get('/api/user/me', {
+      const response = await api.get("/api/user/me", {
         signal: controller.signal,
         quiet: true,
       });
@@ -90,7 +99,10 @@ export const AuthProvider = ({ children }) => {
       setUser(finalUser);
       setUserRole(finalUser.role || null);
       setIsAuthenticated(true);
-    } catch (error) {
+    } catch {
+      // A failure here means "not signed in", which is a normal state for
+      // every anonymous visitor — not something to report. The request is
+      // marked quiet so it cannot trip the service-unavailable screen either.
       setUser(null);
       setUserRole(null);
       setIsAuthenticated(false);
@@ -102,16 +114,18 @@ export const AuthProvider = ({ children }) => {
   // Logout function
   const logout = async () => {
     try {
-      await api.post('/api/auth/logout', {});
+      await api.post("/api/auth/logout", {});
     } catch (error) {
-      console.error('🚨 Logout error:', error);
+      // The local session is cleared in `finally` regardless, so a failed
+      // server-side logout must never block the user from signing out.
+      logger.error("Logout request failed; clearing the local session anyway", error);
     } finally {
       setAuthToken(null); // Clear stored token
       setUser(null);
       setUserRole(null);
       setIsAuthenticated(false);
       // Redirect to home page
-      window.location.href = '/';
+      window.location.href = "/";
     }
   };
 
@@ -123,22 +137,26 @@ export const AuthProvider = ({ children }) => {
   // Silently re-fetch the current user (e.g. after a payment to pick up the new plan)
   const refreshUser = async () => {
     try {
-      const response = await api.get('/api/user/me');
+      const response = await api.get("/api/user/me");
       const userData = response.data;
       const finalUser = userData.user || userData;
       setUser(finalUser);
-    } catch (_) {}
+    } catch (error) {
+      // Best-effort refresh: the caller already has a usable user object and
+      // the next navigation re-fetches. Recorded, never surfaced.
+      logger.debug("Silent user refresh failed", error);
+    }
   };
 
   // Update user profile function
   const updateUser = async (userData) => {
     try {
-      const response = await api.put('/api/user', userData);
+      const response = await api.put("/api/user", userData);
       const updatedUser = response.data.user || response.data;
       setUser(updatedUser);
-      toast.success("User updated successfully!")
+      toast.success("User updated successfully!");
       return { success: true, user: updatedUser };
-    } catch (error) {      
+    } catch (error) {
       const errorMessage = error.response?.data?.message || error.message;
       return { success: false, error: errorMessage };
     }
@@ -157,8 +175,8 @@ export const AuthProvider = ({ children }) => {
       }
     };
 
-    window.addEventListener('focus', handleFocus);
-    return () => window.removeEventListener('focus', handleFocus);
+    window.addEventListener("focus", handleFocus);
+    return () => window.removeEventListener("focus", handleFocus);
   }, []);
 
   const value = {
@@ -173,9 +191,5 @@ export const AuthProvider = ({ children }) => {
     refreshUser,
   };
 
-  return (
-    <AuthContext.Provider value={value}>
-      {children}
-    </AuthContext.Provider>
-  );
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };

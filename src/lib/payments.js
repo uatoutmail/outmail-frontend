@@ -22,14 +22,14 @@ export const getPlans = async () => {
   // quiet: the landing page renders a "couldn't load live pricing" fallback in
   // place. Blanking the whole site would hide the very content someone is
   // there to read.
-  const response = await api.get('/api/payments/plans', { quiet: true });
+  const response = await api.get("/api/payments/plans", { quiet: true });
   return response.data;
 };
 
 // Preview a coupon's price before checkout (auth). Read-only: usage is counted
 // on the backend at verify time, not here, so previewing never burns a spot.
 export const validateCoupon = async ({ code, planId }) => {
-  const response = await api.post('/api/payments/validate-coupon', { code, planId });
+  const response = await api.post("/api/payments/validate-coupon", { code, planId });
   return response.data; // { valid, finalAmount, originalAmount, savings, spotsLeft, error }
 };
 
@@ -41,14 +41,14 @@ export const validateCoupon = async ({ code, planId }) => {
 // order — at any amount — grants the paid send-cap tier. Passing them here
 // would be silently ignored at best and read as tampering at worst.
 const createPaymentOrder = async ({ planId, couponCode }) => {
-  const response = await api.post('/api/payments/orders', { planId, couponCode });
+  const response = await api.post("/api/payments/orders", { planId, couponCode });
   return response.data; // { orderId, razorpayOrderId, amount, currency, keyId }
 };
 
 // Confirm the payment from the browser (auth). Step 4a — gives the user an
 // immediate answer; the webhook is the actual source of truth.
 const verifyPayment = async (payload) => {
-  const response = await api.post('/api/payments/verify', payload);
+  const response = await api.post("/api/payments/verify", payload);
   return response.data;
 };
 
@@ -56,10 +56,10 @@ const verifyPayment = async (payload) => {
 // bundle so visitors who never reach checkout don't pay for it.
 const loadRazorpayScript = () =>
   new Promise((resolve) => {
-    if (typeof window === 'undefined') return resolve(false);
+    if (typeof window === "undefined") return resolve(false);
     if (window.Razorpay) return resolve(true);
-    const script = document.createElement('script');
-    script.src = 'https://checkout.razorpay.com/v1/checkout.js';
+    const script = document.createElement("script");
+    script.src = "https://checkout.razorpay.com/v1/checkout.js";
     script.onload = () => resolve(true);
     script.onerror = () => resolve(false);
     document.body.appendChild(script);
@@ -81,7 +81,7 @@ const loadRazorpayScript = () =>
  */
 export const startCheckout = async ({ planId, couponCode, prefill = {}, onModalClosed } = {}) => {
   const ok = await loadRazorpayScript();
-  if (!ok) throw new Error('Failed to load Razorpay. Check your connection.');
+  if (!ok) throw new Error("Failed to load Razorpay. Check your connection.");
 
   const order = await createPaymentOrder({ planId, couponCode });
 
@@ -92,11 +92,11 @@ export const startCheckout = async ({ planId, couponCode, prefill = {}, onModalC
       currency: order.currency,
       // Shown in Razorpay's modal — one of the few places a customer sees the
       // brand mid-payment, so the spelling matters. It is "Outmail".
-      name: 'Outmail',
-      description: 'Outmail subscription',
+      name: "Outmail",
+      description: "Outmail subscription",
       order_id: order.razorpayOrderId,
       prefill,
-      theme: { color: '#6c00ff' },
+      theme: { color: "#6c00ff" },
       handler: async (response) => {
         // Razorpay's modal has closed and we are now waiting on our own /verify
         // call. That gap is invisible without this callback, and an unexplained
@@ -114,10 +114,12 @@ export const startCheckout = async ({ planId, couponCode, prefill = {}, onModalC
         }
       },
       modal: {
-        ondismiss: () => reject(new Error('Payment cancelled')),
+        ondismiss: () => reject(new Error("Payment cancelled")),
       },
     });
-    rzp.on('payment.failed', (resp) => reject(new Error(resp?.error?.description || 'Payment failed')));
+    rzp.on("payment.failed", (resp) =>
+      reject(new Error(resp?.error?.description || "Payment failed"))
+    );
     rzp.open();
   });
 };

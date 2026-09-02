@@ -1,6 +1,6 @@
-import React from 'react';
-import Link from 'next/link';
-import { Lock } from 'lucide-react';
+import { Lock } from "lucide-react";
+import Link from "next/link";
+import React from "react";
 
 /**
  * The teaser shown in place of a feature the user's plan does not include.
@@ -14,9 +14,9 @@ import { Lock } from 'lucide-react';
  * instead of dropping the user on a generic pricing page — the old link went
  * to /pricing, whose CTA sent them straight back to /dashboard (OUT-226).
  */
-const LockedFeatureOverlay = ({ feature, reason = 'none', targetPlan }) => {
-  const upgrading = reason === 'upgrade';
-  const href = targetPlan ? `/pricing?plan=${targetPlan}` : '/pricing';
+const LockedFeatureOverlay = ({ feature, reason = "none", targetPlan }) => {
+  const upgrading = reason === "upgrade";
+  const href = targetPlan ? `/pricing?plan=${targetPlan}` : "/pricing";
   return (
     <div className="relative w-full h-full min-h-[600px] overflow-hidden rounded-2xl">
       {/* Static teaser backdrop — no live component mounts here, so locked
@@ -50,7 +50,7 @@ const LockedFeatureOverlay = ({ feature, reason = 'none', targetPlan }) => {
             href={href}
             className="inline-block bg-white text-black hover:bg-gray-100 font-bold py-3 px-8 rounded-full transition-colors w-full text-sm"
           >
-            {upgrading ? 'Upgrade my plan' : 'See plans'}
+            {upgrading ? "Upgrade my plan" : "See plans"}
           </Link>
         </div>
       </div>

@@ -1,13 +1,13 @@
 "use client";
 import React from "react";
-import Navbar from "@/component/Navbar";
 import Footer from "@/component/Footer";
-import PageHeader from "@/component/ui/PageHeader";
-import Pricing from "@/component/pricing";
-import WhatYouGet from "@/component/pages/WhatYouGet";
-import Validation from "@/component/landing/Validation";
 import Faq from "@/component/landing/Faq";
+import Validation from "@/component/landing/Validation";
 import { Cta } from "@/component/motion/kit";
+import Navbar from "@/component/Navbar";
+import WhatYouGet from "@/component/pages/WhatYouGet";
+import Pricing from "@/component/pricing";
+import PageHeader from "@/component/ui/PageHeader";
 
 /**
  * The pricing page.
@@ -33,7 +33,9 @@ export default function PricingPage() {
         </PageHeader>
 
         <WhatYouGet />
-        <div id="pricing" className="scroll-mt-20"><Pricing /></div>
+        <div id="pricing" className="scroll-mt-20">
+          <Pricing />
+        </div>
         <Validation />
         <Faq />
       </main>

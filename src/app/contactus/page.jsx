@@ -1,12 +1,12 @@
 "use client";
 
 import React from "react";
-import Navbar from "@/component/Navbar";
 import Footer from "@/component/Footer";
-import PageHeader from "@/component/ui/PageHeader";
-import ContactRouter from "@/component/pages/ContactRouter";
 import Faq from "@/component/landing/Faq";
 import { Cta } from "@/component/motion/kit";
+import Navbar from "@/component/Navbar";
+import ContactRouter from "@/component/pages/ContactRouter";
+import PageHeader from "@/component/ui/PageHeader";
 
 /**
  * The Company & Legal block that used to sit here was removed by request: the

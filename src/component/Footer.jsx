@@ -1,13 +1,13 @@
 "use client";
 
-import React, { useState } from "react";
-import Wordmark from "@/component/ui/wordmark";
-import Link from "next/link";
-import Image from "next/image";
-import { z } from "zod";
-import { toast } from "sonner";
 import { motion, useReducedMotion } from "framer-motion";
 import { Check, Mail } from "lucide-react";
+import Image from "next/image";
+import Link from "next/link";
+import React, { useState } from "react";
+import { toast } from "sonner";
+import { z } from "zod";
+import Wordmark from "@/component/ui/wordmark";
 import { api } from "@/lib/api";
 
 /**
@@ -44,7 +44,6 @@ const LINKS = [
   { href: "/privacy-policy", label: "Privacy" },
   { href: "/refund-and-cancellation", label: "Refunds" },
 ];
-
 
 export default function Footer({ variant = "dark" }) {
   const [email, setEmail] = useState("");
@@ -91,19 +90,29 @@ export default function Footer({ variant = "dark" }) {
           {/* A long, low-contrast settle rather than a border. Starting fully
               transparent means there is no line where the section above ends;
               the page simply gets quieter towards the bottom. */}
-          <div aria-hidden className="pointer-events-none absolute inset-x-0 top-0 h-full"
-            style={{ background: "linear-gradient(to bottom, transparent 0%, rgba(0,0,0,0.18) 45%, rgba(0,0,0,0.42) 100%)" }} />
+          <div
+            aria-hidden
+            className="pointer-events-none absolute inset-x-0 top-0 h-full"
+            style={{
+              background:
+                "linear-gradient(to bottom, transparent 0%, rgba(0,0,0,0.18) 45%, rgba(0,0,0,0.42) 100%)",
+            }}
+          />
           {/* The brand bloom sits low and wide, so it reads as depth under the
               footer rather than as a band drawn across its top edge. */}
-          <div aria-hidden
+          <div
+            aria-hidden
             className="pointer-events-none absolute left-1/2 -translate-x-1/2 bottom-[-140px] w-[900px] h-[420px]"
-            style={{ background: "radial-gradient(ellipse at center, color-mix(in srgb, var(--brand-primary) 13%, transparent), transparent 72%)" }} />
+            style={{
+              background:
+                "radial-gradient(ellipse at center, color-mix(in srgb, var(--brand-primary) 13%, transparent), transparent 72%)",
+            }}
+          />
         </>
       )}
 
       <div className="relative max-w-6xl mx-auto">
         <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-8">
-
           {/* Brand */}
           <div className="max-w-sm">
             <Link href="/" className="inline-flex items-center gap-2.5 mb-3">
@@ -111,15 +120,17 @@ export default function Footer({ variant = "dark" }) {
               <Wordmark className="text-white text-xl leading-none" />
             </Link>
             <p className="text-white/40 text-sm leading-relaxed">
-              Cold outreach, matched jobs, one-click autofill and mentorship — for students
-              with no referrals and one placement season to spend.
+              Cold outreach, matched jobs, one-click autofill and mentorship — for students with no
+              referrals and one placement season to spend.
             </p>
           </div>
 
           {/* Newsletter, inline so it costs one row rather than a column */}
           <div className="w-full md:w-[340px] shrink-0">
             <form onSubmit={handleSubmit} className="flex gap-2">
-              <label htmlFor="footer-email" className="sr-only">Email address</label>
+              <label htmlFor="footer-email" className="sr-only">
+                Email address
+              </label>
               <input
                 id="footer-email"
                 type="email"
@@ -146,7 +157,9 @@ export default function Footer({ variant = "dark" }) {
               </motion.button>
             </form>
             {error && (
-              <p id="footer-email-error" role="alert" className="text-red-400 mt-1.5 text-xs">{error}</p>
+              <p id="footer-email-error" role="alert" className="text-red-400 mt-1.5 text-xs">
+                {error}
+              </p>
             )}
           </div>
         </div>
@@ -154,8 +167,11 @@ export default function Footer({ variant = "dark" }) {
         {/* Links — one wrap, as before */}
         <nav aria-label="Footer" className="mt-9 flex flex-wrap gap-x-6 gap-y-2.5">
           {LINKS.map((l) => (
-            <Link key={l.href} href={l.href}
-              className="text-sm text-white/50 hover:text-white transition-colors duration-200">
+            <Link
+              key={l.href}
+              href={l.href}
+              className="text-sm text-white/50 hover:text-white transition-colors duration-200"
+            >
               {l.label}
             </Link>
           ))}
@@ -166,10 +182,10 @@ export default function Footer({ variant = "dark" }) {
           {/* Entity and LLPIN stay — they say who is taking the money. The
               registered address and phone live in the Terms and Privacy Policy
               rather than on every page. */}
-          <p>
-            © {new Date().getFullYear()} Outmail · PrimeWork Labs LLP · LLPIN ADB-2168
-          </p>
-          <a href="mailto:support@outmail.in" className="hover:text-primary transition-colors">support@outmail.in</a>
+          <p>© {new Date().getFullYear()} Outmail · PrimeWork Labs LLP · LLPIN ADB-2168</p>
+          <a href="mailto:support@outmail.in" className="hover:text-primary transition-colors">
+            support@outmail.in
+          </a>
         </div>
       </div>
     </footer>

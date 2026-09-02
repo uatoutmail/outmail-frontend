@@ -1,7 +1,7 @@
 "use client";
 
-import Link from "next/link";
 import Image from "next/image";
+import Link from "next/link";
 
 /**
  * The Outmail-branded screen behind every error surface (OUT-205).
@@ -40,8 +40,7 @@ export default function ErrorScreen({
         aria-hidden
         className="pointer-events-none absolute inset-0"
         style={{
-          background:
-            "radial-gradient(circle at 50% 0%, rgba(176,108,255,0.16), transparent 60%)",
+          background: "radial-gradient(circle at 50% 0%, rgba(176,108,255,0.16), transparent 60%)",
         }}
       />
 
@@ -63,9 +62,7 @@ export default function ErrorScreen({
         <h1 className="font-syne text-xl sm:text-2xl font-semibold tracking-tight text-foreground mb-3">
           {title}
         </h1>
-        <p className="text-muted-foreground text-[15px] leading-relaxed mb-8">
-          {message}
-        </p>
+        <p className="text-muted-foreground text-[15px] leading-relaxed mb-8">{message}</p>
 
         <div className="flex flex-wrap items-center justify-center gap-3">
           {onRetry && (
@@ -85,9 +82,7 @@ export default function ErrorScreen({
         </div>
 
         {reference && (
-          <p className="mt-8 text-xs text-muted-foreground/70 font-mono">
-            Reference: {reference}
-          </p>
+          <p className="mt-8 text-xs text-muted-foreground/70 font-mono">Reference: {reference}</p>
         )}
       </div>
     </main>
