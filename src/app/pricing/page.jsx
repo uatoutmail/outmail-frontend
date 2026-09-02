@@ -4,7 +4,7 @@ import Navbar from "@/component/Navbar";
 import Footer from "@/component/Footer";
 import PageHeader from "@/component/ui/PageHeader";
 import Pricing from "@/component/pricing";
-import MembershipBenefits from "@/component/membershipbenefits";
+import WhatYouGet from "@/component/pages/WhatYouGet";
 import Validation from "@/component/landing/Validation";
 import Faq from "@/component/landing/Faq";
 import { Cta } from "@/component/motion/kit";
@@ -32,7 +32,7 @@ export default function PricingPage() {
           <Cta label="See the plans" href="#pricing" />
         </PageHeader>
 
-        <MembershipBenefits />
+        <WhatYouGet />
         <div id="pricing" className="scroll-mt-20"><Pricing /></div>
         <Validation />
         <Faq />

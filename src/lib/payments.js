@@ -19,7 +19,10 @@ import { api } from "./api";
 
 // Fetch active plans (public). Step 1 — renders the pricing cards.
 export const getPlans = async () => {
-  const response = await api.get('/api/payments/plans');
+  // quiet: the landing page renders a "couldn't load live pricing" fallback in
+  // place. Blanking the whole site would hide the very content someone is
+  // there to read.
+  const response = await api.get('/api/payments/plans', { quiet: true });
   return response.data;
 };
 

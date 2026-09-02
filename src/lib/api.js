@@ -39,9 +39,18 @@ api.interceptors.response.use(
     // 400 means the request was wrong. Those are about the user's own action,
     // our own copy already describes them, and blanking the app for a
     // validation error would be absurd.
+    //
+    // A request can opt out with `{ quiet: true }`. That is for calls made on
+    // public marketing pages, which must degrade in place rather than blank a
+    // page that mostly needs no backend at all: the anonymous /api/user/me
+    // bootstrap, the pricing fetch, the newsletter and the contact form all
+    // have their own local error handling. Without this, a single backend
+    // blip took down the entire marketing site — including the privacy policy,
+    // which is static text.
     const status = error?.response?.status;
     const ourFault = !error?.response || status >= 500;
-    if (ourFault && typeof window !== 'undefined') {
+    const quiet = error?.config?.quiet === true;
+    if (ourFault && !quiet && typeof window !== 'undefined') {
       window.dispatchEvent(new Event('outmail:service-unavailable'));
     }
     return Promise.reject(error);

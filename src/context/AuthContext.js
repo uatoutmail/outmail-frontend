@@ -76,8 +76,12 @@ export const AuthProvider = ({ children }) => {
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), 10000);
       
+      // quiet: this fires on every public page for anonymous visitors too, and
+      // a failure here already means "logged out" — it must never blank the
+      // marketing site.
       const response = await api.get('/api/user/me', {
-        signal: controller.signal
+        signal: controller.signal,
+        quiet: true,
       });
 
       clearTimeout(timeoutId);
