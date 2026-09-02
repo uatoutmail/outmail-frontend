@@ -7,7 +7,8 @@ import PageHeader from "@/component/ui/PageHeader";
 import Story from "@/component/landing/Story";
 import { motion, AnimatePresence } from "framer-motion";
 import { Phone, ArrowRight, X, Mail } from "lucide-react";
-import { GapBeforeAfter, OfficeLedger, CtaBandCentred } from "@/component/pages/PartnershipSections";
+import GapFlip from "@/component/pages/GapFlip";
+import { OfficeLedger, CtaBandCentred } from "@/component/pages/PartnershipSections";
 
 export default function PartnershipPage() {
   const [isBookCallOpen, setIsBookCallOpen] = useState(false);
@@ -33,7 +34,7 @@ export default function PartnershipPage() {
           </div>
         </PageHeader>
 
-        <GapBeforeAfter />
+        <GapFlip />
         {/* The student-side story: what an office is actually being asked to fund. */}
         <Story />
         <OfficeLedger />

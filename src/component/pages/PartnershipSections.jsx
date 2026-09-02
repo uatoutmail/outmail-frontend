@@ -4,51 +4,6 @@ import React from "react";
 import { Check, Minus, Phone, ArrowRight } from "lucide-react";
 import { Reveal, MaskLines, Kicker } from "@/component/motion/kit";
 
-/**
- * The /partnership page sections: the off-campus gap as a before/after, what
- * the placement office gets as a student-vs-institution ledger, and a centred
- * ask.
- *
- * Institutional pricing is deliberately a conversation rather than a number —
- * it depends on cohort size and the reporting an office needs, and publishing
- * a figure we would immediately negotiate away is worse than saying so.
- */
-
-/** The gap, as the two columns a placement officer already thinks in. */
-export function GapBeforeAfter() {
-  const rows = [
-    { l: "Reach", a: "The companies that visit campus", b: "Any company hiring, anywhere" },
-    { l: "Student effort", a: "Blind applications into ATS queues", b: "Targeted outreach from their own inbox" },
-    { l: "Your visibility", a: "Stops at the drive", b: "Cohort-level reporting all season" },
-  ];
-  return (
-    <section className="py-20">
-      <Reveal className="max-w-5xl mx-auto px-6 mb-10">
-        <Kicker className="mb-4">The off-campus gap</Kicker>
-        <MaskLines lines={["Left is today.", "Right is with Outmail."]} accentIdx={1}
-          className="font-syne text-3xl md:text-4xl font-bold tracking-tight" />
-      </Reveal>
-      <div className="space-y-px">
-        {rows.map((r, i) => (
-          <Reveal key={r.l} delay={i * 0.06}>
-            <div className="grid md:grid-cols-12 border-y border-white/8">
-              <div className="md:col-span-3 px-6 md:px-10 py-6 flex items-center">
-                <span className="text-[10px] uppercase tracking-[3px] text-white/30">{r.l}</span>
-              </div>
-              <div className="md:col-span-4 px-6 md:px-10 py-6 bg-white/[0.015]">
-                <p className="text-[15px] text-white/40 leading-relaxed">{r.a}</p>
-              </div>
-              <div className="md:col-span-5 px-6 md:px-10 py-6 bg-primary/[0.06] border-l border-primary/20">
-                <p className="text-[15px] text-white/80 leading-relaxed">{r.b}</p>
-              </div>
-            </div>
-          </Reveal>
-        ))}
-      </div>
-    </section>
-  );
-}
-
 
 export function OfficeLedger() {
   const rows = [
