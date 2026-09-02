@@ -1,7 +1,7 @@
 "use client";
 import { createContext, useContext, useState, useEffect, useRef } from "react";
 import { toast } from "sonner";
-import { api } from "@/lib/api";
+import { api, SESSION_EXPIRED_EVENT } from "@/lib/api";
 import { logger } from "@/lib/logger";
 
 const AuthContext = createContext({});
@@ -57,6 +57,7 @@ export const useAuth = () => {
 };
 
 export const AuthProvider = ({ children }) => {
+  const expiredRef = useRef(false);
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -128,6 +129,29 @@ export const AuthProvider = ({ children }) => {
       window.location.href = "/";
     }
   };
+
+  /**
+   * A token the server rejected.
+   *
+   * Before this, an expired session produced silent failures on every action:
+   * buttons did nothing, lists stayed empty, and nothing told the user why.
+   * The interceptor cannot fix that itself — it has no idea what is on screen
+   * — so it announces, and the sign-out happens here, once, no matter how
+   * many requests failed at the same time.
+   */
+  useEffect(() => {
+    const onExpired = () => {
+      if (expiredRef.current) return; // several requests can 401 together
+      expiredRef.current = true;
+      setAuthToken(null);
+      setUser(null);
+      setUserRole(null);
+      setIsAuthenticated(false);
+      toast.error("Your session expired. Please sign in again.");
+    };
+    window.addEventListener(SESSION_EXPIRED_EVENT, onExpired);
+    return () => window.removeEventListener(SESSION_EXPIRED_EVENT, onExpired);
+  }, []);
 
   // Login function (to be called after successful OAuth)
   const login = async () => {

@@ -14,6 +14,10 @@ import { api } from "@/lib/api";
 
 vi.mock("@/lib/api", () => ({
   api: { get: vi.fn(), post: vi.fn(), put: vi.fn() },
+  // The provider subscribes to this. A mock that omits it makes every test in
+  // the file fail at import time, which is a confusing way to learn that a
+  // new export exists.
+  SESSION_EXPIRED_EVENT: "outmail:session-expired",
 }));
 vi.mock("sonner", () => ({ toast: { success: vi.fn(), error: vi.fn() } }));
 
