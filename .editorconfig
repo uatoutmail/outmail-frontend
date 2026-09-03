@@ -1,0 +1,15 @@
+# One source of truth for whitespace, so a file's indentation does not depend
+# on which editor last opened it. This repo had tab-indented and space-indented
+# JSX side by side before this existed.
+root = true
+
+[*]
+charset = utf-8
+end_of_line = lf
+indent_style = space
+indent_size = 2
+insert_final_newline = true
+trim_trailing_whitespace = true
+
+[*.md]
+trim_trailing_whitespace = false

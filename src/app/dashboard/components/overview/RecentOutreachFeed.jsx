@@ -1,7 +1,8 @@
 "use client";
-import React, { useEffect, useState } from "react";
 import { Clock, Mail, Inbox } from "lucide-react";
+import React, { useEffect, useState } from "react";
 import { api } from "@/lib/api";
+import { logger } from "@/lib/logger";
 
 function companyFromEmail(email = "") {
   try {
@@ -44,7 +45,7 @@ const RecentOutreachFeed = () => {
         const recent = (res.data?.analytics?.recentActivity || []).slice(0, 5);
         setLogs(recent);
       } catch (err) {
-        console.error("[RecentOutreachFeed] Failed to fetch logs:", err);
+        logger.error("[RecentOutreachFeed] Failed to fetch logs:", err);
       } finally {
         setLoading(false);
       }

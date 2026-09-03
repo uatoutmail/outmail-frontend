@@ -1,6 +1,7 @@
-import React, { useState, useEffect } from "react";
 import { SlidersHorizontal, ChevronDown, ChevronUp, Check, Loader2 } from "lucide-react";
+import React, { useState, useEffect } from "react";
 import { api } from "@/lib/api";
+import { logger } from "@/lib/logger";
 
 const COUNTRIES = [
   { code: "US", label: "United States" },
@@ -46,7 +47,7 @@ const JobPreferences = ({ onSaved, forceOpen = false }) => {
         setInferredYears(data.yearsExperience ?? null);
         setSeekingType(data.seekingType || "");
       } catch (e) {
-        console.error("Failed to load profile:", e);
+        logger.error("Failed to load profile:", e);
       } finally {
         setLoading(false);
       }
@@ -61,14 +62,17 @@ const JobPreferences = ({ onSaved, forceOpen = false }) => {
         countries: country ? [country] : [],
         remotePref,
         minSalary: minSalary === "" ? null : Number(minSalary),
-        targetRoles: targetRoles.split(",").map((r) => r.trim()).filter(Boolean),
+        targetRoles: targetRoles
+          .split(",")
+          .map((r) => r.trim())
+          .filter(Boolean),
         statedYearsExperience: statedYears === "" ? null : Number(statedYears),
         seekingType: seekingType || null,
       });
       setSavedAt(Date.now());
       if (onSaved) onSaved();
     } catch (e) {
-      console.error("Failed to save preferences:", e);
+      logger.error("Failed to save preferences:", e);
     } finally {
       setSaving(false);
     }
@@ -85,7 +89,11 @@ const JobPreferences = ({ onSaved, forceOpen = false }) => {
           <span className="text-sm font-bold text-white">What are you looking for?</span>
           <span className="text-white/30 text-xs hidden sm:inline">— tune your matches</span>
         </div>
-        {open ? <ChevronUp size={18} className="text-white/40" /> : <ChevronDown size={18} className="text-white/40" />}
+        {open ? (
+          <ChevronUp size={18} className="text-white/40" />
+        ) : (
+          <ChevronDown size={18} className="text-white/40" />
+        )}
       </button>
 
       {open && (
@@ -97,13 +105,16 @@ const JobPreferences = ({ onSaved, forceOpen = false }) => {
           ) : (
             <>
               <div>
-                <label className="block text-xs font-bold uppercase tracking-wider text-white/40 mb-2 flex items-center gap-2">
+                <p
+                  id="seeking-type-label"
+                  className="block text-xs font-bold uppercase tracking-wider text-white/40 mb-2 flex items-center gap-2"
+                >
                   I&apos;m looking for
                   <span className="text-[10px] font-bold normal-case tracking-normal text-purple-300 bg-purple-500/10 border border-purple-500/20 rounded-full px-2 py-0.5">
                     Required
                   </span>
-                </label>
-                <div className="space-y-2">
+                </p>
+                <div className="space-y-2" role="radiogroup" aria-labelledby="seeking-type-label">
                   {SEEKING_OPTS.map((opt) => (
                     <label
                       key={opt.value}
@@ -126,50 +137,77 @@ const JobPreferences = ({ onSaved, forceOpen = false }) => {
                   ))}
                 </div>
                 <p className="text-white/25 text-[11px] mt-1.5">
-                  Determines which roles you can see at all — not just how they&apos;re ranked. e.g. picking
-                  &quot;Internships only&quot; hides fresher full-time roles too, not just senior ones.
+                  Determines which roles you can see at all — not just how they&apos;re ranked. e.g.
+                  picking &quot;Internships only&quot; hides fresher full-time roles too, not just
+                  senior ones.
                 </p>
               </div>
 
               <div>
-                <label className="block text-xs font-bold uppercase tracking-wider text-white/40 mb-2">
+                <label
+                  htmlFor="jobpreferences-field-143"
+                  className="block text-xs font-bold uppercase tracking-wider text-white/40 mb-2"
+                >
                   Job-hunt intent
                 </label>
                 <textarea
+                  id="jobpreferences-field-143"
                   value={intentText}
                   onChange={(e) => setIntentText(e.target.value)}
                   rows={3}
                   placeholder="e.g. Backend / ML engineer roles at early-stage startups; open to remote. Pivoting from frontend."
                   className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm text-white placeholder:text-white/25 focus:outline-none focus:border-purple-500/50"
                 />
-                <p className="text-white/25 text-[11px] mt-1.5">Tells matching what you want next — weighted alongside your resume.</p>
+                <p className="text-white/25 text-[11px] mt-1.5">
+                  Tells matching what you want next — weighted alongside your resume.
+                </p>
               </div>
 
               <div>
-                <label className="block text-xs font-bold uppercase tracking-wider text-white/40 mb-2">Primary country of job search</label>
+                <label
+                  htmlFor="jobpreferences-field-159"
+                  className="block text-xs font-bold uppercase tracking-wider text-white/40 mb-2"
+                >
+                  Primary country of job search
+                </label>
                 <select
+                  id="jobpreferences-field-159"
                   value={country}
                   onChange={(e) => setCountry(e.target.value)}
                   className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-purple-500/50"
                 >
-                  <option value="" className="bg-surface-solid">Select your country…</option>
+                  <option value="" className="bg-surface-solid">
+                    Select your country…
+                  </option>
                   {COUNTRIES.map((c) => (
-                    <option key={c.code} value={c.code} className="bg-surface-solid">{c.label} ({c.code})</option>
+                    <option key={c.code} value={c.code} className="bg-surface-solid">
+                      {c.label} ({c.code})
+                    </option>
                   ))}
                 </select>
-                <p className="text-white/25 text-[11px] mt-1.5">You&apos;ll only see openings in this country.</p>
+                <p className="text-white/25 text-[11px] mt-1.5">
+                  You&apos;ll only see openings in this country.
+                </p>
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-xs font-bold uppercase tracking-wider text-white/40 mb-2">Work style</label>
+                  <label
+                    htmlFor="jobpreferences-field-183"
+                    className="block text-xs font-bold uppercase tracking-wider text-white/40 mb-2"
+                  >
+                    Work style
+                  </label>
                   <select
+                    id="jobpreferences-field-183"
                     value={remotePref}
                     onChange={(e) => setRemotePref(e.target.value)}
                     className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-purple-500/50 capitalize"
                   >
                     {REMOTE_OPTS.map((o) => (
-                      <option key={o} value={o} className="bg-surface-solid capitalize">{o}</option>
+                      <option key={o} value={o} className="bg-surface-solid capitalize">
+                        {o}
+                      </option>
                     ))}
                   </select>
                 </div>
@@ -177,27 +215,42 @@ const JobPreferences = ({ onSaved, forceOpen = false }) => {
                   {/* Drives which roles are shown at all — we infer it from the
                       résumé, but only the user knows about career changes,
                       gap years, or experience their résumé doesn't date. */}
-                  <label className="block text-xs font-bold uppercase tracking-wider text-white/40 mb-2">
+                  <label
+                    htmlFor="jobpreferences-field-202"
+                    className="block text-xs font-bold uppercase tracking-wider text-white/40 mb-2"
+                  >
                     Years of experience
                   </label>
                   <input
+                    id="jobpreferences-field-202"
                     type="number"
                     min="0"
                     max="50"
                     step="0.5"
                     value={statedYears}
                     onChange={(e) => setStatedYears(e.target.value)}
-                    placeholder={inferredYears != null ? `We estimated ${inferredYears} from your resume` : "e.g. 1.5"}
+                    placeholder={
+                      inferredYears != null
+                        ? `We estimated ${inferredYears} from your resume`
+                        : "e.g. 1.5"
+                    }
                     className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-sm text-white placeholder:text-white/25 focus:outline-none focus:border-purple-500/50"
                   />
                   <p className="text-[11px] text-white/35 mt-1.5 leading-relaxed">
-                    Full-time work only — exclude internships. This decides which roles you&apos;re shown, so
-                    setting it yourself beats our estimate. Leave blank to keep using the estimate.
+                    Full-time work only — exclude internships. This decides which roles you&apos;re
+                    shown, so setting it yourself beats our estimate. Leave blank to keep using the
+                    estimate.
                   </p>
                 </div>
                 <div>
-                  <label className="block text-xs font-bold uppercase tracking-wider text-white/40 mb-2">Min salary (annual)</label>
+                  <label
+                    htmlFor="jobpreferences-field-226"
+                    className="block text-xs font-bold uppercase tracking-wider text-white/40 mb-2"
+                  >
+                    Min salary (annual)
+                  </label>
                   <input
+                    id="jobpreferences-field-226"
                     type="number"
                     value={minSalary}
                     onChange={(e) => setMinSalary(e.target.value)}
@@ -208,8 +261,14 @@ const JobPreferences = ({ onSaved, forceOpen = false }) => {
               </div>
 
               <div>
-                <label className="block text-xs font-bold uppercase tracking-wider text-white/40 mb-2">Target roles (comma-separated)</label>
+                <label
+                  htmlFor="jobpreferences-field-240"
+                  className="block text-xs font-bold uppercase tracking-wider text-white/40 mb-2"
+                >
+                  Target roles (comma-separated)
+                </label>
                 <input
+                  id="jobpreferences-field-240"
                   value={targetRoles}
                   onChange={(e) => setTargetRoles(e.target.value)}
                   placeholder="e.g. Backend Engineer, ML Engineer"
@@ -226,7 +285,9 @@ const JobPreferences = ({ onSaved, forceOpen = false }) => {
                   {saving ? <Loader2 size={16} className="animate-spin" /> : <Check size={16} />}
                   {saving ? "Saving…" : "Save & refresh matches"}
                 </button>
-                {savedAt && !saving && <span className="text-green-400 text-xs font-semibold">Saved ✓</span>}
+                {savedAt && !saving && (
+                  <span className="text-green-400 text-xs font-semibold">Saved ✓</span>
+                )}
               </div>
             </>
           )}

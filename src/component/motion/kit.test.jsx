@@ -1,5 +1,5 @@
-import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { render, screen } from "@testing-library/react";
+import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { MaskLines } from "./kit";
 
 /**
@@ -22,7 +22,9 @@ let observed;
 beforeEach(() => {
   observed = [];
   class IO {
-    constructor(cb) { this.cb = cb; }
+    constructor(cb) {
+      this.cb = cb;
+    }
     observe(el) {
       observed.push(el);
       // Report it as visible, which is what a real browser does for the
@@ -31,12 +33,16 @@ beforeEach(() => {
     }
     unobserve() {}
     disconnect() {}
-    takeRecords() { return []; }
+    takeRecords() {
+      return [];
+    }
   }
   vi.stubGlobal("IntersectionObserver", IO);
 });
 
-afterEach(() => { vi.unstubAllGlobals(); });
+afterEach(() => {
+  vi.unstubAllGlobals();
+});
 
 describe("MaskLines", () => {
   it("renders every line's text", () => {

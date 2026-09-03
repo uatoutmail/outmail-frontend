@@ -1,22 +1,23 @@
 "use client";
+import { Search, Download, Mail, BriefcaseBusiness } from "lucide-react";
 import { useState, useEffect } from "react";
-import TPOPageShell from "@/component/tpo/TPOPageShell";
-import { Search, Filter, Download, Mail, TrendingUp, BriefcaseBusiness, ArrowUpRight } from "lucide-react";
 import { toast } from "sonner";
 import { tpoColor } from "@/component/tpo/tpoColors";
+import TPOPageShell from "@/component/tpo/TPOPageShell";
 import { api } from "@/lib/api";
+import { logger } from "@/lib/logger";
 
 const scoreTier = (s) => {
   if (s >= 90) return { label: "Top Performer", cls: "bg-purple-100 text-purple-700" };
-  if (s >= 70) return { label: "On Track",      cls: "bg-green-100 text-green-700"   };
-  if (s >= 50) return { label: "Needs Nudge",   cls: "bg-yellow-100 text-yellow-700" };
+  if (s >= 70) return { label: "On Track", cls: "bg-green-100 text-green-700" };
+  if (s >= 50) return { label: "Needs Nudge", cls: "bg-yellow-100 text-yellow-700" };
   return { label: "At Risk", cls: "bg-red-100 text-red-600" };
 };
 
 export default function StudentsPage() {
-  const [search, setSearch]   = useState("");
-  const [branch, setBranch]   = useState("all");
-  const [status, setStatus]   = useState("all");
+  const [search, setSearch] = useState("");
+  const [branch, setBranch] = useState("all");
+  const [status, setStatus] = useState("all");
   const [selected, setSelected] = useState(null);
   const [data, setData] = useState({ ALL_STUDENTS: [] });
   const [loading, setLoading] = useState(true);
@@ -32,7 +33,7 @@ export default function StudentsPage() {
           setData({ ALL_STUDENTS: res.data.students });
         }
       } catch (err) {
-        console.error("Failed to fetch students data", err);
+        logger.error("Failed to fetch students data", err);
       } finally {
         setLoading(false);
       }
@@ -42,7 +43,10 @@ export default function StudentsPage() {
 
   const { ALL_STUDENTS } = data;
 
-  const branches = ["all", ...Array.from(new Set((ALL_STUDENTS || []).map((s) => s.branch).filter(Boolean)))];
+  const branches = [
+    "all",
+    ...Array.from(new Set((ALL_STUDENTS || []).map((s) => s.branch).filter(Boolean))),
+  ];
 
   const filtered = (ALL_STUDENTS || []).filter((s) => {
     const q = search.toLowerCase();
@@ -57,22 +61,41 @@ export default function StudentsPage() {
 
   if (loading) {
     return (
-      <TPOPageShell title="Students" subtitle="All subscribed students, their engagement scores and off-campus activity">
-        <div className="flex justify-center items-center h-64 text-gray-500">Loading students data...</div>
+      <TPOPageShell
+        title="Students"
+        subtitle="All subscribed students, their engagement scores and off-campus activity"
+      >
+        <div className="flex justify-center items-center h-64 text-gray-500">
+          Loading students data...
+        </div>
       </TPOPageShell>
     );
   }
 
   return (
-    <TPOPageShell title="Students" subtitle="All subscribed students, their engagement scores and off-campus activity">
-
+    <TPOPageShell
+      title="Students"
+      subtitle="All subscribed students, their engagement scores and off-campus activity"
+    >
       {/* Summary bar */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-6">
         {[
-          { label: "Total Students",    value: (ALL_STUDENTS || []).length,                              color: "purple" },
-          { label: "Active",            value: (ALL_STUDENTS || []).filter(s=>s.status==="active").length, color: "green"  },
-          { label: "Top Performers",    value: (ALL_STUDENTS || []).filter(s=>s.score>=90).length,       color: "blue"   },
-          { label: "Need Attention",    value: (ALL_STUDENTS || []).filter(s=>s.score<50).length,        color: "red"    },
+          { label: "Total Students", value: (ALL_STUDENTS || []).length, color: "purple" },
+          {
+            label: "Active",
+            value: (ALL_STUDENTS || []).filter((s) => s.status === "active").length,
+            color: "green",
+          },
+          {
+            label: "Top Performers",
+            value: (ALL_STUDENTS || []).filter((s) => s.score >= 90).length,
+            color: "blue",
+          },
+          {
+            label: "Need Attention",
+            value: (ALL_STUDENTS || []).filter((s) => s.score < 50).length,
+            color: "red",
+          },
         ].map(({ label, value, color }) => (
           <div key={label} className={`bg-white rounded-xl border border-gray-200 p-4 shadow-sm`}>
             <p className="text-2xl font-bold text-gray-900">{value}</p>
@@ -86,12 +109,29 @@ export default function StudentsPage() {
         <div className="px-6 py-4 border-b border-gray-100 flex flex-wrap items-center gap-3">
           <div className="flex items-center gap-2 bg-gray-50 border border-gray-200 rounded-lg px-3 py-2 flex-1 min-w-48">
             <Search size={13} className="text-gray-400" />
-            <input value={search} onChange={e=>setSearch(e.target.value)} placeholder="Search by name or branch…" className="text-sm bg-transparent text-gray-700 placeholder-gray-400 focus:outline-none w-full" />
+            <input
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              placeholder="Search by name or branch…"
+              className="text-sm bg-transparent text-gray-700 placeholder-gray-400 focus:outline-none w-full"
+            />
           </div>
-          <select value={branch} onChange={e=>setBranch(e.target.value)} className="text-sm border border-gray-200 rounded-lg px-3 py-2 bg-white text-gray-600 focus:outline-none">
-            {branches.map(b=><option key={b} value={b}>{b==="all"?"All Branches":b}</option>)}
+          <select
+            value={branch}
+            onChange={(e) => setBranch(e.target.value)}
+            className="text-sm border border-gray-200 rounded-lg px-3 py-2 bg-white text-gray-600 focus:outline-none"
+          >
+            {branches.map((b) => (
+              <option key={b} value={b}>
+                {b === "all" ? "All Branches" : b}
+              </option>
+            ))}
           </select>
-          <select value={status} onChange={e=>setStatus(e.target.value)} className="text-sm border border-gray-200 rounded-lg px-3 py-2 bg-white text-gray-600 focus:outline-none">
+          <select
+            value={status}
+            onChange={(e) => setStatus(e.target.value)}
+            className="text-sm border border-gray-200 rounded-lg px-3 py-2 bg-white text-gray-600 focus:outline-none"
+          >
             <option value="all">All Status</option>
             <option value="active">Active</option>
             <option value="inactive">Inactive</option>
@@ -100,7 +140,7 @@ export default function StudentsPage() {
             onClick={() => toast("Student export is coming soon.")}
             className="flex items-center gap-1.5 text-sm text-gray-500 border border-gray-200 rounded-lg px-3 py-2 hover:bg-gray-50 transition"
           >
-            <Download size={13}/> Export
+            <Download size={13} /> Export
           </button>
         </div>
 
@@ -109,9 +149,16 @@ export default function StudentsPage() {
           <table className="w-full text-sm">
             <thead className="bg-gray-50">
               <tr>
-                {["Student","Branch","Year","Emails","Jobs","Score","Status","Actions"].map(h=>(
-                  <th key={h} className="text-left text-xs font-medium text-gray-500 px-5 py-3 whitespace-nowrap">{h}</th>
-                ))}
+                {["Student", "Branch", "Year", "Emails", "Jobs", "Score", "Status", "Actions"].map(
+                  (h) => (
+                    <th
+                      key={h}
+                      className="text-left text-xs font-medium text-gray-500 px-5 py-3 whitespace-nowrap"
+                    >
+                      {h}
+                    </th>
+                  )
+                )}
               </tr>
             </thead>
             <tbody>
@@ -119,15 +166,27 @@ export default function StudentsPage() {
                 const tier = scoreTier(s.score || 0);
                 const name = s.name || s.display_name || "Unknown";
                 return (
-                  <tr key={s.id || name} className="border-t border-gray-50 hover:bg-purple-50/30 transition cursor-pointer" onClick={()=>setSelected(s===selected?null:s)}>
+                  <tr
+                    key={s.id || name}
+                    className="border-t border-gray-50 hover:bg-purple-50/30 transition cursor-pointer"
+                    onClick={() => setSelected(s === selected ? null : s)}
+                  >
                     <td className="px-5 py-3">
                       <div className="flex items-center gap-2.5">
                         <div className="w-8 h-8 rounded-full bg-purple-100 text-purple-700 text-xs font-bold flex items-center justify-center flex-shrink-0">
-                          {name.split(" ").map(n=>n[0]).join("").substring(0,2)}
+                          {name
+                            .split(" ")
+                            .map((n) => n[0])
+                            .join("")
+                            .substring(0, 2)}
                         </div>
                         <div>
                           <p className="font-medium text-gray-800">{name}</p>
-                          <p className="text-xs text-gray-400">Joined {s.joined || (s.created_at ? new Date(s.created_at).toLocaleDateString() : "-")}</p>
+                          <p className="text-xs text-gray-400">
+                            Joined{" "}
+                            {s.joined ||
+                              (s.created_at ? new Date(s.created_at).toLocaleDateString() : "-")}
+                          </p>
                         </div>
                       </div>
                     </td>
@@ -138,17 +197,26 @@ export default function StudentsPage() {
                     <td className="px-5 py-3">
                       <div className="flex items-center gap-1.5">
                         <span className="text-sm font-bold text-gray-800">{s.score || 0}</span>
-                        <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${tier.cls}`}>{tier.label}</span>
+                        <span
+                          className={`text-xs px-2 py-0.5 rounded-full font-medium ${tier.cls}`}
+                        >
+                          {tier.label}
+                        </span>
                       </div>
                     </td>
                     <td className="px-5 py-3">
-                      <span className={`text-xs px-2.5 py-0.5 rounded-full font-medium capitalize ${(s.status || "active")==="active"?"bg-green-100 text-green-700":"bg-gray-100 text-gray-500"}`}>
+                      <span
+                        className={`text-xs px-2.5 py-0.5 rounded-full font-medium capitalize ${(s.status || "active") === "active" ? "bg-green-100 text-green-700" : "bg-gray-100 text-gray-500"}`}
+                      >
                         {s.status || "active"}
                       </span>
                     </td>
                     <td className="px-5 py-3">
                       <button
-                        onClick={(e) => { e.stopPropagation(); toast("Detailed student profiles are coming soon."); }}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          toast("Detailed student profiles are coming soon.");
+                        }}
                         className="text-xs text-purple-600 font-medium hover:underline"
                       >
                         View
@@ -159,7 +227,9 @@ export default function StudentsPage() {
               })}
               {filtered.length === 0 && (
                 <tr>
-                  <td colSpan={8} className="px-5 py-4 text-center text-sm text-gray-400">No students found</td>
+                  <td colSpan={8} className="px-5 py-4 text-center text-sm text-gray-400">
+                    No students found
+                  </td>
                 </tr>
               )}
             </tbody>
@@ -169,13 +239,18 @@ export default function StudentsPage() {
         {/* Expanded row detail */}
         {selected && (
           <div className="border-t border-purple-100 bg-purple-50/40 px-6 py-5">
-            <p className="text-sm font-semibold text-gray-800 mb-3">{(selected.name || selected.display_name)} — Activity Breakdown</p>
+            <p className="text-sm font-semibold text-gray-800 mb-3">
+              {selected.name || selected.display_name} — Activity Breakdown
+            </p>
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
               {[
-                { icon: Mail,            label: "Emails Sent",     value: selected.emails || 0       },
-                { icon: BriefcaseBusiness, label: "Jobs Tracked",  value: selected.jobs || 0         },
+                { icon: Mail, label: "Emails Sent", value: selected.emails || 0 },
+                { icon: BriefcaseBusiness, label: "Jobs Tracked", value: selected.jobs || 0 },
               ].map(({ icon: Icon, label, value }) => (
-                <div key={label} className="bg-white rounded-lg border border-purple-100 px-4 py-3 flex items-center gap-3">
+                <div
+                  key={label}
+                  className="bg-white rounded-lg border border-purple-100 px-4 py-3 flex items-center gap-3"
+                >
                   <Icon size={16} className="text-purple-500" />
                   <div>
                     <p className="text-xs text-gray-400">{label}</p>
@@ -188,7 +263,9 @@ export default function StudentsPage() {
         )}
 
         <div className="px-6 py-3 border-t border-gray-100 flex justify-between items-center">
-          <p className="text-xs text-gray-400">Showing {filtered.length} of {(ALL_STUDENTS || []).length} students</p>
+          <p className="text-xs text-gray-400">
+            Showing {filtered.length} of {(ALL_STUDENTS || []).length} students
+          </p>
           <button
             onClick={() => toast("Student invites are coming soon.")}
             className="text-xs text-purple-600 font-medium hover:underline"

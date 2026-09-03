@@ -17,11 +17,11 @@
  * the payment is gone.
  */
 
-const KEY = 'outmail.acknowledgedPlan';
+const KEY = "outmail.acknowledgedPlan";
 
 /** The plan we should confirm to the user right now, or null. */
 export function pendingActivation(user) {
-  if (typeof window === 'undefined') return null;
+  if (typeof window === "undefined") return null;
   const code = user?.currentPlan?.code;
   if (!code) return null;
   try {
@@ -33,10 +33,14 @@ export function pendingActivation(user) {
 
 /** Record that the user has now seen their plan confirmed. */
 export function acknowledge(user) {
-  if (typeof window === 'undefined') return;
+  if (typeof window === "undefined") return;
   const code = user?.currentPlan?.code;
   if (!code) return;
-  try { localStorage.setItem(KEY, code); } catch { /* nothing to do */ }
+  try {
+    localStorage.setItem(KEY, code);
+  } catch {
+    /* nothing to do */
+  }
 }
 
 /**
@@ -45,6 +49,10 @@ export function acknowledge(user) {
  * machines are shared constantly.
  */
 export function reset() {
-  if (typeof window === 'undefined') return;
-  try { localStorage.removeItem(KEY); } catch { /* nothing to do */ }
+  if (typeof window === "undefined") return;
+  try {
+    localStorage.removeItem(KEY);
+  } catch {
+    /* nothing to do */
+  }
 }

@@ -1,17 +1,17 @@
-import React, { useState } from "react";
 import { ChevronDown } from "lucide-react";
-import { useAuth } from "@/context/AuthContext";
+import React, { useState } from "react";
 import FundingTrends from "./FundingTrends";
-import OutreachStatPills from "./OutreachStatPills";
 import HiringSpotlight from "./HiringSpotlight";
-import RecentOutreachFeed from "./RecentOutreachFeed";
 import HotHiringNews from "./HotHiringNews";
 import MailingAgentPanel from "./MailingAgentPanel";
+import OutreachStatPills from "./OutreachStatPills";
+import RecentOutreachFeed from "./RecentOutreachFeed";
 import WeeklyIntelligenceCard from "./WeeklyIntelligenceCard";
+import { useAuth } from "@/context/AuthContext";
 
 const DashboardOverview = () => {
   const { user } = useAuth();
-  const [selectedPeriod, setSelectedPeriod] = useState('7');
+  const [selectedPeriod, setSelectedPeriod] = useState("7");
 
   return (
     <div className="flex flex-col p-5 gap-4 pb-8">
@@ -19,8 +19,8 @@ const DashboardOverview = () => {
       <div className="flex flex-col gap-3">
         <div className="flex items-center justify-between">
           <h2 className="text-lg font-bold text-white">
-            Welcome back,{' '}
-            <span className="text-purple-400">{user?.display_name || user?.name || 'User'}</span> 
+            Welcome back,{" "}
+            <span className="text-purple-400">{user?.display_name || user?.name || "User"}</span>
           </h2>
           <div className="relative inline-block">
             <select
@@ -42,31 +42,31 @@ const DashboardOverview = () => {
 
       {/* Row 2: Industry Funding Trends (left, wider 3/5) + Hot Hiring News (right 2/5) */}
       <div className="grid grid-cols-1 lg:grid-cols-5 gap-4">
-        <div className="lg:col-span-3" style={{ minHeight: '340px' }}>
+        <div className="lg:col-span-3" style={{ minHeight: "340px" }}>
           <FundingTrends selectedPeriod={selectedPeriod} onPeriodChange={setSelectedPeriod} />
         </div>
-        <div className="lg:col-span-2" style={{ minHeight: '340px' }}>
+        <div className="lg:col-span-2" style={{ minHeight: "340px" }}>
           <HotHiringNews />
         </div>
       </div>
 
       {/* Row 3: This Week's Market Read — the weekly intelligence that drives
           each student's outreach batches (OUT-177) */}
-      <div style={{ minHeight: '260px' }}>
+      <div style={{ minHeight: "260px" }}>
         <WeeklyIntelligenceCard />
       </div>
 
       {/* Row 4: Mailing Agent (desktop sending progress) full width */}
-      <div style={{ minHeight: '280px' }}>
+      <div style={{ minHeight: "280px" }}>
         <MailingAgentPanel />
       </div>
 
       {/* Row 4: Companies Hiring Now (left) + Recent Outreach Feed (right) */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-        <div style={{ minHeight: '240px' }}>
+        <div style={{ minHeight: "240px" }}>
           <HiringSpotlight />
         </div>
-        <div style={{ minHeight: '240px' }}>
+        <div style={{ minHeight: "240px" }}>
           <RecentOutreachFeed />
         </div>
       </div>

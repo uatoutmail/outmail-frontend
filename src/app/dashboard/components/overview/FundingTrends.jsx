@@ -1,18 +1,19 @@
+import { TrendingUp, MoreHorizontal } from "lucide-react";
 import React, { useState, useEffect } from "react";
-import { 
-  BarChart, 
-  Bar, 
-  XAxis, 
-  YAxis, 
-  CartesianGrid, 
-  Tooltip, 
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
   ResponsiveContainer,
   PieChart,
   Pie,
-  Cell
-} from 'recharts';
-import { TrendingUp, MoreHorizontal } from "lucide-react";
+  Cell,
+} from "recharts";
 import { api } from "@/lib/api";
+import { logger } from "@/lib/logger";
 
 // Palette reused across industries so the chart stays on-brand regardless of
 // which industries actually appear in the data.
@@ -20,14 +21,22 @@ import { api } from "@/lib/api";
 // distinguishable from each other, so these deliberately stay a spread rather
 // than folding into the two brand purples — a chart where every line is the
 // same purple is unreadable. Only the first series is brand-anchored.
-const INDUSTRY_COLORS = ['#6C00FF', '#06B6D4', '#10B981', '#F59E0B', '#EF4444', '#AD46FF', '#3B82F6'];
+const INDUSTRY_COLORS = [
+  "#6C00FF",
+  "#06B6D4",
+  "#10B981",
+  "#F59E0B",
+  "#EF4444",
+  "#AD46FF",
+  "#3B82F6",
+];
 
 // Real funding data (OUT-173): MarketSignal rows of kind 'funding' produced by
 // the funding ingestion adapter, aggregated by industry. Amounts are only what
 // was parsed from real headlines — nothing is invented.
 // Values are in millions USD as parsed from headlines.
 const formatAmount = (amountM) => {
-  if (!amountM) return '$0';
+  if (!amountM) return "$0";
   if (amountM >= 1000) return `$${(amountM / 1000).toFixed(1)}B`;
   return `$${Math.round(amountM)}M`;
 };
@@ -40,20 +49,18 @@ const CustomTooltip = ({ active, payload, label }) => {
     return (
       <div className="bg-white/90 backdrop-blur-md p-3 rounded-lg shadow-lg border border-white/20">
         <p className="text-gray-800 font-semibold">{label}</p>
-        <p className="text-purple-600 font-bold">
-          {formatAmount(payload[0].value)}
-        </p>
+        <p className="text-purple-600 font-bold">{formatAmount(payload[0].value)}</p>
       </div>
     );
   }
   return null;
 };
 
-const FundingTrends = ({ selectedPeriod, onPeriodChange }) => {
+const FundingTrends = ({ selectedPeriod }) => {
   const [fundingData, setFundingData] = useState([]);
   const [totals, setTotals] = useState({ events: 0, amountM: 0 });
   const [loading, setLoading] = useState(true);
-  const [viewType, setViewType] = useState('bar');
+  const [viewType, setViewType] = useState("bar");
 
   useEffect(() => {
     let active = true;
@@ -71,7 +78,7 @@ const FundingTrends = ({ selectedPeriod, onPeriodChange }) => {
         setFundingData(industries);
         setTotals({ events: res.data?.totalEvents || 0, amountM: res.data?.totalAmountM || 0 });
       } catch (err) {
-        console.error('[FundingTrends] Failed to load:', err);
+        logger.error("[FundingTrends] Failed to load:", err);
         if (active) {
           setFundingData([]);
           setTotals({ events: 0, amountM: 0 });
@@ -86,9 +93,7 @@ const FundingTrends = ({ selectedPeriod, onPeriodChange }) => {
     };
   }, [selectedPeriod]);
 
-  const topThreeIndustries = [...fundingData]
-    .sort((a, b) => b.amount - a.amount)
-    .slice(0, 3);
+  const topThreeIndustries = [...fundingData].sort((a, b) => b.amount - a.amount).slice(0, 3);
 
   return (
     <div className="bg-white/10 backdrop-blur-md rounded-xl p-3 text-white shadow-xl border border-white/20 h-full flex flex-col">
@@ -99,18 +104,22 @@ const FundingTrends = ({ selectedPeriod, onPeriodChange }) => {
             Industry Funding Trends
           </h3>
           <p className="text-[10px] text-white/50 mt-0.5">
-            Last {selectedPeriod} days · {totals.events} round{totals.events === 1 ? '' : 's'}
+            Last {selectedPeriod} days · {totals.events} round{totals.events === 1 ? "" : "s"}
             {totals.amountM > 0 && (
               <>
-                {' '}· <span className="text-green-400 font-bold">{formatAmount(totals.amountM)}</span> disclosed
+                {" "}
+                · <span className="text-green-400 font-bold">
+                  {formatAmount(totals.amountM)}
+                </span>{" "}
+                disclosed
               </>
             )}
           </p>
         </div>
         <button
-          onClick={() => setViewType(viewType === 'bar' ? 'pie' : 'bar')}
+          onClick={() => setViewType(viewType === "bar" ? "pie" : "bar")}
           className="p-1.5 bg-white/10 hover:bg-white/20 rounded-lg transition-colors"
-          title={`Switch to ${viewType === 'bar' ? 'pie' : 'bar'} chart`}
+          title={`Switch to ${viewType === "bar" ? "pie" : "bar"} chart`}
         >
           <MoreHorizontal size={14} />
         </button>
@@ -131,14 +140,22 @@ const FundingTrends = ({ selectedPeriod, onPeriodChange }) => {
         </div>
       ) : (
         <>
-          <div className="flex-1 min-h-0 mb-2" style={{ minHeight: '180px' }}>
+          <div className="flex-1 min-h-0 mb-2" style={{ minHeight: "180px" }}>
             <ResponsiveContainer width="100%" height="100%">
-              {viewType === 'bar' ? (
-                <BarChart data={fundingData} margin={{ top: 4, right: 4, bottom: 30, left: -10 }} barCategoryGap="15%">
-                  <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.06)" vertical={false} />
+              {viewType === "bar" ? (
+                <BarChart
+                  data={fundingData}
+                  margin={{ top: 4, right: 4, bottom: 30, left: -10 }}
+                  barCategoryGap="15%"
+                >
+                  <CartesianGrid
+                    strokeDasharray="3 3"
+                    stroke="rgba(255,255,255,0.06)"
+                    vertical={false}
+                  />
                   <XAxis
                     dataKey="industry"
-                    tick={{ fill: 'rgba(255,255,255,0.45)', fontSize: 9 }}
+                    tick={{ fill: "rgba(255,255,255,0.45)", fontSize: 9 }}
                     angle={-35}
                     textAnchor="end"
                     height={45}
@@ -146,12 +163,15 @@ const FundingTrends = ({ selectedPeriod, onPeriodChange }) => {
                     tickLine={false}
                   />
                   <YAxis
-                    tick={{ fill: 'rgba(255,255,255,0.45)', fontSize: 9 }}
+                    tick={{ fill: "rgba(255,255,255,0.45)", fontSize: 9 }}
                     tickFormatter={formatAmount}
                     axisLine={false}
                     tickLine={false}
                   />
-                  <Tooltip content={<CustomTooltip />} cursor={{ fill: 'rgba(255,255,255,0.04)' }} />
+                  <Tooltip
+                    content={<CustomTooltip />}
+                    cursor={{ fill: "rgba(255,255,255,0.04)" }}
+                  />
                   <Bar dataKey="amount" radius={[4, 4, 0, 0]} maxBarSize={52}>
                     {fundingData.map((entry, index) => (
                       <Cell key={`cell-${index}`} fill={entry.color} />
@@ -192,7 +212,9 @@ const FundingTrends = ({ selectedPeriod, onPeriodChange }) => {
                     style={{ backgroundColor: industry.color }}
                   />
                   <span className="text-[10px] text-white/70">{industry.industry}</span>
-                  <span className="text-[10px] font-bold text-green-400">{formatAmount(industry.amount)}</span>
+                  <span className="text-[10px] font-bold text-green-400">
+                    {formatAmount(industry.amount)}
+                  </span>
                 </div>
               ))}
             </div>

@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef } from "react";
 
 /**
  * Load on mount, and optionally re-load on an interval — but only while the
@@ -24,7 +24,9 @@ export function usePolling(fn, everyMs = 0) {
   // Kept in a ref so a caller passing an inline arrow doesn't tear down and
   // recreate the effect on every render.
   const saved = useRef(fn);
-  useEffect(() => { saved.current = fn; }, [fn]);
+  useEffect(() => {
+    saved.current = fn;
+  }, [fn]);
 
   useEffect(() => {
     const run = () => saved.current?.();
@@ -35,23 +37,30 @@ export function usePolling(fn, everyMs = 0) {
     if (!everyMs) return undefined;
 
     let timer = null;
-    const start = () => { if (!timer) timer = setInterval(run, everyMs); };
-    const stop = () => { if (timer) { clearInterval(timer); timer = null; } };
+    const start = () => {
+      if (!timer) timer = setInterval(run, everyMs);
+    };
+    const stop = () => {
+      if (timer) {
+        clearInterval(timer);
+        timer = null;
+      }
+    };
 
     const onVisibility = () => {
       if (document.hidden) {
         stop();
       } else {
-        run();   // catch up immediately rather than showing stale data
+        run(); // catch up immediately rather than showing stale data
         start();
       }
     };
 
     if (!document.hidden) start();
-    document.addEventListener('visibilitychange', onVisibility);
+    document.addEventListener("visibilitychange", onVisibility);
     return () => {
       stop();
-      document.removeEventListener('visibilitychange', onVisibility);
+      document.removeEventListener("visibilitychange", onVisibility);
     };
   }, [everyMs]);
 }

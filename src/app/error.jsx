@@ -1,8 +1,8 @@
 "use client";
 
-import { useEffect } from "react";
 import * as Sentry from "@sentry/nextjs";
-import ErrorScreen from "@/components/error/ErrorScreen";
+import { useEffect } from "react";
+import ErrorScreen from "@/component/error/ErrorScreen";
 
 // Route-level error boundary. Catches anything thrown while rendering a page
 // or in a server component, which previously fell through to Next's default

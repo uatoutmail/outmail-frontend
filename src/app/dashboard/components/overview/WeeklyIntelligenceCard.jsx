@@ -1,7 +1,8 @@
 "use client";
-import React, { useEffect, useState } from "react";
 import { Sparkles, Building2 } from "lucide-react";
+import React, { useEffect, useState } from "react";
 import { api } from "@/lib/api";
+import { logger } from "@/lib/logger";
 
 // This week's market read (OUT-177): a user-facing surface of the Saturday
 // weekly-intelligence run — the same analysis that decides which companies
@@ -17,7 +18,7 @@ const WeeklyIntelligenceCard = () => {
         const res = await api.get("/api/outreach/weekly-intelligence");
         if (active) setIntel(res.data?.intelligence || null);
       } catch (err) {
-        console.error("[WeeklyIntelligence] Failed to load:", err);
+        logger.error("[WeeklyIntelligence] Failed to load:", err);
         if (active) setIntel(null);
       } finally {
         if (active) setLoading(false);

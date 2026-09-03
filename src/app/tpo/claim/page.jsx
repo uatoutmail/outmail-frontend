@@ -1,13 +1,13 @@
-'use client';
+"use client";
 
-import { useEffect, useRef, useState } from 'react';
-import { useRouter } from 'next/navigation';
-import Link from 'next/link';
-import Image from 'next/image';
-import Wordmark from '@/component/ui/wordmark';
-import { Loader2, CheckCircle2, XCircle } from 'lucide-react';
-import { api } from '@/lib/api';
-import { useAuth } from '@/context/AuthContext';
+import { Loader2, CheckCircle2, XCircle } from "lucide-react";
+import Image from "next/image";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useEffect, useRef, useState } from "react";
+import Wordmark from "@/component/ui/wordmark";
+import { useAuth } from "@/context/AuthContext";
+import { api } from "@/lib/api";
 
 // OUT-201: the landing page for a TPO invite link
 // (outmail.in/tpo/claim?inviteToken=...). Reads inviteToken from
@@ -25,15 +25,15 @@ export default function TpoClaimPage() {
   const { isAuthenticated, loading, login } = useAuth();
   const router = useRouter();
   const [inviteToken, setInviteToken] = useState(undefined); // undefined = not read yet
-  const [status, setStatus] = useState('idle'); // idle | claiming | success | error
-  const [errorMessage, setErrorMessage] = useState('');
+  const [status, setStatus] = useState("idle"); // idle | claiming | success | error
+  const [errorMessage, setErrorMessage] = useState("");
   const claimAttempted = useRef(false);
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     // window is only available client-side, so this can't happen outside an effect.
     // eslint-disable-next-line react-hooks/set-state-in-effect
-    setInviteToken(params.get('inviteToken') || null);
+    setInviteToken(params.get("inviteToken") || null);
   }, []);
 
   useEffect(() => {
@@ -41,8 +41,10 @@ export default function TpoClaimPage() {
 
     if (!inviteToken) {
       // eslint-disable-next-line react-hooks/set-state-in-effect
-      setStatus('error');
-      setErrorMessage('This link is missing its invite token. Use the link from your invite email directly.');
+      setStatus("error");
+      setErrorMessage(
+        "This link is missing its invite token. Use the link from your invite email directly."
+      );
       return;
     }
 
@@ -53,28 +55,51 @@ export default function TpoClaimPage() {
     }
 
     claimAttempted.current = true;
-    setStatus('claiming');
+    setStatus("claiming");
     (async () => {
       try {
-        await api.post('/api/auth/tpo/claim', { inviteToken });
+        await api.post("/api/auth/tpo/claim", { inviteToken });
         await login(); // refresh AuthContext's user/role before navigating
-        setStatus('success');
-        router.replace('/tpo/dashboard');
+        setStatus("success");
+        router.replace("/tpo/dashboard");
       } catch (err) {
-        setStatus('error');
-        setErrorMessage(err.response?.data?.error || 'This invite link could not be claimed.');
+        setStatus("error");
+        setErrorMessage(err.response?.data?.error || "This invite link could not be claimed.");
       }
     })();
   }, [loading, isAuthenticated, inviteToken, login, router]);
 
   return (
     <main className="min-h-screen bg-background text-white font-syne flex flex-col items-center justify-center p-4 relative overflow-hidden">
-      <div aria-hidden className="absolute top-[10%] left-[5%] w-72 h-72 pointer-events-none" style={{ background: "radial-gradient(circle at center, color-mix(in srgb, var(--brand-primary) 24%, transparent), transparent 70%)" }} />
-      <div aria-hidden className="absolute bottom-[10%] right-[5%] w-72 h-72 pointer-events-none" style={{ background: "radial-gradient(circle at center, color-mix(in srgb, var(--brand-accent) 20%, transparent), transparent 70%)" }} />
+      <div
+        aria-hidden
+        className="absolute top-[10%] left-[5%] w-72 h-72 pointer-events-none"
+        style={{
+          background:
+            "radial-gradient(circle at center, color-mix(in srgb, var(--brand-primary) 24%, transparent), transparent 70%)",
+        }}
+      />
+      <div
+        aria-hidden
+        className="absolute bottom-[10%] right-[5%] w-72 h-72 pointer-events-none"
+        style={{
+          background:
+            "radial-gradient(circle at center, color-mix(in srgb, var(--brand-accent) 20%, transparent), transparent 70%)",
+        }}
+      />
 
       <div className="mb-8 z-10 flex flex-col items-center">
-        <Link href="/" className="flex items-center gap-3 group transition-transform hover:scale-105">
-          <Image src="/logo-nav.png" alt="Outmail Logo" width={50} height={50} className="drop-shadow-[0_0_15px_var(--brand-primary)]" />
+        <Link
+          href="/"
+          className="flex items-center gap-3 group transition-transform hover:scale-105"
+        >
+          <Image
+            src="/logo-nav.png"
+            alt="Outmail Logo"
+            width={50}
+            height={50}
+            className="drop-shadow-[0_0_15px_var(--brand-primary)]"
+          />
           <Wordmark className="text-white text-3xl" />
         </Link>
       </div>
@@ -83,12 +108,12 @@ export default function TpoClaimPage() {
         <div className="glass-card p-8 md:p-10 border border-white/10 bg-surface-panel/40 backdrop-blur-2xl shadow-2xl relative overflow-hidden text-center">
           <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-purple-500 to-transparent opacity-50" />
 
-          {(status === 'idle' || status === 'claiming' || loading) && status !== 'error' ? (
+          {(status === "idle" || status === "claiming" || loading) && status !== "error" ? (
             <div className="py-8 flex flex-col items-center gap-3 text-white/60">
               <Loader2 className="animate-spin" size={28} />
               <p>Setting up your TPO Portal…</p>
             </div>
-          ) : status === 'success' ? (
+          ) : status === "success" ? (
             <div className="py-8 flex flex-col items-center gap-3">
               <CheckCircle2 className="text-emerald-400" size={32} />
               <p className="text-white/80">Taking you to your dashboard…</p>
@@ -98,7 +123,10 @@ export default function TpoClaimPage() {
               <XCircle className="text-red-400" size={32} />
               <h1 className="text-xl font-bold">Couldn&apos;t claim this invite</h1>
               <p className="text-white/60 text-sm">{errorMessage}</p>
-              <Link href="/tpo/login" className="text-purple-400 hover:text-purple-300 text-sm font-medium mt-2">
+              <Link
+                href="/tpo/login"
+                className="text-purple-400 hover:text-purple-300 text-sm font-medium mt-2"
+              >
                 Go to TPO sign in
               </Link>
             </div>

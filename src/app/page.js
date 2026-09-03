@@ -1,13 +1,15 @@
-import Navbar from "@/component/Navbar";
+import { Suspense } from "react";
+import AuthErrorNotice from "@/component/auth/AuthErrorNotice";
 import Footer from "@/component/Footer";
+import ClosingCta from "@/component/landing/ClosingCta";
+import Editorial from "@/component/landing/Editorial";
+import Faq from "@/component/landing/Faq";
 import Hero from "@/component/landing/Hero";
 import KineticBand from "@/component/landing/KineticBand";
-import Editorial from "@/component/landing/Editorial";
+import PricingLedger from "@/component/landing/PricingLedger";
 import Story from "@/component/landing/Story";
 import Validation from "@/component/landing/Validation";
-import PricingLedger from "@/component/landing/PricingLedger";
-import Faq from "@/component/landing/Faq";
-import ClosingCta from "@/component/landing/ClosingCta";
+import Navbar from "@/component/Navbar";
 export const metadata = {
   title: "Outmail | Personalized Cold Outreach & Recruiter Search at Scale",
   description:
@@ -100,6 +102,9 @@ export default function Home() {
           __html: JSON.stringify(softwareApplicationSchema),
         }}
       />
+      <Suspense fallback={null}>
+        <AuthErrorNotice />
+      </Suspense>
       <Navbar variant="dark" />
       {/* Order is the argument: promise, capabilities, proof of the problem,
           price, objections, ask. Pricing sits BEFORE the FAQ because the FAQ

@@ -1,12 +1,31 @@
-"use client";
-
 import React from "react";
-import Navbar from "@/component/Navbar";
 import Footer from "@/component/Footer";
-import PageHeader from "@/component/ui/PageHeader";
-import ContactRouter from "@/component/pages/ContactRouter";
 import Faq from "@/component/landing/Faq";
 import { Cta } from "@/component/motion/kit";
+import Navbar from "@/component/Navbar";
+import ContactRouter from "@/component/pages/ContactRouter";
+import PageHeader from "@/component/ui/PageHeader";
+import { JsonLd, breadcrumbSchema } from "@/lib/structuredData";
+
+export const metadata = {
+  title: "Contact & Support",
+  description:
+    "Questions about your Outmail account, recruiter partnerships, or campus plans for your placement cell. A person replies within 24 hours.",
+  alternates: { canonical: "https://outmail.in/contactus" },
+  openGraph: {
+    title: "Contact & Support | Outmail",
+    description: "Ask us anything — a person replies within 24 hours.",
+    url: "https://outmail.in/contactus",
+    type: "website",
+    images: [{ url: "/image.png", width: 1536, height: 1024, alt: "Contact Outmail" }],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Contact & Support | Outmail",
+    description: "Ask us anything — a person replies within 24 hours.",
+    images: ["/image.png"],
+  },
+};
 
 /**
  * The Company & Legal block that used to sit here was removed by request: the
@@ -21,6 +40,12 @@ import { Cta } from "@/component/motion/kit";
 export default function ContactPage() {
   return (
     <div className="min-h-screen bg-surface-page text-white">
+      <JsonLd
+        schema={breadcrumbSchema([
+          { name: "Home", path: "/" },
+          { name: "Contact", path: "/contactus" },
+        ])}
+      />
       <Navbar variant="dark" />
       <main>
         <PageHeader

@@ -1,24 +1,26 @@
 "use client";
-import React, { useState, useEffect } from "react";
-import { useAuth } from "@/context/AuthContext";
-import DashboardLayout from "@/component/DashboardLayout";
 import {
   LayoutDashboard,
   Mail,
   Users,
   Briefcase,
   SlidersHorizontal,
-  ClipboardList, CreditCard } from "lucide-react";
+  ClipboardList,
+  CreditCard,
+} from "lucide-react";
+import React, { useState, useEffect } from "react";
 
 // Import Components
-import DashboardOverview from "./components/overview/DashboardOverview";
-import ColdOutreachTab from "./components/cold-outreach/ColdOutreachTab";
-import MentorshipTab from "./components/mentorship/MentorshipTab";
-import JobOpeningsTab from "./components/jobs/JobOpeningsTab";
-import SettingsTab from "./components/settings/SettingsTab";
 import AutofillDataTab from "./components/autofill/AutofillDataTab";
-import LockedFeatureOverlay from "./components/LockedFeatureOverlay";
 import BillingTab from "./components/billing/BillingTab";
+import ColdOutreachTab from "./components/cold-outreach/ColdOutreachTab";
+import JobOpeningsTab from "./components/jobs/JobOpeningsTab";
+import LockedFeatureOverlay from "./components/LockedFeatureOverlay";
+import MentorshipTab from "./components/mentorship/MentorshipTab";
+import DashboardOverview from "./components/overview/DashboardOverview";
+import SettingsTab from "./components/settings/SettingsTab";
+import DashboardLayout from "@/component/DashboardLayout";
+import { useAuth, hasStoredToken } from "@/context/AuthContext";
 import { hasFeature, lockReason, UPGRADE_TARGET, daysUntilExpiry } from "@/lib/planAccess";
 import { pendingActivation, acknowledge } from "@/lib/planActivation";
 
@@ -46,17 +48,11 @@ export default function Page() {
   const justActivated = activationDismissed ? null : pendingActivation(user);
 
   // Check if user has stored token
-  const hasStoredToken = () => {
-    if (typeof window !== 'undefined') {
-      return !!localStorage.getItem('authToken');
-    }
-    return false;
-  };
 
   // Redirect if not authenticated
   useEffect(() => {
     if (!loading && !isAuthenticated && !hasStoredToken()) {
-      window.location.href = '/';
+      window.location.href = "/";
     }
   }, [isAuthenticated, loading]);
 
@@ -100,19 +96,26 @@ export default function Page() {
       <ExpiryNotice user={user} onGoToBilling={() => setActiveSection("billing")} />
 
       {justActivated && (
-        <div className="mb-6 rounded-2xl border border-emerald-500/40 bg-emerald-500/10 px-6 py-4 flex items-start justify-between gap-4" role="status">
+        <div
+          className="mb-6 rounded-2xl border border-emerald-500/40 bg-emerald-500/10 px-6 py-4 flex items-start justify-between gap-4"
+          role="status"
+        >
           <div>
             <p className="font-semibold text-emerald-200">
               Your {justActivated.name} plan is active.
             </p>
             <p className="text-sm text-emerald-200/80 mt-1">
-              Your placement year has started — everything is unlocked. You have not been charged twice.
+              Your placement year has started — everything is unlocked. You have not been charged
+              twice.
             </p>
           </div>
           <button
             type="button"
             aria-label="Dismiss"
-            onClick={() => { acknowledge(user); setActivationDismissed(true); }}
+            onClick={() => {
+              acknowledge(user);
+              setActivationDismissed(true);
+            }}
             className="text-emerald-200/60 hover:text-emerald-200"
           >
             ×
@@ -126,24 +129,26 @@ export default function Page() {
       {/* Gating comes from lib/planAccess so the ladder is defined once and
           matches the server. It previously keyed off PLAN_C, which is retired,
           and PLAN_B for jobs — neither matches what we sell (OUT-225). */}
-      {activeSection === "mentorship" && (
-        hasFeature(user, 'mentorship')
-          ? <MentorshipTab />
-          : <LockedFeatureOverlay
-              feature="Expert Mentorship"
-              reason={lockReason(user, 'mentorship')}
-              targetPlan={UPGRADE_TARGET.mentorship}
-            />
-      )}
-      {activeSection === "jobOpenings" && (
-        hasFeature(user, 'jobOpenings')
-          ? <JobOpeningsTab />
-          : <LockedFeatureOverlay
-              feature="Curated Job Openings"
-              reason={lockReason(user, 'jobOpenings')}
-              targetPlan={UPGRADE_TARGET.jobOpenings}
-            />
-      )}
+      {activeSection === "mentorship" &&
+        (hasFeature(user, "mentorship") ? (
+          <MentorshipTab />
+        ) : (
+          <LockedFeatureOverlay
+            feature="Expert Mentorship"
+            reason={lockReason(user, "mentorship")}
+            targetPlan={UPGRADE_TARGET.mentorship}
+          />
+        ))}
+      {activeSection === "jobOpenings" &&
+        (hasFeature(user, "jobOpenings") ? (
+          <JobOpeningsTab />
+        ) : (
+          <LockedFeatureOverlay
+            feature="Curated Job Openings"
+            reason={lockReason(user, "jobOpenings")}
+            targetPlan={UPGRADE_TARGET.jobOpenings}
+          />
+        ))}
       {activeSection === "autofillData" && <AutofillDataTab />}
       {activeSection === "billing" && <BillingTab />}
       {activeSection === "settings" && <SettingsTab />}

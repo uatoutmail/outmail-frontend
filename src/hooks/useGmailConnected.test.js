@@ -1,14 +1,14 @@
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { renderHook, waitFor, act } from '@testing-library/react';
-import { useGmailConnected } from './useGmailConnected';
-import { api } from '@/lib/api';
-import { useAuth } from '@/context/AuthContext';
+import { renderHook, waitFor, act } from "@testing-library/react";
+import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
+import { useGmailConnected } from "./useGmailConnected";
+import { useAuth } from "@/context/AuthContext";
+import { api } from "@/lib/api";
 
 // OUT-170: user.hasGmailConnected comes from the JWT (minted at login) and
 // never updates until the token rotates — so this hook exists specifically
 // to reflect a Gmail connection made in the desktop app AFTER sign-in.
-vi.mock('@/lib/api', () => ({ api: { get: vi.fn() } }));
-vi.mock('@/context/AuthContext', () => ({ useAuth: vi.fn() }));
+vi.mock("@/lib/api", () => ({ api: { get: vi.fn() } }));
+vi.mock("@/context/AuthContext", () => ({ useAuth: vi.fn() }));
 
 beforeEach(() => {
   vi.resetAllMocks();
@@ -20,47 +20,47 @@ afterEach(() => {
   vi.useRealTimers();
 });
 
-describe('useGmailConnected — initial seed', () => {
-  it('seeds connected:true from the JWT so there is no false-negative flash on mount', () => {
+describe("useGmailConnected — initial seed", () => {
+  it("seeds connected:true from the JWT so there is no false-negative flash on mount", () => {
     useAuth.mockReturnValue({ user: { hasGmailConnected: true } });
     api.get.mockReturnValue(new Promise(() => {})); // never resolves during this assertion
     const { result } = renderHook(() => useGmailConnected());
     expect(result.current.gmailConnected).toBe(true);
   });
 
-  it('seeds connected:false when the JWT had no Gmail connection', () => {
+  it("seeds connected:false when the JWT had no Gmail connection", () => {
     api.get.mockReturnValue(new Promise(() => {}));
     const { result } = renderHook(() => useGmailConnected());
     expect(result.current.gmailConnected).toBe(false);
   });
 });
 
-describe('useGmailConnected — live refresh', () => {
-  it('flips to connected once /api/agent/status confirms it, even though the JWT said false', async () => {
+describe("useGmailConnected — live refresh", () => {
+  it("flips to connected once /api/agent/status confirms it, even though the JWT said false", async () => {
     api.get.mockResolvedValue({ data: { credentialConnected: true } });
     const { result } = renderHook(() => useGmailConnected());
     await waitFor(() => expect(result.current.gmailConnected).toBe(true));
   });
 
-  it('keeps the last known value (does not flip to false) when a poll fails', async () => {
+  it("keeps the last known value (does not flip to false) when a poll fails", async () => {
     useAuth.mockReturnValue({ user: { hasGmailConnected: true } });
-    api.get.mockRejectedValue(new Error('network down'));
+    api.get.mockRejectedValue(new Error("network down"));
     const { result } = renderHook(() => useGmailConnected());
     await waitFor(() => expect(result.current.loading).toBe(false));
     expect(result.current.gmailConnected).toBe(true);
   });
 
-  it('ignores a response with a non-boolean credentialConnected field', async () => {
+  it("ignores a response with a non-boolean credentialConnected field", async () => {
     useAuth.mockReturnValue({ user: { hasGmailConnected: true } });
-    api.get.mockResolvedValue({ data: { credentialConnected: 'yes' } });
+    api.get.mockResolvedValue({ data: { credentialConnected: "yes" } });
     const { result } = renderHook(() => useGmailConnected());
     await waitFor(() => expect(result.current.loading).toBe(false));
     expect(result.current.gmailConnected).toBe(true);
   });
 });
 
-describe('useGmailConnected — desktop app event source', () => {
-  it('updates instantly from a window.outmail.onAgentEvent payload, without waiting on a poll', async () => {
+describe("useGmailConnected — desktop app event source", () => {
+  it("updates instantly from a window.outmail.onAgentEvent payload, without waiting on a poll", async () => {
     api.get.mockResolvedValue({ data: { credentialConnected: false } });
     let capturedHandler;
     window.outmail = {
@@ -77,7 +77,7 @@ describe('useGmailConnected — desktop app event source', () => {
     expect(result.current.gmailConnected).toBe(true);
   });
 
-  it('unsubscribes from the desktop event source on unmount', async () => {
+  it("unsubscribes from the desktop event source on unmount", async () => {
     api.get.mockResolvedValue({ data: {} });
     const unsubscribe = vi.fn();
     window.outmail = { onAgentEvent: vi.fn(() => unsubscribe) };
@@ -89,20 +89,20 @@ describe('useGmailConnected — desktop app event source', () => {
   });
 });
 
-describe('useGmailConnected — window focus refresh', () => {
-  it('re-checks status when the window regains focus', async () => {
+describe("useGmailConnected — window focus refresh", () => {
+  it("re-checks status when the window regains focus", async () => {
     api.get.mockResolvedValue({ data: { credentialConnected: false } });
     renderHook(() => useGmailConnected());
     await waitFor(() => expect(api.get).toHaveBeenCalledTimes(1));
 
-    act(() => window.dispatchEvent(new Event('focus')));
+    act(() => window.dispatchEvent(new Event("focus")));
 
     await waitFor(() => expect(api.get).toHaveBeenCalledTimes(2));
   });
 });
 
-describe('useGmailConnected — poll fallback', () => {
-  it('keeps polling while disconnected', async () => {
+describe("useGmailConnected — poll fallback", () => {
+  it("keeps polling while disconnected", async () => {
     vi.useFakeTimers({ shouldAdvanceTime: true });
     api.get.mockResolvedValue({ data: { credentialConnected: false } });
     renderHook(() => useGmailConnected());
@@ -114,7 +114,7 @@ describe('useGmailConnected — poll fallback', () => {
     expect(api.get).toHaveBeenCalledTimes(2);
   });
 
-  it('stops polling once connected', async () => {
+  it("stops polling once connected", async () => {
     vi.useFakeTimers({ shouldAdvanceTime: true });
     api.get.mockResolvedValue({ data: { credentialConnected: true } });
     const { result } = renderHook(() => useGmailConnected());

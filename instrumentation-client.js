@@ -4,7 +4,7 @@
 // No-op unless NEXT_PUBLIC_SENTRY_DSN is set. Note the CSP in next.config.mjs
 // must allow the Sentry ingest host in connect-src, or reports are silently
 // blocked by the browser.
-import * as Sentry from '@sentry/nextjs';
+import * as Sentry from "@sentry/nextjs";
 
 const dsn = process.env.NEXT_PUBLIC_SENTRY_DSN;
 
@@ -19,13 +19,11 @@ if (dsn) {
     replaysOnErrorSampleRate: 0,
     // Drop noise we can't act on.
     ignoreErrors: [
-      'ResizeObserver loop limit exceeded',
-      'Non-Error promise rejection captured',
+      "ResizeObserver loop limit exceeded",
+      "Non-Error promise rejection captured",
       /^Network request failed$/,
     ],
   });
 }
 
-export const onRouterTransitionStart = dsn
-  ? Sentry.captureRouterTransitionStart
-  : () => {};
+export const onRouterTransitionStart = dsn ? Sentry.captureRouterTransitionStart : () => {};

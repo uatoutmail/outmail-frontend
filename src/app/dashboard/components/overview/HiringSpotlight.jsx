@@ -1,7 +1,8 @@
 "use client";
-import React, { useEffect, useState } from "react";
 import { Briefcase } from "lucide-react";
+import React, { useEffect, useState } from "react";
 import { api } from "@/lib/api";
+import { logger } from "@/lib/logger";
 
 // Real hiring data (OUT-172): companies ranked by ACTIVE scraped postings in
 // the last 30 days. Counts come from real Job rows — never fabricated.
@@ -16,7 +17,7 @@ const HiringSpotlight = () => {
         const res = await api.get("/api/news/hiring-spotlight");
         if (active) setCompanies(res.data?.companies || []);
       } catch (err) {
-        console.error("[HiringSpotlight] Failed to load:", err);
+        logger.error("[HiringSpotlight] Failed to load:", err);
         if (active) setCompanies([]);
       } finally {
         if (active) setLoading(false);

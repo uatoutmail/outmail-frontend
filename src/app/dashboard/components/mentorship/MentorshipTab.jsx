@@ -1,8 +1,9 @@
 "use client";
-import React, { useState, useEffect } from "react";
 import { Calendar, FileText, Play, ExternalLink, Eye, Plus, Loader2 } from "lucide-react";
+import React, { useState, useEffect } from "react";
 import { toast } from "sonner";
 import { api } from "@/lib/api";
+import { logger } from "@/lib/logger";
 
 // Open a session link if the backend provided one; otherwise give honest
 // feedback instead of a silent no-op or a fake success.
@@ -25,7 +26,7 @@ const MentorshipTab = () => {
         const response = await api.get("/api/mentorship/sessions");
         setSessions(response.data);
       } catch (error) {
-        console.error("Error fetching mentorship sessions:", error);
+        logger.error("Error fetching mentorship sessions:", error);
       } finally {
         setLoading(false);
       }
@@ -36,55 +37,67 @@ const MentorshipTab = () => {
   const getStatus = (date) => {
     const sessionDate = new Date(date);
     const now = new Date();
-    
-    // Simple logic for status: 
+
+    // Simple logic for status:
     // active: same day
     // upcoming: future day
     // past: past day
-    
+
     const isToday = sessionDate.toDateString() === now.toDateString();
-    if (isToday) return 'active';
-    if (sessionDate > now) return 'upcoming';
-    return 'past';
+    if (isToday) return "active";
+    if (sessionDate > now) return "upcoming";
+    return "past";
   };
 
-  const activeSessions = sessions.filter(s => getStatus(s.date) === 'active');
-  const upcomingSessions = sessions.filter(s => getStatus(s.date) === 'upcoming');
-  const archivedSessions = sessions.filter(s => getStatus(s.date) === 'past');
+  const activeSessions = sessions.filter((s) => getStatus(s.date) === "active");
+  const upcomingSessions = sessions.filter((s) => getStatus(s.date) === "upcoming");
+  const archivedSessions = sessions.filter((s) => getStatus(s.date) === "past");
 
   const getStatusStyle = (status) => {
     switch (status) {
-      case 'active': return 'bg-green-500/20 text-green-400 border-green-500/30';
-      case 'upcoming': return 'bg-blue-500/20 text-blue-400 border-blue-500/30';
-      case 'past': return 'bg-gray-500/20 text-gray-400 border-gray-500/30';
-      default: return 'bg-gray-500/20 text-gray-400 border-gray-500/30';
+      case "active":
+        return "bg-green-500/20 text-green-400 border-green-500/30";
+      case "upcoming":
+        return "bg-blue-500/20 text-blue-400 border-blue-500/30";
+      case "past":
+        return "bg-gray-500/20 text-gray-400 border-gray-500/30";
+      default:
+        return "bg-gray-500/20 text-gray-400 border-gray-500/30";
     }
   };
 
   const getSessionTypeBadge = (type) => {
     switch (type) {
-      case 'Group Session': return 'bg-indigo-500/20 text-indigo-300 border border-indigo-500/30';
-      case 'Workshop': return 'bg-orange-500/20 text-orange-300 border border-orange-500/30';
-      case 'Q&A': return 'bg-teal-500/20 text-teal-300 border border-teal-500/30';
-      default: return 'bg-gray-500/20 text-gray-300 border border-gray-500/30';
+      case "Group Session":
+        return "bg-indigo-500/20 text-indigo-300 border border-indigo-500/30";
+      case "Workshop":
+        return "bg-orange-500/20 text-orange-300 border border-orange-500/30";
+      case "Q&A":
+        return "bg-teal-500/20 text-teal-300 border border-teal-500/30";
+      default:
+        return "bg-gray-500/20 text-gray-300 border border-gray-500/30";
     }
   };
 
   const getSessionTypeLabel = (type) => {
     switch (type) {
-      case 'Q&A': return '💬 Ask Me Anything';
-      case 'Group Session': return '👥 Group Session';
-      case 'Workshop': return '🛠 Workshop';
-      default: return type;
+      case "Q&A":
+        return "💬 Ask Me Anything";
+      case "Group Session":
+        return "👥 Group Session";
+      case "Workshop":
+        return "🛠 Workshop";
+      default:
+        return type;
     }
   };
 
   const renderSessionCard = (session) => {
     const status = getStatus(session.date);
-    const formattedDate = new Date(session.date).toLocaleDateString('en-US', { 
-      month: 'short', 
-      day: 'numeric', 
-      year: 'numeric' 
+    const formattedDate = new Date(session.date).toLocaleDateString("en-US", {
+      month: "short",
+      day: "numeric",
+      year: "numeric",
     });
 
     return (
@@ -100,10 +113,14 @@ const MentorshipTab = () => {
             </div>
           </div>
           <div className="flex flex-col items-end gap-2 shrink-0 ml-2">
-            <span className={`px-2.5 py-1 rounded-full border text-xs font-semibold capitalize ${getStatusStyle(status)}`}>
+            <span
+              className={`px-2.5 py-1 rounded-full border text-xs font-semibold capitalize ${getStatusStyle(status)}`}
+            >
               {status}
             </span>
-            <span className={`px-2.5 py-1 rounded-full text-xs font-semibold ${getSessionTypeBadge(session.sessionType)}`}>
+            <span
+              className={`px-2.5 py-1 rounded-full text-xs font-semibold ${getSessionTypeBadge(session.sessionType)}`}
+            >
               {getSessionTypeLabel(session.sessionType)}
             </span>
           </div>
@@ -119,7 +136,9 @@ const MentorshipTab = () => {
         <div className="space-y-2 mb-4">
           <div className="flex items-center gap-2 text-white/70">
             <Calendar size={14} />
-            <span className="text-sm">{formattedDate} · {session.sessionTime}</span>
+            <span className="text-sm">
+              {formattedDate} · {session.sessionTime}
+            </span>
           </div>
           <div className="flex items-start gap-2 text-white/70">
             <FileText size={14} className="mt-0.5 shrink-0" />
@@ -128,16 +147,26 @@ const MentorshipTab = () => {
         </div>
 
         <div className="flex gap-2">
-          {status === 'past' ? (
+          {status === "past" ? (
             <button
-              onClick={() => openOrNotice(session.recordingUrl || session.recordingLink, 'Recording will be available here soon.')}
+              onClick={() =>
+                openOrNotice(
+                  session.recordingUrl || session.recordingLink,
+                  "Recording will be available here soon."
+                )
+              }
               className="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg transition-colors flex items-center justify-center gap-2 text-sm"
             >
               <Play size={14} /> Watch Recording
             </button>
-          ) : status === 'active' ? (
+          ) : status === "active" ? (
             <button
-              onClick={() => openOrNotice(session.meetingLink || session.joinUrl || session.link, 'The join link opens when the session goes live.')}
+              onClick={() =>
+                openOrNotice(
+                  session.meetingLink || session.joinUrl || session.link,
+                  "The join link opens when the session goes live."
+                )
+              }
               className="flex-1 bg-green-600 hover:bg-green-700 text-white font-medium py-2 px-4 rounded-lg transition-colors flex items-center justify-center gap-2 text-sm"
             >
               <ExternalLink size={14} /> Join Now
@@ -145,13 +174,17 @@ const MentorshipTab = () => {
           ) : (
             <>
               <button
-                onClick={() => openOrNotice(session.detailsUrl, 'Full session details are coming soon.')}
+                onClick={() =>
+                  openOrNotice(session.detailsUrl, "Full session details are coming soon.")
+                }
                 className="flex-1 bg-white/10 hover:bg-white/20 text-white font-medium py-2 px-4 rounded-lg transition-colors flex items-center justify-center gap-2 text-sm"
               >
                 <Eye size={14} /> View Details
               </button>
               <button
-                onClick={() => openOrNotice(session.bookingLink, 'Slot booking opens soon — we\'ll notify you.')}
+                onClick={() =>
+                  openOrNotice(session.bookingLink, "Slot booking opens soon — we'll notify you.")
+                }
                 className="flex-1 bg-purple-600 hover:bg-purple-700 text-white font-medium py-2 px-4 rounded-lg transition-colors flex items-center justify-center gap-2 text-sm"
               >
                 <Plus size={14} /> Book Slot
@@ -213,7 +246,7 @@ const MentorshipTab = () => {
 
       <div>
         <button
-          onClick={() => setShowArchivedSessions(prev => !prev)}
+          onClick={() => setShowArchivedSessions((prev) => !prev)}
           className="flex items-center gap-3 w-full text-left mb-4 group"
         >
           <span className="w-2.5 h-2.5 rounded-full bg-gray-400"></span>
@@ -222,7 +255,7 @@ const MentorshipTab = () => {
           </h2>
           <div className="flex-1 h-px bg-white/10"></div>
           <span className="text-gray-400 group-hover:text-gray-300 transition-colors text-xs font-medium">
-            {showArchivedSessions ? '▲ Hide' : '▼ Show'}
+            {showArchivedSessions ? "▲ Hide" : "▼ Show"}
           </span>
         </button>
         {showArchivedSessions && (

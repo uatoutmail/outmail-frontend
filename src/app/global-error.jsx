@@ -1,7 +1,7 @@
 "use client";
 
-import { useEffect } from "react";
 import * as Sentry from "@sentry/nextjs";
+import { useEffect } from "react";
 
 // Last-resort boundary: catches crashes in the root layout itself, which
 // error.jsx cannot reach (OUT-164).
@@ -31,8 +31,8 @@ export default function GlobalError({ error, reset }) {
           alignItems: "center",
           justifyContent: "center",
           padding: 24,
-          background: "#050816",                        // --background
-          color: "#f9fafb",                             // --foreground
+          background: "#050816", // --background
+          color: "#f9fafb", // --foreground
           fontFamily: "system-ui, -apple-system, Segoe UI, sans-serif",
         }}
       >
@@ -43,7 +43,7 @@ export default function GlobalError({ error, reset }) {
             textAlign: "center",
             borderRadius: 18,
             padding: "48px 32px",
-            background: "rgba(15, 23, 42, 0.7)",        // --surface
+            background: "rgba(15, 23, 42, 0.7)", // --surface
             border: "1px solid rgba(148, 163, 184, 0.35)", // --border-subtle
             boxShadow: "0 18px 45px rgba(15, 23, 42, 0.75)",
           }}
@@ -69,8 +69,8 @@ export default function GlobalError({ error, reset }) {
             We&rsquo;ll be back shortly
           </h1>
           <p style={{ color: "#94a3b8", fontSize: 15, lineHeight: 1.65, margin: "0 0 30px" }}>
-            Outmail is having a moment. We&rsquo;ve been alerted and are already
-            looking into it — please try again in a few minutes.
+            Outmail is having a moment. We&rsquo;ve been alerted and are already looking into it —
+            please try again in a few minutes.
           </p>
 
           <button
@@ -90,7 +90,14 @@ export default function GlobalError({ error, reset }) {
           </button>
 
           {error?.digest && (
-            <p style={{ color: "rgba(148,163,184,0.7)", fontSize: 12, marginTop: 30, fontFamily: "monospace" }}>
+            <p
+              style={{
+                color: "rgba(148,163,184,0.7)",
+                fontSize: 12,
+                marginTop: 30,
+                fontFamily: "monospace",
+              }}
+            >
               Reference: {error.digest}
             </p>
           )}
