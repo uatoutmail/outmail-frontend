@@ -23,12 +23,41 @@ const getAuthToken = () => {
  */
 export const hasStoredToken = () => Boolean(getAuthToken());
 
+/**
+ * A cookie whose only job is to tell middleware "there is probably a session".
+ *
+ * WHY IT IS NOT THE TOKEN
+ *   The backend already sets `outmail_auth` as an httpOnly cookie, which
+ *   JavaScript cannot read. The frontend was then OVERWRITING it via
+ *   document.cookie with the raw JWT — silently downgrading a protected
+ *   cookie into a readable one, and leaving a second copy of the token for
+ *   any injected script to steal.
+ *
+ *   Middleware still needs some client-visible signal, because in production
+ *   the API lives on a different host and its httpOnly cookie is not sent to
+ *   the Next server. So we write a flag with no secret in it. Anyone can forge
+ *   `outmail_session=1` — and that is fine: middleware is a fast negative
+ *   check, and the API verifies the real token on every request.
+ */
+const SESSION_FLAG_COOKIE = "outmail_session";
+
+const setSessionFlag = (present) => {
+  if (typeof window === "undefined") return;
+  document.cookie = present
+    ? `${SESSION_FLAG_COOKIE}=1; path=/; max-age=${7 * 24 * 60 * 60}; secure; samesite=strict`
+    : `${SESSION_FLAG_COOKIE}=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT`;
+};
+
 const setAuthToken = (token) => {
   if (typeof window !== "undefined") {
     if (token) {
       localStorage.setItem("authToken", token);
+      setSessionFlag(true);
     } else {
       localStorage.removeItem("authToken");
+      setSessionFlag(false);
+      // Clear the legacy JS-written copy of the JWT for anyone who still has
+      // one in their browser from before this change.
       document.cookie = "outmail_auth=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT";
     }
   }
@@ -39,8 +68,8 @@ const captureTokenFromURL = () => {
     const urlParams = new URLSearchParams(window.location.search);
     const token = urlParams.get("token");
     if (token) {
+      // setAuthToken writes the session FLAG, not the token, into a cookie.
       setAuthToken(token);
-      document.cookie = `outmail_auth=${token}; path=/; max-age=${7 * 24 * 60 * 60}; secure; samesite=strict`;
       window.history.replaceState({}, document.title, window.location.pathname);
       return token;
     }

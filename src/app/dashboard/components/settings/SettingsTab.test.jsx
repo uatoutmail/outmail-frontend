@@ -202,7 +202,11 @@ describe("SettingsTab — resume management", () => {
     await waitFor(() => expect(screen.getByText("resume.pdf")).toBeInTheDocument());
 
     await userEvent.click(screen.getByTitle("View Resume"));
-    expect(openSpy).toHaveBeenCalledWith("https://s3.example.com/resume.pdf", "_blank");
+    expect(openSpy).toHaveBeenCalledWith(
+      "https://s3.example.com/resume.pdf",
+      "_blank",
+      "noopener,noreferrer"
+    );
     vi.unstubAllGlobals();
   });
 });

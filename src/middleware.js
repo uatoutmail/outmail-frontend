@@ -47,7 +47,10 @@ const startsWithSegment = (path, prefix) => path === prefix || path.startsWith(`
 export function middleware(request) {
   const { pathname, origin, search } = request.nextUrl;
 
+  // `outmail_session` is an opaque flag written by the client; the rest are
+  // legacy names kept so a deploy does not sign out anyone mid-session.
   const sessionCookie =
+    request.cookies.get("outmail_session") ||
     request.cookies.get("outmail_auth") ||
     request.cookies.get("connect.sid") ||
     request.cookies.get("sessionId") ||
