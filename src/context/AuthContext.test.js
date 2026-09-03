@@ -104,6 +104,49 @@ describe("AuthContext — window focus re-check (the stale-closure fix)", () => 
     releaseFirstCall({ data: { user: { id: "u1" } } });
     await waitFor(() => expect(result.current.loading).toBe(false));
   });
+
+  // The bug this covers (OUT-224 follow-up): a focus-triggered re-check
+  // called setLoading(true), and RequireAuth renders null while loading —
+  // so switching tabs, or even a native file picker briefly stealing window
+  // focus, silently unmounted the entire dashboard and reset any in-progress
+  // page/form state. A background revalidation of an ALREADY-established
+  // session must never toggle `loading`, even while its request is pending.
+  it("never sets loading=true for a focus-triggered re-check, even while the request is pending", async () => {
+    api.get.mockResolvedValueOnce({ data: { user: { id: "u1" } } });
+    const { result } = renderHook(() => useAuth(), { wrapper });
+    await waitFor(() => expect(result.current.loading).toBe(false));
+
+    let releaseFocusCall;
+    api.get.mockReturnValueOnce(
+      new Promise((resolve) => {
+        releaseFocusCall = resolve;
+      })
+    );
+
+    act(() => window.dispatchEvent(new Event("focus")));
+    await waitFor(() => expect(api.get).toHaveBeenCalledTimes(2));
+    // The re-check is genuinely in flight (unresolved) right now — this is
+    // exactly the window during which the old code blanked the dashboard.
+    expect(result.current.loading).toBe(false);
+
+    releaseFocusCall({ data: { user: { id: "u1" } } });
+    await waitFor(() => expect(api.get).toHaveBeenCalledTimes(2));
+    expect(result.current.loading).toBe(false);
+  });
+
+  it("still signs the user out if a focus re-check finds the session genuinely expired", async () => {
+    api.get.mockResolvedValueOnce({ data: { user: { id: "u1" } } });
+    const { result } = renderHook(() => useAuth(), { wrapper });
+    await waitFor(() => expect(result.current.isAuthenticated).toBe(true));
+
+    api.get.mockRejectedValueOnce(new Error("401"));
+    act(() => window.dispatchEvent(new Event("focus")));
+
+    await waitFor(() => expect(result.current.isAuthenticated).toBe(false));
+    // Confirms this isn't just "isAuthenticated flips" — loading was never
+    // touched by the background check that discovered this.
+    expect(result.current.loading).toBe(false);
+  });
 });
 
 describe("AuthContext — logout", () => {

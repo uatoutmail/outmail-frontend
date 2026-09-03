@@ -101,10 +101,21 @@ export const AuthProvider = ({ children }) => {
     loadingRef.current = loading;
   }, [loading]);
 
-  // Check authentication status
-  const checkAuth = async () => {
+  // Check authentication status.
+  //
+  // `background` distinguishes the initial "do we even know if this user is
+  // signed in" check from a revalidation of an ALREADY-established session
+  // (the window-focus listener below). Only the initial check should gate
+  // rendering — RequireAuth returns null while `loading` is true, so setting
+  // it on every focus-regain was unmounting the entire dashboard (and any
+  // in-progress form state, and the active tab) every time a user switched
+  // tabs or a native file picker briefly stole window focus. A background
+  // revalidation still updates user/isAuthenticated normally — including
+  // signing the user out if the session genuinely expired — it just does
+  // that quietly instead of blanking a page that was working fine.
+  const checkAuth = async (background = false) => {
     try {
-      setLoading(true);
+      if (!background) setLoading(true);
 
       // Check for token in URL first (OAuth redirect)
       captureTokenFromURL();
@@ -137,7 +148,7 @@ export const AuthProvider = ({ children }) => {
       setUserRole(null);
       setIsAuthenticated(false);
     } finally {
-      setLoading(false);
+      if (!background) setLoading(false);
     }
   };
 
@@ -221,10 +232,11 @@ export const AuthProvider = ({ children }) => {
     // eslint-disable-next-line react-hooks/set-state-in-effect
     checkAuth();
 
-    // Re-check auth when user returns to the tab
+    // Re-check auth when user returns to the tab — in the background, so it
+    // can't unmount a dashboard the user is actively in the middle of using.
     const handleFocus = () => {
       if (!loadingRef.current) {
-        checkAuth();
+        checkAuth(true);
       }
     };
 
