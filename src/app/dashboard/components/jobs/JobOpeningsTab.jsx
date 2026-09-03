@@ -5,6 +5,7 @@ import JobCard from "./JobCard";
 import JobPreferences from "./JobPreferences";
 import { api } from "@/lib/api";
 import { logger } from "@/lib/logger";
+import { openExternal } from "@/lib/safeUrl";
 
 // India-student launch: /api/jobs 403s with this shape when a résumé and/or
 // a seeking-type preference are missing — hard prerequisites, not just
@@ -159,7 +160,10 @@ const JobOpeningsTab = () => {
       toast.error("No application link is available for this job.");
       return;
     }
-    window.open(applyUrl, "_blank");
+    if (!openExternal(applyUrl)) {
+      toast.error("That job link looks invalid, so we did not open it.");
+      return;
+    }
     try {
       await recordAction(job.id, "applied");
       setJobOpenings((prev) =>
@@ -195,7 +199,12 @@ const JobOpeningsTab = () => {
   };
 
   const handleOpenJob = (url) => {
-    if (url) window.open(url, "_blank");
+    // Job links come from the aggregation pipeline, not from us. openExternal
+    // refuses anything that is not http/https/mailto and always opens with
+    // noopener — see lib/safeUrl.js.
+    if (!openExternal(url)) {
+      toast.error("That job link looks invalid, so we did not open it.");
+    }
   };
 
   const getStatusColor = (action) => {
