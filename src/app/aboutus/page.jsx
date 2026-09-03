@@ -10,20 +10,6 @@ export const metadata = {
   description:
     "Outmail helps university students reach the right companies, get resume-matched jobs, and learn from real mentors. Learn about our mission.",
   alternates: { canonical: "https://outmail.in/aboutus" },
-  openGraph: {
-    title: "About Us | Outmail",
-    description:
-      "Outmail exists for students with no referrals and one placement season to spend. What we hold to, and who operates the company.",
-    url: "https://outmail.in/aboutus",
-    type: "website",
-    images: [{ url: "/image.png", width: 1536, height: 1024, alt: "About Outmail" }],
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: "About Us | Outmail",
-    description: "Built for students with no referrals and one placement season to spend.",
-    images: ["/image.png"],
-  },
 };
 
 export default function Page() {

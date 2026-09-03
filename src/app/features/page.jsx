@@ -9,28 +9,6 @@ import { GlanceChips, FeaturesChapters, ProofComparison } from "@/component/page
 import PageHeader from "@/component/ui/PageHeader";
 import { JsonLd, breadcrumbSchema } from "@/lib/structuredData";
 
-export const metadata = {
-  title: "Features",
-  description:
-    "Cold outreach to verified recruiters from your own Gmail, resume-matched job openings with an explainable score, one-click application autofill, and bi-weekly mentorship.",
-  alternates: { canonical: "https://outmail.in/features" },
-  openGraph: {
-    title: "Features | Outmail",
-    description:
-      "The four things that decide whether effort turns into interviews: outreach, matched jobs, autofill and mentorship.",
-    url: "https://outmail.in/features",
-    type: "website",
-    images: [{ url: "/image.png", width: 1536, height: 1024, alt: "Outmail features" }],
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: "Features | Outmail",
-    description:
-      "Outreach, matched jobs, autofill and mentorship — for students with no referrals.",
-    images: ["/image.png"],
-  },
-};
-
 export default function FeaturesPage() {
   return (
     <div className="min-h-screen bg-surface-page text-white">

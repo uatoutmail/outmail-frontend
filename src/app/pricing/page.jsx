@@ -10,26 +10,6 @@ import Pricing from "@/component/pricing";
 import PageHeader from "@/component/ui/PageHeader";
 import { JsonLd, breadcrumbSchema } from "@/lib/structuredData";
 
-export const metadata = {
-  title: "Pricing",
-  description:
-    "One payment for twelve months of Outmail. No subscription, nothing renews, all taxes included, and a full refund within 7 days.",
-  alternates: { canonical: "https://outmail.in/pricing" },
-  openGraph: {
-    title: "Pricing | Outmail",
-    description: "One payment. Twelve months. Nothing renews. Full refund within 7 days.",
-    url: "https://outmail.in/pricing",
-    type: "website",
-    images: [{ url: "/image.png", width: 1536, height: 1024, alt: "Outmail pricing" }],
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: "Pricing | Outmail",
-    description: "One payment. Twelve months. Nothing renews.",
-    images: ["/image.png"],
-  },
-};
-
 /**
  * The pricing page.
  *

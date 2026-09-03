@@ -1,3 +1,4 @@
+import { Mail } from "lucide-react";
 import Footer from "@/component/Footer";
 import Story from "@/component/landing/Story";
 import Navbar from "@/component/Navbar";
@@ -6,27 +7,6 @@ import GapFlip from "@/component/pages/GapFlip";
 import { CtaBandCentred, OfficeLedger } from "@/component/pages/PartnershipSections";
 import PageHeader from "@/component/ui/PageHeader";
 import { JsonLd, breadcrumbSchema } from "@/lib/structuredData";
-
-export const metadata = {
-  title: "For Universities & Placement Cells",
-  description:
-    "Outmail extends your placement cell beyond campus drives — recruiter outreach, resume-matched openings and mentorship for every student, with cohort-level visibility for your team.",
-  alternates: { canonical: "https://outmail.in/partnership" },
-  openGraph: {
-    title: "For Universities & Placement Cells | Outmail",
-    description:
-      "Help more students get placed off campus, with full visibility for your placement team.",
-    url: "https://outmail.in/partnership",
-    type: "website",
-    images: [{ url: "/image.png", width: 1536, height: 1024, alt: "Outmail for universities" }],
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: "For Universities & Placement Cells | Outmail",
-    description: "Help more students get placed off campus.",
-    images: ["/image.png"],
-  },
-};
 
 export default function PartnershipPage() {
   return (
@@ -50,7 +30,7 @@ export default function PartnershipPage() {
               href="mailto:contact@outmail.in"
               className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-btn border border-white/20 font-syne text-sm text-white/80 hover:text-white hover:bg-white/10 transition-colors"
             >
-              Contact us
+              <Mail size={16} /> Contact us
             </a>
           </div>
         </PageHeader>

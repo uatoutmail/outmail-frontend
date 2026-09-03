@@ -7,26 +7,6 @@ import ContactRouter from "@/component/pages/ContactRouter";
 import PageHeader from "@/component/ui/PageHeader";
 import { JsonLd, breadcrumbSchema } from "@/lib/structuredData";
 
-export const metadata = {
-  title: "Contact & Support",
-  description:
-    "Questions about your Outmail account, recruiter partnerships, or campus plans for your placement cell. A person replies within 24 hours.",
-  alternates: { canonical: "https://outmail.in/contactus" },
-  openGraph: {
-    title: "Contact & Support | Outmail",
-    description: "Ask us anything — a person replies within 24 hours.",
-    url: "https://outmail.in/contactus",
-    type: "website",
-    images: [{ url: "/image.png", width: 1536, height: 1024, alt: "Contact Outmail" }],
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: "Contact & Support | Outmail",
-    description: "Ask us anything — a person replies within 24 hours.",
-    images: ["/image.png"],
-  },
-};
-
 /**
  * The Company & Legal block that used to sit here was removed by request: the
  * registered address and phone number are published in the Terms and the
