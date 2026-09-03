@@ -27,6 +27,7 @@ import { ConfirmDialog } from "@/component/ui/alert-dialog";
 import { useAuth } from "@/context/AuthContext";
 import { api } from "@/lib/api";
 import { logger } from "@/lib/logger";
+import { openExternal } from "@/lib/safeUrl";
 
 const SettingsTab = () => {
   const { user, updateUser } = useAuth();
@@ -213,7 +214,9 @@ const SettingsTab = () => {
       return;
     }
     if (attachment.url) {
-      window.open(attachment.url, "_blank");
+      if (!openExternal(attachment.url)) {
+        toast.error("That file link looks invalid, so we did not open it.");
+      }
     } else {
       toast.error("File URL not available. Please check console for details or contact support.");
     }

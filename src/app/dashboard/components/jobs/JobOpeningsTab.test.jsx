@@ -140,7 +140,11 @@ describe("JobOpeningsTab — job actions", () => {
 
     await userEvent.click(screen.getByRole("button", { name: /auto-apply/i }));
 
-    expect(openSpy).toHaveBeenCalledWith("https://apply.example.com/j1", "_blank");
+    expect(openSpy).toHaveBeenCalledWith(
+      "https://apply.example.com/j1",
+      "_blank",
+      "noopener,noreferrer"
+    );
     await waitFor(() =>
       expect(api.post).toHaveBeenCalledWith("/api/jobs/j1/interactions", { action: "applied" })
     );

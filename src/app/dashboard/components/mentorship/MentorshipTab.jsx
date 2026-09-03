@@ -4,13 +4,14 @@ import React, { useState, useEffect } from "react";
 import { toast } from "sonner";
 import { api } from "@/lib/api";
 import { logger } from "@/lib/logger";
+import { openExternal } from "@/lib/safeUrl";
 
 // Open a session link if the backend provided one; otherwise give honest
 // feedback instead of a silent no-op or a fake success.
 const openOrNotice = (url, message) => {
-  if (url) {
-    window.open(url, "_blank", "noopener,noreferrer");
-  } else {
+  // Already used noopener; now also refuses a non-http(s) scheme, so a
+  // tampered meeting link cannot execute in our origin.
+  if (!openExternal(url)) {
     toast(message);
   }
 };
