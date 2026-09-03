@@ -34,6 +34,15 @@ describe("middleware — protected routes", () => {
     }
   });
 
+  it("sends each area to ITS OWN sign-in page", () => {
+    // A placement officer bounced to the student homepage has no idea where
+    // to sign in. The first version of this file sent everything to "/", and
+    // an existing E2E test caught it.
+    expect(redirectedTo(middleware(req("/tpo/dashboard")))).toContain("/tpo/login");
+    expect(redirectedTo(middleware(req("/admin")))).toContain("/tpo/login");
+    expect(redirectedTo(middleware(req("/dashboard")))).not.toContain("/tpo/login");
+  });
+
   it("remembers where they were going, so sign-in can send them back", () => {
     const res = middleware(req("/dashboard/jobs?tab=saved"));
     expect(decodeURIComponent(redirectedTo(res))).toContain("next=/dashboard/jobs?tab=saved");

@@ -145,7 +145,11 @@ export default function Footer({ variant = "dark" }) {
                 type="submit"
                 disabled={subscribed}
                 whileTap={reduce ? {} : { scale: 0.985 }}
-                aria-label="Subscribe"
+                // The visible label is hidden below `sm`, so this button needs an
+                // accessible name — but a STATIC one overrides the text and
+                // leaves a screen-reader user permanently hearing "Subscribe",
+                // never learning it worked. It has to track the state.
+                aria-label={subscribed ? "Subscribed" : "Subscribe"}
                 className={`shrink-0 rounded-btn px-4 py-2.5 font-syne text-sm font-semibold transition-colors duration-200 flex items-center gap-1.5 ${
                   subscribed
                     ? "bg-emerald-500/15 text-emerald-300 border border-emerald-500/30"

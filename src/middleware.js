@@ -33,6 +33,15 @@ const PROTECTED = ["/dashboard", "/admin", "/tpo"];
 //   /tpo/claim  — an invited TPO arrives here from an email, with no session
 const PUBLIC_EXCEPTIONS = ["/tpo/login", "/tpo/claim"];
 
+// Where an unauthenticated visitor is sent, per area. A placement officer
+// bounced to the student homepage would have no idea where to sign in — and
+// an existing E2E test asserts exactly this, which is how the first version
+// of this file (everything to "/") was caught.
+const SIGN_IN_PATH = [
+  { prefix: "/tpo", path: "/tpo/login" },
+  { prefix: "/admin", path: "/tpo/login" },
+];
+
 const startsWithSegment = (path, prefix) => path === prefix || path.startsWith(`${prefix}/`);
 
 export function middleware(request) {
@@ -55,8 +64,9 @@ export function middleware(request) {
   const isProtected = !isPublicException && PROTECTED.some((p) => startsWithSegment(pathname, p));
 
   if (isProtected && !sessionCookie && !isOauthLanding) {
+    const signIn = SIGN_IN_PATH.find((r) => startsWithSegment(pathname, r.prefix))?.path || "/";
     // `next` lets the sign-in page send them back where they meant to go.
-    const url = new URL("/", origin);
+    const url = new URL(signIn, origin);
     url.searchParams.set("signin", "required");
     url.searchParams.set("next", `${pathname}${search}`);
     return NextResponse.redirect(url);
