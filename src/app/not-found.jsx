@@ -1,4 +1,4 @@
-import ErrorScreen from "@/components/error/ErrorScreen";
+import ErrorScreen from "@/component/error/ErrorScreen";
 
 // 404. Not an outage, so it gets its own copy rather than the generic
 // "we'll be back shortly" — telling someone we're fixing a problem when they

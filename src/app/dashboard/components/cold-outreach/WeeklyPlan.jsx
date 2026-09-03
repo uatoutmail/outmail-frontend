@@ -1,15 +1,27 @@
 "use client";
 
+import {
+  CalendarDays,
+  CheckCircle2,
+  ShieldCheck,
+  Sparkles,
+  Briefcase,
+  FileText,
+} from "lucide-react";
 import React, { useState, useEffect, useCallback } from "react";
-import { CalendarDays, CheckCircle2, ShieldCheck, Sparkles, Briefcase, FileText } from "lucide-react";
-import { api } from "@/lib/api";
 import { toast } from "sonner";
+import { api } from "@/lib/api";
+import { logger } from "@/lib/logger";
 
 // Weekly plan review & approval (OUT-147). Every Sunday the backend prepares
 // next week's outreach; depending on the approval mode the student confirms
 // the whole week, each day, or nothing (auto).
 const MODES = [
-  { value: "weekly", label: "Weekly approval", hint: "One click on Sunday arms the whole week (default)" },
+  {
+    value: "weekly",
+    label: "Weekly approval",
+    hint: "One click on Sunday arms the whole week (default)",
+  },
   { value: "daily", label: "Daily approval", hint: "Each morning's batch waits for your tap" },
   { value: "auto", label: "Automatic", hint: "The plan sends without asking" },
 ];
@@ -27,9 +39,7 @@ const VALIDATION_UI = {
 const ValidationBadge = ({ status }) => {
   const ui = VALIDATION_UI[status] || VALIDATION_UI.unknown;
   return (
-    <span className={`px-1.5 py-0.5 rounded text-[10px] border ${ui.className}`}>
-      {ui.label}
-    </span>
+    <span className={`px-1.5 py-0.5 rounded text-[10px] border ${ui.className}`}>{ui.label}</span>
   );
 };
 
@@ -43,7 +53,7 @@ const WeeklyPlan = () => {
       const response = await api.get("/api/outreach/week-plan");
       setData(response.data);
     } catch (error) {
-      console.warn("Error fetching week plan:", error.message);
+      logger.warn("Error fetching week plan:", error.message);
     } finally {
       setLoading(false);
     }
@@ -109,7 +119,11 @@ const WeeklyPlan = () => {
                   : "border-white/10 bg-white/5 hover:bg-white/10"
               }`}
             >
-              <p className={`text-sm font-semibold ${mode === m.value ? "text-purple-300" : "text-white"}`}>{m.label}</p>
+              <p
+                className={`text-sm font-semibold ${mode === m.value ? "text-purple-300" : "text-white"}`}
+              >
+                {m.label}
+              </p>
               <p className="text-xs text-gray-400 mt-1 leading-relaxed">{m.hint}</p>
             </button>
           ))}
@@ -132,10 +146,11 @@ const WeeklyPlan = () => {
               </p>
             </div>
           </div>
-          {plan && (
-            weekApproved ? (
+          {plan &&
+            (weekApproved ? (
               <span className="flex items-center gap-2 px-4 py-2 rounded-lg bg-green-500/10 border border-green-500/20 text-green-400 text-sm font-semibold">
-                <CheckCircle2 size={16} /> {plan.status === "auto" ? "Auto mode — sends automatically" : "Week approved"}
+                <CheckCircle2 size={16} />{" "}
+                {plan.status === "auto" ? "Auto mode — sends automatically" : "Week approved"}
               </span>
             ) : mode !== "daily" ? (
               <button
@@ -145,15 +160,15 @@ const WeeklyPlan = () => {
               >
                 {approving ? "Approving…" : "Approve week"}
               </button>
-            ) : null
-          )}
+            ) : null)}
         </div>
 
         {!plan ? (
           <div className="p-10 text-center border border-dashed border-white/20 rounded-xl bg-white/10">
             <h3 className="text-lg font-semibold text-gray-300 mb-1">No plan yet</h3>
             <p className="text-sm text-gray-500">
-              Your first weekly plan is generated on Sunday night once auto-mailing is enabled and your desktop agent is connected.
+              Your first weekly plan is generated on Sunday night once auto-mailing is enabled and
+              your desktop agent is connected.
             </p>
           </div>
         ) : (
@@ -161,10 +176,17 @@ const WeeklyPlan = () => {
             {Object.entries(plan.days).map(([day, rows]) => {
               const dayApproved = weekApproved || plan.approvedDays?.[day] === true;
               return (
-                <div key={day} className="rounded-xl border border-white/10 bg-white/5 overflow-hidden">
+                <div
+                  key={day}
+                  className="rounded-xl border border-white/10 bg-white/5 overflow-hidden"
+                >
                   <div className="flex items-center justify-between px-4 py-3 bg-white/5 border-b border-white/10">
                     <p className="text-sm font-semibold text-white">
-                      {new Date(`${day}T12:00:00Z`).toLocaleDateString("en-IN", { weekday: "long", day: "numeric", month: "short" })}
+                      {new Date(`${day}T12:00:00Z`).toLocaleDateString("en-IN", {
+                        weekday: "long",
+                        day: "numeric",
+                        month: "short",
+                      })}
                       <span className="text-gray-400 font-normal"> · {rows.length} emails</span>
                     </p>
                     {mode === "daily" && !dayApproved && (
@@ -177,12 +199,17 @@ const WeeklyPlan = () => {
                       </button>
                     )}
                     {dayApproved && (
-                      <span className="text-xs text-green-400 flex items-center gap-1"><CheckCircle2 size={13} /> Approved</span>
+                      <span className="text-xs text-green-400 flex items-center gap-1">
+                        <CheckCircle2 size={13} /> Approved
+                      </span>
                     )}
                   </div>
                   <div className="divide-y divide-white/5">
                     {rows.map((row) => (
-                      <div key={row.id} className="px-4 py-3 flex flex-col md:flex-row md:items-center justify-between gap-2">
+                      <div
+                        key={row.id}
+                        className="px-4 py-3 flex flex-col md:flex-row md:items-center justify-between gap-2"
+                      >
                         <div className="min-w-0">
                           <div className="flex items-center gap-2">
                             <span className="text-sm font-medium text-white truncate">
@@ -196,7 +223,10 @@ const WeeklyPlan = () => {
                           </div>
                           {row.reason && (
                             <p className="text-xs text-gray-400 mt-0.5 flex items-start gap-1">
-                              <Sparkles size={12} className="text-purple-400/70 mt-0.5 flex-shrink-0" />
+                              <Sparkles
+                                size={12}
+                                className="text-purple-400/70 mt-0.5 flex-shrink-0"
+                              />
                               <span className="truncate">{row.reason}</span>
                             </p>
                           )}

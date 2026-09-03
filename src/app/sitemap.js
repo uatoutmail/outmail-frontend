@@ -1,5 +1,6 @@
+import { siteUrl } from "@/lib/env";
 export default function sitemap() {
-  const baseUrl = process.env.NEXT_PUBLIC_FRONTEND_URL || "https://outmail.in";
+  const baseUrl = siteUrl;
 
   const routes = [
     {
@@ -21,6 +22,13 @@ export default function sitemap() {
       path: "/partnership",
       changeFrequency: "weekly",
       priority: 0.9,
+    },
+    {
+      // Was missing entirely: /faq exists, is linked from the footer and
+      // every page, and answers the questions people search for by name.
+      path: "/faq",
+      changeFrequency: "monthly",
+      priority: 0.8,
     },
     {
       path: "/aboutus",

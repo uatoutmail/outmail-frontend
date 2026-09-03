@@ -1,8 +1,8 @@
 "use client";
 
 import { useState, useEffect, useCallback, useRef } from "react";
-import { api } from "@/lib/api";
 import { useAuth } from "@/context/AuthContext";
+import { api } from "@/lib/api";
 
 /**
  * Live "is Gmail connected?" state.

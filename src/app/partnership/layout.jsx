@@ -1,6 +1,5 @@
 export const metadata = {
-  title:
-    "University Placement Software | Outmail Institutional Outreach Platform",
+  title: "University Placement Software | Outmail Institutional Outreach Platform",
   description:
     "Empower your students with structured recruiter outreach. Get full visibility into student off-campus hiring activity and improve university placement outcomes.",
   keywords: [

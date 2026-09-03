@@ -2,8 +2,8 @@
 import React, { useEffect, useState } from "react";
 import { useAuth } from "@/context/AuthContext";
 import { api } from "@/lib/api";
-import { startCheckout, getPlans } from "@/lib/payments";
 import { formatPaise } from "@/lib/paymentOutcome";
+import { startCheckout, getPlans } from "@/lib/payments";
 import { daysUntilExpiry } from "@/lib/planAccess";
 
 /**
@@ -42,7 +42,9 @@ export default function BillingTab() {
       })
       .catch(() => alive && setError(true))
       .finally(() => alive && setLoading(false));
-    return () => { alive = false; };
+    return () => {
+      alive = false;
+    };
   }, []);
 
   const plan = user?.currentPlan;
@@ -90,7 +92,10 @@ function PlanStatus({ plan, days, expired, onRenew, renewing }) {
         <p className="text-white/60 text-sm mb-5">
           Outmail is a one-time payment for one placement year. Nothing renews automatically.
         </p>
-        <a href="/pricing" className="inline-block bg-white text-black font-bold py-2.5 px-6 rounded-full text-sm hover:bg-gray-100">
+        <a
+          href="/pricing"
+          className="inline-block bg-white text-black font-bold py-2.5 px-6 rounded-full text-sm hover:bg-gray-100"
+        >
           See plans
         </a>
       </Card>
@@ -99,9 +104,11 @@ function PlanStatus({ plan, days, expired, onRenew, renewing }) {
 
   // Expiry is stated in both remaining days and an absolute date. "42 days left"
   // is what people act on; the date is what they check against a bank statement.
-  const tone = expired ? "border-red-500/40 bg-red-500/5"
-    : days <= 30 ? "border-amber-500/40 bg-amber-500/5"
-    : "border-white/12 bg-white/5";
+  const tone = expired
+    ? "border-red-500/40 bg-red-500/5"
+    : days <= 30
+      ? "border-amber-500/40 bg-amber-500/5"
+      : "border-white/12 bg-white/5";
 
   return (
     <Card className={tone}>
@@ -110,7 +117,9 @@ function PlanStatus({ plan, days, expired, onRenew, renewing }) {
           <p className="text-xs uppercase tracking-[3px] text-purple-400 mb-2">Your plan</p>
           <h3 className="text-xl font-bold text-white">{plan.name}</h3>
           {days != null && (
-            <p className={`text-sm mt-2 ${expired ? "text-red-300" : days <= 30 ? "text-amber-300" : "text-white/60"}`}>
+            <p
+              className={`text-sm mt-2 ${expired ? "text-red-300" : days <= 30 ? "text-amber-300" : "text-white/60"}`}
+            >
               {expired
                 ? `Your placement year ended ${Math.abs(days)} day${Math.abs(days) === 1 ? "" : "s"} ago.`
                 : `${days} day${days === 1 ? "" : "s"} left in your placement year.`}
@@ -118,8 +127,12 @@ function PlanStatus({ plan, days, expired, onRenew, renewing }) {
           )}
         </div>
         {(expired || (days != null && days <= 30)) && (
-          <button type="button" onClick={onRenew} disabled={renewing}
-            className="bg-white text-black font-bold py-2.5 px-6 rounded-full text-sm hover:bg-gray-100 disabled:opacity-50">
+          <button
+            type="button"
+            onClick={onRenew}
+            disabled={renewing}
+            className="bg-white text-black font-bold py-2.5 px-6 rounded-full text-sm hover:bg-gray-100 disabled:opacity-50"
+          >
             {renewing ? "Opening checkout…" : expired ? "Renew to resume" : "Renew early"}
           </button>
         )}
@@ -172,11 +185,17 @@ function PaymentHistory({ orders }) {
             {orders.map((o) => (
               <tr key={o.id} className="border-t border-white/8">
                 <td className="py-3 pr-4 whitespace-nowrap">
-                  {new Date(o.created_at).toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" })}
+                  {new Date(o.created_at).toLocaleDateString("en-IN", {
+                    day: "numeric",
+                    month: "short",
+                    year: "numeric",
+                  })}
                 </td>
                 <td className="py-3 pr-4">{o.plan?.name || "—"}</td>
                 <td className="py-3 pr-4 whitespace-nowrap">{formatPaise(o.amount, o.currency)}</td>
-                <td className="py-3"><StatusPill status={o.status} /></td>
+                <td className="py-3">
+                  <StatusPill status={o.status} />
+                </td>
               </tr>
             ))}
           </tbody>
@@ -184,18 +203,22 @@ function PaymentHistory({ orders }) {
       </div>
       <p className="text-white/40 text-xs mt-4">
         Need a receipt for a payment? Email{" "}
-        <a href="mailto:support@outmail.in" className="underline">support@outmail.in</a> with the date and we will send one.
+        <a href="mailto:support@outmail.in" className="underline">
+          support@outmail.in
+        </a>{" "}
+        with the date and we will send one.
       </p>
     </Card>
   );
 }
 
 function StatusPill({ status }) {
-  const styles = {
-    paid: "bg-emerald-500/15 text-emerald-300 border-emerald-500/30",
-    failed: "bg-red-500/15 text-red-300 border-red-500/30",
-    created: "bg-white/10 text-white/60 border-white/20",
-  }[status] || "bg-white/10 text-white/60 border-white/20";
+  const styles =
+    {
+      paid: "bg-emerald-500/15 text-emerald-300 border-emerald-500/30",
+      failed: "bg-red-500/15 text-red-300 border-red-500/30",
+      created: "bg-white/10 text-white/60 border-white/20",
+    }[status] || "bg-white/10 text-white/60 border-white/20";
   // 'created' is opaque to a customer — it means they started a checkout and it
   // never completed, so say that instead of leaking our internal state name.
   const label = status === "created" ? "Not completed" : status === "paid" ? "Paid" : "Failed";
@@ -224,7 +247,10 @@ function RefundNotice({ orders }) {
           ? `Your 7-day refund window is open for another ${REFUND_WINDOW_DAYS - daysSince} day${REFUND_WINDOW_DAYS - daysSince === 1 ? "" : "s"}. Email support@outmail.in and we will refund in full, no questions asked.`
           : "Your 7-day refund window has closed."}
       </p>
-      <a href="/refund-and-cancellation" className="inline-block mt-3 text-sm text-accent-light underline">
+      <a
+        href="/refund-and-cancellation"
+        className="inline-block mt-3 text-sm text-accent-light underline"
+      >
         Read the full policy
       </a>
     </Card>

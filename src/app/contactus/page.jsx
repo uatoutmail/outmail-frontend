@@ -1,12 +1,11 @@
-"use client";
-
 import React from "react";
-import Navbar from "@/component/Navbar";
 import Footer from "@/component/Footer";
-import PageHeader from "@/component/ui/PageHeader";
-import ContactRouter from "@/component/pages/ContactRouter";
 import Faq from "@/component/landing/Faq";
 import { Cta } from "@/component/motion/kit";
+import Navbar from "@/component/Navbar";
+import ContactRouter from "@/component/pages/ContactRouter";
+import PageHeader from "@/component/ui/PageHeader";
+import { JsonLd, breadcrumbSchema } from "@/lib/structuredData";
 
 /**
  * The Company & Legal block that used to sit here was removed by request: the
@@ -21,6 +20,12 @@ import { Cta } from "@/component/motion/kit";
 export default function ContactPage() {
   return (
     <div className="min-h-screen bg-surface-page text-white">
+      <JsonLd
+        schema={breadcrumbSchema([
+          { name: "Home", path: "/" },
+          { name: "Contact", path: "/contactus" },
+        ])}
+      />
       <Navbar variant="dark" />
       <main>
         <PageHeader

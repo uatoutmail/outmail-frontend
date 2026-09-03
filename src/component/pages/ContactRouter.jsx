@@ -1,10 +1,10 @@
 "use client";
-import React, { useState } from "react";
 import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
 import { GraduationCap, Building2, Users, ArrowRight, Clock, Check } from "lucide-react";
+import React, { useState } from "react";
 import { toast } from "sonner";
-import { api } from "@/lib/api";
 import { Reveal, MaskLines, Kicker, EASE_OUT } from "@/component/motion/kit";
+import { api } from "@/lib/api";
 
 /**
  * The contact form.
@@ -21,7 +21,10 @@ import { Reveal, MaskLines, Kicker, EASE_OUT } from "@/component/motion/kit";
  */
 const AUDIENCES = [
   {
-    I: GraduationCap, k: "student", role: "Student", t: "I'm a student",
+    I: GraduationCap,
+    k: "student",
+    role: "Student",
+    t: "I'm a student",
     d: "Questions about your account, a payment, or how outreach works.",
     fields: [
       { n: "name", l: "Your name", type: "text", required: true },
@@ -30,7 +33,10 @@ const AUDIENCES = [
     ],
   },
   {
-    I: Building2, k: "recruiter", role: "Recruiter", t: "I'm a recruiter",
+    I: Building2,
+    k: "recruiter",
+    role: "Recruiter",
+    t: "I'm a recruiter",
     d: "Partnerships, or removing yourself from our contact pool.",
     fields: [
       { n: "name", l: "Your name", type: "text", required: true },
@@ -40,7 +46,10 @@ const AUDIENCES = [
     ],
   },
   {
-    I: Users, k: "tpo", role: "Placement officer", t: "I'm a placement officer",
+    I: Users,
+    k: "tpo",
+    role: "Placement officer",
+    t: "I'm a placement officer",
     d: "Campus plans, bulk access and reporting for your students.",
     fields: [
       { n: "name", l: "Your name", type: "text", required: true },
@@ -62,7 +71,11 @@ export default function ContactRouter() {
   const reduce = useReducedMotion();
   const a = AUDIENCES[k];
 
-  const pick = (i) => { setK(i); setForm({}); setSent(false); };
+  const pick = (i) => {
+    setK(i);
+    setForm({});
+    setSent(false);
+  };
   const change = (e) => setForm((f) => ({ ...f, [e.target.name]: e.target.value }));
 
   const submit = async (e) => {
@@ -71,16 +84,24 @@ export default function ContactRouter() {
     try {
       // `company`/`institution` are folded into the message rather than sent as
       // unknown keys — the endpoint takes name/email/role/message.
-      const extra = [form.company && `Company: ${form.company}`, form.institution && `Institution: ${form.institution}`]
-        .filter(Boolean).join("\n");
-      await api.post("/api/contact", {
-        name: form.name || "",
-        email: form.email || "",
-        role: a.role,
-        message: extra ? `${extra}\n\n${form.message || ""}` : form.message || "",
-      }, { quiet: true });
+      const extra = [
+        form.company && `Company: ${form.company}`,
+        form.institution && `Institution: ${form.institution}`,
+      ]
+        .filter(Boolean)
+        .join("\n");
+      await api.post(
+        "/api/contact",
+        {
+          name: form.name || "",
+          email: form.email || "",
+          role: a.role,
+          message: extra ? `${extra}\n\n${form.message || ""}` : form.message || "",
+        },
+        { quiet: true }
+      );
       setSent(true);
-    } catch (err) {
+    } catch {
       // Never surface backend internals — the user only needs to know it failed
       // and what to do instead.
       toast.error("We couldn't send that. Please email support@outmail.in.");
@@ -93,15 +114,33 @@ export default function ContactRouter() {
     <section id="contact-us" className="max-w-4xl mx-auto px-6 py-20 scroll-mt-24">
       <Reveal>
         <Kicker className="mb-4">Reach us</Kicker>
-        <MaskLines lines={["Who's asking?"]} className="font-syne text-3xl md:text-4xl font-bold tracking-tight mb-3" />
-        <p className="text-white/45 mb-8">So we can send it to the right person and skip the fields that do not apply.</p>
+        <MaskLines
+          lines={["Who's asking?"]}
+          className="font-syne text-3xl md:text-4xl font-bold tracking-tight mb-3"
+        />
+        <p className="text-white/45 mb-8">
+          So we can send it to the right person and skip the fields that do not apply.
+        </p>
       </Reveal>
 
-      <div className="grid sm:grid-cols-3 gap-3 mb-6" role="tablist" aria-label="Who is contacting us">
+      <div
+        className="grid sm:grid-cols-3 gap-3 mb-6"
+        role="tablist"
+        aria-label="Who is contacting us"
+      >
         {AUDIENCES.map((x, i) => (
-          <button key={x.k} onClick={() => pick(i)} role="tab" aria-selected={k === i} type="button"
+          <button
+            key={x.k}
+            onClick={() => pick(i)}
+            role="tab"
+            aria-selected={k === i}
+            type="button"
             className={`text-left rounded-2xl border p-5 transition-colors duration-200 ${
-              k === i ? "border-primary/50 bg-primary/[0.08]" : "border-white/10 bg-white/[0.02] hover:border-white/25"}`}>
+              k === i
+                ? "border-primary/50 bg-primary/[0.08]"
+                : "border-white/10 bg-white/[0.02] hover:border-white/25"
+            }`}
+          >
             <x.I size={17} className={k === i ? "text-primary" : "text-white/30"} />
             <p className="font-syne text-[15px] font-bold mt-3 mb-1">{x.t}</p>
             <p className="text-xs text-white/40 leading-relaxed">{x.d}</p>
@@ -111,38 +150,70 @@ export default function ContactRouter() {
 
       <AnimatePresence mode="wait">
         {sent ? (
-          <motion.div key="sent"
-            initial={reduce ? false : { opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }}
+          <motion.div
+            key="sent"
+            initial={reduce ? false : { opacity: 0, y: 14 }}
+            animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.3, ease: EASE_OUT }}
-            className="rounded-3xl border border-emerald-500/30 bg-emerald-500/[0.07] p-10 text-center" role="status">
+            className="rounded-3xl border border-emerald-500/30 bg-emerald-500/[0.07] p-10 text-center"
+            role="status"
+          >
             <span className="inline-flex w-11 h-11 rounded-full bg-emerald-500/20 items-center justify-center mb-4">
               <Check size={20} className="text-emerald-300" />
             </span>
             <p className="font-syne text-xl font-bold mb-2">Message sent.</p>
-            <p className="text-sm text-white/50">A person will reply within 24 hours, usually sooner.</p>
+            <p className="text-sm text-white/50">
+              A person will reply within 24 hours, usually sooner.
+            </p>
           </motion.div>
         ) : (
-          <motion.form key={a.k} onSubmit={submit}
-            initial={reduce ? false : { opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }}
-            exit={reduce ? {} : { opacity: 0, y: -14 }} transition={{ duration: 0.28, ease: EASE_OUT }}
-            className="rounded-3xl border border-white/12 bg-white/[0.03] p-8 space-y-5">
+          <motion.form
+            key={a.k}
+            onSubmit={submit}
+            initial={reduce ? false : { opacity: 0, y: 14 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={reduce ? {} : { opacity: 0, y: -14 }}
+            transition={{ duration: 0.28, ease: EASE_OUT }}
+            className="rounded-3xl border border-white/12 bg-white/[0.03] p-8 space-y-5"
+          >
             {a.fields.map((f) => (
               <div key={f.n}>
-                <label htmlFor={`c-${f.n}`} className="block text-[10px] uppercase tracking-[2px] text-white/35 mb-2">
+                <label
+                  htmlFor={`c-${f.n}`}
+                  className="block text-[10px] uppercase tracking-[2px] text-white/35 mb-2"
+                >
                   {f.l}
                 </label>
                 {f.area ? (
-                  <textarea id={`c-${f.n}`} name={f.n} rows={4} required={f.required}
-                    value={form[f.n] || ""} onChange={change} className={INPUT} />
+                  <textarea
+                    id={`c-${f.n}`}
+                    name={f.n}
+                    rows={4}
+                    required={f.required}
+                    value={form[f.n] || ""}
+                    onChange={change}
+                    className={INPUT}
+                  />
                 ) : (
-                  <input id={`c-${f.n}`} name={f.n} type={f.type} required={f.required}
-                    value={form[f.n] || ""} onChange={change} className={INPUT} />
+                  <input
+                    id={`c-${f.n}`}
+                    name={f.n}
+                    type={f.type}
+                    required={f.required}
+                    value={form[f.n] || ""}
+                    onChange={change}
+                    className={INPUT}
+                  />
                 )}
               </div>
             ))}
             <div className="flex flex-wrap items-center gap-4 pt-1">
-              <button type="submit" disabled={sending} aria-busy={sending}
-                className="font-syne font-semibold text-sm bg-primary hover:bg-primary-hover text-white rounded-btn px-6 py-3 transition-colors inline-flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed">
+              <button
+                type="submit"
+                disabled={sending}
+                aria-busy={sending}
+                className="font-syne font-semibold text-sm bg-primary hover:bg-primary-hover text-white rounded-btn px-6 py-3 transition-colors inline-flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
                 {sending ? "Sending…" : "Send message"} {!sending && <ArrowRight size={15} />}
               </button>
               <span className="text-xs text-white/30 inline-flex items-center gap-1.5">

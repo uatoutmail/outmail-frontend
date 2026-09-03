@@ -1,6 +1,6 @@
 "use client";
-import React, { useRef } from "react";
 import { motion, useScroll, useTransform, useReducedMotion } from "framer-motion";
+import React, { useRef } from "react";
 import { Reveal } from "@/component/motion/kit";
 
 /**
@@ -30,11 +30,18 @@ export function KineticBand() {
       </Reveal>
       <div className="space-y-1 md:space-y-2">
         {rows.map((r, i) => (
-          <motion.p key={i} style={reduce ? {} : { x: r.x, willChange: "transform" }}
-            className={`font-syne text-[13vw] md:text-[9vw] font-bold leading-[0.95] whitespace-nowrap ${r.cls || ""}`}>
-            {r.grad
-              ? <span className="bg-gradient-to-r from-primary to-accent-light bg-clip-text text-transparent">{r.text}</span>
-              : r.text}
+          <motion.p
+            key={i}
+            style={reduce ? {} : { x: r.x, willChange: "transform" }}
+            className={`font-syne text-[13vw] md:text-[9vw] font-bold leading-[0.95] whitespace-nowrap ${r.cls || ""}`}
+          >
+            {r.grad ? (
+              <span className="bg-gradient-to-r from-primary to-accent-light bg-clip-text text-transparent">
+                {r.text}
+              </span>
+            ) : (
+              r.text
+            )}
           </motion.p>
         ))}
       </div>

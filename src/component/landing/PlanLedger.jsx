@@ -1,9 +1,9 @@
 "use client";
-import React, { useRef } from "react";
 import { motion, useInView } from "framer-motion";
 import { Check, Minus, Users, Flame } from "lucide-react";
-import { formatPaise } from "@/lib/paymentOutcome";
+import React, { useRef } from "react";
 import { Reveal, EASE_OUT } from "@/component/motion/kit";
+import { formatPaise } from "@/lib/paymentOutcome";
 
 /**
  * The plan ledger — the agreed pricing layout, shared by the landing section
@@ -50,7 +50,7 @@ export function LaunchBanner({ plan }) {
   const inView = useInView(ref, { once: true, margin: "-10%" });
 
   if (!plan || !(plan.list_amount > plan.amount)) return null;
-  if (plan.launchPlacesLeft === 0) return null;   // cohort full: the offer is over
+  if (plan.launchPlacesLeft === 0) return null; // cohort full: the offer is over
 
   const price = formatPaise(plan.amount, plan.currency);
   const listPrice = formatPaise(plan.list_amount, plan.currency);
@@ -61,10 +61,16 @@ export function LaunchBanner({ plan }) {
 
   return (
     <Reveal delay={0.06}>
-      <div ref={ref} className="rounded-2xl border border-primary/35 bg-gradient-to-r from-primary/15 via-primary/[0.07] to-transparent px-6 py-5 mb-4 text-left">
+      <div
+        ref={ref}
+        className="rounded-2xl border border-primary/35 bg-gradient-to-r from-primary/15 via-primary/[0.07] to-transparent px-6 py-5 mb-4 text-left"
+      >
         <div className="flex flex-wrap items-center gap-x-4 gap-y-3 justify-between">
           <div className="flex items-center gap-3">
-            <span aria-hidden className="w-9 h-9 rounded-xl bg-primary/20 border border-primary/30 flex items-center justify-center shrink-0">
+            <span
+              aria-hidden
+              className="w-9 h-9 rounded-xl bg-primary/20 border border-primary/30 flex items-center justify-center shrink-0"
+            >
               <Flame size={16} className="text-primary" />
             </span>
             <div>
@@ -87,15 +93,19 @@ export function LaunchBanner({ plan }) {
                 </span>
               </div>
               <div className="h-1.5 rounded-full bg-white/10 overflow-hidden">
-                <motion.div initial={{ width: 0 }} animate={inView ? { width: `${pct}%` } : undefined}
+                <motion.div
+                  initial={{ width: 0 }}
+                  animate={inView ? { width: `${pct}%` } : undefined}
                   transition={{ duration: 0.9, ease: EASE_OUT }}
-                  className="h-full bg-gradient-to-r from-primary to-accent-light" />
+                  className="h-full bg-gradient-to-r from-primary to-accent-light"
+                />
               </div>
             </div>
           )}
         </div>
         <p className="text-[11px] text-white/30 mt-3">
-          Buy at the launch price and you keep the full year at that price — we never ask for the difference later.
+          Buy at the launch price and you keep the full year at that price — we never ask for the
+          difference later.
         </p>
       </div>
     </Reveal>
@@ -103,7 +113,13 @@ export function LaunchBanner({ plan }) {
 }
 
 function PriceCell({ plan, accent }) {
-  if (!plan) return <span className="inline-block w-20 h-7 rounded bg-white/10 animate-pulse align-middle" aria-hidden />;
+  if (!plan)
+    return (
+      <span
+        className="inline-block w-20 h-7 rounded bg-white/10 animate-pulse align-middle"
+        aria-hidden
+      />
+    );
   return (
     <>
       <p className="font-syne text-2xl sm:text-3xl font-bold leading-none">
@@ -117,7 +133,9 @@ function PriceCell({ plan, accent }) {
       {plan.seatsRemaining != null && (
         <p className={`text-[11px] mt-1 font-mono inline-flex items-center gap-1 ${accent}`}>
           <Users size={10} />
-          {plan.seatsRemaining > 0 ? `${plan.seatsRemaining}/${plan.max_seats} seats` : "fully subscribed"}
+          {plan.seatsRemaining > 0
+            ? `${plan.seatsRemaining}/${plan.max_seats} seats`
+            : "fully subscribed"}
         </p>
       )}
     </>
@@ -131,26 +149,40 @@ export default function PlanLedger({ a, b, renderCtaA, renderCtaB, footNote }) {
         <div className="grid grid-cols-12 gap-3 px-5 sm:px-6 py-6 border-b border-white/10 bg-white/[0.02] items-end">
           <div className="col-span-6" />
           <div className="col-span-3 text-center">
-            <p className="text-[10px] uppercase tracking-[2px] text-primary mb-1.5">Outreach &amp; Jobs</p>
+            <p className="text-[10px] uppercase tracking-[2px] text-primary mb-1.5">
+              Outreach &amp; Jobs
+            </p>
             <PriceCell plan={a} accent="text-primary" />
           </div>
           <div className="col-span-3 text-center">
-            <p className="text-[10px] uppercase tracking-[2px] text-accent-light mb-1.5">+ Mentorship</p>
+            <p className="text-[10px] uppercase tracking-[2px] text-accent-light mb-1.5">
+              + Mentorship
+            </p>
             <PriceCell plan={b} accent="text-accent-light" />
           </div>
         </div>
 
         {MATRIX.map((r, i) => (
           <Reveal key={r.label} delay={i * 0.03}>
-            <div className={`grid grid-cols-12 gap-3 px-5 sm:px-6 py-4 items-center border-b border-white/[0.06] ${!r.a ? "bg-accent-light/[0.05]" : ""}`}>
-              <span className="col-span-6 text-[13px] sm:text-sm text-white/60 leading-snug">{r.label}</span>
-              <span className="col-span-3 flex justify-center">
-                {r.a ? <Check size={16} className="text-primary" aria-label="included" />
-                     : <Minus size={16} className="text-white/15" aria-label="not included" />}
+            <div
+              className={`grid grid-cols-12 gap-3 px-5 sm:px-6 py-4 items-center border-b border-white/[0.06] ${!r.a ? "bg-accent-light/[0.05]" : ""}`}
+            >
+              <span className="col-span-6 text-[13px] sm:text-sm text-white/60 leading-snug">
+                {r.label}
               </span>
               <span className="col-span-3 flex justify-center">
-                {r.b ? <Check size={16} className="text-accent-light" aria-label="included" />
-                     : <Minus size={16} className="text-white/15" aria-label="not included" />}
+                {r.a ? (
+                  <Check size={16} className="text-primary" aria-label="included" />
+                ) : (
+                  <Minus size={16} className="text-white/15" aria-label="not included" />
+                )}
+              </span>
+              <span className="col-span-3 flex justify-center">
+                {r.b ? (
+                  <Check size={16} className="text-accent-light" aria-label="included" />
+                ) : (
+                  <Minus size={16} className="text-white/15" aria-label="not included" />
+                )}
               </span>
             </div>
           </Reveal>
@@ -158,7 +190,8 @@ export default function PlanLedger({ a, b, renderCtaA, renderCtaB, footNote }) {
 
         <div className="grid grid-cols-12 gap-3 px-5 sm:px-6 py-6 items-center bg-white/[0.02]">
           <span className="col-span-12 sm:col-span-6 text-[11px] text-white/30 leading-relaxed mb-3 sm:mb-0">
-            {footNote ?? "One payment. Twelve months. Nothing renews. All taxes included. Full refund within 7 days."}
+            {footNote ??
+              "One payment. Twelve months. Nothing renews. All taxes included. Full refund within 7 days."}
           </span>
           <div className="col-span-6 sm:col-span-3 flex justify-center">{renderCtaA?.(a)}</div>
           <div className="col-span-6 sm:col-span-3 flex justify-center">{renderCtaB?.(b)}</div>

@@ -1,18 +1,12 @@
+import { siteUrl } from "@/lib/env";
 export default function robots() {
-  const baseUrl = process.env.NEXT_PUBLIC_FRONTEND_URL || "https://outmail.in";
+  const baseUrl = siteUrl;
 
   return {
     rules: {
       userAgent: "*",
       allow: "/",
-      disallow: [
-        "/admin/",
-        "/app-login/",
-        "/auth/",
-        "/dashboard/",
-        "/student/",
-        "/tpo/",
-      ],
+      disallow: ["/admin/", "/app-login/", "/auth/", "/dashboard/", "/student/", "/tpo/"],
     },
     sitemap: `${baseUrl}/sitemap.xml`,
   };

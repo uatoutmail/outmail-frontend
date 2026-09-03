@@ -1,13 +1,14 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import { useAuth } from "@/context/AuthContext";
 import { toast } from "sonner";
-import TPOPageShell from "@/component/tpo/TPOPageShell";
-import TPOOverviewCards from "@/component/tpo/TPOOverviewCards";
 import TPOCharts from "@/component/tpo/TPOCharts";
-import TPOStudentTable from "@/component/tpo/TPOStudentTable";
 import TPOMentorshipPanel from "@/component/tpo/TPOMentorshipPanel";
+import TPOOverviewCards from "@/component/tpo/TPOOverviewCards";
+import TPOPageShell from "@/component/tpo/TPOPageShell";
+import TPOStudentTable from "@/component/tpo/TPOStudentTable";
+import { useAuth } from "@/context/AuthContext";
 import { api } from "@/lib/api";
+import { logger } from "@/lib/logger";
 
 export default function TPODashboard() {
   const { user, isAuthenticated } = useAuth();
@@ -25,7 +26,7 @@ export default function TPODashboard() {
         const res = await api.get("/api/admin/stats");
         setStats(res.data.stats);
       } catch (err) {
-        console.error("Failed to fetch TPO stats", err);
+        logger.error("Failed to fetch TPO stats", err);
       }
     };
     if (isAuthenticated) {
@@ -46,9 +47,7 @@ export default function TPODashboard() {
         {/* Welcome */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
-            <h1 className="text-2xl font-bold text-gray-900">
-              Welcome back, {firstName} 
-            </h1>
+            <h1 className="text-2xl font-bold text-gray-900">Welcome back, {firstName}</h1>
             <p className="text-gray-500 text-sm mt-1">
               {tpoUser.college} &nbsp;·&nbsp; Batch 2025–26 &nbsp;·&nbsp; Last updated: Today
             </p>
@@ -93,4 +92,3 @@ export default function TPODashboard() {
     </TPOPageShell>
   );
 }
-

@@ -16,8 +16,7 @@ export const metadata = {
   },
   openGraph: {
     title: "Contact Us | Personalized Cold Outreach Support",
-    description:
-      "Get in touch for support, partnerships, or more information about Outmail.",
+    description: "Get in touch for support, partnerships, or more information about Outmail.",
     url: "https://outmail.in/contactus",
     type: "website",
     images: [
@@ -32,8 +31,7 @@ export const metadata = {
   twitter: {
     card: "summary_large_image",
     title: "Contact Us | Personalized Cold Outreach Support",
-    description:
-      "Get in touch for support, partnerships, or more information about Outmail.",
+    description: "Get in touch for support, partnerships, or more information about Outmail.",
     images: ["/image.png"],
   },
 };

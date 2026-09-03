@@ -1,9 +1,10 @@
-import React, { useState, useEffect } from "react";
 import { Mail, AlertTriangle, ChevronRight, Send, FileText } from "lucide-react";
-import { api } from "@/lib/api";
+import React, { useState, useEffect } from "react";
 import { toast } from "sonner";
+import { api } from "@/lib/api";
+import { logger } from "@/lib/logger";
 
-const CustomOutreach = ({ resumes, hasResumes, user, gmailConnected }) => {
+const CustomOutreach = ({ resumes, hasResumes, gmailConnected }) => {
   const [customTargetEmail, setCustomTargetEmail] = useState("");
   const [customSelectedResumeId, setCustomSelectedResumeId] = useState("");
   const [customJobDescription, setCustomJobDescription] = useState("");
@@ -22,31 +23,35 @@ const CustomOutreach = ({ resumes, hasResumes, user, gmailConnected }) => {
   const handleSendCustomOutreach = async (e) => {
     e.preventDefault();
     if (!customTargetEmail || !customSelectedResumeId || !customJobDescription) {
-      toast.error('Please fill in all fields.');
+      toast.error("Please fill in all fields.");
       return;
     }
 
     if (!gmailConnected) {
-      toast.error('Please connect your Gmail in the Outmail desktop app first.');
+      toast.error("Please connect your Gmail in the Outmail desktop app first.");
       return;
     }
 
     setIsCustomSending(true);
 
     try {
-      await api.post('/api/outreach/custom', {
+      await api.post("/api/outreach/custom", {
         targetMail: customTargetEmail,
         resumeId: customSelectedResumeId,
         jobDescription: customJobDescription,
       });
 
-      toast.success(`Custom outreach queued! Your desktop app will send it to ${customTargetEmail} within a minute while it's online.`);
+      toast.success(
+        `Custom outreach queued! Your desktop app will send it to ${customTargetEmail} within a minute while it's online.`
+      );
 
-      setCustomTargetEmail('');
-      setCustomJobDescription('');
+      setCustomTargetEmail("");
+      setCustomJobDescription("");
     } catch (error) {
-      console.error('Error sending custom outreach:', error);
-      toast.error(error.response?.data?.error || 'An error occurred while sending the custom outreach.');
+      logger.error("Error sending custom outreach:", error);
+      toast.error(
+        error.response?.data?.error || "An error occurred while sending the custom outreach."
+      );
     } finally {
       setIsCustomSending(false);
     }
@@ -61,7 +66,8 @@ const CustomOutreach = ({ resumes, hasResumes, user, gmailConnected }) => {
         <div>
           <h2 className="text-xl font-bold text-white">Custom Outreach Mailer</h2>
           <p className="text-sm text-gray-400 mt-1">
-            Generate and send a personalized outreach email for any job description and target email.
+            Generate and send a personalized outreach email for any job description and target
+            email.
           </p>
         </div>
       </div>
@@ -73,7 +79,8 @@ const CustomOutreach = ({ resumes, hasResumes, user, gmailConnected }) => {
             <div>
               <h4 className="text-red-400 font-semibold mb-1">Resume Required</h4>
               <p className="text-sm text-red-400/80">
-                You need to upload at least one resume in the Settings before you can run outreach campaigns. The AI uses your resume to generate personalized emails.
+                You need to upload at least one resume in the Settings before you can run outreach
+                campaigns. The AI uses your resume to generate personalized emails.
               </p>
             </div>
           </div>
@@ -85,7 +92,8 @@ const CustomOutreach = ({ resumes, hasResumes, user, gmailConnected }) => {
             <div>
               <h4 className="text-yellow-400 font-semibold mb-1">Gmail Connection Required</h4>
               <p className="text-sm text-yellow-400/80">
-                You need to connect your Gmail account using an App Password in the Settings before you can send outreach emails.
+                You need to connect your Gmail account using an App Password in the Settings before
+                you can send outreach emails.
               </p>
             </div>
           </div>
@@ -93,9 +101,15 @@ const CustomOutreach = ({ resumes, hasResumes, user, gmailConnected }) => {
 
         <form onSubmit={handleSendCustomOutreach} className="space-y-6 max-w-4xl">
           <div>
-            <label className="block text-sm font-semibold text-gray-300 mb-2">Select Resume</label>
+            <label
+              htmlFor="customoutreach-select-resume"
+              className="block text-sm font-semibold text-gray-300 mb-2"
+            >
+              Select Resume
+            </label>
             <div className="relative">
               <select
+                id="customoutreach-select-resume"
                 value={customSelectedResumeId}
                 onChange={(e) => setCustomSelectedResumeId(e.target.value)}
                 disabled={!hasResumes}
@@ -114,12 +128,18 @@ const CustomOutreach = ({ resumes, hasResumes, user, gmailConnected }) => {
           </div>
 
           <div>
-            <label className="block text-sm font-semibold text-gray-300 mb-2">Target Recipient Email</label>
+            <label
+              htmlFor="customoutreach-field-124"
+              className="block text-sm font-semibold text-gray-300 mb-2"
+            >
+              Target Recipient Email
+            </label>
             <div className="relative">
               <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-gray-400">
                 <Mail size={18} />
               </div>
               <input
+                id="customoutreach-field-124"
                 type="email"
                 required
                 placeholder="recruiter@company.com"
@@ -131,12 +151,18 @@ const CustomOutreach = ({ resumes, hasResumes, user, gmailConnected }) => {
           </div>
 
           <div>
-            <label className="block text-sm font-semibold text-gray-300 mb-2">Job Description</label>
+            <label
+              htmlFor="customoutreach-field-143"
+              className="block text-sm font-semibold text-gray-300 mb-2"
+            >
+              Job Description
+            </label>
             <div className="relative">
               <div className="absolute top-3 left-3 text-gray-400 pointer-events-none">
                 <FileText size={18} />
               </div>
               <textarea
+                id="customoutreach-field-143"
                 required
                 rows={8}
                 placeholder="Paste the full job description or requirements here..."
@@ -152,10 +178,10 @@ const CustomOutreach = ({ resumes, hasResumes, user, gmailConnected }) => {
             disabled={isCustomSending || !hasResumes || !gmailConnected}
             className={`flex items-center justify-center gap-2 px-8 py-3.5 rounded-xl font-semibold shadow-md transition-all duration-300 w-full sm:w-auto ${
               isCustomSending
-                ? 'bg-purple-600/50 cursor-not-allowed border border-purple-500/30 text-white/70'
+                ? "bg-purple-600/50 cursor-not-allowed border border-purple-500/30 text-white/70"
                 : !hasResumes || !gmailConnected
-                ? 'bg-gray-800 text-gray-500 cursor-not-allowed border border-gray-700'
-                : 'bg-white/10 hover:bg-purple-600 border border-white/10 hover:border-purple-500 text-white hover:shadow-lg hover:shadow-purple-500/20'
+                  ? "bg-gray-800 text-gray-500 cursor-not-allowed border border-gray-700"
+                  : "bg-white/10 hover:bg-purple-600 border border-white/10 hover:border-purple-500 text-white hover:shadow-lg hover:shadow-purple-500/20"
             }`}
           >
             {isCustomSending ? (

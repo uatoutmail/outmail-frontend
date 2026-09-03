@@ -1,7 +1,9 @@
-import Navbar from "@/component/Navbar";
 import Footer from "@/component/Footer";
 import Faq from "@/component/landing/Faq";
+import Navbar from "@/component/Navbar";
 import PageHeader from "@/component/ui/PageHeader";
+import { FAQS } from "@/lib/faqs";
+import { JsonLd, faqSchema, breadcrumbSchema } from "@/lib/structuredData";
 
 export const metadata = {
   title: "FAQ | Outmail - Personalized Cold Outreach",
@@ -23,6 +25,13 @@ export default function FAQPage() {
   return (
     <div className="min-h-screen bg-surface-page text-white">
       <Navbar variant="dark" />
+      <JsonLd schema={faqSchema(FAQS)} />
+      <JsonLd
+        schema={breadcrumbSchema([
+          { name: "Home", path: "/" },
+          { name: "FAQ", path: "/faq" },
+        ])}
+      />
       <main>
         <PageHeader
           kicker="Questions"

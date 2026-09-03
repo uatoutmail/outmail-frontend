@@ -1,8 +1,9 @@
-import Navbar from "@/component/Navbar";
 import Footer from "@/component/Footer";
-import PageHeader from "@/component/ui/PageHeader";
-import { ProblemSplit, PrinciplesManifesto, EntityLetter } from "@/component/pages/AboutSections";
 import Validation from "@/component/landing/Validation";
+import Navbar from "@/component/Navbar";
+import { ProblemSplit, PrinciplesManifesto, EntityLetter } from "@/component/pages/AboutSections";
+import PageHeader from "@/component/ui/PageHeader";
+import { JsonLd, breadcrumbSchema } from "@/lib/structuredData";
 
 export const metadata = {
   title: "About Us",
@@ -14,6 +15,12 @@ export const metadata = {
 export default function Page() {
   return (
     <div className="min-h-screen bg-surface-page text-white">
+      <JsonLd
+        schema={breadcrumbSchema([
+          { name: "Home", path: "/" },
+          { name: "About", path: "/aboutus" },
+        ])}
+      />
       <Navbar variant="dark" />
       <main>
         <PageHeader

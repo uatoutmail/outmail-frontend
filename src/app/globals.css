@@ -28,29 +28,29 @@
      declared brand colour was the least-used of three competing purples — so
      editing it changed almost nothing on screen. That is what the migration
      bought. */
-  --brand-primary: #7f22ff;          /* violet — the brand */
-  --brand-primary-hover: #6516d6;    /* deeper, for hover/active */
-  --brand-accent-light: #c084fc;     /* light violet — links, accents, gradient partner */
-  --brand-primary-soft: #d8b4fe;     /* softest violet — subtle highlights */
-  --brand-glow: #b06cff;             /* hero gradient purple */
-  --brand-accent: #c026d3;           /* fuchsia — gradient start only, never primary */
-  --brand-accent-soft: #e879f9;      /* lighter fuchsia */
+  --brand-primary: #7f22ff; /* violet — the brand */
+  --brand-primary-hover: #6516d6; /* deeper, for hover/active */
+  --brand-accent-light: #c084fc; /* light violet — links, accents, gradient partner */
+  --brand-primary-soft: #d8b4fe; /* softest violet — subtle highlights */
+  --brand-glow: #b06cff; /* hero gradient purple */
+  --brand-accent: #c026d3; /* fuchsia — gradient start only, never primary */
+  --brand-accent-soft: #e879f9; /* lighter fuchsia */
   --brand-primary-foreground: #ffffff;
 
   /* Surfaces & lines (dark glass theme) */
   --surface: rgba(15, 23, 42, 0.7);
   --surface-2: rgba(255, 255, 255, 0.05);
-  --surface-3: rgba(255, 255, 255, 0.10);
+  --surface-3: rgba(255, 255, 255, 0.1);
   --border-subtle: rgba(168, 158, 190, 0.35);
 
-  --background: #09060f;             /* html/body — near-black with a violet cast */
-  --surface-page: #09060f;           /* section backgrounds */
-  --surface-panel: #150f24;          /* solid panels — violet-black, was slate */
-  --surface-solid: #1a1a1a;          /* opaque surfaces — native <option>, menus */
-  --surface-deep: #140d2b;           /* deep violet-black, gradient stops */
+  --background: #09060f; /* html/body — near-black with a violet cast */
+  --surface-page: #09060f; /* section backgrounds */
+  --surface-panel: #150f24; /* solid panels — violet-black, was slate */
+  --surface-solid: #1a1a1a; /* opaque surfaces — native <option>, menus */
+  --surface-deep: #140d2b; /* deep violet-black, gradient stops */
   --foreground: #f9fafb;
   --muted-foreground: #a39fb3;
-  --muted-strong: #6b7280;           /* dimmer body text */
+  --muted-strong: #6b7280; /* dimmer body text */
 
   /* Semantic — status only, never decoration */
   --success: #22c55e;
@@ -105,16 +105,28 @@
    Lenis drives the real window scroll rather than transforming a container, so
    position:sticky and Framer's useScroll both keep working. These three rules
    are what stop the browser's own scroll anchoring from fighting it. */
-html.lenis, html.lenis body { height: auto; }
-.lenis.lenis-smooth { scroll-behavior: auto !important; }
-.lenis.lenis-stopped { overflow: hidden; }
+html.lenis,
+html.lenis body {
+  height: auto;
+}
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+.lenis.lenis-stopped {
+  overflow: hidden;
+}
 
 /* ---- Base ---- */
 html,
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: var(--font-sans), "Segoe UI", system-ui, -apple-system, sans-serif;
+  font-family:
+    var(--font-sans),
+    "Segoe UI",
+    system-ui,
+    -apple-system,
+    sans-serif;
 }
 
 /* Visible keyboard focus everywhere (a11y) */
@@ -126,7 +138,9 @@ body {
 
 /* Respect reduced-motion (also covers the W2 animation work) */
 @media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after {
+  *,
+  *::before,
+  *::after {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
@@ -142,7 +156,9 @@ body {
   border: 1px solid var(--border-subtle);
   -webkit-backdrop-filter: blur(18px);
   backdrop-filter: blur(18px);
-  box-shadow: 0 18px 45px rgba(15, 23, 42, 0.75), 0 0 0 1px rgba(15, 23, 42, 0.4);
+  box-shadow:
+    0 18px 45px rgba(15, 23, 42, 0.75),
+    0 0 0 1px rgba(15, 23, 42, 0.4);
 }
 
 .gradient-text {
@@ -169,7 +185,8 @@ body {
   border-radius: 1.25rem;
   border: 1px solid var(--border-subtle);
   padding: 1.75rem;
-  background: radial-gradient(circle at top left, rgba(56, 189, 248, 0.12), transparent 55%),
+  background:
+    radial-gradient(circle at top left, rgba(56, 189, 248, 0.12), transparent 55%),
     radial-gradient(circle at bottom right, rgba(168, 85, 247, 0.12), transparent 55%),
     rgba(15, 23, 42, 0.9);
   position: relative;
@@ -184,7 +201,9 @@ body {
   transition: opacity 0.4s ease;
   pointer-events: none;
 }
-.phase-card:hover::before { opacity: 1; }
+.phase-card:hover::before {
+  opacity: 1;
+}
 
 .note-box {
   padding: 1rem 1rem 1rem 1.25rem;
@@ -204,37 +223,70 @@ body {
   /* Was rgba(59,130,246) — blue, left over from the pre-rotation palette.
      The blur() is gone too: a radial-gradient is already soft, and blurring
      one only adds a full-size rasterisation on every paint. */
-  background: radial-gradient(circle at center, rgba(127, 34, 255, 0.30), transparent 62%);
+  background: radial-gradient(circle at center, rgba(127, 34, 255, 0.3), transparent 62%);
   opacity: 0.8;
   pointer-events: none;
 }
 
 @keyframes scroll {
-  0% { transform: translateX(0%); }
-  100% { transform: translateX(-50%); }
+  0% {
+    transform: translateX(0%);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
 }
-.animate-scroll { animation: scroll 10s linear infinite; }
+.animate-scroll {
+  animation: scroll 10s linear infinite;
+}
 
 @keyframes pop-burst {
-  0% { transform: scale(1); }
-  50% { transform: scale(1.3); }
-  100% { transform: scale(1); }
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.3);
+  }
+  100% {
+    transform: scale(1);
+  }
 }
-.animate-pop { animation: pop-burst 0.4s cubic-bezier(0.68, -0.55, 0.27, 1.55); }
+.animate-pop {
+  animation: pop-burst 0.4s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+}
 
 /* ---- Flip card ---- */
-.flip-card { background-color: transparent; width: 100%; aspect-ratio: 1/1; perspective: 1000px; }
+.flip-card {
+  background-color: transparent;
+  width: 100%;
+  aspect-ratio: 1/1;
+  perspective: 1000px;
+}
 .flip-card-inner {
-  position: relative; width: 100%; height: 100%;
-  transition: transform 0.6s ease; transform-style: preserve-3d;
+  position: relative;
+  width: 100%;
+  height: 100%;
+  transition: transform 0.6s ease;
+  transform-style: preserve-3d;
 }
-.flip-card:hover .flip-card-inner { transform: rotateY(180deg); }
-.flip-card-front, .flip-card-back {
-  position: absolute; width: 100%; height: 100%;
-  backface-visibility: hidden; border-radius: 0.75rem;
-  display: flex; flex-direction: column; justify-content: center; align-items: center;
+.flip-card:hover .flip-card-inner {
+  transform: rotateY(180deg);
 }
-.flip-card-front { background: #e5d4ff; }
+.flip-card-front,
+.flip-card-back {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  backface-visibility: hidden;
+  border-radius: 0.75rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+.flip-card-front {
+  background: #e5d4ff;
+}
 .flip-card-back {
   background-color: var(--brand-primary);
   transform: rotateY(180deg);
@@ -250,31 +302,147 @@ body {
    All motion below is disabled by the prefers-reduced-motion block
    above, so each scene degrades to a clean static composition.
    ============================================================ */
-@keyframes ob-float-y   { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
-@keyframes ob-float-y-lg{ 0%,100% { transform: translateY(0); } 50% { transform: translateY(-14px); } }
-@keyframes ob-fill-bar  { from { transform: scaleX(0); } to { transform: scaleX(1); } }
-@keyframes ob-pulse-ring{ 0% { transform: scale(.55); opacity:.55; } 70% { opacity:0; } 100% { transform: scale(1.7); opacity:0; } }
-@keyframes ob-orbit     { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
-@keyframes ob-orbit-rev { from { transform: rotate(0deg); } to { transform: rotate(-360deg); } }
-@keyframes ob-travel-x  { 0% { left:6%; opacity:0; } 12% { opacity:1; } 80% { opacity:1; } 100% { left:82%; opacity:0; } }
-@keyframes ob-soft-pulse{ 0%,100% { opacity:.45; } 50% { opacity:1; } }
-@keyframes ob-twinkle   { 0%,100% { opacity:.12; } 50% { opacity:.55; } }
-@keyframes ob-count-up  { from { transform: translateY(40%); opacity:0; } to { transform: translateY(0); opacity:1; } }
+@keyframes ob-float-y {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-8px);
+  }
+}
+@keyframes ob-float-y-lg {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-14px);
+  }
+}
+@keyframes ob-fill-bar {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+@keyframes ob-pulse-ring {
+  0% {
+    transform: scale(0.55);
+    opacity: 0.55;
+  }
+  70% {
+    opacity: 0;
+  }
+  100% {
+    transform: scale(1.7);
+    opacity: 0;
+  }
+}
+@keyframes ob-orbit {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+@keyframes ob-orbit-rev {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(-360deg);
+  }
+}
+@keyframes ob-travel-x {
+  0% {
+    left: 6%;
+    opacity: 0;
+  }
+  12% {
+    opacity: 1;
+  }
+  80% {
+    opacity: 1;
+  }
+  100% {
+    left: 82%;
+    opacity: 0;
+  }
+}
+@keyframes ob-soft-pulse {
+  0%,
+  100% {
+    opacity: 0.45;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+@keyframes ob-twinkle {
+  0%,
+  100% {
+    opacity: 0.12;
+  }
+  50% {
+    opacity: 0.55;
+  }
+}
+@keyframes ob-count-up {
+  from {
+    transform: translateY(40%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
 
-.anim-float-y    { animation: ob-float-y 4s ease-in-out infinite; }
-.anim-float-y-lg { animation: ob-float-y-lg 6s ease-in-out infinite; }
-.anim-fill-bar   { transform: scaleX(0); transform-origin: left center; animation: ob-fill-bar 1.4s cubic-bezier(.22,.61,.36,1) forwards; }
-.anim-pulse-ring { animation: ob-pulse-ring 2.8s ease-out infinite; }
-.anim-orbit      { animation: ob-orbit 18s linear infinite; }
-.anim-orbit-rev  { animation: ob-orbit-rev 18s linear infinite; }
-.anim-travel-x   { animation: ob-travel-x 4.5s ease-in-out infinite; }
-.anim-soft-pulse { animation: ob-soft-pulse 2.4s ease-in-out infinite; }
-.anim-twinkle    { animation: ob-twinkle 3.5s ease-in-out infinite; }
-.anim-count-up   { animation: ob-count-up .7s cubic-bezier(.22,.61,.36,1) forwards; }
+.anim-float-y {
+  animation: ob-float-y 4s ease-in-out infinite;
+}
+.anim-float-y-lg {
+  animation: ob-float-y-lg 6s ease-in-out infinite;
+}
+.anim-fill-bar {
+  transform: scaleX(0);
+  transform-origin: left center;
+  animation: ob-fill-bar 1.4s cubic-bezier(0.22, 0.61, 0.36, 1) forwards;
+}
+.anim-pulse-ring {
+  animation: ob-pulse-ring 2.8s ease-out infinite;
+}
+.anim-orbit {
+  animation: ob-orbit 18s linear infinite;
+}
+.anim-orbit-rev {
+  animation: ob-orbit-rev 18s linear infinite;
+}
+.anim-travel-x {
+  animation: ob-travel-x 4.5s ease-in-out infinite;
+}
+.anim-soft-pulse {
+  animation: ob-soft-pulse 2.4s ease-in-out infinite;
+}
+.anim-twinkle {
+  animation: ob-twinkle 3.5s ease-in-out infinite;
+}
+.anim-count-up {
+  animation: ob-count-up 0.7s cubic-bezier(0.22, 0.61, 0.36, 1) forwards;
+}
 
 /* When motion is reduced, make sure fill bars & count-ups show their END state
    (the keyframes are frozen, but these start hidden — reveal them). */
 @media (prefers-reduced-motion: reduce) {
-  .anim-fill-bar { transform: scaleX(1); }
-  .anim-count-up { opacity: 1; transform: none; }
+  .anim-fill-bar {
+    transform: scaleX(1);
+  }
+  .anim-count-up {
+    opacity: 1;
+    transform: none;
+  }
 }

@@ -18,7 +18,7 @@
  *   own confirmation before taking money.
  */
 
-const KEY = 'outmail.checkoutIntent';
+const KEY = "outmail.checkoutIntent";
 
 // Intent older than this is ignored. Opening a payment modal because of a
 // choice someone made an hour ago is startling, not helpful.
@@ -26,7 +26,7 @@ const MAX_AGE_MS = 30 * 60 * 1000;
 
 /** Remember a plan choice before redirecting to sign-in. */
 export function rememberIntent(planId, planCode) {
-  if (typeof window === 'undefined' || !planId) return;
+  if (typeof window === "undefined" || !planId) return;
   try {
     sessionStorage.setItem(KEY, JSON.stringify({ planId, planCode, at: Date.now() }));
   } catch {
@@ -39,7 +39,7 @@ export function rememberIntent(planId, planCode) {
  * in place, every later visit to /pricing would reopen checkout.
  */
 export function takeIntent() {
-  if (typeof window === 'undefined') return null;
+  if (typeof window === "undefined") return null;
   try {
     const raw = sessionStorage.getItem(KEY);
     sessionStorage.removeItem(KEY);
@@ -53,6 +53,10 @@ export function takeIntent() {
 }
 
 export function clearIntent() {
-  if (typeof window === 'undefined') return;
-  try { sessionStorage.removeItem(KEY); } catch { /* nothing to do */ }
+  if (typeof window === "undefined") return;
+  try {
+    sessionStorage.removeItem(KEY);
+  } catch {
+    /* nothing to do */
+  }
 }

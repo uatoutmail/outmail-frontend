@@ -1,5 +1,12 @@
 import { describe, it, expect } from "vitest";
-import { hasFeature, lockReason, daysUntilExpiry, hasLapsed, FEATURE_PLANS, UPGRADE_TARGET } from "./planAccess";
+import {
+  hasFeature,
+  lockReason,
+  daysUntilExpiry,
+  hasLapsed,
+  FEATURE_PLANS,
+  UPGRADE_TARGET,
+} from "./planAccess";
 
 // The ladder previously lived as inline conditionals and had drifted: mentorship
 // was gated on PLAN_C (retired) and jobs on PLAN_B, so a ₹999 Outreach & Jobs
@@ -70,13 +77,17 @@ describe("UPGRADE_TARGET", () => {
 
 describe("daysUntilExpiry", () => {
   it("counts down the placement year", () => {
-    const d = daysUntilExpiry({ accessExpiresAt: new Date(Date.now() + 30 * 86400000).toISOString() });
+    const d = daysUntilExpiry({
+      accessExpiresAt: new Date(Date.now() + 30 * 86400000).toISOString(),
+    });
     expect(d).toBeGreaterThan(29);
     expect(d).toBeLessThanOrEqual(31);
   });
 
   it("goes negative once lapsed, rather than clamping to zero", () => {
-    expect(daysUntilExpiry({ accessExpiresAt: new Date(Date.now() - 5 * 86400000).toISOString() })).toBeLessThan(0);
+    expect(
+      daysUntilExpiry({ accessExpiresAt: new Date(Date.now() - 5 * 86400000).toISOString() })
+    ).toBeLessThan(0);
   });
 
   it("is null when unknown", () => {
@@ -90,7 +101,9 @@ describe("daysUntilExpiry", () => {
 // stopped working (OUT-236).
 describe("hasLapsed — 'ran out' must be distinguishable from 'never bought'", () => {
   it("is true for someone whose year ended", () => {
-    expect(hasLapsed({ lapsedPlan: { code: "PLAN_A", name: "Outreach & Jobs" }, currentPlan: null })).toBe(true);
+    expect(
+      hasLapsed({ lapsedPlan: { code: "PLAN_A", name: "Outreach & Jobs" }, currentPlan: null })
+    ).toBe(true);
   });
 
   it("is false for someone who never bought anything", () => {
@@ -102,7 +115,9 @@ describe("hasLapsed — 'ran out' must be distinguishable from 'never bought'", 
   });
 
   it("counts days negative once expired, so the banner can say how long ago", () => {
-    const d = daysUntilExpiry({ accessExpiresAt: new Date(Date.now() - 3 * 86400000).toISOString() });
+    const d = daysUntilExpiry({
+      accessExpiresAt: new Date(Date.now() - 3 * 86400000).toISOString(),
+    });
     expect(d).toBeLessThan(0);
   });
 });

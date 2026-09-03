@@ -10,7 +10,9 @@ describe("classify", () => {
   });
 
   it("maps a sold-out plan from the response code", () => {
-    expect(classify({ response: { status: 409, data: { code: "PLAN_SOLD_OUT" } } })).toBe(OUTCOME.SOLD_OUT);
+    expect(classify({ response: { status: 409, data: { code: "PLAN_SOLD_OUT" } } })).toBe(
+      OUTCOME.SOLD_OUT
+    );
   });
 
   it("maps a rejected verification to FAILED", () => {

@@ -12,11 +12,15 @@ export const metadata = {
 };
 
 const H2 = ({ children }) => (
-  <h2 className="text-2xl font-bold text-slate-900 border-b border-slate-100 pb-2 font-syne">{children}</h2>
+  <h2 className="text-2xl font-bold text-slate-900 border-b border-slate-100 pb-2 font-syne">
+    {children}
+  </h2>
 );
 const Section = ({ children }) => <section className="space-y-6">{children}</section>;
 const A = ({ href, children }) => (
-  <a href={href} className="text-accent-light hover:underline">{children}</a>
+  <a href={href} className="text-accent-light hover:underline">
+    {children}
+  </a>
 );
 
 export default function TermsAndConditions() {
@@ -37,9 +41,9 @@ export default function TermsAndConditions() {
             <p className="text-lg text-slate-800">
               These terms are the agreement between you and{" "}
               <strong className="text-slate-900">PrimeWork Labs LLP</strong> (LLPIN ADB-2168), which
-              operates Outmail at{" "}
-              <A href="https://outmail.in">https://outmail.in</A> (“Outmail”, “we”, “our”, “us”).
-              Registered office: 1/400, UIT, Bhiwadi, Alwar, Rajasthan 301019, India.
+              operates Outmail at <A href="https://outmail.in">https://outmail.in</A> (“Outmail”,
+              “we”, “our”, “us”). Registered office: 1/400, UIT, Bhiwadi, Alwar, Rajasthan 301019,
+              India.
             </p>
             <p>
               By creating an account or paying for Outmail you accept these terms. If you do not
@@ -74,8 +78,8 @@ export default function TermsAndConditions() {
             <div className="space-y-4">
               <p>
                 <strong className="text-slate-900">
-                  Outmail is a one-time payment for one year of access — a “placement year”. It is not
-                  a subscription and it does not renew automatically.
+                  Outmail is a one-time payment for one year of access — a “placement year”. It is
+                  not a subscription and it does not renew automatically.
                 </strong>{" "}
                 We will never charge you a second time unless you choose to buy another year.
               </p>
@@ -84,9 +88,9 @@ export default function TermsAndConditions() {
                 inclusive of all applicable taxes. The price shown is the total you pay.
               </p>
               <p>
-                Your year begins when your payment is confirmed. The end date is shown in the Billing
-                section of your dashboard. If you buy again before your year ends, the remaining days
-                are added to the new year rather than lost.
+                Your year begins when your payment is confirmed. The end date is shown in the
+                Billing section of your dashboard. If you buy again before your year ends, the
+                remaining days are added to the new year rather than lost.
               </p>
               <p>
                 Payments are processed by Razorpay. We never receive or store your card or UPI
@@ -100,20 +104,20 @@ export default function TermsAndConditions() {
             <div className="space-y-4">
               <p>
                 Outmail helps you find relevant companies and contacts, drafts personalised emails,
-                and sends them from your own email account. It also shows job openings matched to your
-                resume, and — on the plan that includes it — mentorship sessions.
+                and sends them from your own email account. It also shows job openings matched to
+                your resume, and — on the plan that includes it — mentorship sessions.
               </p>
               <p className="bg-slate-50 border border-slate-200 rounded-xl p-6">
                 <strong className="text-slate-900">
                   We do not promise you a job, an interview, or a reply.
                 </strong>{" "}
                 No tool can. What we provide is reach, relevance and consistency. Any figures we
-                publish about typical outcomes are illustrative, not a guarantee, and outcomes depend
-                heavily on your own profile and the market.
+                publish about typical outcomes are illustrative, not a guarantee, and outcomes
+                depend heavily on your own profile and the market.
               </p>
               <p>
-                We do not promise that a specific company, recruiter or job will be available to you.
-                The pool of contacts and openings changes constantly.
+                We do not promise that a specific company, recruiter or job will be available to
+                you. The pool of contacts and openings changes constantly.
               </p>
             </div>
           </Section>
@@ -134,15 +138,17 @@ export default function TermsAndConditions() {
               <ul className="list-disc pl-6 space-y-3">
                 <li>the accuracy of what you say about yourself, including your resume;</li>
                 <li>reviewing drafts before they are sent, where you have approval enabled;</li>
-                <li>complying with the terms of your own email provider, including sending limits;</li>
+                <li>
+                  complying with the terms of your own email provider, including sending limits;
+                </li>
                 <li>anything you add or edit in a message.</li>
               </ul>
               <p>
-                <strong className="text-slate-900">On AI-drafted content.</strong> Emails are drafted
-                by an automated system using your resume and profile. Automated drafting can produce
-                text that is inaccurate or that overstates your experience. You are responsible for
-                what is sent in your name. Do not enable automatic sending unless you are comfortable
-                with that.
+                <strong className="text-slate-900">On AI-drafted content.</strong> Emails are
+                drafted by an automated system using your resume and profile. Automated drafting can
+                produce text that is inaccurate or that overstates your experience. You are
+                responsible for what is sent in your name. Do not enable automatic sending unless
+                you are comfortable with that.
               </p>
             </div>
           </Section>
@@ -178,8 +184,9 @@ export default function TermsAndConditions() {
             </ul>
             <p>
               We enforce contact limits automatically. If you breach these rules we may suspend or
-              close your account. Where the breach is serious — in particular sending unsolicited bulk
-              email or misusing recruiter data — no refund is due for the remainder of your year.
+              close your account. Where the breach is serious — in particular sending unsolicited
+              bulk email or misusing recruiter data — no refund is due for the remainder of your
+              year.
             </p>
           </Section>
 
@@ -192,14 +199,12 @@ export default function TermsAndConditions() {
                 duration of your access. You may not copy, modify, decompile or redistribute it.
               </p>
               <p>
-                The application needs a Gmail app password to send on your behalf. That credential is
-                stored only in your computer’s operating-system keychain and is never transmitted to
-                us — see section 3 of the <A href="/privacy-policy">Privacy Policy</A>. You may revoke
-                it in your Google account at any time, which immediately stops all sending.
+                The application needs a Gmail app password to send on your behalf. That credential
+                is stored only in your computer’s operating-system keychain and is never transmitted
+                to us — see section 3 of the <A href="/privacy-policy">Privacy Policy</A>. You may
+                revoke it in your Google account at any time, which immediately stops all sending.
               </p>
-              <p>
-                You are responsible for keeping your own computer and email account secure.
-              </p>
+              <p>You are responsible for keeping your own computer and email account secure.</p>
             </div>
           </Section>
 
@@ -236,13 +241,15 @@ export default function TermsAndConditions() {
                 your saved answers.
               </p>
               <p>
-                You grant us a limited licence to store and process that content solely to operate the
-                service for you: to match you to companies, to draft emails in your name, and to fill
-                application forms on your instruction. We do not use it to train models for others, we
-                do not sell it, and the licence ends when you delete the content or your account.
+                You grant us a limited licence to store and process that content solely to operate
+                the service for you: to match you to companies, to draft emails in your name, and to
+                fill application forms on your instruction. We do not use it to train models for
+                others, we do not sell it, and the licence ends when you delete the content or your
+                account.
               </p>
               <p>
-                You confirm that you have the right to upload what you upload, and that it is accurate.
+                You confirm that you have the right to upload what you upload, and that it is
+                accurate.
               </p>
             </div>
           </Section>
@@ -250,9 +257,10 @@ export default function TermsAndConditions() {
           <Section>
             <H2>9. Our intellectual property</H2>
             <p>
-              Outmail, its name, branding, software, matching system and recruiter database are owned
-              by PrimeWork Labs LLP and protected by law. Nothing in these terms transfers any of it
-              to you. You receive a right to use the service, not a right to its underlying assets.
+              Outmail, its name, branding, software, matching system and recruiter database are
+              owned by PrimeWork Labs LLP and protected by law. Nothing in these terms transfers any
+              of it to you. You receive a right to use the service, not a right to its underlying
+              assets.
             </p>
           </Section>
 
@@ -264,8 +272,8 @@ export default function TermsAndConditions() {
                 Maintenance, third-party outages and factors outside our control can interrupt it.
               </li>
               <li>
-                Outreach sends on weekdays, within daily limits that start low and increase over time.
-                That warm-up protects your email account’s reputation and is deliberate.
+                Outreach sends on weekdays, within daily limits that start low and increase over
+                time. That warm-up protects your email account’s reputation and is deliberate.
               </li>
               <li>
                 We may change or improve features during your year. If we remove something material
@@ -295,8 +303,8 @@ export default function TermsAndConditions() {
               </li>
               <li>
                 We may suspend or close your account for a breach of section 5, for non-payment, or
-                where required by law. Where practical we will tell you first and give you a chance to
-                put it right.
+                where required by law. Where practical we will tell you first and give you a chance
+                to put it right.
               </li>
               <li>
                 On closure, sending stops and job openings are no longer shown. Your data is handled
@@ -322,8 +330,8 @@ export default function TermsAndConditions() {
               </p>
               <p>
                 We are not liable for indirect or consequential loss, nor for loss of opportunity —
-                including a job you did not get, an interview you were not offered, or a reply you did
-                not receive. Those outcomes depend on employers, not on us.
+                including a job you did not get, an interview you were not offered, or a reply you
+                did not receive. Those outcomes depend on employers, not on us.
               </p>
               <p>
                 We are not liable for the acts of your email provider, including suspension or
@@ -335,9 +343,9 @@ export default function TermsAndConditions() {
           <Section>
             <H2>14. Indemnity</H2>
             <p>
-              You agree to indemnify us against claims, losses and reasonable costs arising from your
-              breach of section 5, from content you sent that was unlawful or misleading, or from your
-              misuse of recruiter contact data.
+              You agree to indemnify us against claims, losses and reasonable costs arising from
+              your breach of section 5, from content you sent that was unlawful or misleading, or
+              from your misuse of recruiter contact data.
             </p>
           </Section>
 
@@ -345,9 +353,9 @@ export default function TermsAndConditions() {
             <H2>15. Changes to these terms</H2>
             <p>
               We may update these terms. The version in force is the one published here when you buy
-              or renew. If a change materially affects your rights during a year you have already paid
-              for, we will tell you by email at least 14 days before it takes effect, and you may ask
-              for a proportionate refund of the unused period if you do not accept it.
+              or renew. If a change materially affects your rights during a year you have already
+              paid for, we will tell you by email at least 14 days before it takes effect, and you
+              may ask for a proportionate refund of the unused period if you do not accept it.
             </p>
           </Section>
 
@@ -357,8 +365,8 @@ export default function TermsAndConditions() {
               <p>
                 These terms are governed by the laws of India. The courts at Alwar, Rajasthan have
                 exclusive jurisdiction, except that nothing prevents you from bringing a complaint
-                before a consumer forum where you are entitled to do so under the Consumer Protection
-                Act, 2019.
+                before a consumer forum where you are entitled to do so under the Consumer
+                Protection Act, 2019.
               </p>
               <p>
                 Before starting proceedings, please contact us. Most issues are resolved by email
@@ -374,8 +382,9 @@ export default function TermsAndConditions() {
                 Support: <A href="mailto:support@outmail.in">support@outmail.in</A>
               </p>
               <p>
-                Grievance Officer: <strong className="text-slate-900">Vishu Tomer</strong>, Designated
-                Partner — <A href="mailto:admin@outmail.in">admin@outmail.in</A>, +91 63751 19988
+                Grievance Officer: <strong className="text-slate-900">Vishu Tomer</strong>,
+                Designated Partner — <A href="mailto:admin@outmail.in">admin@outmail.in</A>, +91
+                63751 19988
               </p>
               <p>PrimeWork Labs LLP, 1/400, UIT, Bhiwadi, Alwar, Rajasthan 301019, India</p>
               <p>
