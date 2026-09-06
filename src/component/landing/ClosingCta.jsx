@@ -2,8 +2,10 @@
 import { Check } from "lucide-react";
 import { OFFERINGS } from "./Editorial";
 import { Reveal, Count, Cta } from "@/component/motion/kit";
+import { CLOSING } from "@/content/landing";
 
-export default function ClosingCta() {
+/** `copy` defaults to the production wording; only the content lab varies it. */
+export default function ClosingCta({ copy = CLOSING[0] }) {
   return (
     <section className="relative max-w-4xl mx-auto px-6 py-28 text-center">
       {/* A radial-gradient, not `blur-[130px]` on a filled circle. A 520px blur
@@ -21,11 +23,11 @@ export default function ClosingCta() {
       <div className="relative">
         <Reveal>
           <p className="font-syne text-4xl md:text-6xl font-bold tracking-tight mb-5">
-            Your placement year
+            {copy.lines[0]}
             <br />
-            starts{" "}
+            {copy.lines[1]}
             <span className="bg-gradient-to-r from-primary to-accent-light bg-clip-text text-transparent">
-              now.
+              {copy.accent}
             </span>
           </p>
         </Reveal>
@@ -34,7 +36,7 @@ export default function ClosingCta() {
             <span className="font-syne text-3xl font-bold text-white">
               <Count to={999} prefix="₹" />
             </span>
-            <span className="ml-2">for twelve months</span>
+            <span className="ml-2">{copy.priceSuffix}</span>
           </p>
         </Reveal>
         <Reveal delay={0.2}>
@@ -44,7 +46,7 @@ export default function ClosingCta() {
         </Reveal>
         <Reveal delay={0.3}>
           <div>
-            <Cta label="Start your year" />
+            <Cta label={copy.cta} />
           </div>
         </Reveal>
         <Reveal delay={0.4}>

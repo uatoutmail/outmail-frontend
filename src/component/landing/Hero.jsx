@@ -3,6 +3,7 @@ import { motion, useReducedMotion } from "framer-motion";
 import React from "react";
 import HeroVisual from "./HeroVisual";
 import { Reveal, MaskLines, Tilt, Cta, Kicker, EASE_OUT } from "@/component/motion/kit";
+import { HERO } from "@/content/landing";
 
 /**
  * Landing hero.
@@ -13,8 +14,11 @@ import { Reveal, MaskLines, Tilt, Cta, Kicker, EASE_OUT } from "@/component/moti
  *
  * The whole block sits inside one perspective so the cursor tilt moves the
  * headline and the floating cards together rather than as two separate toys.
+ *
+ * `copy` defaults to HERO[0], which is exactly the production wording — so the
+ * live page is unchanged and only the content lab passes anything else.
  */
-export default function Hero() {
+export default function Hero({ copy = HERO[0] }) {
   const reduce = useReducedMotion();
   return (
     <section
@@ -23,11 +27,12 @@ export default function Hero() {
     >
       <div className="max-w-6xl mx-auto w-full grid lg:grid-cols-12 gap-10 items-center">
         <Tilt max={9} z={60} className="lg:col-span-7">
-          <Kicker className="mb-6">Built for your placement year</Kicker>
+          <Kicker className="mb-6">{copy.kicker}</Kicker>
 
           <MaskLines
+            key={copy.label}
             as="h1"
-            lines={["Get seen by", "real recruiters."]}
+            lines={copy.lines}
             accentIdx={1}
             className="font-syne text-5xl md:text-7xl font-bold tracking-tight leading-[1.03]"
           />
@@ -39,23 +44,20 @@ export default function Hero() {
               transition={{ duration: 0.8, delay: 0.85, ease: EASE_OUT }}
               className="font-syne text-3xl md:text-5xl font-bold tracking-tight leading-[1.08] text-white/45"
             >
-              And find the jobs{" "}
+              {copy.second.lead}{" "}
               <span className="bg-gradient-to-r from-accent-light to-primary bg-clip-text text-transparent">
-                worth applying to.
+                {copy.second.accent}
               </span>
             </motion.p>
           </div>
 
           <Reveal delay={1.35}>
-            <p className="text-lg text-white/50 max-w-lg mt-8 mb-9">
-              Cold outreach, matched jobs, one-click autofill and mentorship — one payment, twelve
-              months. Less than a month of LinkedIn Premium.
-            </p>
+            <p className="text-lg text-white/50 max-w-lg mt-8 mb-9">{copy.sub}</p>
           </Reveal>
           <Reveal delay={1.5}>
             <div className="flex flex-wrap items-center gap-4">
-              <Cta label="Start your year" />
-              <span className="text-sm text-white/35">₹999 · full refund within 7 days</span>
+              <Cta label={copy.cta} />
+              <span className="text-sm text-white/35">{copy.micro}</span>
             </div>
           </Reveal>
         </Tilt>
