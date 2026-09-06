@@ -1,11 +1,29 @@
 "use client";
-import { Monitor, CheckCircle2, XCircle, Inbox, KeyRound } from "lucide-react";
+import { Monitor, CheckCircle2, XCircle, Inbox, KeyRound, Download } from "lucide-react";
 import React, { useCallback, useState } from "react";
 import { useNow } from "@/hooks/useNow";
 import { usePolling } from "@/hooks/usePolling";
 import { api } from "@/lib/api";
 import { logger } from "@/lib/logger";
 import { POLL_MS } from "@/lib/polling";
+
+// Stable, version-less S3 keys — every desktop release overwrites the same
+// four objects, so this never needs to change across app versions. The repo
+// itself is private (its GitHub Release assets 404 for anyone without repo
+// access), so S3 is the actual public download surface.
+const DESKTOP_DOWNLOAD_BASE = "https://s3.ap-south-1.amazonaws.com/outmail.in/desktop-releases";
+const DOWNLOAD_URLS = {
+  mac: `${DESKTOP_DOWNLOAD_BASE}/Outmail-mac.dmg`,
+  win: `${DESKTOP_DOWNLOAD_BASE}/Outmail-win-setup.exe`,
+};
+const PLATFORM_LABEL = { mac: "Mac", win: "Windows" };
+
+/** Best-effort OS guess for which installer to lead with. Defaults to mac —
+ * a wrong guess costs one extra click on the secondary link, never a dead end. */
+function detectPlatform() {
+  if (typeof navigator === "undefined") return "mac";
+  return /win/i.test(navigator.userAgent || "") ? "win" : "mac";
+}
 
 /** Convert an ISO timestamp to a relative "X ago" label. */
 function timeAgo(isoString) {
@@ -24,6 +42,8 @@ const MailingAgentPanel = () => {
   const [linkCodeExpiry, setLinkCodeExpiry] = useState(null);
   const [generatingCode, setGeneratingCode] = useState(false);
   const now = useNow();
+  const platform = detectPlatform();
+  const otherPlatform = platform === "win" ? "mac" : "win";
 
   const fetchStatus = useCallback(async () => {
     try {
@@ -119,27 +139,44 @@ const MailingAgentPanel = () => {
 
       {/* Link desktop agent */}
       {!online && (
-        <div className="mb-3 bg-purple-500/10 border border-purple-500/20 rounded-lg p-3">
-          {linkCode ? (
-            <div className="text-center">
-              <p className="text-[11px] text-white/50 mb-1">
-                Enter this code in the Outmail desktop app:
-              </p>
-              <p className="text-lg font-bold tracking-widest text-purple-300">{linkCode}</p>
-              <p className="text-[10px] text-white/30 mt-1">
-                Expires in {Math.max(0, Math.round((linkCodeExpiry - now) / 60000))} min
-              </p>
-            </div>
-          ) : (
-            <button
-              onClick={generateLinkCode}
-              disabled={generatingCode}
-              className="w-full flex items-center justify-center gap-1.5 text-[11px] font-medium text-purple-300 hover:text-purple-200 disabled:opacity-50"
+        <div className="mb-3 bg-purple-500/10 border border-purple-500/20 rounded-lg p-3 space-y-3">
+          <div>
+            <a
+              href={DOWNLOAD_URLS[platform]}
+              className="w-full flex items-center justify-center gap-1.5 text-[11px] font-medium text-white bg-purple-500 hover:bg-purple-400 rounded-md py-2 transition-colors"
             >
-              <KeyRound size={12} />
-              {generatingCode ? "Generating..." : "Link Desktop Agent"}
-            </button>
-          )}
+              <Download size={12} />
+              Download for {PLATFORM_LABEL[platform]}
+            </a>
+            <p className="text-center text-[10px] text-white/30 mt-1.5">
+              <a href={DOWNLOAD_URLS[otherPlatform]} className="underline hover:text-white/50">
+                Get it for {PLATFORM_LABEL[otherPlatform]} instead
+              </a>
+            </p>
+          </div>
+
+          <div className="border-t border-white/10 pt-3">
+            {linkCode ? (
+              <div className="text-center">
+                <p className="text-[11px] text-white/50 mb-1">
+                  Enter this code in the Outmail desktop app:
+                </p>
+                <p className="text-lg font-bold tracking-widest text-purple-300">{linkCode}</p>
+                <p className="text-[10px] text-white/30 mt-1">
+                  Expires in {Math.max(0, Math.round((linkCodeExpiry - now) / 60000))} min
+                </p>
+              </div>
+            ) : (
+              <button
+                onClick={generateLinkCode}
+                disabled={generatingCode}
+                className="w-full flex items-center justify-center gap-1.5 text-[11px] font-medium text-purple-300 hover:text-purple-200 disabled:opacity-50"
+              >
+                <KeyRound size={12} />
+                {generatingCode ? "Generating..." : "Link Desktop Agent"}
+              </button>
+            )}
+          </div>
         </div>
       )}
 
