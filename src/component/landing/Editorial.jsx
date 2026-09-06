@@ -1,6 +1,7 @@
 "use client";
 import { Mail, Briefcase, Zap, Users } from "lucide-react";
 import { Reveal, MaskLines, Count, Kicker } from "@/component/motion/kit";
+import { EDITORIAL } from "@/content/landing";
 
 /**
  * The four offerings, set as a magazine spread rather than a card grid.
@@ -32,16 +33,19 @@ export const OFFERINGS = [
   },
 ];
 
-export default function Editorial() {
+/** `copy` defaults to the production wording; only the content lab varies it. */
+export default function Editorial({ copy = EDITORIAL[0] }) {
+  const items = OFFERINGS.map((o, i) => ({ ...o, ...copy.items[i] }));
   return (
     <section className="max-w-5xl mx-auto px-6 py-28">
       <Reveal>
-        <Kicker className="mb-10">The four things</Kicker>
+        <Kicker className="mb-10">{copy.kicker}</Kicker>
       </Reveal>
       <div className="grid grid-cols-12 gap-x-10 gap-y-16">
         <div className="col-span-12 md:col-span-7">
           <MaskLines
-            lines={["Most resumes are", "never read by a", "human being."]}
+            key={copy.label}
+            lines={copy.lines}
             accentIdx={2}
             className="font-syne text-4xl md:text-5xl font-bold leading-[1.03] tracking-tight"
           />
@@ -51,14 +55,14 @@ export default function Editorial() {
           className="col-span-12 md:col-span-5 md:border-l border-white/15 md:pl-8 md:pt-3"
         >
           <p className="font-syne text-5xl font-bold text-primary/30 leading-none mb-2">
-            <Count to={250} suffix="+" />
+            <Count key={copy.label} to={copy.stat} suffix={copy.statSuffix} />
           </p>
           <p className="text-sm text-white/50 leading-relaxed">
             applications per opening. A recruiter reads perhaps twelve. Outmail is how you become
             one of the twelve — and how you find the openings worth that effort.
           </p>
         </Reveal>
-        {OFFERINGS.map((o, i) => (
+        {items.map((o, i) => (
           <Reveal
             key={o.t}
             delay={i * 0.06}
