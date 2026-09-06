@@ -70,27 +70,27 @@ export const EDITORIAL = [
   {
     label: "Current",
     kicker: "The four things",
-    lines: ["Most resumes are", "never read by a", "human being."],
+    lines: ["Four problems.", "One subscription-free", "year."],
     stat: 250,
     statSuffix: "+",
     statBody:
       "applications per opening. A recruiter reads perhaps twelve. Outmail is how you become one of the twelve — and how you find the openings worth that effort.",
     items: [
       {
-        t: "Cold outreach",
-        d: "Personalised emails to verified recruiters, sent from your own Gmail — never from us.",
+        t: "Reach",
+        d: "Emails to the person hiring, written from your resume and sent from your inbox.",
       },
       {
-        t: "Matched jobs",
-        d: "Openings scored against your resume, with the reasoning shown so you know why.",
+        t: "Find",
+        d: "Openings pulled from job boards and company sites, ranked against what you can do.",
       },
       {
-        t: "One-click autofill",
-        d: "Applications completed from answers you saved once, by a browser extension.",
+        t: "Apply",
+        d: "A browser extension that completes the form while you read the job description.",
       },
       {
-        t: "Mentorship",
-        d: "Bi-weekly sessions with people who have navigated the path you are on. 25 seats.",
+        t: "Close",
+        d: "Fortnightly sessions with people who have been through the loop you are entering.",
       },
     ],
   },
@@ -207,11 +207,11 @@ export const EDITORIAL = [
 export const CLOSING = [
   {
     label: "Current",
-    lines: ["Your placement year", "starts "],
-    accent: "now.",
-    priceSuffix: "for twelve months",
-    sub: "No subscription. Nothing renews. Full refund within 7 days.",
-    cta: "Start your year",
+    lines: ["Every week you wait", "is a week of "],
+    accent: "openings.",
+    priceSuffix: "for the whole season",
+    sub: "One payment. Nothing renews, ever. If it is not for you, ask within 7 days and we refund all of it.",
+    cta: "Start this week",
   },
   {
     label: "Cost of waiting",
