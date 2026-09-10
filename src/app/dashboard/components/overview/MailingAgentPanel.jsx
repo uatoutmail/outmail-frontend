@@ -1,5 +1,13 @@
 "use client";
-import { Monitor, CheckCircle2, XCircle, Inbox, KeyRound, Download } from "lucide-react";
+import {
+  Monitor,
+  CheckCircle2,
+  XCircle,
+  Inbox,
+  KeyRound,
+  Download,
+  ChevronDown,
+} from "lucide-react";
 import React, { useCallback, useState } from "react";
 import { useNow } from "@/hooks/useNow";
 import { usePolling } from "@/hooks/usePolling";
@@ -24,6 +32,7 @@ const MailingAgentPanel = () => {
   const [linkCode, setLinkCode] = useState(null);
   const [linkCodeExpiry, setLinkCodeExpiry] = useState(null);
   const [generatingCode, setGeneratingCode] = useState(false);
+  const [activityOpen, setActivityOpen] = useState(false);
   const now = useNow();
   const platform = detectPlatform();
   const otherPlatform = platform === "win" ? "mac" : "win";
@@ -163,56 +172,84 @@ const MailingAgentPanel = () => {
         </div>
       )}
 
-      {/* Log feed */}
-      <div className="flex-1 overflow-y-auto space-y-1 min-h-0">
-        {loading ? (
-          <div className="flex items-center justify-center h-full py-6">
-            <div className="animate-spin rounded-full h-5 w-5 border-2 border-white/20 border-t-white/60" />
-          </div>
-        ) : logs.length === 0 ? (
-          <div className="flex flex-col items-center justify-center h-full gap-2 py-6">
-            <Inbox size={28} className="text-white/20" />
-            <p className="text-xs text-white/30 text-center">
-              No sends yet.
-              <br />
-              {online
-                ? "Your agent is connected and waiting for today's batch."
-                : "Open the Outmail desktop app to start sending."}
-            </p>
-          </div>
-        ) : (
-          /* Sends and failures only — heartbeats are liveness, not activity
-             (OUT-174); the header shows the single last-check-in line. */
-          logs.map((log) => {
-            const ok = log.status === "success";
-            return (
-              <div
-                key={log.id}
-                className="flex items-center gap-2.5 py-1.5 border-b border-white/5 last:border-0"
-              >
-                <div className="w-6 h-6 rounded-full bg-white/5 flex items-center justify-center flex-shrink-0">
-                  {ok ? (
-                    <CheckCircle2 size={11} className="text-green-400" />
-                  ) : (
-                    <XCircle size={11} className="text-red-400" />
-                  )}
-                </div>
-                <div className="flex-1 min-w-0">
-                  <p className="text-xs text-white truncate">
-                    {ok
-                      ? `Sent to ${log.recipient || "recipient"}`
-                      : `Failed: ${log.recipient || "recipient"}`}
-                  </p>
-                  {log.error && <p className="text-[10px] text-red-400/70 truncate">{log.error}</p>}
-                </div>
-                <span className="text-[10px] text-white/50 flex-shrink-0">
-                  {timeAgo(log.createdAt)}
-                </span>
-              </div>
-            );
-          })
-        )}
-      </div>
+      {/* Log feed — collapsed by default. The list used to be an unbounded
+          flex-1/overflow-y-auto area that only scrolled if an ANCESTOR gave
+          this card a real height; DashboardOverview.jsx's wrapper only sets
+          minHeight, so there was never a bounding height to scroll within —
+          the list just grew the whole dashboard instead. Collapsing by
+          default (like Weekly Plan) and bounding the expanded list to its
+          own fixed max-height fixes this regardless of what any ancestor
+          does. */}
+      {loading ? (
+        <p className="text-[11px] text-white/40 py-2">Loading activity…</p>
+      ) : logs.length === 0 ? (
+        <div className="flex flex-col items-center justify-center gap-2 py-6">
+          <Inbox size={28} className="text-white/20" />
+          <p className="text-xs text-white/30 text-center">
+            No sends yet.
+            <br />
+            {online
+              ? "Your agent is connected and waiting for today's batch."
+              : "Open the Outmail desktop app to start sending."}
+          </p>
+        </div>
+      ) : (
+        <div>
+          <button
+            type="button"
+            onClick={() => setActivityOpen((v) => !v)}
+            aria-expanded={activityOpen}
+            className="w-full flex items-center justify-between py-1.5 text-[11px] text-white/55 hover:text-white/85 transition-colors"
+          >
+            <span className="flex items-center gap-1.5">
+              <ChevronDown
+                size={13}
+                className={`transition-transform ${activityOpen ? "rotate-180" : ""}`}
+              />
+              Recent activity
+            </span>
+            <span>
+              {logs.length} {logs.length === 1 ? "entry" : "entries"}
+            </span>
+          </button>
+          {activityOpen && (
+            <div className="max-h-64 overflow-y-auto space-y-1">
+              {/* Sends and failures only — heartbeats are liveness, not
+                  activity (OUT-174); the header shows the last-check-in line. */}
+              {logs.map((log) => {
+                const ok = log.status === "success";
+                return (
+                  <div
+                    key={log.id}
+                    className="flex items-center gap-2.5 py-1.5 border-b border-white/5 last:border-0"
+                  >
+                    <div className="w-6 h-6 rounded-full bg-white/5 flex items-center justify-center flex-shrink-0">
+                      {ok ? (
+                        <CheckCircle2 size={11} className="text-green-400" />
+                      ) : (
+                        <XCircle size={11} className="text-red-400" />
+                      )}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-xs text-white truncate">
+                        {ok
+                          ? `Sent to ${log.recipient || "recipient"}`
+                          : `Failed: ${log.recipient || "recipient"}`}
+                      </p>
+                      {log.error && (
+                        <p className="text-[10px] text-red-400/70 truncate">{log.error}</p>
+                      )}
+                    </div>
+                    <span className="text-[10px] text-white/50 flex-shrink-0">
+                      {timeAgo(log.createdAt)}
+                    </span>
+                  </div>
+                );
+              })}
+            </div>
+          )}
+        </div>
+      )}
     </div>
   );
 };
