@@ -107,7 +107,7 @@ describe("MailingAgentPanel — online with activity", () => {
     expect(screen.queryByRole("button", { name: /link desktop agent/i })).not.toBeInTheDocument();
   });
 
-  it("renders success and failure log entries", async () => {
+  it("keeps the activity log collapsed by default, expanding it on click", async () => {
     api.get.mockResolvedValue({
       data: {
         online: true,
@@ -130,7 +130,18 @@ describe("MailingAgentPanel — online with activity", () => {
       },
     });
     render(<MailingAgentPanel />);
-    await waitFor(() => expect(screen.getByText("Sent to hr@acme.com")).toBeInTheDocument());
+
+    await waitFor(() =>
+      expect(screen.getByRole("button", { name: /recent activity/i })).toBeInTheDocument()
+    );
+    expect(screen.getByText("2 entries")).toBeInTheDocument();
+    // Collapsed by default — an unbounded list of every past send used to
+    // grow the whole dashboard instead of scrolling internally.
+    expect(screen.queryByText("Sent to hr@acme.com")).not.toBeInTheDocument();
+
+    await userEvent.click(screen.getByRole("button", { name: /recent activity/i }));
+
+    expect(screen.getByText("Sent to hr@acme.com")).toBeInTheDocument();
     expect(screen.getByText("Failed: hr@beta.com")).toBeInTheDocument();
     expect(screen.getByText("Bounced")).toBeInTheDocument();
   });
