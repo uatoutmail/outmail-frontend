@@ -37,6 +37,9 @@ const LINKS = [
   { href: "/features", label: "Features" },
   { href: "/pricing", label: "Pricing" },
   { href: "/faq", label: "FAQ" },
+  // Linked from the welcome and setup-stalled emails; also the page someone
+  // still deciding reads to find out what Outmail actually installs.
+  { href: "/getting-started", label: "Setup guide" },
   { href: "/aboutus", label: "About" },
   { href: "/partnership", label: "Partnership" },
   { href: "/contactus", label: "Contact" },

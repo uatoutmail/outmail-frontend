@@ -31,6 +31,13 @@ export default function sitemap() {
       priority: 0.8,
     },
     {
+      // Linked by name from the welcome and setup-stalled emails, so it is a
+      // real landing page for people arriving cold, not just an internal doc.
+      path: "/getting-started",
+      changeFrequency: "monthly",
+      priority: 0.7,
+    },
+    {
       path: "/aboutus",
       changeFrequency: "monthly",
       priority: 0.8,
