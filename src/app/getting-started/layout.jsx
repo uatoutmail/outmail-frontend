@@ -1,3 +1,6 @@
+// Metadata for /getting-started. It lives in the layout because the page is a
+// server component that composes client sections, and Next only reads a
+// `metadata` export from a module that is not marked "use client".
 export const metadata = {
   title: "Getting started",
   description:
@@ -21,6 +24,7 @@ export const metadata = {
   },
 };
 
+/** Pass-through: this layout exists only to carry the metadata above. */
 export default function GettingStartedLayout({ children }) {
   return children;
 }

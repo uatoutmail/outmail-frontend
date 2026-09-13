@@ -97,6 +97,10 @@ function KeychainNote() {
   );
 }
 
+/**
+ * The five steps as numbered chapters — the same treatment /features uses, so
+ * the guide reads as part of the site rather than a help doc bolted on.
+ */
 export function SetupChapters() {
   return (
     <section className="max-w-5xl mx-auto px-6 py-16 space-y-24">
@@ -159,6 +163,10 @@ export function AfterSetup() {
   );
 }
 
+/**
+ * The four things support is actually asked, answered before they are asked.
+ * Also the source of the page's FAQ structured data.
+ */
 export function Troubleshooting() {
   return (
     <section className="max-w-4xl mx-auto px-6 py-16">
