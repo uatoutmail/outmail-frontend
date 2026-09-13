@@ -105,3 +105,28 @@ export function JsonLd({ schema }) {
     />
   );
 }
+
+/**
+ * HowTo, for the setup guide.
+ *
+ * Same rule as faqSchema: every step named here must be visible on the page, so
+ * it is generated from the array the page renders rather than written out
+ * separately. `totalTime` is an ISO 8601 duration — PT10M is ten minutes, which
+ * is the figure the welcome email also quotes.
+ */
+export function howToSchema({ name, description, steps, totalTime = "PT10M" }) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "HowTo",
+    name,
+    description,
+    totalTime,
+    step: steps.map((s, i) => ({
+      "@type": "HowToStep",
+      position: i + 1,
+      name: s.t,
+      text: s.d,
+      url: `${SITE}/getting-started#${s.id}`,
+    })),
+  };
+}
