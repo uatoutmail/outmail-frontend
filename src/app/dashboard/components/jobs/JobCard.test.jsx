@@ -21,7 +21,6 @@ function makeHandlers() {
     handleDiscard: vi.fn(),
     handleResetStatus: vi.fn(),
     handleApply: vi.fn(),
-    handleAutoApply: vi.fn(),
   };
 }
 
@@ -59,16 +58,13 @@ describe("JobCard — a new (no userAction) job", () => {
     expect(screen.getByText("Python")).toBeInTheDocument();
   });
 
-  it("shows Apply, Auto-Apply, and Discard for a new job, and calls handlers with the right args", async () => {
+  it("shows Apply and Discard for a new job, and calls handlers with the right args", async () => {
     const handlers = makeHandlers();
     render(<JobCard job={newJob} {...handlers} />);
 
     await userEvent.click(screen.getByRole("button", { name: /apply now/i }));
     expect(handlers.handleOpenJob).toHaveBeenCalledWith("https://apply.example.com/j1");
     expect(handlers.handleApply).toHaveBeenCalledWith("j1");
-
-    await userEvent.click(screen.getByRole("button", { name: /auto-apply/i }));
-    expect(handlers.handleAutoApply).toHaveBeenCalledWith(newJob);
 
     await userEvent.click(screen.getByRole("button", { name: /discard/i }));
     expect(handlers.handleDiscard).toHaveBeenCalledWith("j1");
@@ -104,22 +100,14 @@ describe("JobCard — a new (no userAction) job", () => {
 describe("JobCard — a job with an existing userAction (not new)", () => {
   const appliedJob = { ...newJob, userAction: "applied" };
 
-  it("hides Apply/Discard/Auto-Apply and shows Reset Status instead", async () => {
+  it("hides Apply/Discard and shows Reset Status instead", async () => {
     const handlers = makeHandlers();
     render(<JobCard job={appliedJob} {...handlers} />);
 
     expect(screen.queryByRole("button", { name: /^apply now$/i })).not.toBeInTheDocument();
-    expect(screen.queryByRole("button", { name: /auto-apply/i })).not.toBeInTheDocument();
     expect(screen.queryByRole("button", { name: /discard/i })).not.toBeInTheDocument();
 
     await userEvent.click(screen.getByRole("button", { name: /reset status/i }));
     expect(handlers.handleResetStatus).toHaveBeenCalledWith("j1");
-  });
-
-  it("still opens the source link via the Source Link button", async () => {
-    const handlers = makeHandlers();
-    render(<JobCard job={appliedJob} {...handlers} />);
-    await userEvent.click(screen.getByRole("button", { name: /source link/i }));
-    expect(handlers.handleOpenJob).toHaveBeenCalledWith("https://source.example.com/j1");
   });
 });

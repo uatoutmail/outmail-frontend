@@ -128,45 +128,6 @@ describe("JobOpeningsTab — job actions", () => {
     expect(screen.getByText("Frontend Engineer")).toBeInTheDocument();
   });
 
-  it("auto-applies: opens the link and records the action", async () => {
-    api.get.mockResolvedValue(
-      jobsResponse([{ ...strongJob, applyLink: "https://apply.example.com/j1" }])
-    );
-    api.post.mockResolvedValue({});
-    const openSpy = vi.fn();
-    vi.stubGlobal("open", openSpy);
-    render(<JobOpeningsTab />);
-    await waitFor(() => expect(screen.getByText("Backend Engineer")).toBeInTheDocument());
-
-    await userEvent.click(screen.getByRole("button", { name: /auto-apply/i }));
-
-    expect(openSpy).toHaveBeenCalledWith(
-      "https://apply.example.com/j1",
-      "_blank",
-      "noopener,noreferrer"
-    );
-    await waitFor(() =>
-      expect(api.post).toHaveBeenCalledWith("/api/jobs/j1/interactions", { action: "applied" })
-    );
-    vi.unstubAllGlobals();
-  });
-
-  it("auto-apply shows an error and does not open anything when there is no application link", async () => {
-    api.get.mockResolvedValue(jobsResponse([{ ...strongJob, applyLink: null, url: null }]));
-    const openSpy = vi.fn();
-    vi.stubGlobal("open", openSpy);
-    render(<JobOpeningsTab />);
-    await waitFor(() => expect(screen.getByText("Backend Engineer")).toBeInTheDocument());
-
-    await userEvent.click(screen.getByRole("button", { name: /auto-apply/i }));
-
-    expect(openSpy).not.toHaveBeenCalled();
-    expect(api.post).not.toHaveBeenCalled();
-    const { toast } = await import("sonner");
-    expect(toast.error).toHaveBeenCalledWith("No application link is available for this job.");
-    vi.unstubAllGlobals();
-  });
-
   it("resets an applied job's status back to pending", async () => {
     api.get.mockResolvedValue(jobsResponse([{ ...strongJob, userAction: "applied" }]));
     api.patch.mockResolvedValue({});
