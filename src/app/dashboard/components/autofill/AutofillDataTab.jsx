@@ -1,134 +1,181 @@
 "use client";
 import {
   ClipboardList,
-  User,
-  MapPin,
-  Link as LinkIcon,
-  ShieldCheck,
-  Settings2,
-  Briefcase,
-  GraduationCap,
-  Sparkles,
   Save,
   RefreshCw,
   Plus,
   Trash2,
   Lock,
-  Info,
+  ShieldCheck,
+  ChevronDown,
+  Check,
+  AlertCircle,
 } from "lucide-react";
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback, useMemo } from "react";
 import { toast } from "sonner";
 import { api } from "@/lib/api";
 
-// The full autofill profile the browser extension fills from. Reads/writes
-// /api/autofill/profile (the extension syncs the same record). Editing lives
-// here (web) so the extension stays thin.
-const EMPTY = {
-  identity: { firstName: "", lastName: "", fullName: "" },
-  contact: { email: "", phone: "" },
-  address: { line1: "", city: "", state: "", country: "", postalCode: "" },
-  links: { linkedin: "", github: "", portfolio: "", website: "" },
-  workAuth: { authorizedToWork: "", requiresSponsorship: "" },
-  preferences: {
-    desiredSalary: "",
-    noticePeriod: "",
-    startDate: "",
-    willingToRelocate: false,
-    remotePreference: "",
-  },
-  skills: [],
-  experience: [],
-  education: [],
-  demographics: { gender: "", race: "", ethnicity: "", veteranStatus: "", disabilityStatus: "" },
-  customQA: {},
+/**
+ * The one-time setup that makes every future application a click.
+ *
+ * WHY THIS FORM IS GENERATED, NOT WRITTEN
+ *   It used to be ~20 hand-written inputs. The taxonomy is now 97 fields plus 7
+ *   repeating sections, and hand-writing those would guarantee the same drift
+ *   that made this rewrite necessary: a field in the backend that the dashboard
+ *   never showed, so nobody could ever fill it in.
+ *
+ *   Everything below renders from GET /api/autofill/schema. Adding a field to
+ *   the backend catalog makes it appear here with no change to this file.
+ *
+ * WHY IT IS LONG, AND WHY THAT IS FINE
+ *   Because the alternative is answering the same questions on every
+ *   application forever. The form says so, shows what is already filled from
+ *   the résumé, and orders what is left by how often forms actually ask for it
+ *   — so the first ten minutes buy the most.
+ */
+
+const EMPTY_PROFILE = { customQA: {} };
+
+/* ---------------------------------------------------------------- primitives */
+
+const Field = ({ def, value, onChange }) => {
+  const id = `af-${def.path.replace(/\./g, "-")}`;
+  const base =
+    "w-full p-3 rounded-lg border border-white/15 bg-white/5 text-white placeholder-white/25 " +
+    "focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-colors";
+
+  return (
+    <div>
+      <label
+        htmlFor={id}
+        className="flex items-center gap-1.5 text-sm font-medium text-white/70 mb-1.5"
+      >
+        {def.label}
+        {def.sensitive && (
+          <ShieldCheck size={12} className="text-emerald-400/70" aria-label="Encrypted at rest" />
+        )}
+      </label>
+
+      {def.type === "enum" ? (
+        <select
+          id={id}
+          value={value ?? ""}
+          onChange={(e) => onChange(e.target.value)}
+          className={`${base} cursor-pointer`}
+        >
+          <option value="" className="bg-surface-panel">
+            —
+          </option>
+          {def.options.map((o) => (
+            <option key={o.value} value={o.value} className="bg-surface-panel">
+              {o.label}
+            </option>
+          ))}
+        </select>
+      ) : def.type === "textarea" ? (
+        <textarea
+          id={id}
+          rows={3}
+          value={value ?? ""}
+          onChange={(e) => onChange(e.target.value)}
+          className={`${base} resize-y`}
+        />
+      ) : def.type === "boolean" ? (
+        <div className="flex items-center gap-3 h-[46px]">
+          <input
+            id={id}
+            type="checkbox"
+            checked={!!value}
+            onChange={(e) => onChange(e.target.checked)}
+            className="w-4 h-4 accent-primary cursor-pointer"
+          />
+          <label htmlFor={id} className="text-sm text-white/60 cursor-pointer">
+            Yes
+          </label>
+        </div>
+      ) : (
+        <input
+          id={id}
+          type={def.type === "number" ? "number" : def.type === "date" ? "date" : "text"}
+          value={value ?? ""}
+          onChange={(e) =>
+            onChange(
+              def.type === "number"
+                ? e.target.value === ""
+                  ? ""
+                  : Number(e.target.value)
+                : e.target.value
+            )
+          }
+          className={base}
+        />
+      )}
+    </div>
+  );
 };
 
-const Card = ({ icon: Icon, title, color = "text-purple-400", right, children }) => (
-  <div className="bg-white/10 backdrop-blur-md rounded-2xl shadow-lg p-6 border border-white/20">
-    <div className="flex items-center justify-between gap-4 mb-6">
-      <div className="flex items-center gap-4">
-        <Icon className={color} size={22} />
-        <h2 className="text-lg font-semibold text-white">{title}</h2>
+/** A collapsible group. Everything starts open except the opt-in one. */
+const Group = ({ group, open, onToggle, filled, total, children }) => (
+  <section className="bg-white/[0.04] border border-white/10 rounded-2xl overflow-hidden">
+    <button
+      type="button"
+      onClick={onToggle}
+      aria-expanded={open}
+      className="w-full flex items-center justify-between gap-4 px-6 py-4 text-left hover:bg-white/[0.03] transition-colors"
+    >
+      <div className="min-w-0">
+        <h2 className="text-base font-semibold text-white flex items-center gap-2">
+          {group.title}
+          {filled === total && total > 0 && <Check size={14} className="text-emerald-400" />}
+        </h2>
+        {group.blurb && (
+          <p className="text-xs text-white/40 mt-0.5 leading-relaxed">{group.blurb}</p>
+        )}
       </div>
-      {right}
-    </div>
-    {children}
-  </div>
+      <div className="flex items-center gap-3 shrink-0">
+        <span className="font-mono text-[11px] text-white/35 tabular-nums">
+          {filled}/{total}
+        </span>
+        <ChevronDown
+          size={16}
+          className={`text-white/40 transition-transform ${open ? "rotate-180" : ""}`}
+        />
+      </div>
+    </button>
+    {open && <div className="px-6 pb-6 pt-1">{children}</div>}
+  </section>
 );
 
-const Input = ({ label, value, onChange, placeholder, type = "text" }) => (
-  <div>
-    <label
-      htmlFor="autofilldatatab-field-60"
-      className="block text-sm font-medium text-gray-300 mb-1"
-    >
-      {label}
-    </label>
-    <input
-      id="autofilldatatab-field-60"
-      type={type}
-      value={value ?? ""}
-      onChange={(e) => onChange(e.target.value)}
-      placeholder={placeholder}
-      className="w-full p-3 rounded-lg border border-gray-600 bg-white/5 text-white placeholder-white/30 focus:outline-none focus:ring-2 focus:ring-purple-500 transition-colors"
-    />
-  </div>
-);
-
-const Select = ({ label, value, onChange, options }) => (
-  <div>
-    <label
-      htmlFor="autofilldatatab-field-73"
-      className="block text-sm font-medium text-gray-300 mb-1"
-    >
-      {label}
-    </label>
-    <select
-      id="autofilldatatab-field-73"
-      value={value ?? ""}
-      onChange={(e) => onChange(e.target.value)}
-      className="w-full p-3 rounded-lg border border-gray-600 bg-white/5 text-white focus:outline-none focus:ring-2 focus:ring-purple-500 transition-colors"
-    >
-      {options.map((o) => (
-        <option key={o.value} value={o.value} className="bg-surface-panel">
-          {o.label}
-        </option>
-      ))}
-    </select>
-  </div>
-);
-
-const YES_NO = [
-  { value: "", label: "—" },
-  { value: "yes", label: "Yes" },
-  { value: "no", label: "No" },
-];
-const REMOTE = [
-  { value: "", label: "—" },
-  { value: "remote", label: "Remote" },
-  { value: "hybrid", label: "Hybrid" },
-  { value: "onsite", label: "On-site" },
-  { value: "any", label: "Any" },
-];
+/* --------------------------------------------------------------------- page */
 
 const AutofillDataTab = () => {
-  const [data, setData] = useState(EMPTY);
+  const [schema, setSchema] = useState(null);
+  const [data, setData] = useState(EMPTY_PROFILE);
+  const [fieldStatus, setFieldStatus] = useState({});
+  const [missing, setMissing] = useState([]);
+  const [completeness, setCompleteness] = useState(0);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
-  const [completeness, setCompleteness] = useState(0);
-  const [showEeo, setShowEeo] = useState(false);
   const [gated, setGated] = useState(false);
+  const [openGroups, setOpenGroups] = useState({});
+  const [eeoOpen, setEeoOpen] = useState(false);
 
   const load = useCallback(async () => {
     setLoading(true);
     try {
-      const { data: res } = await api.get("/api/autofill/profile");
-      setData({
-        ...EMPTY,
-        ...(res.data || {}),
-        address: { ...EMPTY.address, ...(res.data?.address || {}) },
-      });
-      setCompleteness(Math.round((res.completeness || 0) * 100));
+      const [schemaRes, profileRes] = await Promise.all([
+        api.get("/api/autofill/schema"),
+        api.get("/api/autofill/profile"),
+      ]);
+      setSchema(schemaRes.data);
+      setData({ ...EMPTY_PROFILE, ...(profileRes.data.data || {}) });
+      setFieldStatus(profileRes.data.fieldStatus || {});
+      setMissing(profileRes.data.missing || []);
+      setCompleteness(Math.round((profileRes.data.completeness || 0) * 100));
+      // Opt-in groups stay shut until asked for; everything else opens.
+      setOpenGroups(
+        Object.fromEntries((schemaRes.data.groups || []).map((g) => [g.key, !g.optIn]))
+      );
     } catch (e) {
       if (e.response?.status === 403) setGated(true);
       else toast.error("Could not load your autofill data");
@@ -137,55 +184,60 @@ const AutofillDataTab = () => {
     }
   }, []);
 
-  // `load` is async and only calls setState after its awaits resolve, so the
-  // rule's cascading-render concern does not apply here.
+  // `load` only calls setState after its awaits resolve, so the cascading-render
+  // rule does not apply here.
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect
     load();
   }, [load]);
 
-  // nested setters
-  const setField = (section, key, value) =>
-    setData((d) => ({ ...d, [section]: { ...d[section], [key]: value } }));
-  const setArr = (section, i, key, value) =>
-    setData((d) => ({
-      ...d,
-      [section]: d[section].map((it, idx) => (idx === i ? { ...it, [key]: value } : it)),
-    }));
-  const addItem = (section, tpl) => setData((d) => ({ ...d, [section]: [...d[section], tpl] }));
-  const removeItem = (section, i) =>
-    setData((d) => ({ ...d, [section]: d[section].filter((_, idx) => idx !== i) }));
+  const getAt = useCallback(
+    (path) => path.split(".").reduce((o, k) => (o == null ? undefined : o[k]), data),
+    [data]
+  );
 
-  const buildFields = () => {
-    const f = {};
-    const put = (path, v) => {
-      f[path] = v;
-    };
-    for (const [sec, obj] of Object.entries({
-      identity: data.identity,
-      contact: data.contact,
-      address: data.address,
-      links: data.links,
-      workAuth: data.workAuth,
-      preferences: data.preferences,
-      demographics: data.demographics,
-    })) {
-      for (const [k, v] of Object.entries(obj)) put(`${sec}.${k}`, v);
-    }
-    f.skills = data.skills;
-    f.experience = data.experience;
-    f.education = data.education;
-    return f;
-  };
+  const setAt = (path, value) =>
+    setData((d) => {
+      const next = structuredClone(d);
+      const keys = path.split(".");
+      let cur = next;
+      for (let i = 0; i < keys.length - 1; i++) {
+        if (cur[keys[i]] == null || typeof cur[keys[i]] !== "object") cur[keys[i]] = {};
+        cur = cur[keys[i]];
+      }
+      cur[keys.at(-1)] = value;
+      return next;
+    });
 
+  const setSection = (key, rows) => setData((d) => ({ ...d, [key]: rows }));
+
+  /**
+   * Sends only what changed.
+   *
+   * Posting all 97 paths on every save would mark every untouched field
+   * `confirmed`, which tells the backend the user has personally vouched for a
+   * blank — and stops it ever asking for that field again.
+   */
   const save = async () => {
     setSaving(true);
     try {
-      const { data: res } = await api.put("/api/autofill/profile", { fields: buildFields() });
+      const fields = {};
+      for (const g of schema.groups) {
+        for (const f of g.fields) {
+          const v = getAt(f.path);
+          if (v !== undefined) fields[f.path] = v;
+        }
+      }
+      for (const l of schema.lists) fields[l.path] = data[l.path] || [];
+      for (const s of schema.sections) fields[s.key] = data[s.key] || [];
+
+      const { data: res } = await api.put("/api/autofill/profile", { fields });
+      setFieldStatus(res.fieldStatus || {});
+      setMissing(res.missing || []);
       setCompleteness(Math.round((res.completeness || 0) * 100));
-      toast.success("Autofill data saved");
+      toast.success("Saved — the extension will pick this up on its next sync");
     } catch (e) {
-      toast.error(e.response?.data?.error || "Failed to save");
+      toast.error(e.response?.data?.error || "Could not save");
     } finally {
       setSaving(false);
     }
@@ -196,7 +248,7 @@ const AutofillDataTab = () => {
     try {
       await api.post("/api/autofill/profile/rebuild");
       await load();
-      toast.success("Rebuilt from your resume");
+      toast.success("Rebuilt from your résumé — anything you edited was kept");
     } catch (e) {
       toast.error(e.response?.data?.error || "Rebuild failed");
     } finally {
@@ -204,460 +256,298 @@ const AutofillDataTab = () => {
     }
   };
 
+  const groupProgress = useMemo(() => {
+    if (!schema) return {};
+    return Object.fromEntries(
+      schema.groups.map((g) => [
+        g.key,
+        {
+          filled: g.fields.filter((f) => fieldStatus[f.path] && fieldStatus[f.path] !== "missing")
+            .length,
+          total: g.fields.length,
+        },
+      ])
+    );
+  }, [schema, fieldStatus]);
+
   if (gated) {
     return (
       <div className="p-4 sm:p-8 max-w-3xl mx-auto font-syne">
         <div className="bg-white/10 border border-white/20 rounded-2xl p-10 text-center">
-          <Lock className="mx-auto text-purple-400 mb-4" size={32} />
-          <h2 className="text-xl font-bold text-white mb-2">Autofill is a premium feature</h2>
+          <Lock className="mx-auto text-primary mb-4" size={32} />
+          <h2 className="text-xl font-bold text-white mb-2">Autofill is part of your plan</h2>
           <p className="text-white/50 text-sm">
-            Upgrade your plan to build your autofill profile and use the browser extension.
+            Start your year to build your autofill profile and use the browser extension.
           </p>
         </div>
       </div>
     );
   }
 
-  const skillsText = (data.skills || []).join(", ");
+  if (loading || !schema) {
+    return (
+      <div className="flex justify-center py-24">
+        <div className="w-10 h-10 rounded-full border-2 border-primary/30 border-t-primary animate-spin" />
+      </div>
+    );
+  }
 
   return (
     <div className="p-4 sm:p-6 font-syne">
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
-        <div>
-          <h1 className="text-2xl sm:text-3xl font-bold mb-1 mt-4 text-white flex items-center gap-3">
-            <ClipboardList className="text-purple-400" size={26} /> Autofill Data
-          </h1>
-          <p className="text-white/60 text-sm">
-            One profile the Outmail browser extension fills every job application from. Derived from
-            your resume — review and complete it.
-          </p>
-        </div>
-        <div className="flex items-center gap-3">
-          <button
-            onClick={rebuild}
-            disabled={saving || loading}
-            className="flex items-center gap-2 px-4 py-2.5 rounded-lg border border-white/20 text-white/80 text-sm font-semibold hover:bg-white/5 transition-colors disabled:opacity-50"
-          >
-            <RefreshCw size={16} /> Rebuild from resume
-          </button>
-          <button
-            onClick={save}
-            disabled={saving || loading}
-            className="flex items-center gap-2 px-6 py-2.5 rounded-lg font-semibold shadow-lg bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white transition-all disabled:opacity-50"
-          >
-            {saving ? (
-              <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-            ) : (
-              <Save size={18} />
-            )}
-            {saving ? "Saving..." : "Save Changes"}
-          </button>
-        </div>
-      </div>
-
-      {/* Completeness */}
-      <div className="max-w-5xl mx-auto mb-6">
-        <div className="flex items-center justify-between mb-2">
-          <span className="text-xs font-semibold uppercase tracking-wider text-white/50">
-            Profile completeness
-          </span>
-          <span className="text-xs font-bold text-purple-300">{completeness}%</span>
-        </div>
-        <div className="h-1.5 bg-white/10 rounded-full overflow-hidden">
-          <div
-            className="h-full bg-gradient-to-r from-purple-500 to-indigo-500 transition-all duration-500"
-            style={{ width: `${completeness}%` }}
-          />
-        </div>
-      </div>
-
-      {loading ? (
-        <div className="flex justify-center py-20">
-          <div className="w-10 h-10 rounded-full border-2 border-purple-500/30 border-t-purple-500 animate-spin" />
-        </div>
-      ) : (
-        <div className="max-w-5xl mx-auto space-y-6">
-          <Card icon={User} title="Personal">
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <Input
-                label="First Name"
-                value={data.identity.firstName}
-                onChange={(v) => setField("identity", "firstName", v)}
-                placeholder="Jane"
-              />
-              <Input
-                label="Last Name"
-                value={data.identity.lastName}
-                onChange={(v) => setField("identity", "lastName", v)}
-                placeholder="Doe"
-              />
-              <Input
-                label="Email"
-                value={data.contact.email}
-                onChange={(v) => setField("contact", "email", v)}
-                placeholder="jane@example.com"
-              />
-              <Input
-                label="Phone"
-                value={data.contact.phone}
-                onChange={(v) => setField("contact", "phone", v)}
-                placeholder="+91 XXXXX XXXXX"
-              />
-            </div>
-          </Card>
-
-          <Card icon={MapPin} title="Location" color="text-blue-400">
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <Input
-                label="Address line"
-                value={data.address.line1}
-                onChange={(v) => setField("address", "line1", v)}
-                placeholder="Street / area"
-              />
-              <Input
-                label="City"
-                value={data.address.city}
-                onChange={(v) => setField("address", "city", v)}
-                placeholder="Bangalore"
-              />
-              <Input
-                label="State"
-                value={data.address.state}
-                onChange={(v) => setField("address", "state", v)}
-                placeholder="Karnataka"
-              />
-              <Input
-                label="Country"
-                value={data.address.country}
-                onChange={(v) => setField("address", "country", v)}
-                placeholder="IN / US / AU …"
-              />
-              <Input
-                label="Postal code"
-                value={data.address.postalCode}
-                onChange={(v) => setField("address", "postalCode", v)}
-                placeholder="560001"
-              />
-            </div>
-          </Card>
-
-          <Card icon={LinkIcon} title="Links" color="text-emerald-400">
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <Input
-                label="LinkedIn"
-                value={data.links.linkedin}
-                onChange={(v) => setField("links", "linkedin", v)}
-                placeholder="linkedin.com/in/…"
-              />
-              <Input
-                label="GitHub"
-                value={data.links.github}
-                onChange={(v) => setField("links", "github", v)}
-                placeholder="github.com/…"
-              />
-              <Input
-                label="Portfolio"
-                value={data.links.portfolio}
-                onChange={(v) => setField("links", "portfolio", v)}
-                placeholder="https://…"
-              />
-              <Input
-                label="Website"
-                value={data.links.website}
-                onChange={(v) => setField("links", "website", v)}
-                placeholder="https://…"
-              />
-            </div>
-          </Card>
-
-          <Card icon={ShieldCheck} title="Work Authorization" color="text-yellow-400">
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <Select
-                label="Authorized to work"
-                value={data.workAuth.authorizedToWork}
-                onChange={(v) => setField("workAuth", "authorizedToWork", v)}
-                options={YES_NO}
-              />
-              <Select
-                label="Requires visa sponsorship"
-                value={data.workAuth.requiresSponsorship}
-                onChange={(v) => setField("workAuth", "requiresSponsorship", v)}
-                options={YES_NO}
-              />
-            </div>
-          </Card>
-
-          <Card icon={Settings2} title="Job Preferences" color="text-pink-400">
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <Input
-                label="Desired salary"
-                value={data.preferences.desiredSalary}
-                onChange={(v) => setField("preferences", "desiredSalary", v)}
-                placeholder="e.g. 1200000"
-              />
-              <Input
-                label="Notice period"
-                value={data.preferences.noticePeriod}
-                onChange={(v) => setField("preferences", "noticePeriod", v)}
-                placeholder="e.g. 30 days"
-              />
-              <Input
-                label="Earliest start date"
-                value={data.preferences.startDate}
-                onChange={(v) => setField("preferences", "startDate", v)}
-                placeholder="YYYY-MM-DD or 'Immediate'"
-              />
-              <Select
-                label="Remote preference"
-                value={data.preferences.remotePreference}
-                onChange={(v) => setField("preferences", "remotePreference", v)}
-                options={REMOTE}
-              />
-              <div className="flex items-center gap-3 mt-2">
-                <input
-                  id="relocate"
-                  type="checkbox"
-                  checked={!!data.preferences.willingToRelocate}
-                  onChange={(e) => setField("preferences", "willingToRelocate", e.target.checked)}
-                  className="w-4 h-4 accent-purple-500 cursor-pointer"
-                />
-                <label htmlFor="relocate" className="text-sm text-gray-300 cursor-pointer">
-                  Willing to relocate
-                </label>
-              </div>
-            </div>
-          </Card>
-
-          <Card
-            icon={Briefcase}
-            title="Experience"
-            color="text-purple-400"
-            right={
-              <button
-                onClick={() =>
-                  addItem("experience", {
-                    company: "",
-                    title: "",
-                    startDate: "",
-                    endDate: "",
-                    description: "",
-                  })
-                }
-                className="flex items-center gap-1.5 text-xs font-semibold text-purple-300 hover:text-purple-200"
-              >
-                <Plus size={14} /> Add
-              </button>
-            }
-          >
-            {data.experience.length === 0 && (
-              <p className="text-white/30 text-sm">No experience yet.</p>
-            )}
-            <div className="space-y-4">
-              {data.experience.map((exp, i) => (
-                <div key={i} className="p-4 rounded-xl bg-white/5 border border-white/10 relative">
-                  <button
-                    onClick={() => removeItem("experience", i)}
-                    className="absolute top-3 right-3 text-red-400/60 hover:text-red-400"
-                  >
-                    <Trash2 size={15} />
-                  </button>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <Input
-                      label="Company"
-                      value={exp.company}
-                      onChange={(v) => setArr("experience", i, "company", v)}
-                    />
-                    <Input
-                      label="Title"
-                      value={exp.title}
-                      onChange={(v) => setArr("experience", i, "title", v)}
-                    />
-                    <Input
-                      label="Start"
-                      value={exp.startDate}
-                      onChange={(v) => setArr("experience", i, "startDate", v)}
-                      placeholder="YYYY-MM"
-                    />
-                    <Input
-                      label="End"
-                      value={exp.endDate}
-                      onChange={(v) => setArr("experience", i, "endDate", v)}
-                      placeholder="YYYY-MM or blank if current"
-                    />
-                  </div>
-                  <div className="mt-4">
-                    <label
-                      htmlFor="autofilldatatab-field-475"
-                      className="block text-sm font-medium text-gray-300 mb-1"
-                    >
-                      Description
-                    </label>
-                    <textarea
-                      id="autofilldatatab-field-475"
-                      rows="2"
-                      value={exp.description ?? ""}
-                      onChange={(e) => setArr("experience", i, "description", e.target.value)}
-                      className="w-full p-3 rounded-lg border border-gray-600 bg-white/5 text-white placeholder-white/30 focus:outline-none focus:ring-2 focus:ring-purple-500 resize-none"
-                    />
-                  </div>
-                </div>
-              ))}
-            </div>
-          </Card>
-
-          <Card
-            icon={GraduationCap}
-            title="Education"
-            color="text-blue-400"
-            right={
-              <button
-                onClick={() =>
-                  addItem("education", {
-                    degree: "",
-                    institution: "",
-                    field: "",
-                    startDate: "",
-                    endDate: "",
-                  })
-                }
-                className="flex items-center gap-1.5 text-xs font-semibold text-blue-300 hover:text-blue-200"
-              >
-                <Plus size={14} /> Add
-              </button>
-            }
-          >
-            {data.education.length === 0 && (
-              <p className="text-white/30 text-sm">No education yet.</p>
-            )}
-            <div className="space-y-4">
-              {data.education.map((ed, i) => (
-                <div key={i} className="p-4 rounded-xl bg-white/5 border border-white/10 relative">
-                  <button
-                    onClick={() => removeItem("education", i)}
-                    className="absolute top-3 right-3 text-red-400/60 hover:text-red-400"
-                  >
-                    <Trash2 size={15} />
-                  </button>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <Input
-                      label="Degree"
-                      value={ed.degree}
-                      onChange={(v) => setArr("education", i, "degree", v)}
-                    />
-                    <Input
-                      label="Institution"
-                      value={ed.institution}
-                      onChange={(v) => setArr("education", i, "institution", v)}
-                    />
-                    <Input
-                      label="Field of study"
-                      value={ed.field}
-                      onChange={(v) => setArr("education", i, "field", v)}
-                    />
-                    <Input
-                      label="Graduation"
-                      value={ed.endDate}
-                      onChange={(v) => setArr("education", i, "endDate", v)}
-                      placeholder="YYYY"
-                    />
-                  </div>
-                </div>
-              ))}
-            </div>
-          </Card>
-
-          <Card icon={Sparkles} title="Skills" color="text-emerald-400">
-            <label
-              htmlFor="autofilldatatab-comma-separated"
-              className="block text-sm font-medium text-gray-300 mb-1"
-            >
-              Comma-separated
-            </label>
-            <textarea
-              id="autofilldatatab-comma-separated"
-              rows="2"
-              value={skillsText}
-              onChange={(e) =>
-                setData((d) => ({
-                  ...d,
-                  skills: e.target.value
-                    .split(",")
-                    .map((s) => s.trim())
-                    .filter(Boolean),
-                }))
-              }
-              placeholder="Python, React, SQL, …"
-              className="w-full p-3 rounded-lg border border-gray-600 bg-white/5 text-white placeholder-white/30 focus:outline-none focus:ring-2 focus:ring-purple-500 resize-none"
-            />
-          </Card>
-
-          {/* Demographics — opt-in */}
-          <div className="bg-white/5 border border-white/10 rounded-2xl p-6">
-            <button
-              onClick={() => setShowEeo((s) => !s)}
-              className="w-full flex items-center justify-between text-left"
-            >
-              <div className="flex items-center gap-3">
-                <Info className="text-white/40" size={18} />
-                <div>
-                  <h2 className="text-base font-semibold text-white">
-                    Demographics / EEO (optional)
-                  </h2>
-                  <p className="text-xs text-white/40 mt-0.5">
-                    Only filled if you provide it AND enable the opt-in toggle in the extension.
-                    Never derived from your resume.
-                  </p>
-                </div>
-              </div>
-              <span className="text-white/40 text-sm">{showEeo ? "Hide" : "Show"}</span>
-            </button>
-            {showEeo && (
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-5">
-                <Input
-                  label="Gender"
-                  value={data.demographics.gender}
-                  onChange={(v) => setField("demographics", "gender", v)}
-                />
-                <Input
-                  label="Race"
-                  value={data.demographics.race}
-                  onChange={(v) => setField("demographics", "race", v)}
-                />
-                <Input
-                  label="Ethnicity"
-                  value={data.demographics.ethnicity}
-                  onChange={(v) => setField("demographics", "ethnicity", v)}
-                />
-                <Input
-                  label="Veteran status"
-                  value={data.demographics.veteranStatus}
-                  onChange={(v) => setField("demographics", "veteranStatus", v)}
-                />
-                <Input
-                  label="Disability status"
-                  value={data.demographics.disabilityStatus}
-                  onChange={(v) => setField("demographics", "disabilityStatus", v)}
-                />
-              </div>
-            )}
+      <div className="max-w-5xl mx-auto">
+        {/* Header */}
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6 mt-4">
+          <div>
+            <h1 className="text-2xl sm:text-3xl font-bold text-white flex items-center gap-3 mb-1">
+              <ClipboardList className="text-primary" size={26} /> Autofill data
+            </h1>
+            <p className="text-white/50 text-sm max-w-xl leading-relaxed">
+              Answer these once and the extension fills every application from them. It is long on
+              purpose — the alternative is typing the same answers into every form for the rest of
+              your search.
+            </p>
           </div>
-
-          <div className="flex justify-end pb-10">
+          <div className="flex items-center gap-3 shrink-0">
+            <button
+              onClick={rebuild}
+              disabled={saving}
+              className="flex items-center gap-2 px-4 py-2.5 rounded-lg border border-white/20 text-white/80 text-sm font-semibold hover:bg-white/5 transition-colors disabled:opacity-50"
+            >
+              <RefreshCw size={16} /> Rebuild from résumé
+            </button>
             <button
               onClick={save}
               disabled={saving}
-              className="flex items-center gap-2 px-8 py-3 rounded-lg font-semibold shadow-lg bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white transition-all disabled:opacity-50"
+              className="flex items-center gap-2 px-6 py-2.5 rounded-lg font-semibold shadow-lg bg-primary hover:bg-primary-hover text-white transition-colors disabled:opacity-50"
             >
               {saving ? (
                 <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
               ) : (
                 <Save size={18} />
               )}
-              Save Changes
+              {saving ? "Saving…" : "Save"}
             </button>
           </div>
         </div>
-      )}
+
+        {/* Progress. Weighted by how often forms ask for a field, so this reads
+            as "share of applications you can finish", not "boxes ticked". */}
+        <div className="mb-6">
+          <div className="flex items-center justify-between mb-2">
+            <span className="text-xs font-semibold uppercase tracking-wider text-white/50">
+              Applications you can complete
+            </span>
+            <span className="text-xs font-bold text-primary tabular-nums">{completeness}%</span>
+          </div>
+          <div className="h-1.5 bg-white/10 rounded-full overflow-hidden">
+            <div
+              className="h-full bg-gradient-to-r from-accent to-primary transition-all duration-500"
+              style={{ width: `${completeness}%` }}
+            />
+          </div>
+        </div>
+
+        {/* What to do next, heaviest first. More useful than a percentage. */}
+        {missing.length > 0 && (
+          <div className="mb-6 rounded-xl border border-white/10 bg-white/[0.03] p-4">
+            <div className="flex items-center gap-2 mb-2.5">
+              <AlertCircle size={14} className="text-amber-400" />
+              <span className="text-xs font-semibold uppercase tracking-wider text-white/60">
+                Fill these next — they appear on the most forms
+              </span>
+            </div>
+            <div className="flex flex-wrap gap-1.5">
+              {missing.slice(0, 10).map((m) => (
+                <span
+                  key={m.path}
+                  className="text-[11px] px-2 py-1 rounded-md bg-white/5 border border-white/10 text-white/60"
+                >
+                  {m.label}
+                </span>
+              ))}
+            </div>
+          </div>
+        )}
+
+        <div className="space-y-4">
+          {schema.groups
+            .filter((g) => !g.optIn)
+            .map((g) => (
+              <Group
+                key={g.key}
+                group={g}
+                open={!!openGroups[g.key]}
+                onToggle={() => setOpenGroups((o) => ({ ...o, [g.key]: !o[g.key] }))}
+                filled={groupProgress[g.key]?.filled ?? 0}
+                total={groupProgress[g.key]?.total ?? 0}
+              >
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  {g.fields.map((f) => (
+                    <Field
+                      key={f.path}
+                      def={f}
+                      value={getAt(f.path)}
+                      onChange={(v) => setAt(f.path, v)}
+                    />
+                  ))}
+                </div>
+              </Group>
+            ))}
+
+          {/* Free-text lists — skills today */}
+          {schema.lists.map((l) => (
+            <section
+              key={l.path}
+              className="bg-white/[0.04] border border-white/10 rounded-2xl px-6 py-5"
+            >
+              <label
+                htmlFor={`af-list-${l.path}`}
+                className="block text-base font-semibold text-white mb-1"
+              >
+                {l.label}
+              </label>
+              <p className="text-xs text-white/40 mb-3">Comma separated.</p>
+              <textarea
+                id={`af-list-${l.path}`}
+                rows={2}
+                value={(data[l.path] || []).join(", ")}
+                onChange={(e) =>
+                  setData((d) => ({
+                    ...d,
+                    [l.path]: e.target.value
+                      .split(",")
+                      .map((s) => s.trim())
+                      .filter(Boolean),
+                  }))
+                }
+                className="w-full p-3 rounded-lg border border-white/15 bg-white/5 text-white placeholder-white/25 focus:outline-none focus:ring-2 focus:ring-primary resize-none"
+              />
+            </section>
+          ))}
+
+          {/* Repeating sections */}
+          {schema.sections.map((s) => {
+            const rows = data[s.key] || [];
+            return (
+              <section
+                key={s.key}
+                className="bg-white/[0.04] border border-white/10 rounded-2xl px-6 py-5"
+              >
+                <div className="flex items-center justify-between mb-4">
+                  <h2 className="text-base font-semibold text-white flex items-center gap-2">
+                    {s.title}
+                    {s.sensitive && <ShieldCheck size={12} className="text-emerald-400/70" />}
+                  </h2>
+                  <button
+                    onClick={() =>
+                      setSection(s.key, [
+                        ...rows,
+                        Object.fromEntries(s.itemFields.map((f) => [f.path, ""])),
+                      ])
+                    }
+                    className="flex items-center gap-1.5 text-xs font-semibold text-primary hover:text-primary-soft"
+                  >
+                    <Plus size={14} /> Add
+                  </button>
+                </div>
+
+                {rows.length === 0 && <p className="text-white/30 text-sm">Nothing added yet.</p>}
+
+                <div className="space-y-4">
+                  {rows.map((row, i) => (
+                    <div
+                      key={i}
+                      className="relative p-4 rounded-xl bg-white/5 border border-white/10"
+                    >
+                      <button
+                        onClick={() =>
+                          setSection(
+                            s.key,
+                            rows.filter((_, idx) => idx !== i)
+                          )
+                        }
+                        className="absolute top-3 right-3 text-red-400/60 hover:text-red-400"
+                        aria-label={`Remove ${s.title} entry ${i + 1}`}
+                      >
+                        <Trash2 size={15} />
+                      </button>
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pr-8">
+                        {s.itemFields.map((f) => (
+                          <Field
+                            key={f.path}
+                            def={f}
+                            value={row[f.path]}
+                            onChange={(v) =>
+                              setSection(
+                                s.key,
+                                rows.map((r, idx) => (idx === i ? { ...r, [f.path]: v } : r))
+                              )
+                            }
+                          />
+                        ))}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </section>
+            );
+          })}
+
+          {/* Opt-in groups last, collapsed, and honest about what they are for. */}
+          {schema.groups
+            .filter((g) => g.optIn)
+            .map((g) => (
+              <section
+                key={g.key}
+                className="bg-white/[0.02] border border-white/10 rounded-2xl overflow-hidden"
+              >
+                <button
+                  type="button"
+                  onClick={() => setEeoOpen((v) => !v)}
+                  aria-expanded={eeoOpen}
+                  className="w-full flex items-center justify-between gap-4 px-6 py-4 text-left hover:bg-white/[0.03] transition-colors"
+                >
+                  <div>
+                    <h2 className="text-base font-semibold text-white">{g.title}</h2>
+                    <p className="text-xs text-white/40 mt-0.5 leading-relaxed max-w-xl">
+                      {g.blurb}
+                    </p>
+                  </div>
+                  <ChevronDown
+                    size={16}
+                    className={`text-white/40 shrink-0 transition-transform ${eeoOpen ? "rotate-180" : ""}`}
+                  />
+                </button>
+                {eeoOpen && (
+                  <div className="px-6 pb-6 grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    {g.fields.map((f) => (
+                      <Field
+                        key={f.path}
+                        def={f}
+                        value={getAt(f.path)}
+                        onChange={(v) => setAt(f.path, v)}
+                      />
+                    ))}
+                  </div>
+                )}
+              </section>
+            ))}
+        </div>
+
+        <div className="flex items-center justify-between gap-4 mt-8 pb-10">
+          <p className="text-xs text-white/35 flex items-center gap-1.5">
+            <ShieldCheck size={12} className="text-emerald-400/70" />
+            Marked fields are encrypted before they are stored.
+          </p>
+          <button
+            onClick={save}
+            disabled={saving}
+            className="flex items-center gap-2 px-8 py-3 rounded-lg font-semibold shadow-lg bg-primary hover:bg-primary-hover text-white transition-colors disabled:opacity-50"
+          >
+            <Save size={18} /> Save
+          </button>
+        </div>
+      </div>
     </div>
   );
 };
