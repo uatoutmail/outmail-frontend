@@ -7,8 +7,6 @@ import {
   Sparkles,
   CheckCircle,
   X,
-  ExternalLink,
-  Zap,
   ChevronDown,
   ChevronUp,
 } from "lucide-react";
@@ -29,7 +27,6 @@ const JobCard = ({
   handleDiscard,
   handleResetStatus,
   handleApply,
-  handleAutoApply,
 }) => {
   const [isExpanded, setIsExpanded] = useState(false);
   const tier = getPriorityTier(job.matchScore);
@@ -38,7 +35,6 @@ const JobCard = ({
   // Accept either backend field shape (applyLink/url or applyUrl/sourceUrl) so
   // links work regardless of which backend version is deployed.
   const applyUrl = job.applyLink || job.applyUrl || job.url || job.sourceUrl;
-  const sourceUrl = job.url || job.sourceUrl || applyUrl;
   const skills = job.signals || job.skills || [];
 
   const onApply = () => {
@@ -189,17 +185,8 @@ const JobCard = ({
       )}
 
       <div className="flex flex-wrap gap-3 mt-4">
-        {isNew && (
+        {isNew ? (
           <>
-            {handleAutoApply && (
-              <button
-                onClick={() => handleAutoApply(job)}
-                title="Opens the application and the Outmail Autofiller extension fills it for you"
-                className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-6 py-2.5 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white font-bold rounded-xl transition-all active:scale-95 text-sm shadow-lg shadow-purple-900/30"
-              >
-                <Zap size={18} /> Auto-Apply
-              </button>
-            )}
             <button
               onClick={onApply}
               className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-6 py-2.5 bg-green-600 hover:bg-green-500 text-white font-bold rounded-xl transition-all active:scale-95 text-sm shadow-lg shadow-green-900/20"
@@ -213,14 +200,7 @@ const JobCard = ({
               <X size={18} /> Discard
             </button>
           </>
-        )}
-        <button
-          onClick={() => handleOpenJob(sourceUrl)}
-          className={`flex-1 sm:flex-none flex items-center justify-center gap-2 px-6 py-2.5 ${isNew ? "bg-purple-600/50 hover:bg-purple-600" : "bg-purple-600 hover:bg-purple-500"} text-white font-bold rounded-xl transition-all active:scale-95 text-sm shadow-lg shadow-purple-900/20`}
-        >
-          <ExternalLink size={18} /> Source Link
-        </button>
-        {!isNew && (
+        ) : (
           <button
             onClick={() => handleResetStatus(job.id)}
             className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-6 py-2.5 bg-white/5 hover:bg-white/10 text-white font-bold rounded-xl border border-white/10 transition-all active:scale-95 text-sm"

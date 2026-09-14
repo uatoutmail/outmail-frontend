@@ -152,30 +152,6 @@ const JobOpeningsTab = () => {
     }
   };
 
-  // Auto-apply: open the application so the Outmail Autofiller extension fills
-  // it, and record the apply. (The extension autofills on the opened page.)
-  const handleAutoApply = async (job) => {
-    const applyUrl = job.applyLink || job.applyUrl || job.url || job.sourceUrl;
-    if (!applyUrl) {
-      toast.error("No application link is available for this job.");
-      return;
-    }
-    if (!openExternal(applyUrl)) {
-      toast.error("That job link looks invalid, so we did not open it.");
-      return;
-    }
-    try {
-      await recordAction(job.id, "applied");
-      setJobOpenings((prev) =>
-        prev.map((j) => (j.id === job.id ? { ...j, userAction: "applied" } : j))
-      );
-      toast.success("Opened the application — Autofill will fill it in.");
-    } catch (e) {
-      logger.error("Failed to record action:", e);
-      toast.error("Opened the application, but couldn't save the status.");
-    }
-  };
-
   const handleDiscard = async (jobId) => {
     try {
       await recordAction(jobId, "discarded");
@@ -275,7 +251,6 @@ const JobOpeningsTab = () => {
     handleDiscard,
     handleResetStatus,
     handleApply,
-    handleAutoApply,
   };
 
   return (
