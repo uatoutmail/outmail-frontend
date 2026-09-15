@@ -13,18 +13,32 @@ import { useEffect } from "react";
  * The intent is only PEEKED at here; /pricing consumes and clears it. Reading
  * destructively in two places would race, and the user would land on pricing
  * with the choice already thrown away.
+ *
+ * `returnTo` is the same idea for pages that send someone to sign in and need
+ * them back afterwards — the extension connect page, which is useless if the
+ * user lands on the dashboard instead. Unlike the checkout intent this one IS
+ * consumed here, because nothing downstream reads it.
  */
+
+// Only our own paths, and only a path — never a full URL. A value that
+// survives sign-in and then gets navigated to is an open-redirect if anything
+// but this is allowed.
+const safeReturnTo = (value) =>
+  typeof value === "string" && /^\/[a-zA-Z0-9\-_/]*$/.test(value) ? value : null;
 export default function AuthSuccess() {
   const router = useRouter();
 
   useEffect(() => {
     let hasIntent = false;
+    let returnTo = null;
     try {
       hasIntent = Boolean(sessionStorage.getItem("outmail.checkoutIntent"));
+      returnTo = safeReturnTo(sessionStorage.getItem("outmail.returnTo"));
+      if (returnTo) sessionStorage.removeItem("outmail.returnTo");
     } catch {
       // Private browsing — fall through to the dashboard.
     }
-    router.replace(hasIntent ? "/pricing" : "/dashboard");
+    router.replace(returnTo || (hasIntent ? "/pricing" : "/dashboard"));
   }, [router]);
 
   // No state here on purpose. Branching the message would mean setting state
