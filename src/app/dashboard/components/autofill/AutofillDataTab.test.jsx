@@ -64,6 +64,23 @@ const SCHEMA = {
       ],
     },
     {
+      key: "experienceSummary",
+      title: "Work experience",
+      blurb: "",
+      optIn: false,
+      fields: [
+        {
+          path: "experienceSummary.totalYears",
+          label: "Total years of experience",
+          type: "number",
+          options: null,
+          weight: 3,
+          sensitive: false,
+          derivable: false,
+        },
+      ],
+    },
+    {
       key: "demographics",
       title: "Diversity & EEO",
       blurb: "Voluntary on every form that asks.",
@@ -110,6 +127,12 @@ const PROFILE = {
     { path: "contact.phone", label: "Phone", weight: 3, type: "tel" },
     { path: "academics.cgpa", label: "CGPA", weight: 3, type: "number" },
     { path: "identity.dateOfBirth", label: "Date of birth", weight: 3, type: "date" },
+    {
+      path: "experienceSummary.totalYears",
+      label: "Total years of experience",
+      weight: 3,
+      type: "number",
+    },
   ],
 };
 
@@ -330,5 +353,23 @@ describe("getting around a very long form", () => {
 
     await waitFor(() => expect(api.put).toHaveBeenCalled());
     expect(api.put.mock.calls[0][1].fields).toHaveProperty("identity.firstName", "Ananya");
+  });
+});
+
+describe("jumping to a field in a group that is not on screen", () => {
+  beforeEach(() => {
+    Element.prototype.scrollIntoView = vi.fn();
+  });
+
+  it("reaches Total years of experience — the one reported as doing nothing", async () => {
+    mountOk();
+    render(<AutofillDataTab />);
+    await waitFor(() =>
+      expect(screen.getByRole("button", { name: "Total years of experience" })).toBeInTheDocument()
+    );
+
+    await userEvent.click(screen.getByRole("button", { name: "Total years of experience" }));
+
+    await waitFor(() => expect(Element.prototype.scrollIntoView).toHaveBeenCalled());
   });
 });
