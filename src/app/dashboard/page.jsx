@@ -8,7 +8,7 @@ import {
   ClipboardList,
   CreditCard,
 } from "lucide-react";
-import React, { useState, useEffect } from "react";
+import React, { useCallback, useEffect, useState, useSyncExternalStore } from "react";
 
 // Import Components
 import AutofillDataTab from "./components/autofill/AutofillDataTab";
@@ -34,9 +34,69 @@ const studentNavItems = [
   { label: "Settings", action: "settings", icon: SlidersHorizontal },
 ];
 
+/** The sections a `?tab=` value is allowed to name. */
+const SECTION_KEYS = studentNavItems.map((i) => i.action);
+
+/**
+ * Which section the current URL is asking for.
+ *
+ * Anything unrecognised falls back to the dashboard rather than rendering
+ * nothing — a stale or hand-edited link should land somewhere sensible.
+ */
+function sectionFromUrl() {
+  if (typeof window === "undefined") return "dashboard";
+  const tab = new URLSearchParams(window.location.search).get("tab");
+  return SECTION_KEYS.includes(tab) ? tab : "dashboard";
+}
+
+/**
+ * pushState does not fire popstate, so switching tabs has to announce itself.
+ */
+const TAB_CHANGE_EVENT = "outmail:dashboard-tab";
+
+function subscribeToSection(onChange) {
+  window.addEventListener("popstate", onChange);
+  window.addEventListener(TAB_CHANGE_EVENT, onChange);
+  return () => {
+    window.removeEventListener("popstate", onChange);
+    window.removeEventListener(TAB_CHANGE_EVENT, onChange);
+  };
+}
+
+/** The server has no URL to read, and this is what it renders. */
+const serverSection = () => "dashboard";
+
 export default function Page() {
   const { user, isAuthenticated, loading, logout } = useAuth();
-  const [activeSection, setActiveSection] = useState("dashboard");
+
+  // The active section lives in the URL, so a refresh keeps you where you were.
+  // It used to be component state alone: saving something on Settings and
+  // reloading to check it worked dropped you on Overview, and you had to
+  // navigate back to see your own change. The same applied to every tab.
+  //
+  // The URL is an external store, so it is read as one. This also gets Back and
+  // Forward moving between tabs, which is what a URL-backed tab implies and
+  // what people try as soon as they notice the address changing.
+  const activeSection = useSyncExternalStore(subscribeToSection, sectionFromUrl, serverSection);
+
+  /**
+   * Switch section and record it in the URL.
+   *
+   * pushState, not replaceState: the address bar is already changing, so Back
+   * should return to the previous tab. The dashboard itself carries no `tab`
+   * parameter, so the default section produces a clean /dashboard URL.
+   */
+  const goToSection = useCallback((section) => {
+    if (typeof window === "undefined") return;
+    const next = SECTION_KEYS.includes(section) ? section : "dashboard";
+    const url = new URL(window.location.href);
+    // Other query parameters belong to the payment and activation flows and
+    // must survive a tab change.
+    if (next === "dashboard") url.searchParams.delete("tab");
+    else url.searchParams.set("tab", next);
+    window.history.pushState({}, "", url);
+    window.dispatchEvent(new Event(TAB_CHANGE_EVENT));
+  }, []);
   // A plan that became active without the user ever seeing a confirmation —
   // the webhook-only path (OUT-228).
   //
@@ -80,7 +140,7 @@ export default function Page() {
       portalName="Student Portal"
       navItems={studentNavItems}
       activeSection={activeSection}
-      setActiveSection={setActiveSection}
+      setActiveSection={goToSection}
       logout={logout}
       title=""
       subtitle=""
