@@ -11,7 +11,7 @@ import {
   Check,
   AlertCircle,
 } from "lucide-react";
-import React, { useState, useEffect, useCallback, useMemo } from "react";
+import React, { useState, useEffect, useCallback, useMemo, useRef } from "react";
 import { toast } from "sonner";
 import { api } from "@/lib/api";
 
@@ -210,6 +210,10 @@ const AutofillDataTab = () => {
   const [saving, setSaving] = useState(false);
   const [gated, setGated] = useState(false);
   const [openGroups, setOpenGroups] = useState({});
+  // Where a "fill these next" chip wants to send us, handed to the effect that
+  // runs once the group it lives in has actually rendered.
+  const pendingJumpRef = useRef(null);
+  const [jumpTick, setJumpTick] = useState(0);
   const [eeoOpen, setEeoOpen] = useState(false);
 
   const load = useCallback(async () => {
@@ -254,10 +258,25 @@ const AutofillDataTab = () => {
    * which is better than a click that appears to do nothing.
    */
   const jumpTo = useCallback((path) => {
-    const groupKey = groupKeyForPath(path);
-    setOpenGroups((o) => ({ ...o, [groupKey]: true }));
+    // The scroll happens in the effect below, AFTER React has committed the
+    // render that opens the group. requestAnimationFrame was not enough: in a
+    // real browser React commits in a later frame, so the lookup ran against a
+    // DOM that had not updated and silently found nothing. The test never
+    // caught it because userEvent.click flushes React synchronously.
+    pendingJumpRef.current = path;
+    setOpenGroups((o) => ({ ...o, [groupKeyForPath(path)]: true }));
+    // Forces the effect to re-run even when the group was already open and the
+    // state update above changes nothing.
+    setJumpTick((t) => t + 1);
+  }, []);
 
-    requestAnimationFrame(() => {
+  useEffect(() => {
+    const path = pendingJumpRef.current;
+    if (!path) return;
+    pendingJumpRef.current = null;
+
+    {
+      const groupKey = groupKeyForPath(path);
       // In order of precision: the input itself, the free-text list that owns
       // it, the repeating section, then the group heading. A missing field can
       // name any of these — "Skills" is a list, "Education" a section — and a
@@ -273,8 +292,8 @@ const AutofillDataTab = () => {
       if (typeof target.focus === "function" && target.tagName !== "SECTION") {
         target.focus({ preventScroll: true });
       }
-    });
-  }, []);
+    }
+  }, [jumpTick]);
 
   const getAt = useCallback(
     (path) => path.split(".").reduce((o, k) => (o == null ? undefined : o[k]), data),
