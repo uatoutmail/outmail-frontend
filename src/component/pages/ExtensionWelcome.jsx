@@ -304,7 +304,7 @@ function NextSteps() {
         <li>Nothing is ever submitted for you — you always press the button.</li>
       </ul>
       <Link
-        href="/dashboard?tab=autofill"
+        href="/dashboard?tab=autofillData"
         className="mt-5 inline-flex items-center justify-center rounded-lg border border-border-subtle px-4 py-2 text-sm font-semibold text-foreground transition-colors hover:bg-surface-2"
       >
         Review what it will fill

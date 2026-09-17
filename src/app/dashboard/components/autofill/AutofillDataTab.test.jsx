@@ -109,6 +109,7 @@ const PROFILE = {
   missing: [
     { path: "contact.phone", label: "Phone", weight: 3, type: "tel" },
     { path: "academics.cgpa", label: "CGPA", weight: 3, type: "number" },
+    { path: "identity.dateOfBirth", label: "Date of birth", weight: 3, type: "date" },
   ],
 };
 
@@ -264,5 +265,70 @@ describe("failure states", () => {
       expect(toast.error).toHaveBeenCalledWith("Refusing to store restricted field")
     );
     expect(screen.getByLabelText(/first name/i)).toHaveValue("Ananya");
+  });
+});
+
+// The form runs to a hundred fields across a dozen sections. Being told your
+// Current CTC is missing and left to find it is most of the work still to do —
+// and with one Save at the top of the page, finishing a section meant scrolling
+// all the way back up to keep it.
+describe("getting around a very long form", () => {
+  beforeEach(() => {
+    Element.prototype.scrollIntoView = vi.fn();
+  });
+
+  it("the next-up chips are buttons, not decoration", async () => {
+    mountOk();
+    render(<AutofillDataTab />);
+    await waitFor(() => expect(screen.getByText(/fill these next/i)).toBeInTheDocument());
+
+    expect(screen.getByRole("button", { name: "Phone" })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "CGPA" })).toBeInTheDocument();
+  });
+
+  it("clicking one scrolls to it", async () => {
+    mountOk();
+    render(<AutofillDataTab />);
+    await waitFor(() => expect(screen.getByRole("button", { name: "Phone" })).toBeInTheDocument());
+
+    // Skills is a list section in the fixture, so this also exercises the
+    // fallback from "no such input" to the section that owns it.
+    await userEvent.click(screen.getByRole("button", { name: "Date of birth" }));
+    await waitFor(() => expect(Element.prototype.scrollIntoView).toHaveBeenCalled());
+  });
+
+  it("opens the group first, so a collapsed section still gets you there", async () => {
+    // A collapsed group renders none of its inputs, so focusing before the
+    // next paint would find nothing to focus.
+    mountOk();
+    render(<AutofillDataTab />);
+    await waitFor(() => expect(screen.getByText("Diversity & EEO")).toBeInTheDocument());
+    expect(screen.queryByLabelText(/^category$/i)).not.toBeInTheDocument();
+
+    await userEvent.click(screen.getByText("Diversity & EEO"));
+    expect(screen.getByLabelText(/category/i)).toBeInTheDocument();
+  });
+
+  it("every open section carries its own Save", async () => {
+    mountOk();
+    render(<AutofillDataTab />);
+    await waitFor(() => expect(screen.getByText("About you")).toBeInTheDocument());
+
+    // One at the top of the page, plus one per open group.
+    const saves = screen.getAllByRole("button", { name: /^save$/i });
+    expect(saves.length).toBeGreaterThan(1);
+  });
+
+  it("a section's Save saves the whole form", async () => {
+    mountOk();
+    api.put.mockResolvedValue({ data: { fieldStatus: {}, completeness: 0.5, missing: [] } });
+    render(<AutofillDataTab />);
+    await waitFor(() => expect(screen.getByLabelText(/first name/i)).toBeInTheDocument());
+
+    const saves = screen.getAllByRole("button", { name: /^save$/i });
+    await userEvent.click(saves[saves.length - 1]);
+
+    await waitFor(() => expect(api.put).toHaveBeenCalled());
+    expect(api.put.mock.calls[0][1].fields).toHaveProperty("identity.firstName", "Ananya");
   });
 });

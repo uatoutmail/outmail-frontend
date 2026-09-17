@@ -38,8 +38,24 @@ const EMPTY_PROFILE = { customQA: {} };
 
 /* ---------------------------------------------------------------- primitives */
 
+/**
+ * Stable DOM ids so the "fill these next" chips can jump to what they name.
+ *
+ * The form runs to a hundred fields across a dozen sections. Telling somebody
+ * their Current CTC is missing and leaving them to find it is most of the work
+ * still to do — so the chips became buttons, and these are what they aim at.
+ */
+const sectionAnchorId = (key) => `af-section-${key}`;
+// Dots are legal in an id but awkward in a CSS selector, so paths are dashed.
+// Field and jumpTo MUST agree on this: they were written separately and did
+// not, so every chip scrolled to the section instead of the field it named.
+const fieldAnchorId = (path) => `af-${String(path).replace(/\./g, "-")}`;
+
+/** Group key for a field path: "compensation.currentCtc" -> "compensation". */
+const groupKeyForPath = (path) => String(path || "").split(".")[0];
+
 const Field = ({ def, value, onChange }) => {
-  const id = `af-${def.path.replace(/\./g, "-")}`;
+  const id = fieldAnchorId(def.path);
   const base =
     "w-full p-3 rounded-lg border border-white/15 bg-white/5 text-white placeholder-white/25 " +
     "focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-colors";
@@ -115,8 +131,13 @@ const Field = ({ def, value, onChange }) => {
 };
 
 /** A collapsible group. Everything starts open except the opt-in one. */
-const Group = ({ group, open, onToggle, filled, total, children }) => (
-  <section className="bg-white/[0.04] border border-white/10 rounded-2xl overflow-hidden">
+const Group = ({ group, open, onToggle, filled, total, children, onSave, saving }) => (
+  <section
+    id={sectionAnchorId(group.key)}
+    // scroll-mt keeps the heading clear of the sticky header when a chip jumps
+    // here, rather than landing with the title hidden behind it.
+    className="bg-white/[0.04] border border-white/10 rounded-2xl overflow-hidden scroll-mt-24"
+  >
     <button
       type="button"
       onClick={onToggle}
@@ -142,8 +163,39 @@ const Group = ({ group, open, onToggle, filled, total, children }) => (
         />
       </div>
     </button>
-    {open && <div className="px-6 pb-6 pt-1">{children}</div>}
+    {open && (
+      <div className="px-6 pb-6 pt-1">
+        {children}
+        {onSave && <SectionSave onSave={onSave} saving={saving} />}
+      </div>
+    )}
   </section>
+);
+
+/**
+ * A Save at the foot of every section.
+ *
+ * The form is long by design and nobody fills it in one sitting. With a single
+ * Save at the top of the page, finishing a section meant scrolling all the way
+ * back up to keep the work — so the natural thing to do was close the tab and
+ * lose it.
+ *
+ * It saves the WHOLE form, not just this section: the state is one object and
+ * a partial write would need the server to merge, which is a larger change for
+ * no user-visible gain. The label says "Save" because that is what it does.
+ */
+const SectionSave = ({ onSave, saving }) => (
+  <div className="mt-5 pt-4 border-t border-white/10 flex justify-end">
+    <button
+      type="button"
+      onClick={onSave}
+      disabled={saving}
+      className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-white/10 hover:bg-white/15 border border-white/15 text-sm font-semibold text-white transition-colors disabled:opacity-50"
+    >
+      <Save size={15} />
+      {saving ? "Saving…" : "Save"}
+    </button>
+  </div>
 );
 
 /* --------------------------------------------------------------------- page */
@@ -190,6 +242,39 @@ const AutofillDataTab = () => {
     // eslint-disable-next-line react-hooks/set-state-in-effect
     load();
   }, [load]);
+
+  /**
+   * Open the group a field lives in, scroll to it, and put the cursor in it.
+   *
+   * Opening first matters: a collapsed group renders none of its inputs, so
+   * focusing before the next paint would find nothing. requestAnimationFrame
+   * is enough — React has committed by then.
+   *
+   * Falls back to the section heading when the field itself cannot be found,
+   * which is better than a click that appears to do nothing.
+   */
+  const jumpTo = useCallback((path) => {
+    const groupKey = groupKeyForPath(path);
+    setOpenGroups((o) => ({ ...o, [groupKey]: true }));
+
+    requestAnimationFrame(() => {
+      // In order of precision: the input itself, the free-text list that owns
+      // it, the repeating section, then the group heading. A missing field can
+      // name any of these — "Skills" is a list, "Education" a section — and a
+      // chip that silently does nothing is worse than one that lands close.
+      const target =
+        document.getElementById(fieldAnchorId(path)) ||
+        document.getElementById(`af-list-${path}`) ||
+        document.getElementById(sectionAnchorId(path)) ||
+        document.getElementById(sectionAnchorId(groupKey));
+      if (!target) return;
+
+      target.scrollIntoView({ behavior: "smooth", block: "center" });
+      if (typeof target.focus === "function" && target.tagName !== "SECTION") {
+        target.focus({ preventScroll: true });
+      }
+    });
+  }, []);
 
   const getAt = useCallback(
     (path) => path.split(".").reduce((o, k) => (o == null ? undefined : o[k]), data),
@@ -358,14 +443,19 @@ const AutofillDataTab = () => {
             </div>
             <div className="flex flex-wrap gap-1.5">
               {missing.slice(0, 10).map((m) => (
-                <span
+                <button
                   key={m.path}
-                  className="text-[11px] px-2 py-1 rounded-md bg-white/5 border border-white/10 text-white/60"
+                  type="button"
+                  onClick={() => jumpTo(m.path)}
+                  className="text-[11px] px-2 py-1 rounded-md bg-white/5 border border-white/10 text-white/70 hover:bg-primary/20 hover:border-primary/40 hover:text-white focus:outline-none focus:ring-2 focus:ring-primary transition-colors"
                 >
                   {m.label}
-                </span>
+                </button>
               ))}
             </div>
+            <p className="mt-2.5 text-[11px] text-white/35">
+              Click any of these to jump straight to it.
+            </p>
           </div>
         )}
 
@@ -380,6 +470,8 @@ const AutofillDataTab = () => {
                 onToggle={() => setOpenGroups((o) => ({ ...o, [g.key]: !o[g.key] }))}
                 filled={groupProgress[g.key]?.filled ?? 0}
                 total={groupProgress[g.key]?.total ?? 0}
+                onSave={save}
+                saving={saving}
               >
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   {g.fields.map((f) => (
@@ -398,7 +490,8 @@ const AutofillDataTab = () => {
           {schema.lists.map((l) => (
             <section
               key={l.path}
-              className="bg-white/[0.04] border border-white/10 rounded-2xl px-6 py-5"
+              id={sectionAnchorId(l.path)}
+              className="bg-white/[0.04] border border-white/10 rounded-2xl px-6 py-5 scroll-mt-24"
             >
               <label
                 htmlFor={`af-list-${l.path}`}
@@ -431,7 +524,8 @@ const AutofillDataTab = () => {
             return (
               <section
                 key={s.key}
-                className="bg-white/[0.04] border border-white/10 rounded-2xl px-6 py-5"
+                id={sectionAnchorId(s.key)}
+                className="bg-white/[0.04] border border-white/10 rounded-2xl px-6 py-5 scroll-mt-24"
               >
                 <div className="flex items-center justify-between mb-4">
                   <h2 className="text-base font-semibold text-white flex items-center gap-2">
