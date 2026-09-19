@@ -1,6 +1,7 @@
 "use client";
 import Link from "next/link";
 import React, { useCallback, useEffect, useRef, useState } from "react";
+import ComingSoonCta from "@/component/ComingSoonCta";
 import PlanLedger, { LaunchBanner } from "@/component/landing/PlanLedger";
 import { Reveal, MaskLines, Kicker } from "@/component/motion/kit";
 import { useAuth } from "@/context/AuthContext";
@@ -138,6 +139,7 @@ export default function ZPricing() {
   // button can be in, so a disabled button always says why it is disabled.
   const cta = (plan, primary) => {
     if (!plan) return null;
+    if (plan.comingSoon) return <ComingSoonCta plan={plan} primary={primary} />;
     const soldOut = isSoldOut(plan);
     const busy = busyPlan === plan.id;
     const label = busy
