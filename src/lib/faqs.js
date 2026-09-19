@@ -52,6 +52,11 @@ export const FAQS = [
     q: "Can you guarantee I'll get a job?",
     a: "No, and anyone who does is lying. What Outmail changes is how many of the right people see you, and how much of your time goes into the applications worth making. The rest is your profile and the market.",
   },
+  {
+    cat: "Product",
+    q: "What roles does Outmail support right now?",
+    a: "Software, data and IT roles for students graduating into their first job — including DevOps, QA and cybersecurity. That is where our matching, outreach and mentorship are strongest, and we would rather do that well than do everything at once. More fields are on the roadmap as the team grows.",
+  },
 ];
 
 /** The three worries people actually arrive with, in the order they ask. */
