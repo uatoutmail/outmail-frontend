@@ -18,9 +18,11 @@ vi.mock("@/lib/payments", () => ({
 }));
 vi.mock("@/lib/checkoutIntent", () => ({ rememberIntent: vi.fn(), takeIntent: vi.fn(() => null) }));
 vi.mock("@/context/AuthContext", () => ({ useAuth: vi.fn() }));
+vi.mock("@/lib/api", () => ({ api: { post: vi.fn() } }));
 vi.mock("sonner", () => ({ toast: { success: vi.fn(), error: vi.fn() } }));
 
 const { getPlans, startCheckout } = await import("@/lib/payments");
+const { api } = await import("@/lib/api");
 const { useAuth } = await import("@/context/AuthContext");
 const Pricing = (await import("./pricing")).default;
 
@@ -46,6 +48,11 @@ const PLAN_B = {
 
 beforeEach(() => {
   vi.clearAllMocks();
+  // `--localstorage-file` (required by this repo's test setup, see CLAUDE.md)
+  // persists localStorage to disk ACROSS separate test runs, not just within
+  // one file — so a "joined the waitlist" flag set by a previous run survives
+  // into this one unless explicitly cleared here.
+  window.localStorage.clear();
   useAuth.mockReturnValue({ isAuthenticated: true, refreshUser: vi.fn() });
   getPlans.mockResolvedValue([PLAN_A, PLAN_B]);
   startCheckout.mockResolvedValue({ ok: true });
@@ -140,5 +147,55 @@ describe("pricing — the all-in claim", () => {
     render(<Pricing />);
     expect(await screen.findByText(/inclusive of all taxes/i)).toBeInTheDocument();
     expect(screen.getByText(/no fees added at\s+checkout/i)).toBeInTheDocument();
+  });
+});
+
+// OUT-246: mentorship is shown but not sold yet — a "Coming soon" click must
+// register interest, never open checkout, regardless of auth state.
+describe("pricing — a coming-soon plan", () => {
+  it("shows Coming soon instead of a buy button, and never starts checkout", async () => {
+    getPlans.mockResolvedValue([PLAN_A, { ...PLAN_B, comingSoon: true }]);
+    useAuth.mockReturnValue({
+      isAuthenticated: true,
+      user: { display_name: "Ananya", email: "ananya@example.com" },
+      refreshUser: vi.fn(),
+    });
+    api.post.mockResolvedValue({ data: { ok: true } });
+    render(<Pricing />);
+
+    // PLAN_A (₹999) is still on sale — only PLAN_B's own button changes.
+    const comingSoon = await screen.findByRole("button", { name: /coming soon/i });
+    expect(screen.getByRole("button", { name: /^get it$/i })).toBeInTheDocument();
+
+    await userEvent.click(comingSoon);
+    expect(startCheckout).not.toHaveBeenCalled();
+    expect(api.post).toHaveBeenCalledWith(
+      "/api/contact",
+      expect.objectContaining({ role: "Mentorship interest", email: "ananya@example.com" }),
+      expect.anything()
+    );
+    expect(await screen.findByRole("button", { name: /you're on the list/i })).toBeInTheDocument();
+  });
+
+  it("asks a signed-out visitor for an email instead of submitting immediately", async () => {
+    getPlans.mockResolvedValue([PLAN_A, { ...PLAN_B, comingSoon: true }]);
+    useAuth.mockReturnValue({ isAuthenticated: false, user: null, refreshUser: vi.fn() });
+    api.post.mockResolvedValue({ data: { ok: true } });
+    render(<Pricing />);
+
+    const comingSoon = await screen.findByRole("button", { name: /coming soon/i });
+    await userEvent.click(comingSoon);
+    expect(api.post).not.toHaveBeenCalled();
+
+    const emailInput = await screen.findByLabelText(/email for mentorship waitlist/i);
+    await userEvent.type(emailInput, "visitor@example.com");
+    await userEvent.click(screen.getByRole("button", { name: /notify me/i }));
+
+    expect(api.post).toHaveBeenCalledWith(
+      "/api/contact",
+      expect.objectContaining({ role: "Mentorship interest", email: "visitor@example.com" }),
+      expect.anything()
+    );
+    expect(startCheckout).not.toHaveBeenCalled();
   });
 });

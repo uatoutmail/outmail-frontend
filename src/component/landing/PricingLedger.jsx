@@ -2,6 +2,7 @@
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
 import PlanLedger, { LaunchBanner } from "./PlanLedger";
+import ComingSoonCta from "@/component/ComingSoonCta";
 import { Reveal, MaskLines, Cta, Kicker } from "@/component/motion/kit";
 import { getPlans } from "@/lib/payments";
 
@@ -64,14 +65,18 @@ export default function PricingLedger() {
               a={a}
               b={b}
               renderCtaA={() => <Cta label="Get it" href="/pricing" />}
-              renderCtaB={() => (
-                <Link
-                  href="/pricing"
-                  className="font-syne font-semibold text-sm border border-white/20 hover:border-accent-light hover:text-accent-light rounded-btn px-5 py-2.5 transition-colors whitespace-nowrap"
-                >
-                  Take a seat
-                </Link>
-              )}
+              renderCtaB={(p) =>
+                p?.comingSoon ? (
+                  <ComingSoonCta plan={p} primary={false} />
+                ) : (
+                  <Link
+                    href="/pricing"
+                    className="font-syne font-semibold text-sm border border-white/20 hover:border-accent-light hover:text-accent-light rounded-btn px-5 py-2.5 transition-colors whitespace-nowrap"
+                  >
+                    Take a seat
+                  </Link>
+                )
+              }
             />
           </>
         )}
