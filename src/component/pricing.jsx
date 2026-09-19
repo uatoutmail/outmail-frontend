@@ -181,6 +181,10 @@ export default function ZPricing() {
             The only difference is mentorship. One payment either way — nothing renews. For
             comparison, LinkedIn Premium is ₹1,400–2,800 <em>per month</em> in India.
           </p>
+          <p className="text-white/30 text-xs mt-3 max-w-lg">
+            Built for software, data and IT roles right now — that is where our job matching is
+            strongest.
+          </p>
         </Reveal>
 
         <div className="mt-12">
