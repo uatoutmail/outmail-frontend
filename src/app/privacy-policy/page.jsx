@@ -172,9 +172,19 @@ export default function PrivacyPolicy() {
                       "You gave it to us for this purpose",
                     ],
                     [
-                      "Saved answers you store for the Autofill extension",
-                      "To fill application forms on your instruction",
+                      "Autofill profile — the answers application forms ask for: contact details, addresses, education and marks, work history, notice period, and current and expected salary",
+                      "To fill job application forms on your instruction, and only on the page you are looking at",
                       "Your consent",
+                    ],
+                    [
+                      "Diversity and EEO answers — gender, disability status and category, where you choose to provide them",
+                      "Only to fill the equivalent question on an application form, and only after you switch this on. It is off by default, and never used for matching, scoring or any decision of ours",
+                      "Your explicit consent, given by switching it on",
+                    ],
+                    [
+                      "The text of questions on forms you open with the extension — the labels, not your answers",
+                      "To work out which of your saved answers belongs in which box, once per form rather than once per person",
+                      "Necessary to provide the service you asked for",
                     ],
                     [
                       "Payment records — plan, amount, date, Razorpay reference",
@@ -196,6 +206,16 @@ export default function PrivacyPolicy() {
                 </tbody>
               </table>
             </div>
+            <p>
+              <strong className="text-slate-900">
+                Gender, disability status and category are sensitive personal data, and we treat
+                them that way.
+              </strong>{" "}
+              They are collected only if you turn on diversity answers yourself. They are stored
+              encrypted, they go nowhere except the form field you are filling, and they are never
+              shown to a recruiter, never used to rank you, and never used to decide which jobs you
+              see. Turning the setting off stops them being filled anywhere, immediately.
+            </p>
             <p className="text-slate-600">
               We do not collect financial account details. Card and UPI details are entered directly
               with Razorpay and never reach us.
@@ -216,6 +236,21 @@ export default function PrivacyPolicy() {
                 Outmail uses Google’s Gemini models to read your resume, to score how well a job
                 matches your profile, and to draft the text of outreach emails. Your resume content
                 and profile are sent to that service for those purposes.
+              </p>
+              <p>
+                The Autofill extension uses the same service for one narrow job: working out which
+                of your saved answers belongs in which box on an application form. When a form asks
+                something we have not seen before, the{" "}
+                <strong className="text-slate-900">wording of that question</strong> — not your
+                answer to it — is sent to Gemini so we can map it to the right field. The result is
+                stored against the form rather than against you, so a question is only ever worked
+                out once, however many people apply.
+              </p>
+              <p>
+                <strong className="text-slate-900">
+                  Your diversity and EEO answers are never sent to any AI service,
+                </strong>{" "}
+                for this or for anything else, and they are never used to match, rank or filter you.
               </p>
               <p>
                 <strong className="text-slate-900">
@@ -371,8 +406,8 @@ export default function PrivacyPolicy() {
                   {[
                     [
                       "Google (Sign-In, Gemini)",
-                      "Authentication; resume parsing, matching and email drafting",
-                      "Account identity; resume and profile content",
+                      "Authentication; resume parsing, matching, email drafting, and mapping application-form questions to your saved answers",
+                      "Account identity; resume and profile content; the wording of form questions. Never your diversity or EEO answers",
                     ],
                     ["Razorpay", "Payment processing", "Name, email, payment amount and reference"],
                     ["Amazon Web Services (S3)", "Resume file storage", "Your uploaded resume"],
