@@ -8,8 +8,9 @@ import { isExtensionInstalled, pairExtension, pingExtension } from "@/lib/extens
 
 // This page opens by itself the moment the extension is installed, so its job
 // is to be RIGHT about which of five situations the visitor is in, and to say
-// something actionable in each. The happy path must need no click at all —
-// that is the entire reason the page exists.
+// something actionable in each. The happy path is ONE click, "Agree and
+// connect", after the data disclosure. The Chrome Web Store requires that
+// agreement, so connecting must never happen without it.
 
 vi.mock("@/lib/api", () => ({ api: { post: vi.fn() } }));
 vi.mock("@/context/AuthContext", () => ({ useAuth: vi.fn() }));
@@ -35,17 +36,21 @@ beforeEach(() => {
   vi.clearAllMocks();
 });
 
+const agree = async () =>
+  userEvent.click(await screen.findByRole("button", { name: /agree and connect/i }));
+
 describe("the happy path", () => {
-  it("connects with no click at all", async () => {
+  it("connects on one click of Agree and connect, sending the agreement", async () => {
     signedIn();
     extensionPresent();
     api.post.mockResolvedValue({ data: { code: "ABC123" } });
     pairExtension.mockResolvedValue({ ok: true, email: "ananya@example.com" });
 
     render(<ExtensionWelcome />);
+    await agree();
 
     await waitFor(() => expect(screen.getByText("Connected")).toBeInTheDocument());
-    expect(pairExtension).toHaveBeenCalledWith("ABC123");
+    expect(pairExtension).toHaveBeenCalledWith("ABC123", { consent: true });
   });
 
   it("never shows the code to the user", async () => {
@@ -57,6 +62,7 @@ describe("the happy path", () => {
     pairExtension.mockResolvedValue({ ok: true });
 
     render(<ExtensionWelcome />);
+    await agree();
 
     await waitFor(() => expect(screen.getByText("Connected")).toBeInTheDocument());
     expect(screen.queryByText(/ABC123/)).not.toBeInTheDocument();
@@ -69,6 +75,7 @@ describe("the happy path", () => {
     pairExtension.mockResolvedValue({ ok: true });
 
     render(<ExtensionWelcome />);
+    await agree();
     await waitFor(() => expect(screen.getByText(/rajesh@example.com/)).toBeInTheDocument());
   });
 
@@ -79,6 +86,30 @@ describe("the happy path", () => {
     render(<ExtensionWelcome />);
 
     await waitFor(() => expect(screen.getByText("Already connected")).toBeInTheDocument());
+    expect(api.post).not.toHaveBeenCalled();
+    expect(pairExtension).not.toHaveBeenCalled();
+  });
+});
+
+describe("the data disclosure", () => {
+  it("shows what is collected and connects NOTHING until the user agrees", async () => {
+    signedIn();
+    extensionPresent();
+    api.post.mockResolvedValue({ data: { code: "ABC123" } });
+    pairExtension.mockResolvedValue({ ok: true });
+
+    render(<ExtensionWelcome />);
+
+    expect(await screen.findByText("Before you connect")).toBeInTheDocument();
+    expect(screen.getByText(/downloads your saved profile and resume/i)).toBeInTheDocument();
+    expect(screen.getByText(/Google Gemini/)).toBeInTheDocument();
+    expect(screen.getByText(/saves answers you type/i)).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: /privacy policy/i })).toHaveAttribute(
+      "href",
+      "/privacy-policy"
+    );
+    // Give any automatic connect a chance to fire. None may.
+    await new Promise((r) => setTimeout(r, 50));
     expect(api.post).not.toHaveBeenCalled();
     expect(pairExtension).not.toHaveBeenCalled();
   });
@@ -113,6 +144,7 @@ describe("the states that are not the happy path", () => {
     api.post.mockRejectedValue({ response: { status: 403 } });
 
     render(<ExtensionWelcome />);
+    await agree();
 
     await waitFor(() => expect(screen.getByText(/part of a paid plan/i)).toBeInTheDocument());
   });
@@ -124,6 +156,7 @@ describe("the states that are not the happy path", () => {
     pairExtension.mockResolvedValue({ ok: false, reason: "reload_required" });
 
     render(<ExtensionWelcome />);
+    await agree();
 
     await waitFor(() => expect(screen.getByText("Couldn't connect")).toBeInTheDocument());
     expect(screen.getByText(/reload this page/i)).toBeInTheDocument();
@@ -136,6 +169,7 @@ describe("the states that are not the happy path", () => {
     pairExtension.mockResolvedValueOnce({ ok: false, reason: "extension_unreachable" });
 
     render(<ExtensionWelcome />);
+    await agree();
     await waitFor(() => expect(screen.getByText("Couldn't connect")).toBeInTheDocument());
 
     pairExtension.mockResolvedValue({ ok: true });
@@ -152,6 +186,7 @@ describe("the states that are not the happy path", () => {
     pairExtension.mockResolvedValue({ ok: false, reason: "extension_unreachable" });
 
     render(<ExtensionWelcome />);
+    await agree();
     await waitFor(() => expect(screen.getByText("Couldn't connect")).toBeInTheDocument());
 
     await userEvent.click(screen.getByRole("button", { name: /connect with a code instead/i }));

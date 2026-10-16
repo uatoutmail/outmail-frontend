@@ -34,6 +34,7 @@ export default function PrivacyPolicy() {
           <p className="text-accent-light font-semibold tracking-wide text-sm md:text-base uppercase">
             Effective Date: 31st August 2026
           </p>
+          <p className="text-sm text-slate-500">Last updated: 16th October 2026</p>
         </div>
 
         <div className="prose prose-slate max-w-none space-y-12 text-slate-700 leading-relaxed font-geist">
@@ -262,6 +263,31 @@ export default function PrivacyPolicy() {
               <p>
                 No decision with a legal or similarly significant effect on you is made solely by
                 automated means. Matching and drafting are suggestions; you decide whether to send.
+              </p>
+              <h3 id="autofill-extension" className="pt-2 text-lg font-semibold text-slate-900">
+                The Outmail Autofill browser extension
+              </h3>
+              <p>
+                Before the extension connects to your account it shows you what it does with data,
+                and it connects only after you click &ldquo;Agree and connect&rdquo;. Nothing is
+                sent to Outmail before that. Once connected, it acts only on a page where you click
+                Fill. On that page it downloads your saved profile and resume from your account,
+                reads the form, and sends the wording of any question it does not recognise to
+                Outmail so the right saved answer can be found. If you type an answer into one of
+                those questions, it is saved to your account so it can be filled next time. The
+                extension does not record your browsing history, does not read pages you have not
+                asked it to fill, and never submits a form.
+              </p>
+              <p>
+                <strong className="text-slate-900">Limited Use.</strong> The use of information
+                received through the Outmail Autofill extension adheres to the{" "}
+                <A href="https://developer.chrome.com/docs/webstore/program-policies/limited-use">
+                  Chrome Web Store User Data Policy
+                </A>
+                , including the Limited Use requirements. We use that information only to fill job
+                applications for you, we do not sell it or use it for advertising, and we do not
+                transfer it to anyone except as needed to provide that feature, to comply with the
+                law, or to keep the service secure.
               </p>
             </div>
           </Section>
