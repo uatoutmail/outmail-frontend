@@ -99,10 +99,25 @@ describe("pairing", () => {
       },
     });
 
+    const r = await pairExtension("ABC123", { consent: true });
+
+    expect(seen[0]).toMatchObject({ action: "pair", code: "ABC123", consent: true });
+    expect(r).toMatchObject({ ok: true, email: "ananya@example.com" });
+  });
+
+  it("sends consent: false unless the caller explicitly agreed", async () => {
+    const seen = [];
+    detach = fakeExtension({
+      replyTo: (d) => {
+        seen.push(d);
+        return { ok: false, reason: "consent_required" };
+      },
+    });
+
     const r = await pairExtension("ABC123");
 
-    expect(seen[0]).toMatchObject({ action: "pair", code: "ABC123" });
-    expect(r).toMatchObject({ ok: true, email: "ananya@example.com" });
+    expect(seen[0]).toMatchObject({ action: "pair", code: "ABC123", consent: false });
+    expect(r).toMatchObject({ ok: false, reason: "consent_required" });
   });
 
   it("passes a refusal straight through", async () => {
