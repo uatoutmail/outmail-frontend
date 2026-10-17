@@ -2,6 +2,9 @@ import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import JobCard from "./JobCard";
+import { api } from "@/lib/api";
+
+vi.mock("@/lib/api", () => ({ api: { post: vi.fn() } }));
 
 const getPriorityTier = (score) =>
   score >= 70
@@ -109,5 +112,51 @@ describe("JobCard — a job with an existing userAction (not new)", () => {
 
     await userEvent.click(screen.getByRole("button", { name: /reset status/i }));
     expect(handlers.handleResetStatus).toHaveBeenCalledWith("j1");
+  });
+});
+
+// A student clicking through is the only check that runs against every live
+// job every day — the fastest way we learn a link rotted since the last
+// verification sweep.
+describe("JobCard — reporting a dead job", () => {
+  beforeEach(() => vi.clearAllMocks());
+
+  it("asks why before sending, rather than reporting on a single click", async () => {
+    render(<JobCard job={newJob} {...makeHandlers()} />);
+
+    await userEvent.click(screen.getByRole("button", { name: /report/i }));
+
+    expect(api.post).not.toHaveBeenCalled();
+    expect(screen.getByRole("button", { name: /link is broken/i })).toBeInTheDocument();
+  });
+
+  it("sends the reason and tells the user what their report did", async () => {
+    api.post.mockResolvedValue({ data: { message: "Thanks — flagged for review." } });
+    render(<JobCard job={newJob} {...makeHandlers()} />);
+
+    await userEvent.click(screen.getByRole("button", { name: /report/i }));
+    await userEvent.click(screen.getByRole("button", { name: /no longer accepting/i }));
+
+    expect(api.post).toHaveBeenCalledWith("/api/jobs/j1/report", { reason: "NOT_ACCEPTING" });
+    expect(await screen.findByText(/flagged for review/i)).toBeInTheDocument();
+  });
+
+  it("says so when the report could not be sent, instead of silently swallowing it", async () => {
+    api.post.mockRejectedValue(new Error("offline"));
+    render(<JobCard job={newJob} {...makeHandlers()} />);
+
+    await userEvent.click(screen.getByRole("button", { name: /report/i }));
+    await userEvent.click(screen.getByRole("button", { name: /link is broken/i }));
+
+    expect(await screen.findByText(/could not send that/i)).toBeInTheDocument();
+  });
+
+  it("reporting is separate from discarding — discard is a personal hide, report says it is broken for everyone", async () => {
+    const handlers = makeHandlers();
+    render(<JobCard job={newJob} {...handlers} />);
+
+    await userEvent.click(screen.getByRole("button", { name: /report/i }));
+
+    expect(handlers.handleDiscard).not.toHaveBeenCalled();
   });
 });
