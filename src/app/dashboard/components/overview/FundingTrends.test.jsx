@@ -30,14 +30,15 @@ describe("FundingTrends", () => {
     await waitFor(() => expect(screen.getByText(/no funding rounds tracked/i)).toBeInTheDocument());
   });
 
-  it("renders totals and the top-funded industries, formatting billions correctly", async () => {
+  it("renders totals and the most-active industries by relative score, not dollar amount", async () => {
     api.get.mockResolvedValue({
       data: {
+        relative: true,
         industries: [
-          { industry: "FinTech", amountM: 1500, events: 2 },
-          { industry: "HealthTech", amountM: 50, events: 1 },
+          { industry: "FinTech", relativeScore: 100, amountM: 1500, events: 4 },
+          { industry: "HealthTech", relativeScore: 25, amountM: 50, events: 1 },
         ],
-        totalEvents: 3,
+        totalEvents: 5,
         totalAmountM: 1550,
       },
     });
@@ -45,9 +46,42 @@ describe("FundingTrends", () => {
 
     await waitFor(() => expect(screen.getByText("FinTech")).toBeInTheDocument());
     expect(screen.getByText(/last 30 days/i)).toBeInTheDocument();
-    expect(screen.getByText(/3 rounds/)).toBeInTheDocument();
-    expect(screen.getByText("$1.5B")).toBeInTheDocument();
-    expect(screen.getByText("$50M")).toBeInTheDocument();
+    expect(screen.getByText(/5 rounds/)).toBeInTheDocument();
+    expect(screen.getByText(/relative signal strength/i)).toBeInTheDocument();
+    expect(screen.getByText("Most Active")).toBeInTheDocument();
+    // Billions-formatting is exercised here (via the badge), not as a
+    // separate exact-text assertion — "$1.5B" is not an isolated text node
+    // anywhere (it's concatenated with "4 signals · " inside the same span).
+    expect(screen.getByText(/4 signals · \$1\.5B/)).toBeInTheDocument();
+    expect(screen.getByText(/1 signal · \$50M/)).toBeInTheDocument();
+  });
+
+  it("shows the empty state when every industry has a zero relative score, even though the array isn't empty", async () => {
+    api.get.mockResolvedValue({
+      data: {
+        relative: true,
+        industries: [
+          { industry: "FinTech", relativeScore: 0, amountM: 0, events: 0 },
+          { industry: "HealthTech", relativeScore: 0, amountM: 0, events: 0 },
+        ],
+        totalEvents: 0,
+        totalAmountM: 0,
+      },
+    });
+    render(<FundingTrends selectedPeriod="7" />);
+    await waitFor(() => expect(screen.getByText(/no funding rounds tracked/i)).toBeInTheDocument());
+  });
+
+  it("does not show a $0 badge for the most-active industry when it has signals but no parseable amount", async () => {
+    api.get.mockResolvedValue({
+      data: {
+        industries: [{ industry: "FinTech", relativeScore: 100, amountM: 0, events: 3 }],
+        totalEvents: 3,
+        totalAmountM: 0,
+      },
+    });
+    render(<FundingTrends selectedPeriod="7" />);
+    await waitFor(() => expect(screen.getByText("3 signals")).toBeInTheDocument());
   });
 
   it("clears data and stops loading when the fetch fails", async () => {
@@ -59,7 +93,7 @@ describe("FundingTrends", () => {
   it("toggles between bar and pie chart views", async () => {
     api.get.mockResolvedValue({
       data: {
-        industries: [{ industry: "FinTech", amountM: 100, events: 1 }],
+        industries: [{ industry: "FinTech", relativeScore: 100, amountM: 100, events: 1 }],
         totalEvents: 1,
         totalAmountM: 100,
       },
