@@ -60,10 +60,25 @@ const MailingAgentStatus = () => {
     }
   };
 
+  // Ambient Tone Wash: no dot, no orb, no ring — the card's own background
+  // temperature IS the signal (a soft radial wash in the state's colour),
+  // the icon tint and the heading colour carry the rest. Soft and
+  // professional at rest; offline still reads clearly because the wash,
+  // the icon and the heading all shift colour together, not just one dot.
+  const wash = online
+    ? "bg-[radial-gradient(ellipse_at_18%_15%,rgba(52,211,153,0.16),transparent_65%)] bg-white/[0.045] border-emerald-400/20"
+    : "bg-[radial-gradient(ellipse_at_18%_15%,rgba(251,113,133,0.15),transparent_65%)] bg-white/[0.045] border-rose-400/20";
+  const iconTint = online ? "bg-emerald-400/15 text-emerald-300" : "bg-rose-400/15 text-rose-300";
+  const headingColor = online ? "text-emerald-300" : "text-rose-300";
+
   return (
-    <div className="bg-white/10 backdrop-blur-md rounded-xl p-4 border border-white/10 h-full flex flex-col">
+    <div
+      className={`rounded-xl p-4 border h-full flex flex-col backdrop-blur-md transition-colors ${loading ? "bg-white/10 border-white/10" : wash}`}
+    >
       <div className="flex items-center gap-2 mb-3">
-        <div className="p-2 bg-purple-500/20 rounded-lg text-purple-400">
+        <div
+          className={`p-2 rounded-lg transition-colors ${loading ? "bg-purple-500/20 text-purple-400" : iconTint}`}
+        >
           <Monitor size={18} />
         </div>
         <div>
@@ -77,47 +92,14 @@ const MailingAgentStatus = () => {
           <div className="animate-spin rounded-full h-8 w-8 border-4 border-white/20 border-t-white" />
         </div>
       ) : (
-        <div className="flex-1 flex flex-col items-center justify-center gap-3 py-2">
-          {/* A glass-marble orb (radial gradient + a soft highlight + a
-              two-layer ambient glow) rather than a flat Tailwind-palette
-              dot — the same signal, rendered like something a premium
-              product would ship instead of a stock alert icon. Offline
-              gets a slow breathing pulse (animate-pulse), not a frantic
-              ping — attention-grabbing without reading as an alarm. */}
-          <div className="relative flex items-center justify-center h-16 w-16">
-            <span
-              className={`absolute inline-flex h-16 w-16 rounded-full ${
-                online ? "bg-emerald-400/25 animate-ping" : "bg-rose-500/25 animate-pulse"
-              }`}
-            />
-            <span
-              className={`relative inline-flex h-14 w-14 rounded-full ring-1 ring-white/20 ${
-                online
-                  ? "bg-[radial-gradient(circle_at_32%_28%,#a7f3d0_0%,#10b981_42%,#065f46_100%)] shadow-[0_0_18px_4px_rgba(16,185,129,0.45),0_0_42px_14px_rgba(16,185,129,0.18)]"
-                  : "bg-[radial-gradient(circle_at_32%_28%,#fecdd3_0%,#e11d48_42%,#7f1d1d_100%)] shadow-[0_0_18px_4px_rgba(225,29,72,0.4),0_0_42px_14px_rgba(225,29,72,0.16)]"
-              }`}
-            >
-              {/* Glass highlight */}
-              <span className="absolute top-2 left-2.5 h-3 w-3 rounded-full bg-white/50 blur-[2px]" />
-            </span>
-          </div>
-          <div className="text-center">
-            <p
-              className={`text-lg font-bold tracking-wide bg-clip-text text-transparent ${
-                online
-                  ? "bg-gradient-to-r from-emerald-300 to-emerald-500 drop-shadow-[0_0_10px_rgba(16,185,129,0.45)]"
-                  : "bg-gradient-to-r from-rose-300 to-rose-500 drop-shadow-[0_0_10px_rgba(225,29,72,0.4)]"
-              }`}
-            >
-              {online ? "Online" : "Offline"}
-            </p>
-            <p className="text-[11px] text-white/40 mt-0.5">
-              {status?.lastSeen ? `Last check-in ${timeAgo(status.lastSeen)}` : "Never connected"}
-            </p>
-          </div>
+        <div className="flex-1 flex flex-col gap-2 py-1">
+          <p className={`text-xl font-bold ${headingColor}`}>{online ? "Online" : "Offline"}</p>
+          <p className="text-[11px] text-white/45">
+            {status?.lastSeen ? `Last check-in ${timeAgo(status.lastSeen)}` : "Never connected"}
+          </p>
 
           {!online && (
-            <div className="w-full pt-1 space-y-2">
+            <div className="w-full pt-2 mt-auto space-y-2">
               {linkCode ? (
                 <div className="text-center">
                   <p className="text-[10px] text-white/50">Enter this code in the desktop app:</p>

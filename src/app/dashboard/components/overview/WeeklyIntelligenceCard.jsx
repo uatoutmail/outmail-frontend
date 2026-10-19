@@ -1,5 +1,5 @@
 "use client";
-import { Sparkles, Building2 } from "lucide-react";
+import { Sparkles, Building2, ChevronDown, ChevronUp } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import { api } from "@/lib/api";
 import { logger } from "@/lib/logger";
@@ -7,9 +7,15 @@ import { logger } from "@/lib/logger";
 // This week's market read (OUT-177): a user-facing surface of the Saturday
 // weekly-intelligence run — the same analysis that decides which companies
 // enter each student's outreach batches.
+//
+// The generation prompt already allows 3-6 industries (weeklyIntelligenceService.js) —
+// this just stopped hard-capping the UI at 4. Some weeks the model returns
+// fewer than 5; the ranked list and the "Show all N" button both read off
+// the real count rather than assuming 5 exist.
 const WeeklyIntelligenceCard = () => {
   const [intel, setIntel] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [expanded, setExpanded] = useState(false);
 
   useEffect(() => {
     let active = true;
@@ -64,35 +70,73 @@ const WeeklyIntelligenceCard = () => {
           </p>
         </div>
       ) : (
-        <div className="flex-1 overflow-y-auto min-h-0 space-y-3">
+        <div className="flex-1 flex flex-col gap-3 min-h-0">
           {intel.summary && (
-            <p className="text-[11px] text-white/75 leading-relaxed">{intel.summary}</p>
+            <p className="text-[13px] text-white/75 leading-relaxed">{intel.summary}</p>
           )}
 
-          {intel.industries?.length > 0 && (
-            <div>
-              <p className="text-[9px] text-white/55 uppercase tracking-widest mb-1.5">
-                Industries expected to hire
-              </p>
-              <div className="space-y-1.5">
-                {intel.industries.slice(0, 4).map((row) => (
-                  <div key={row.industry} className="flex items-start gap-2">
-                    <span className="text-[11px] font-semibold text-white flex-shrink-0">
-                      {row.industry}
-                    </span>
-                    {typeof row.confidence === "number" && (
-                      <span className="text-[9px] px-1.5 py-0.5 rounded-full bg-purple-500/25 text-purple-100 font-semibold flex-shrink-0">
-                        {Math.round(row.confidence * 100)}%
+          {(() => {
+            const ranked = (intel.industries || []).slice(0, 5);
+            if (ranked.length === 0) return null;
+            return (
+              <div className="relative">
+                {/* Collapsed: a bounded max-height clips mid-list rather than
+                    mid-sentence — only full rows are ever visible, the next
+                    one just fades under the gradient instead of being cut
+                    off ragged. 5 rows is a known, bounded size, so a fixed
+                    "open" ceiling is safe without measuring scrollHeight. */}
+                <div
+                  className="overflow-hidden transition-[max-height] duration-300 ease-in-out"
+                  style={{ maxHeight: expanded ? "640px" : "150px" }}
+                >
+                  {ranked.map((row, i) => (
+                    <div
+                      key={row.industry}
+                      className={`flex items-start gap-4 py-3 ${i > 0 ? "border-t border-white/[0.06]" : ""}`}
+                    >
+                      <span className="text-2xl font-extrabold text-white/15 w-9 flex-shrink-0 leading-none">
+                        {String(i + 1).padStart(2, "0")}
                       </span>
+                      <div className="min-w-0">
+                        <div className="flex items-center gap-2 flex-wrap">
+                          <span className="text-[15px] font-bold text-white">{row.industry}</span>
+                          {typeof row.confidence === "number" && (
+                            <span className="text-[11px] font-bold text-emerald-300 bg-emerald-400/10 rounded-full px-2 py-0.5">
+                              {Math.round(row.confidence * 100)}% confidence
+                            </span>
+                          )}
+                        </div>
+                        {row.reason && (
+                          <p className="text-[12.5px] text-white/55 leading-snug mt-1">
+                            {row.reason}
+                          </p>
+                        )}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+                {!expanded && ranked.length > 2 && (
+                  <div className="absolute inset-x-0 bottom-0 h-12 bg-gradient-to-t from-black/90 to-transparent pointer-events-none" />
+                )}
+                {ranked.length > 2 && (
+                  <button
+                    onClick={() => setExpanded((v) => !v)}
+                    className="relative w-full flex items-center justify-center gap-1 text-[11.5px] font-semibold text-purple-300 hover:text-purple-200 bg-purple-500/10 hover:bg-purple-500/15 border border-purple-400/20 rounded-full py-1.5 mt-2"
+                  >
+                    {expanded ? (
+                      <>
+                        Show less <ChevronUp size={13} />
+                      </>
+                    ) : (
+                      <>
+                        Show all {ranked.length} <ChevronDown size={13} />
+                      </>
                     )}
-                    {row.reason && (
-                      <span className="text-[10px] text-white/55 truncate">{row.reason}</span>
-                    )}
-                  </div>
-                ))}
+                  </button>
+                )}
               </div>
-            </div>
-          )}
+            );
+          })()}
 
           {intel.companies?.length > 0 && (
             <div>
