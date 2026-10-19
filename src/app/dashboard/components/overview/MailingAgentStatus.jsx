@@ -78,20 +78,37 @@ const MailingAgentStatus = () => {
         </div>
       ) : (
         <div className="flex-1 flex flex-col items-center justify-center gap-3 py-2">
-          <div className="relative flex items-center justify-center">
+          {/* A glass-marble orb (radial gradient + a soft highlight + a
+              two-layer ambient glow) rather than a flat Tailwind-palette
+              dot — the same signal, rendered like something a premium
+              product would ship instead of a stock alert icon. Offline
+              gets a slow breathing pulse (animate-pulse), not a frantic
+              ping — attention-grabbing without reading as an alarm. */}
+          <div className="relative flex items-center justify-center h-16 w-16">
             <span
-              className={`absolute inline-flex h-12 w-12 rounded-full opacity-40 ${
-                online ? "bg-green-400 animate-ping" : "bg-red-500"
+              className={`absolute inline-flex h-16 w-16 rounded-full ${
+                online ? "bg-emerald-400/25 animate-ping" : "bg-rose-500/25 animate-pulse"
               }`}
             />
             <span
-              className={`relative inline-flex h-12 w-12 rounded-full shadow-lg ${
-                online ? "bg-green-400 shadow-green-400/50" : "bg-red-500 shadow-red-500/50"
+              className={`relative inline-flex h-14 w-14 rounded-full ring-1 ring-white/20 ${
+                online
+                  ? "bg-[radial-gradient(circle_at_32%_28%,#a7f3d0_0%,#10b981_42%,#065f46_100%)] shadow-[0_0_18px_4px_rgba(16,185,129,0.45),0_0_42px_14px_rgba(16,185,129,0.18)]"
+                  : "bg-[radial-gradient(circle_at_32%_28%,#fecdd3_0%,#e11d48_42%,#7f1d1d_100%)] shadow-[0_0_18px_4px_rgba(225,29,72,0.4),0_0_42px_14px_rgba(225,29,72,0.16)]"
               }`}
-            />
+            >
+              {/* Glass highlight */}
+              <span className="absolute top-2 left-2.5 h-3 w-3 rounded-full bg-white/50 blur-[2px]" />
+            </span>
           </div>
           <div className="text-center">
-            <p className={`text-lg font-bold ${online ? "text-green-400" : "text-red-400"}`}>
+            <p
+              className={`text-lg font-bold tracking-wide bg-clip-text text-transparent ${
+                online
+                  ? "bg-gradient-to-r from-emerald-300 to-emerald-500 drop-shadow-[0_0_10px_rgba(16,185,129,0.45)]"
+                  : "bg-gradient-to-r from-rose-300 to-rose-500 drop-shadow-[0_0_10px_rgba(225,29,72,0.4)]"
+              }`}
+            >
               {online ? "Online" : "Offline"}
             </p>
             <p className="text-[11px] text-white/40 mt-0.5">
