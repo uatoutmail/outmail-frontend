@@ -5,7 +5,7 @@ import { DOWNLOAD_URLS, PLATFORM_LABEL, detectPlatform } from "@/lib/desktopDown
 
 /**
  * The public download CTA — same DOWNLOAD_URLS/detectPlatform this dashboard
- * already uses in MailingAgentPanel, just presented to a signed-out visitor.
+ * already uses in MailingAgentStatus, just presented to a signed-out visitor.
  *
  * Platform detection reads navigator, so it can only run after mount; a
  * server-rendered guess would always say "Mac" and flash-correct on

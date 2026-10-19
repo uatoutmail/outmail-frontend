@@ -1,11 +1,8 @@
 import { ChevronDown } from "lucide-react";
 import React, { useState } from "react";
 import FundingTrends from "./FundingTrends";
-import HiringSpotlight from "./HiringSpotlight";
-import HotHiringNews from "./HotHiringNews";
-import MailingAgentPanel from "./MailingAgentPanel";
+import MailingAgentStatus from "./MailingAgentStatus";
 import OutreachStatPills from "./OutreachStatPills";
-import RecentOutreachFeed from "./RecentOutreachFeed";
 import WeeklyIntelligenceCard from "./WeeklyIntelligenceCard";
 import { useAuth } from "@/context/AuthContext";
 
@@ -40,13 +37,16 @@ const DashboardOverview = () => {
         <OutreachStatPills selectedPeriod={selectedPeriod} />
       </div>
 
-      {/* Row 2: Industry Funding Trends (left, wider 3/5) + Hot Hiring News (right 2/5) */}
+      {/* Row 2: Industry Funding Trends (left, wider 3/5) + Mailing Agent
+          status (right 2/5) — a loud online/offline light is meant to be the
+          first thing a student notices, so it sits above the fold next to
+          the other at-a-glance chart rather than buried further down. */}
       <div className="grid grid-cols-1 lg:grid-cols-5 gap-4">
         <div className="lg:col-span-3" style={{ minHeight: "340px" }}>
           <FundingTrends selectedPeriod={selectedPeriod} onPeriodChange={setSelectedPeriod} />
         </div>
         <div className="lg:col-span-2" style={{ minHeight: "340px" }}>
-          <HotHiringNews />
+          <MailingAgentStatus />
         </div>
       </div>
 
@@ -54,21 +54,6 @@ const DashboardOverview = () => {
           each student's outreach batches (OUT-177) */}
       <div style={{ minHeight: "260px" }}>
         <WeeklyIntelligenceCard />
-      </div>
-
-      {/* Row 4: Mailing Agent (desktop sending progress) full width */}
-      <div style={{ minHeight: "280px" }}>
-        <MailingAgentPanel />
-      </div>
-
-      {/* Row 4: Companies Hiring Now (left) + Recent Outreach Feed (right) */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-        <div style={{ minHeight: "240px" }}>
-          <HiringSpotlight />
-        </div>
-        <div style={{ minHeight: "240px" }}>
-          <RecentOutreachFeed />
-        </div>
       </div>
     </div>
   );

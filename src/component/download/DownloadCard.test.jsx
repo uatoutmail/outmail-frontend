@@ -2,7 +2,7 @@ import { render, screen } from "@testing-library/react";
 import { describe, it, expect, afterEach } from "vitest";
 import DownloadCard from "./DownloadCard";
 
-// Same platform-detection contract as MailingAgentPanel.test.jsx (both read
+// Same platform-detection contract as MailingAgentStatus.test.jsx (both read
 // DOWNLOAD_URLS/detectPlatform from the same shared @/lib/desktopDownload
 // module) — mirrored here since this is the signed-out surface, not the
 // dashboard one.
