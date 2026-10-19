@@ -11,7 +11,12 @@ const DashboardOverview = () => {
   const [selectedPeriod, setSelectedPeriod] = useState("7");
 
   return (
-    <div className="flex flex-col p-5 gap-4 pb-8">
+    // No padding of its own — DashboardLayout's <main> already wraps every
+    // page in p-6. Stacking a second p-5/pb-8 on top of that was pure
+    // double-padding (~95px of it) and the actual reason this page needed
+    // the page-level scrollbar DashboardLayout's <main overflow-y-auto>
+    // otherwise exists to avoid.
+    <div className="flex flex-col gap-3">
       {/* Row 1: Welcome + Period Selector + Stat Pills */}
       <div className="flex flex-col gap-3">
         <div className="flex items-center justify-between">
