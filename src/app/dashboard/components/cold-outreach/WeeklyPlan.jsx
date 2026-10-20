@@ -112,7 +112,7 @@ const WeeklyPlan = () => {
   }
 
   const plan = data?.plan;
-  const mode = data?.mode || "weekly";
+  const mode = data?.mode || "auto";
   const weekApproved = plan && (plan.status === "approved" || plan.status === "auto");
 
   return (
