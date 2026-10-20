@@ -1,8 +1,7 @@
 "use client";
-import { motion, useInView } from "framer-motion";
 import { Check, Minus, Users, Flame } from "lucide-react";
-import React, { useRef } from "react";
-import { Reveal, EASE_OUT } from "@/component/motion/kit";
+import React from "react";
+import { Reveal } from "@/component/motion/kit";
 import { formatPaise } from "@/lib/paymentOutcome";
 
 /**
@@ -37,71 +36,40 @@ export const MATRIX = [
  * keep; a clock is one we would have to keep resetting, and a reset clock is
  * the most recognisable dark pattern there is.
  *
- * The places-remaining bar renders ONLY when the API supplies a real number.
- * Inventing one would be a false scarcity claim — actionable under the CCPA
- * 2023 dark-pattern guidelines, and disproved by refreshing the page.
+ * 2026-10-20: the places-remaining counter + progress bar (right side) was
+ * removed by request. `total` is still read from the plan to keep the "first
+ * N students" line on the left honest and in sync with the backend — it just
+ * no longer renders a remaining-count readout alongside it.
  */
 export function LaunchBanner({ plan }) {
-  // The observer lives on the banner, not on the bar. The bar starts at width
-  // 0 inside an overflow-hidden track — a zero-area target clipped by an
-  // ancestor is exactly the shape IntersectionObserver is least reliable
-  // about, and the same trap that blanked every masked heading.
-  const ref = useRef(null);
-  const inView = useInView(ref, { once: true, margin: "-10%" });
-
   if (!plan || !(plan.list_amount > plan.amount)) return null;
   if (plan.launchPlacesLeft === 0) return null; // cohort full: the offer is over
 
   const price = formatPaise(plan.amount, plan.currency);
   const listPrice = formatPaise(plan.list_amount, plan.currency);
-  const left = plan.launchPlacesLeft;
   const total = plan.launchPlacesTotal;
-  const known = typeof left === "number" && typeof total === "number" && total > 0;
-  const pct = known ? Math.max(2, Math.round(((total - left) / total) * 100)) : 0;
+  const known = typeof total === "number" && total > 0;
 
   return (
     <Reveal delay={0.06}>
-      <div
-        ref={ref}
-        className="rounded-2xl border border-primary/35 bg-gradient-to-r from-primary/15 via-primary/[0.07] to-transparent px-6 py-5 mb-4 text-left"
-      >
-        <div className="flex flex-wrap items-center gap-x-4 gap-y-3 justify-between">
-          <div className="flex items-center gap-3">
-            <span
-              aria-hidden
-              className="w-9 h-9 rounded-xl bg-primary/20 border border-primary/30 flex items-center justify-center shrink-0"
-            >
-              <Flame size={16} className="text-primary" />
-            </span>
-            <div>
-              <p className="font-syne font-bold text-[15px] leading-tight">
-                Launch price — {price} instead of{" "}
-                <span className="text-white/35 line-through font-normal">{listPrice}</span>
-              </p>
-              <p className="text-xs text-white/45 mt-0.5">
-                {known ? `For the first ${total.toLocaleString("en-IN")} students in India. ` : ""}
-                After that it is {listPrice}.
-              </p>
-            </div>
+      <div className="rounded-2xl border border-primary/35 bg-gradient-to-r from-primary/15 via-primary/[0.07] to-transparent px-6 py-5 mb-4 text-left">
+        <div className="flex items-center gap-3">
+          <span
+            aria-hidden
+            className="w-9 h-9 rounded-xl bg-primary/20 border border-primary/30 flex items-center justify-center shrink-0"
+          >
+            <Flame size={16} className="text-primary" />
+          </span>
+          <div>
+            <p className="font-syne font-bold text-[15px] leading-tight">
+              Launch price — {price} instead of{" "}
+              <span className="text-white/35 line-through font-normal">{listPrice}</span>
+            </p>
+            <p className="text-xs text-white/45 mt-0.5">
+              {known ? `For the first ${total.toLocaleString("en-IN")} students in India. ` : ""}
+              After that it is {listPrice}.
+            </p>
           </div>
-          {known && (
-            <div className="w-full sm:w-56">
-              <div className="flex items-center justify-between text-[11px] mb-1.5">
-                <span className="text-white/45">Launch places</span>
-                <span className="font-mono text-primary">
-                  {left.toLocaleString("en-IN")} of {total.toLocaleString("en-IN")} left
-                </span>
-              </div>
-              <div className="h-1.5 rounded-full bg-white/10 overflow-hidden">
-                <motion.div
-                  initial={{ width: 0 }}
-                  animate={inView ? { width: `${pct}%` } : undefined}
-                  transition={{ duration: 0.9, ease: EASE_OUT }}
-                  className="h-full bg-gradient-to-r from-primary to-accent-light"
-                />
-              </div>
-            </div>
-          )}
         </div>
         <p className="text-[11px] text-white/30 mt-3">
           Buy at the launch price and you keep the full year at that price — we never ask for the
