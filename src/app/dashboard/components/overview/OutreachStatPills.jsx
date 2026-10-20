@@ -1,4 +1,4 @@
-import { Mail, TrendingUp, Building, FileText } from "lucide-react";
+import { Mail, TrendingUp, Building, Briefcase } from "lucide-react";
 import React, { useState, useEffect } from "react";
 import { api } from "@/lib/api";
 import { logger } from "@/lib/logger";
@@ -53,13 +53,17 @@ const OutreachStatPills = ({ selectedPeriod = "7" }) => {
       border: "border-cyan-500/25",
     },
     {
-      label: "Active Outreach",
-      value: loading ? null : (data?.activeOutreach ?? "None"),
-      icon: FileText,
+      // 2026-10-20 dashboard audit: replaces "Active Outreach", which showed
+      // the hardcoded literal 'AI-generated' — never real data. Job openings
+      // delivered (all-time, via JobImpression) is the Rs 999 "500
+      // openings/year" promise's own accounting, already wired into the real
+      // job feed (jobsController.js) — not a new pipeline.
+      label: "Job Openings Shown",
+      value: loading ? null : (data?.jobOpeningsShown ?? 0),
+      icon: Briefcase,
       color: "text-amber-400",
       bg: "bg-amber-500/15",
       border: "border-amber-500/25",
-      truncate: true,
     },
   ];
 
