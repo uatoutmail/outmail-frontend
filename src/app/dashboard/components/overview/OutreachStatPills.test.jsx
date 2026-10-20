@@ -17,29 +17,32 @@ describe("OutreachStatPills — fetch failure", () => {
     await waitFor(() => {
       expect(document.querySelectorAll(".animate-pulse")).toHaveLength(0);
     });
-    expect(screen.getAllByText("0").length).toBeGreaterThan(0);
-    expect(screen.getByText("None")).toBeInTheDocument();
+    // All four stats default to "0" on a failed fetch now — the fourth tile
+    // no longer has a non-numeric "None" fallback (it shows a real delivered
+    // count, defaulting to 0 like the other three).
+    expect(screen.getAllByText("0").length).toBe(4);
   });
 
-  it("renders real values on a successful fetch", async () => {
+  it("renders real values on a successful fetch, including the real job-openings-delivered count", async () => {
     api.get.mockResolvedValue({
       data: {
         emailsSentPeriod: 12,
         totalEmailsSent: 340,
         companiesTargeted: 8,
-        activeOutreach: "3 pending",
+        jobOpeningsShown: 137,
       },
     });
     render(<OutreachStatPills selectedPeriod="7" />);
 
     await waitFor(() => expect(screen.getByText("12")).toBeInTheDocument());
     expect(screen.getByText("340")).toBeInTheDocument();
-    expect(screen.getByText("3 pending")).toBeInTheDocument();
+    expect(screen.getByText("Job Openings Shown")).toBeInTheDocument();
+    expect(screen.getByText("137")).toBeInTheDocument();
   });
 
   it("re-fetches when selectedPeriod changes", async () => {
     api.get.mockResolvedValue({
-      data: { emailsSentPeriod: 1, totalEmailsSent: 1, companiesTargeted: 1, activeOutreach: "1" },
+      data: { emailsSentPeriod: 1, totalEmailsSent: 1, companiesTargeted: 1, jobOpeningsShown: 1 },
     });
     const { rerender } = render(<OutreachStatPills selectedPeriod="7" />);
     await waitFor(() => expect(api.get).toHaveBeenCalledWith(expect.stringContaining("period=7")));
