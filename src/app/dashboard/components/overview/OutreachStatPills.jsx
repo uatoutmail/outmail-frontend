@@ -29,8 +29,17 @@ const OutreachStatPills = ({ selectedPeriod = "7" }) => {
 
   const stats = [
     {
+      // 2026-10-20 dashboard audit: "sent" used to count every row CREATED
+      // in the window regardless of status, so a row that expired unsent
+      // still read as sent. Now shows "X of Y" — X = actually sent, Y =
+      // everything we prepared for this window. The gap is never assigned a
+      // cause: Outmail's own responsibility ends at preparing correct
+      // content, and what happens after (approval, whether the desktop
+      // agent was online, local SMTP delivery) runs on the student's own
+      // machine, outside anything we execute or can guarantee.
       label: `Emails Sent (${selectedPeriod}d)`,
-      value: loading ? null : (data?.emailsSentPeriod ?? "0"),
+      value: loading ? null : (data?.emailsSentPeriod ?? 0),
+      secondary: loading ? null : (data?.emailsPreparedPeriod ?? 0),
       icon: Mail,
       color: "text-purple-400",
       bg: "bg-purple-500/15",
@@ -38,15 +47,19 @@ const OutreachStatPills = ({ selectedPeriod = "7" }) => {
     },
     {
       label: "Total Emails Sent",
-      value: loading ? null : (data?.totalEmailsSent ?? "0"),
+      value: loading ? null : (data?.totalEmailsSent ?? 0),
+      secondary: loading ? null : (data?.totalEmailsPrepared ?? 0),
       icon: TrendingUp,
       color: "text-green-400",
       bg: "bg-green-500/15",
       border: "border-green-500/25",
     },
     {
+      // Distinct real companies (via CompanyEmail), not distinct recipient
+      // email addresses — two recruiter contacts at the same company used
+      // to count as two companies targeted.
       label: "Companies Targeted",
-      value: loading ? null : (data?.companiesTargeted ?? "0"),
+      value: loading ? null : (data?.companiesTargeted ?? 0),
       icon: Building,
       color: "text-cyan-400",
       bg: "bg-cyan-500/15",
@@ -84,10 +97,11 @@ const OutreachStatPills = ({ selectedPeriod = "7" }) => {
             {stat.value === null ? (
               <div className="h-4 w-12 bg-white/10 animate-pulse rounded mt-1"></div>
             ) : (
-              <p
-                className={`text-sm font-bold mt-0.5 ${stat.color} ${stat.truncate ? "truncate" : ""}`}
-              >
-                {stat.value}
+              <p className={`text-sm font-bold mt-0.5 ${stat.color}`}>
+                <span>{stat.value}</span>
+                {stat.secondary != null && (
+                  <span className="text-white/40 font-normal text-xs"> of {stat.secondary}</span>
+                )}
               </p>
             )}
           </div>
