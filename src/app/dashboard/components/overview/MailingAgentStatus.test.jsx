@@ -59,3 +59,34 @@ describe("MailingAgentStatus — offline, getting connected", () => {
     expect(screen.queryByRole("button", { name: /link desktop agent/i })).not.toBeInTheDocument();
   });
 });
+
+// OUT-173: a device that has checked in before but lost its Gmail connection
+// is a different situation from never having linked at all, and gets its own
+// one-click fix — a deep link straight into the native app's settings panel,
+// never a password field on this page (OUT-169 rule).
+describe("MailingAgentStatus — previously connected, Gmail disconnected", () => {
+  it("shows a Reconnect Gmail deep link when the device has checked in before but credentialConnected is false", async () => {
+    const lastSeen = new Date(Date.now() - 5 * 60 * 1000).toISOString();
+    api.get.mockResolvedValue({ data: { online: true, lastSeen, credentialConnected: false } });
+    render(<MailingAgentStatus />);
+    const link = await screen.findByRole("link", { name: /reconnect gmail/i });
+    expect(link).toHaveAttribute("href", "outmail://reconnect-gmail");
+  });
+
+  it("does not show Reconnect Gmail when credentialConnected is true", async () => {
+    const lastSeen = new Date(Date.now() - 5 * 60 * 1000).toISOString();
+    api.get.mockResolvedValue({ data: { online: true, lastSeen, credentialConnected: true } });
+    render(<MailingAgentStatus />);
+    await waitFor(() => expect(screen.getByText("Online")).toBeInTheDocument());
+    expect(screen.queryByRole("link", { name: /reconnect gmail/i })).not.toBeInTheDocument();
+  });
+
+  it("does not show Reconnect Gmail for a device that has never connected — that's the Link Desktop Agent flow instead", async () => {
+    api.get.mockResolvedValue({
+      data: { online: false, lastSeen: null, credentialConnected: false },
+    });
+    render(<MailingAgentStatus />);
+    expect(await screen.findByRole("button", { name: /link desktop agent/i })).toBeInTheDocument();
+    expect(screen.queryByRole("link", { name: /reconnect gmail/i })).not.toBeInTheDocument();
+  });
+});
