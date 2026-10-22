@@ -121,22 +121,36 @@ const MailingAgentStatus = () => {
           {!online && (
             <div className="w-full pt-2 mt-auto space-y-2">
               {linkCode ? (
+                // Specific, not just "in the desktop app" — names the exact
+                // field the app's own login screen shows ("Enter a one-time
+                // code"), and leads with the simpler option it's a fallback
+                // for, since this is the exact point someone stares at a
+                // code with no idea where it goes.
                 <div className="text-center">
-                  <p className="text-[10px] text-white/50">Enter this code in the desktop app:</p>
+                  <p className="text-[10px] text-white/50">
+                    On the app&rsquo;s sign-in screen, under &ldquo;Enter a one-time code&rdquo;,
+                    paste:
+                  </p>
                   <p className="text-base font-bold tracking-widest text-purple-300">{linkCode}</p>
                   <p className="text-[9px] text-white/30">
                     Expires in {Math.max(0, Math.round((linkCodeExpiry - now) / 60000))} min
                   </p>
                 </div>
               ) : (
-                <button
-                  onClick={generateLinkCode}
-                  disabled={generatingCode}
-                  className="w-full flex items-center justify-center gap-1.5 text-[11px] font-medium text-purple-300 hover:text-purple-200 disabled:opacity-50"
-                >
-                  <KeyRound size={12} />
-                  {generatingCode ? "Generating..." : "Link Desktop Agent"}
-                </button>
+                <>
+                  <p className="text-[10px] text-white/40 text-center">
+                    Already have the app open? Click &ldquo;Sign in with Google&rdquo; there instead
+                    — simplest, no code needed.
+                  </p>
+                  <button
+                    onClick={generateLinkCode}
+                    disabled={generatingCode}
+                    className="w-full flex items-center justify-center gap-1.5 text-[11px] font-medium text-purple-300 hover:text-purple-200 disabled:opacity-50"
+                  >
+                    <KeyRound size={12} />
+                    {generatingCode ? "Generating..." : "Link Desktop Agent"}
+                  </button>
+                </>
               )}
               <a
                 href={DOWNLOAD_URLS[platform]}
