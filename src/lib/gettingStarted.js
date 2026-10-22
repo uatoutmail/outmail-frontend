@@ -50,7 +50,7 @@ export const STEPS = [
     pill: "2 minutes",
     d: "This is what actually sends your email, and it is the reason your password never leaves your machine. It runs quietly in the background and sends on the schedule you approve.",
     points: [
-      "macOS: right-click the app and choose Open on first launch",
+      "macOS: it isn't actually damaged — the app just isn't code-signed yet, so macOS blocks it harder than usual and won't offer an “Open Anyway” button in Settings. Open Terminal and run: xattr -cr ~/Downloads/Outmail.app (drag the app into the Terminal window after typing “xattr -cr ” to fill in the path automatically), then open the app normally",
       "Windows: choose “More info”, then “Run anyway”",
       "Open it and click “Sign in with Google” — the same account you use for Outmail. That's what links this device to your account; your dashboard's “Link Desktop Agent” code is only a fallback if sign-in doesn't work",
       "Scheduled mail goes out only while your computer is awake",
@@ -98,6 +98,14 @@ export const AFTER_SETUP = [
  * and because Google only credits FAQ markup whose answers are visible.
  */
 export const TROUBLESHOOTING = [
+  {
+    q: "macOS says “Outmail is damaged and can't be opened”",
+    a: "It isn't actually damaged — the app isn't code-signed yet, so macOS blocks it harder than usual and skips the normal “Open Anyway” button in Settings. Click Cancel (never “Move to Bin”), open Terminal, and run: xattr -cr ~/Downloads/Outmail.app — drag the app into the Terminal window right after typing “xattr -cr ” to fill in the exact path. Then open the app as usual.",
+  },
+  {
+    q: "Windows: “More info” doesn't appear on the blue warning screen",
+    a: 'Rare, but if it happens: open PowerShell, run Unblock-File -Path "$env:USERPROFILE\\Downloads\\Outmail-win-setup.exe", then run the installer again. The normal Windows path (“More info” → “Run anyway”) works for almost everyone — try that first.',
+  },
   {
     q: "“App passwords” is not in my Google account",
     a: "2-Step Verification is not on yet, or your college has disabled app passwords on a managed account. If it is a college account, use a personal Gmail instead.",
