@@ -38,7 +38,7 @@ export const STEPS = [
     points: [
       "Turn on 2-Step Verification at myaccount.google.com/security",
       "Create an app password named “Outmail” at myaccount.google.com/apppasswords",
-      "Paste the 16 characters into the Outmail desktop app",
+      "Paste the 16 characters into the Outmail desktop app, once you've signed in there (see the next step)",
     ],
     note: "keychain",
   },
@@ -52,6 +52,7 @@ export const STEPS = [
     points: [
       "macOS: right-click the app and choose Open on first launch",
       "Windows: choose “More info”, then “Run anyway”",
+      "Open it and click “Sign in with Google” — the same account you use for Outmail. That's what links this device to your account; your dashboard's “Link Desktop Agent” code is only a fallback if sign-in doesn't work",
       "Scheduled mail goes out only while your computer is awake",
     ],
   },
