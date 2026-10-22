@@ -1,5 +1,5 @@
 "use client";
-import { Monitor, KeyRound, Download } from "lucide-react";
+import { Monitor, KeyRound, Download, RefreshCw } from "lucide-react";
 import React, { useCallback, useState } from "react";
 import { useNow } from "@/hooks/useNow";
 import { usePolling } from "@/hooks/usePolling";
@@ -97,6 +97,26 @@ const MailingAgentStatus = () => {
           <p className="text-[11px] text-white/45">
             {status?.lastSeen ? `Last check-in ${timeAgo(status.lastSeen)}` : "Never connected"}
           </p>
+
+          {/* OUT-173: the agent is installed (it has checked in before) but
+              Gmail itself got disconnected — a different situation from
+              never having linked the device at all, so it gets its own CTA
+              rather than falling into the "Link Desktop Agent" flow below.
+              This is a deep link (outmail://reconnect-gmail), not a password
+              field — the app password is never typed on a web page (OUT-169
+              rule, enforced in the desktop app itself). Clicking it opens the
+              already-installed app straight to its native Gmail settings
+              panel; if the stored credential is still valid, it reconnects
+              with nothing to type at all. */}
+          {status?.lastSeen && status?.credentialConnected === false && (
+            <a
+              href="outmail://reconnect-gmail"
+              className="w-full flex items-center justify-center gap-1.5 text-[11px] font-medium text-white bg-purple-500 hover:bg-purple-400 rounded-md py-1.5 transition-colors mt-auto"
+            >
+              <RefreshCw size={12} />
+              Reconnect Gmail
+            </a>
+          )}
 
           {!online && (
             <div className="w-full pt-2 mt-auto space-y-2">
