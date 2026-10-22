@@ -52,6 +52,7 @@ export const STEPS = [
     points: [
       "macOS: it isn't actually damaged — the app just isn't code-signed yet, so macOS blocks it harder than usual and won't offer an “Open Anyway” button in Settings. Open Terminal and run: xattr -cr ~/Downloads/Outmail.app (drag the app into the Terminal window after typing “xattr -cr ” to fill in the path automatically), then open the app normally",
       "Windows: choose “More info”, then “Run anyway”",
+      "macOS may ask for your Mac login password at some point (often right after you paste your Gmail app password) to let Outmail use your Mac's Keychain — that's the mechanism that stores the app password securely on your device and is exactly why it's never sent to Outmail's servers. This is expected; enter your normal Mac password to allow it",
       "Open it and click “Sign in with Google” — the same account you use for Outmail. That's what links this device to your account; your dashboard's “Link Desktop Agent” code is only a fallback if sign-in doesn't work",
       "Scheduled mail goes out only while your computer is awake",
     ],
@@ -105,6 +106,10 @@ export const TROUBLESHOOTING = [
   {
     q: "Windows: “More info” doesn't appear on the blue warning screen",
     a: 'Rare, but if it happens: open PowerShell, run Unblock-File -Path "$env:USERPROFILE\\Downloads\\Outmail-win-setup.exe", then run the installer again. The normal Windows path (“More info” → “Run anyway”) works for almost everyone — try that first.',
+  },
+  {
+    q: "macOS is asking for my Mac login password while I'm setting up Outmail",
+    a: "That's expected — it's macOS asking permission for Outmail to use your Mac's Keychain, which is exactly what stores your Gmail app password securely on your own device (and why it never reaches Outmail's servers). It usually appears right after you paste the app password. Enter your normal Mac login password to allow it.",
   },
   {
     q: "“App passwords” is not in my Google account",
