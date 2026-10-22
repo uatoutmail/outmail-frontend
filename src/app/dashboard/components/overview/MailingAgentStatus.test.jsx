@@ -58,6 +58,26 @@ describe("MailingAgentStatus — offline, getting connected", () => {
     expect(api.post).toHaveBeenCalledWith("/api/agent/link/code");
     expect(screen.queryByRole("button", { name: /link desktop agent/i })).not.toBeInTheDocument();
   });
+
+  // Found live, 2026-10-22: a real user stared at a generated code with no
+  // idea where it went. Fixed two things - lead with the simpler option
+  // (Google sign-in directly in the app), and once a code exists, name the
+  // exact field the app's own login screen shows, not just "the app".
+  it("suggests signing in with Google directly in the app before the code is generated", async () => {
+    api.get.mockResolvedValue({ data: { online: false, lastSeen: null } });
+    render(<MailingAgentStatus />);
+    expect(await screen.findByText(/sign in with google.*there instead/i)).toBeInTheDocument();
+  });
+
+  it('once a code exists, names the exact field on the app\'s login screen, not just "the app"', async () => {
+    api.get.mockResolvedValue({ data: { online: false, lastSeen: null } });
+    api.post.mockResolvedValue({ data: { code: "LINK99", expiresInSeconds: 300 } });
+    render(<MailingAgentStatus />);
+
+    await userEvent.click(await screen.findByRole("button", { name: /link desktop agent/i }));
+
+    expect(await screen.findByText(/enter a one-time code/i)).toBeInTheDocument();
+  });
 });
 
 // OUT-173: a device that has checked in before but lost its Gmail connection
