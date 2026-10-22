@@ -106,6 +106,10 @@ export const TROUBLESHOOTING = [
     a: "The app password was probably pasted with spaces. Google shows it in four blocks; type it without them.",
   },
   {
+    q: "My dashboard shows the agent as disconnected, even though it worked before",
+    a: "Click “Reconnect Gmail” on your dashboard's Mailing Agent card. It reopens the desktop app and reconnects using the password already saved on your computer — you won't need to type it again unless you disconnected it yourself or signed in with a different Google account.",
+  },
+  {
     q: "Nothing has sent",
     a: "Check the desktop app is running. Scheduled email only goes out while your computer is awake.",
   },
