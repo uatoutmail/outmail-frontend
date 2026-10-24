@@ -367,7 +367,7 @@ const AutofillDataTab = () => {
     try {
       await api.post("/api/autofill/profile/rebuild");
       await load();
-      toast.success("Rebuilt from your résumé, anything you edited was kept");
+      toast.success("Rebuilt from your resume, anything you edited was kept");
     } catch (e) {
       toast.error(e.response?.data?.error || "Rebuild failed");
     } finally {
@@ -450,7 +450,7 @@ const AutofillDataTab = () => {
               disabled={saving}
               className="flex items-center gap-2 px-4 py-2.5 rounded-lg border border-white/20 text-white/80 text-sm font-semibold hover:bg-white/5 transition-colors disabled:opacity-50"
             >
-              <RefreshCw size={16} /> Rebuild from résumé
+              <RefreshCw size={16} /> Rebuild from resume
             </button>
             <button
               onClick={save}
