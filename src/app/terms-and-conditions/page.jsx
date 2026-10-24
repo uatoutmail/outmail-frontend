@@ -381,13 +381,13 @@ export default function TermsAndConditions() {
             <H2>17. Contact and grievances</H2>
             <div className="space-y-2">
               <p>
-                Customer care: <A href="mailto:support@outmail.in">support@outmail.in</A>, +91 94108
-                54417
+                Customer care: <A href="mailto:support@outmail.in">support@outmail.in</A>, +91 90570
+                26464
               </p>
               <p>
                 Grievance Officer: <strong className="text-slate-900">Vishu Tomer</strong>,
                 Designated Partner — <A href="mailto:admin@outmail.in">admin@outmail.in</A>, +91
-                63751 19988
+                90570 26464
               </p>
               <p>PrimeWork Labs LLP, 1/400, UIT, Bhiwadi, Alwar, Rajasthan 301019, India</p>
               <p>

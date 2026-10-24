@@ -75,7 +75,7 @@ export default function PrivacyPolicy() {
               <p>
                 Customer care: <A href="mailto:support@outmail.in">support@outmail.in</A>
               </p>
-              <p>Phone: +91 94108 54417</p>
+              <p>Phone: +91 90570 26464</p>
             </div>
           </Section>
 
@@ -555,7 +555,7 @@ export default function PrivacyPolicy() {
               <p>
                 Email: <A href="mailto:admin@outmail.in">admin@outmail.in</A>
               </p>
-              <p>Phone: +91 63751 19988</p>
+              <p>Phone: +91 90570 26464</p>
               <p>1/400, UIT, Bhiwadi, Alwar, Rajasthan 301019, India</p>
             </div>
             <p>
