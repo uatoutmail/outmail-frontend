@@ -26,7 +26,7 @@ import Link from "next/link";
  */
 export default function ErrorScreen({
   title = "We'll be back shortly",
-  message = "Outmail is having a moment. We've been alerted and are already looking into it — please try again in a few minutes.",
+  message = "Outmail is having a moment. We've been alerted and are already looking into it, please try again in a few minutes.",
   reference,
   onRetry,
   homeHref = "/",

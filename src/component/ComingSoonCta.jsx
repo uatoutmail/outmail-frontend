@@ -47,7 +47,7 @@ export default function ComingSoonCta({ plan, primary = false }) {
       setJoined(true);
       setAskingForEmail(false);
     } catch {
-      setError("Could not reach us just now — try again in a moment.");
+      setError("Could not reach us just now, try again in a moment.");
     } finally {
       setSubmitting(false);
     }

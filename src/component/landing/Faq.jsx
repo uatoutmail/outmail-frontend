@@ -33,7 +33,7 @@ export const FAQS = [
     cat: "Money",
     I: CreditCard,
     q: "What happens when my year ends?",
-    a: "Outreach stops and job openings are no longer shown, and we remind you before that happens. Nothing is deleted — your resume, history and saved answers stay exactly where they are and come back the moment you renew. Renewing early adds to the days you have left rather than replacing them.",
+    a: "Outreach stops and job openings are no longer shown, and we remind you before that happens. Nothing is deleted, your resume, history and saved answers stay exactly where they are and come back the moment you renew. Renewing early adds to the days you have left rather than replacing them.",
   },
   {
     cat: "Privacy",
@@ -51,7 +51,7 @@ export const FAQS = [
     cat: "Product",
     I: Sparkles,
     q: "Will this get my Gmail account banned?",
-    a: "Your daily limit starts at five and grows slowly, only if you are actually sending. That warm-up is deliberate — it is what keeps your account inside normal sending behaviour rather than looking like bulk mail.",
+    a: "Your daily limit starts at five and grows slowly, only if you are actually sending. That warm-up is deliberate, it is what keeps your account inside normal sending behaviour rather than looking like bulk mail.",
   },
   {
     cat: "Product",
@@ -84,7 +84,7 @@ const Ask = ({ className = "" }) => (
     <Link href="/contactus" className="text-primary hover:underline">
       Ask us directly
     </Link>{" "}
-    — a person replies.
+    and a person replies.
   </p>
 );
 

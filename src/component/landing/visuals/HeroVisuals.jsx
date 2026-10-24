@@ -149,12 +149,12 @@ export function HeroSentMail() {
           </div>
           <div className="px-4 py-2.5 border-b border-white/[0.06] text-[11px]">
             <span className="text-white/80">
-              Backend intern — built a payments reconciliation tool
+              Backend intern: built a payments reconciliation tool
             </span>
           </div>
           <div className="px-4 py-3 text-[11px] leading-relaxed text-white/45">
-            Hi — I saw you are hiring backend interns. In my final year I built a reconciliation
-            tool that handled 40k transactions a day…
+            Hi, I saw you are hiring backend interns. In my final year I built a reconciliation tool
+            that handled 40k transactions a day…
           </div>
           <div className="px-4 py-2.5 flex items-center justify-between border-t border-white/[0.06] bg-white/[0.02]">
             <span className="inline-flex items-center gap-1.5 text-[10px] text-white/45">
