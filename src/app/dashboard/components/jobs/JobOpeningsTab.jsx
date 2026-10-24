@@ -7,7 +7,7 @@ import { api } from "@/lib/api";
 import { logger } from "@/lib/logger";
 import { openExternal } from "@/lib/safeUrl";
 
-// India-student launch: /api/jobs 403s with this shape when a résumé and/or
+// India-student launch: /api/jobs 403s with this shape when a resume and/or
 // a seeking-type preference are missing — hard prerequisites, not just
 // "better matching if you fill this in". Renders in place of the job list
 // rather than routing the user away, so completing it is a single step.
@@ -27,7 +27,7 @@ const JobPrerequisiteGate = ({ missing, onResumeUploaded, onPreferencesSaved }) 
       await api.post("/api/resumes/", formData, {
         headers: { "Content-Type": "multipart/form-data" },
       });
-      toast.success("Résumé uploaded.");
+      toast.success("Resume uploaded.");
       onResumeUploaded();
     } catch (err) {
       toast.error(`Upload failed: ${err.response?.data?.error || err.message}`);
@@ -44,7 +44,7 @@ const JobPrerequisiteGate = ({ missing, onResumeUploaded, onPreferencesSaved }) 
       </div>
       <p className="text-white text-xl font-bold mb-2">One more step before job openings unlock</p>
       <p className="text-white/40 text-sm max-w-md mb-8">
-        We show every student a feed matched to their actual profile, and that needs a résumé and to
+        We show every student a feed matched to their actual profile, and that needs a resume and to
         know what you&apos;re looking for first.
       </p>
 
@@ -63,7 +63,7 @@ const JobPrerequisiteGate = ({ missing, onResumeUploaded, onPreferencesSaved }) 
             className="w-full flex items-center justify-center gap-2 px-6 py-3.5 bg-purple-600 hover:bg-purple-500 disabled:opacity-50 text-white text-sm font-bold rounded-xl transition-all active:scale-95"
           >
             {uploading ? <Loader2 size={16} className="animate-spin" /> : <UploadCloud size={16} />}
-            {uploading ? "Uploading…" : "Upload your résumé"}
+            {uploading ? "Uploading…" : "Upload your resume"}
           </button>
           <p className="text-white/25 text-[11px] mt-2">PDF, DOC, DOCX, JPG or PNG, up to 5MB.</p>
         </div>
