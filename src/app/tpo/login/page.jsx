@@ -84,7 +84,7 @@ export default function TpoLoginPage() {
               <h1 className="text-2xl font-bold mb-3">No TPO access on this account</h1>
               <p className="text-white/60 mb-6 text-sm">
                 This Google account isn&apos;t linked to a TPO portal yet. If your institution has
-                partnered with Outmail, check your inbox for an invite email — or ask your Outmail
+                partnered with Outmail, check your inbox for an invite email, or ask your Outmail
                 contact to send one.
               </p>
               <Link
@@ -109,7 +109,7 @@ export default function TpoLoginPage() {
                 Continue with Google
               </a>
               <p className="text-white/40 text-xs mt-6">
-                First time? You&apos;ll need an invite from your Outmail contact — check{" "}
+                First time? You&apos;ll need an invite from your Outmail contact, check{" "}
                 <Link href="/tpo/claim" className="text-purple-400 hover:text-purple-300">
                   your invite link
                 </Link>{" "}

@@ -339,7 +339,7 @@ const AutofillDataTab = () => {
       setFieldStatus(res.fieldStatus || {});
       setMissing(res.missing || []);
       setCompleteness(Math.round((res.completeness || 0) * 100));
-      toast.success("Saved — the extension will pick this up on its next sync");
+      toast.success("Saved. The extension will pick this up on its next sync");
     } catch (e) {
       toast.error(e.response?.data?.error || "Could not save");
     } finally {
@@ -352,7 +352,7 @@ const AutofillDataTab = () => {
     try {
       await api.post("/api/autofill/profile/rebuild");
       await load();
-      toast.success("Rebuilt from your résumé — anything you edited was kept");
+      toast.success("Rebuilt from your résumé, anything you edited was kept");
     } catch (e) {
       toast.error(e.response?.data?.error || "Rebuild failed");
     } finally {
@@ -407,8 +407,8 @@ const AutofillDataTab = () => {
             </h1>
             <p className="text-white/50 text-sm max-w-xl leading-relaxed">
               Answer these once and the extension fills every application from them. It is long on
-              purpose — the alternative is typing the same answers into every form for the rest of
-              your search.
+              purpose, since the alternative is typing the same answers into every form for the rest
+              of your search.
             </p>
           </div>
           <div className="flex items-center gap-3 shrink-0">
@@ -457,7 +457,7 @@ const AutofillDataTab = () => {
             <div className="flex items-center gap-2 mb-2.5">
               <AlertCircle size={14} className="text-amber-400" />
               <span className="text-xs font-semibold uppercase tracking-wider text-white/60">
-                Fill these next — they appear on the most forms
+                Fill these next, they appear on the most forms
               </span>
             </div>
             <div className="flex flex-wrap gap-1.5">

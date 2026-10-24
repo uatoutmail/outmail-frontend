@@ -44,7 +44,7 @@ const JobPrerequisiteGate = ({ missing, onResumeUploaded, onPreferencesSaved }) 
       </div>
       <p className="text-white text-xl font-bold mb-2">One more step before job openings unlock</p>
       <p className="text-white/40 text-sm max-w-md mb-8">
-        We show every student a feed matched to their actual profile — that needs a résumé and to
+        We show every student a feed matched to their actual profile, and that needs a résumé and to
         know what you&apos;re looking for first.
       </p>
 
@@ -65,7 +65,7 @@ const JobPrerequisiteGate = ({ missing, onResumeUploaded, onPreferencesSaved }) 
             {uploading ? <Loader2 size={16} className="animate-spin" /> : <UploadCloud size={16} />}
             {uploading ? "Uploading…" : "Upload your résumé"}
           </button>
-          <p className="text-white/25 text-[11px] mt-2">PDF, DOC, DOCX, JPG or PNG — up to 5MB.</p>
+          <p className="text-white/25 text-[11px] mt-2">PDF, DOC, DOCX, JPG or PNG, up to 5MB.</p>
         </div>
       )}
 
@@ -268,7 +268,7 @@ const JobOpeningsTab = () => {
             )}
           </div>
           <p className="text-white/40 text-sm max-w-md">
-            Ranked for your profile by the Outmail Score — real skill, seniority and intent fit, not
+            Ranked for your profile by the Outmail Score: real skill, seniority and intent fit, not
             a generic list.
           </p>
         </div>

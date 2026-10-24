@@ -23,7 +23,7 @@ export default function FeaturesPage() {
         <PageHeader
           kicker="Core features"
           lines={["What Outmail does", "for students."]}
-          sub="Recruiter outreach, resume-matched openings, one-click applications and mentorship — the four things that decide whether effort turns into interviews."
+          sub="Recruiter outreach, resume-matched openings, one-click applications and mentorship: the four things that decide whether effort turns into interviews."
         >
           <Cta label="Start your year" href="/pricing" />
         </PageHeader>
@@ -39,7 +39,7 @@ export default function FeaturesPage() {
             </h2>
             {/* Not "free forever" — there is no free tier, only three trial sends. */}
             <p className="text-white/50 text-base max-w-xl mx-auto mb-8">
-              Everything above for ₹999 — one payment, twelve months, nothing renews. Full refund
+              Everything above for ₹999. One payment, twelve months, nothing renews. Full refund
               within 7 days.
             </p>
             <div className="flex flex-wrap items-center justify-center gap-4">

@@ -151,7 +151,7 @@ export default function SettingsPage() {
           </div>
           <Field
             label="Institution Logo"
-            hint="Upload a PNG or SVG — max 500 KB. Shown in reports and student emails."
+            hint="Upload a PNG or SVG, max 500 KB. Shown in reports and student emails."
           >
             <div className="flex items-center gap-4">
               <div className="h-14 w-14 rounded-xl bg-purple-100 border-2 border-dashed border-purple-300 flex items-center justify-center text-purple-600 font-bold text-lg overflow-hidden">

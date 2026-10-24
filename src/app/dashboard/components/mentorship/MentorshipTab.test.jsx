@@ -148,7 +148,7 @@ describe("MentorshipTab — session actions", () => {
 
     await userEvent.click(screen.getByRole("button", { name: /book slot/i }));
     expect(openSpy).not.toHaveBeenCalled();
-    expect(toast).toHaveBeenCalledWith("Slot booking opens soon — we'll notify you.");
+    expect(toast).toHaveBeenCalledWith("Slot booking opens soon, we'll notify you.");
   });
 
   it("opens the recording for a past session", async () => {

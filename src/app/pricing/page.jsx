@@ -35,7 +35,7 @@ export default function PricingPage() {
         <PageHeader
           kicker="Pricing"
           lines={["One payment.", "Twelve months."]}
-          sub="Outmail emails real recruiters from your own inbox and puts matched openings in front of you. Pay once — no subscription, nothing renews. Not right for you? Full refund within 7 days."
+          sub="Outmail emails real recruiters from your own inbox and puts matched openings in front of you. Pay once, no subscription, nothing renews. Not right for you? Full refund within 7 days."
         >
           <Cta label="See the plans" href="#pricing" />
         </PageHeader>

@@ -1,7 +1,7 @@
 export const metadata = {
   title: "Terms and Conditions",
   description:
-    "The terms governing your use of Outmail, operated by PrimeWork Labs LLP — one placement year of recruiter outreach, matched jobs and optional mentorship.",
+    "The terms governing your use of Outmail, operated by PrimeWork Labs LLP: one placement year of recruiter outreach, matched jobs and optional mentorship.",
   alternates: { canonical: "https://outmail.in/terms-and-conditions" },
   openGraph: {
     title: "Terms and Conditions | Outmail",
@@ -80,7 +80,7 @@ export default function TermsAndConditions() {
             <div className="space-y-4">
               <p>
                 <strong className="text-slate-900">
-                  Outmail is a one-time payment for one year of access — a “placement year”. It is
+                  Outmail is a one-time payment for one year of access, a “placement year”. It is
                   not a subscription and it does not renew automatically.
                 </strong>{" "}
                 We will never charge you a second time unless you choose to buy another year.
@@ -107,7 +107,7 @@ export default function TermsAndConditions() {
               <p>
                 Outmail helps you find relevant companies and contacts, drafts personalised emails,
                 and sends them from your own email account. It also shows job openings matched to
-                your resume, and — on the plan that includes it — mentorship sessions.
+                your resume, and, on the plan that includes it, mentorship sessions.
               </p>
               <p className="bg-slate-50 border border-slate-200 rounded-xl p-6">
                 <strong className="text-slate-900">
@@ -133,7 +133,7 @@ export default function TermsAndConditions() {
               <p>
                 <strong className="text-slate-900">
                   Emails sent through Outmail are sent from your own email account, in your name, on
-                  your instruction. For every legal purpose, you are the sender — not us.
+                  your instruction. For every legal purpose, you are the sender, not us.
                 </strong>
               </p>
               <p>You are responsible for:</p>
@@ -186,8 +186,8 @@ export default function TermsAndConditions() {
             </ul>
             <p>
               We enforce contact limits automatically. If you breach these rules we may suspend or
-              close your account. Where the breach is serious — in particular sending unsolicited
-              bulk email or misusing recruiter data — no refund is due for the remainder of your
+              close your account. Where the breach is serious, in particular sending unsolicited
+              bulk email or misusing recruiter data, no refund is due for the remainder of your
               year.
             </p>
           </Section>
@@ -203,7 +203,7 @@ export default function TermsAndConditions() {
               <p>
                 The application needs a Gmail app password to send on your behalf. That credential
                 is stored only in your computer’s operating-system keychain and is never transmitted
-                to us — see section 3 of the <A href="/privacy-policy">Privacy Policy</A>. You may
+                to us, see section 3 of the <A href="/privacy-policy">Privacy Policy</A>. You may
                 revoke it in your Google account at any time, which immediately stops all sending.
               </p>
               <p>You are responsible for keeping your own computer and email account secure.</p>
@@ -239,7 +239,7 @@ export default function TermsAndConditions() {
             <H2>8. Your content</H2>
             <div className="space-y-4">
               <p>
-                You keep ownership of everything you upload — your resume, your profile details and
+                You keep ownership of everything you upload: your resume, your profile details and
                 your saved answers.
               </p>
               <p>
@@ -331,7 +331,7 @@ export default function TermsAndConditions() {
                 </strong>
               </p>
               <p>
-                We are not liable for indirect or consequential loss, nor for loss of opportunity —
+                We are not liable for indirect or consequential loss, nor for loss of opportunity,
                 including a job you did not get, an interview you were not offered, or a reply you
                 did not receive. Those outcomes depend on employers, not on us.
               </p>
@@ -386,7 +386,7 @@ export default function TermsAndConditions() {
               </p>
               <p>
                 Grievance Officer: <strong className="text-slate-900">Vishu Tomer</strong>,
-                Designated Partner — <A href="mailto:admin@outmail.in">admin@outmail.in</A>, +91
+                Designated Partner, <A href="mailto:admin@outmail.in">admin@outmail.in</A>, +91
                 90570 26464
               </p>
               <p>PrimeWork Labs LLP, 1/400, UIT, Bhiwadi, Alwar, Rajasthan 301019, India</p>

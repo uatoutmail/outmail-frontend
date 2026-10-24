@@ -165,7 +165,7 @@ export default function Page() {
               Your {justActivated.name} plan is active.
             </p>
             <p className="text-sm text-emerald-200/80 mt-1">
-              Your placement year has started — everything is unlocked. You have not been charged
+              Your placement year has started and everything is unlocked. You have not been charged
               twice.
             </p>
           </div>
@@ -246,7 +246,7 @@ function ExpiryNotice({ user, onGoToBilling }) {
         </p>
         <p className={`text-sm mt-1 ${expired ? "text-red-200/80" : "text-amber-200/80"}`}>
           {expired
-            ? "Sending is paused and job openings are hidden. Nothing has been deleted — renew and everything comes back."
+            ? "Sending is paused and job openings are hidden. Nothing has been deleted, renew and everything comes back."
             : "Renewing early adds to the days you have left rather than replacing them."}
         </p>
       </div>

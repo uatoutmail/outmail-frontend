@@ -43,7 +43,7 @@ const LockedFeatureOverlay = ({ feature, reason = "none", targetPlan }) => {
           </h2>
           <p className="text-white/60 mb-8 text-sm leading-relaxed">
             {upgrading
-              ? `Your current plan doesn't include ${feature}. Upgrade to add it — you keep everything you already have.`
+              ? `Your current plan doesn't include ${feature}. Upgrade to add it, you keep everything you already have.`
               : `Get full access to ${feature} and everything else Outmail does, for one placement year.`}
           </p>
           <Link

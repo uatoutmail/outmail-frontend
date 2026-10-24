@@ -128,7 +128,7 @@ describe("StudentsPage — table, filtering, and row detail", () => {
     expect(screen.queryByText(/activity breakdown/i)).not.toBeInTheDocument();
 
     await userEvent.click(screen.getByText("Alice Student"));
-    expect(screen.getByText(/alice student — activity breakdown/i)).toBeInTheDocument();
+    expect(screen.getByText(/alice student: activity breakdown/i)).toBeInTheDocument();
 
     await userEvent.click(screen.getByText("Alice Student"));
     expect(screen.queryByText(/activity breakdown/i)).not.toBeInTheDocument();

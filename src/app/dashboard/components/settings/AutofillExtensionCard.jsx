@@ -183,7 +183,7 @@ const AutofillExtensionCard = () => {
               }
             >
               {detected
-                ? "The extension is in another browser — show me a code"
+                ? "The extension is in another browser, show me a code"
                 : loading
                   ? "Generating…"
                   : "Generate Link Code"}
