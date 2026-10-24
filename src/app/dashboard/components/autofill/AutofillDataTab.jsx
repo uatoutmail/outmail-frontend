@@ -209,6 +209,7 @@ const AutofillDataTab = () => {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [gated, setGated] = useState(false);
+  const [loadError, setLoadError] = useState(null);
   const [openGroups, setOpenGroups] = useState({});
   // Where a "fill these next" chip wants to send us, handed to the effect that
   // runs once the group it lives in has actually rendered.
@@ -218,6 +219,7 @@ const AutofillDataTab = () => {
 
   const load = useCallback(async () => {
     setLoading(true);
+    setLoadError(null);
     try {
       const [schemaRes, profileRes] = await Promise.all([
         api.get("/api/autofill/schema"),
@@ -233,8 +235,21 @@ const AutofillDataTab = () => {
         Object.fromEntries((schemaRes.data.groups || []).map((g) => [g.key, !g.optIn]))
       );
     } catch (e) {
-      if (e.response?.status === 403) setGated(true);
-      else toast.error("Could not load your autofill data");
+      if (e.response?.status === 403) {
+        setGated(true);
+      } else {
+        // A toast alone used to be the only signal here — it fades in a few
+        // seconds, after which the page was stuck on the loading spinner
+        // forever with no way to recover short of a hard reload (found
+        // 2026-10-24, surfaced as a user-reported "black screen"). This keeps
+        // a real error state on screen with a way to actually retry.
+        toast.error("Could not load your autofill data");
+        setLoadError(
+          e.response?.status === 429
+            ? "Too many requests right now. Wait a moment and try again."
+            : e.response?.data?.error || "Could not load your autofill data."
+        );
+      }
     } finally {
       setLoading(false);
     }
@@ -383,6 +398,24 @@ const AutofillDataTab = () => {
           <p className="text-white/50 text-sm">
             Start your year to build your autofill profile and use the browser extension.
           </p>
+        </div>
+      </div>
+    );
+  }
+
+  if (loadError && !loading) {
+    return (
+      <div className="p-4 sm:p-8 max-w-3xl mx-auto font-syne">
+        <div className="bg-white/10 border border-white/20 rounded-2xl p-10 text-center">
+          <AlertCircle className="mx-auto text-red-400 mb-4" size={32} />
+          <h2 className="text-xl font-bold text-white mb-2">Could not load your autofill data</h2>
+          <p className="text-white/50 text-sm mb-6">{loadError}</p>
+          <button
+            onClick={load}
+            className="inline-flex items-center gap-2 px-6 py-2.5 rounded-lg font-semibold bg-primary hover:bg-primary-hover text-white transition-colors"
+          >
+            <RefreshCw size={16} /> Try again
+          </button>
         </div>
       </div>
     );
