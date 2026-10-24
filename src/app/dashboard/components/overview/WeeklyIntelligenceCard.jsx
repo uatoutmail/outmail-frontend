@@ -48,7 +48,7 @@ const WeeklyIntelligenceCard = () => {
             This Week&apos;s Market Read
           </h3>
           <p className="text-[11px] text-white/55">
-            Where we expect hiring — drives your outreach batches
+            Where we expect hiring, drives your outreach batches
           </p>
         </div>
         {weekLabel && (

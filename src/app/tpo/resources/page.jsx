@@ -38,7 +38,7 @@ const resources = [
     color: "blue",
     items: [
       {
-        title: "Outmail Score — Explained",
+        title: "Outmail Score, Explained",
         type: "PDF",
         desc: "How job scores are calculated and what drives them",
         tag: "Recommended",

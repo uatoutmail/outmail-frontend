@@ -69,7 +69,7 @@ export default function GlobalError({ error, reset }) {
             We&rsquo;ll be back shortly
           </h1>
           <p style={{ color: "#94a3b8", fontSize: 15, lineHeight: 1.65, margin: "0 0 30px" }}>
-            Outmail is having a moment. We&rsquo;ve been alerted and are already looking into it —
+            Outmail is having a moment. We&rsquo;ve been alerted and are already looking into it,
             please try again in a few minutes.
           </p>
 
