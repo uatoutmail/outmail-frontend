@@ -129,6 +129,6 @@ export const TROUBLESHOOTING = [
   },
   {
     q: "Still stuck",
-    a: "Email support@outmail.in or call +91 94108 54417. A person replies, usually the same day.",
+    a: "Email support@outmail.in or call +91 90570 26464. A person replies, usually the same day.",
   },
 ];
