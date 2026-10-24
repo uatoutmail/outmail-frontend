@@ -221,7 +221,7 @@ function Body({ state, error, email, onConnect, onRetry, showFallback, onToggleF
         <Status
           icon={<MonitorDown size={20} aria-hidden="true" />}
           title="We can't see the extension"
-          detail="This browser doesn't have the Outmail Autofill extension installed — or it was just installed and this tab hasn't caught up yet."
+          detail="This browser doesn't have the Outmail Autofill extension installed, or it was just installed and this tab hasn't caught up yet."
           action={
             <button
               type="button"

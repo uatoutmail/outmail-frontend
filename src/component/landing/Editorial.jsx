@@ -14,7 +14,7 @@ import { STAT } from "@/content/story";
 export const OFFERINGS = [
   {
     t: "Cold outreach",
-    d: "Personalised emails to verified recruiters, sent from your own Gmail — never from us.",
+    d: "Personalised emails to verified recruiters, sent from your own Gmail, never from us.",
     I: Mail,
   },
   {

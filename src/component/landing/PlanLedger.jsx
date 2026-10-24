@@ -62,7 +62,7 @@ export function LaunchBanner({ plan }) {
           </span>
           <div>
             <p className="font-syne font-bold text-[15px] leading-tight">
-              Launch price — {price} instead of{" "}
+              Launch price: {price} instead of{" "}
               <span className="text-white/35 line-through font-normal">{listPrice}</span>
             </p>
             <p className="text-xs text-white/45 mt-0.5">
@@ -72,7 +72,7 @@ export function LaunchBanner({ plan }) {
           </div>
         </div>
         <p className="text-[11px] text-white/30 mt-3">
-          Buy at the launch price and you keep the full year at that price — we never ask for the
+          Buy at the launch price and you keep the full year at that price. We never ask for the
           difference later.
         </p>
       </div>
