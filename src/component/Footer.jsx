@@ -123,7 +123,7 @@ export default function Footer({ variant = "dark" }) {
               <Wordmark className="text-white text-xl leading-none" />
             </Link>
             <p className="text-white/40 text-sm leading-relaxed">
-              Cold outreach, matched jobs, one-click autofill and mentorship — for students with no
+              Cold outreach, matched jobs, one-click autofill and mentorship, for students with no
               referrals and one placement season to spend.
             </p>
           </div>
@@ -139,7 +139,7 @@ export default function Footer({ variant = "dark" }) {
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder="Get updates — you@college.edu"
+                placeholder="Get updates: you@college.edu"
                 aria-invalid={Boolean(error)}
                 aria-describedby={error ? "footer-email-error" : undefined}
                 className="flex-1 min-w-0 px-4 py-2.5 rounded-btn text-sm text-white bg-white/[0.04] border border-white/12 placeholder:text-white/25 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-colors"

@@ -44,10 +44,10 @@ export default function PricingLedger() {
         />
         <p className="text-white/45 mt-4 max-w-lg">
           The only difference is mentorship. Rather than dress that up, here it is as a list. One
-          payment either way — nothing renews.
+          payment either way, nothing renews.
         </p>
         <p className="text-white/30 text-xs mt-3 max-w-lg">
-          Built for software, data and IT roles right now — that is where our job matching is
+          Built for software, data and IT roles right now, that is where our job matching is
           strongest.
         </p>
       </Reveal>

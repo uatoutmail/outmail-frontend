@@ -22,7 +22,7 @@ import { Reveal, MaskLines, Kicker, EASE_OUT } from "@/component/motion/kit";
  */
 
 const DISCLAIMER =
-  "Real conversations, quoted with permission. We have no customer results to show yet — when we do, they go here.";
+  "Real conversations, quoted with permission. We have no customer results to show yet, when we do, they go here.";
 
 /* ── 1 · CURRENT ─────────────────────────────────────────────────────────── */
 export function ValidationCurrent() {
@@ -187,7 +187,7 @@ export function ValidationResearch() {
         />
         <p className="text-white/45 max-w-xl">
           Unstructured interviews, March 2026, six final-year students across five campuses. No
-          incentive, no script. This is the whole sample — it is small, and we would rather say so.
+          incentive, no script. This is the whole sample, it is small, and we would rather say so.
         </p>
       </Reveal>
       <div className="rounded-2xl border border-white/10 overflow-hidden">
