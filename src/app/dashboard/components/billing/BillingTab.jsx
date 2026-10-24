@@ -144,7 +144,7 @@ function PlanStatus({ plan, days, expired, onRenew, renewing }) {
           {/* A student worrying their data is gone will not renew. Saying this
               plainly is the single most useful sentence on the lapsed screen. */}
           <p className="text-white/50">
-            Nothing has been deleted — your resume, your outreach history and your saved answers are
+            Nothing has been deleted. Your resume, your outreach history and your saved answers are
             all still here, and come back the moment you renew.
           </p>
         </div>
@@ -152,7 +152,7 @@ function PlanStatus({ plan, days, expired, onRenew, renewing }) {
 
       {!expired && days != null && days <= 30 && (
         <p className="mt-5 pt-5 border-t border-white/10 text-sm text-white/50">
-          Renewing early does not lose the days you have left — they are added on top.
+          Renewing early does not lose the days you have left, they are added on top.
         </p>
       )}
     </Card>
@@ -240,7 +240,7 @@ function RefundNotice({ orders }) {
           what the refund policy will say after OUT-234. */}
       <p className="text-white/60 text-sm mb-3">
         Outmail is a one-time payment for one year. There is no subscription and nothing renews
-        automatically, so there is nothing to cancel — your access simply ends unless you renew.
+        automatically, so there is nothing to cancel. Your access simply ends unless you renew.
       </p>
       <p className={`text-sm ${open ? "text-emerald-300" : "text-white/50"}`}>
         {open

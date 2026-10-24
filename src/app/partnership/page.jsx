@@ -22,7 +22,7 @@ export default function PartnershipPage() {
         <PageHeader
           kicker="For universities & placement cells"
           lines={["Help more students", "get placed off campus."]}
-          sub="Outmail extends your placement cell beyond campus drives — structured recruiter outreach, resume-matched openings and mentorship for every student, with full visibility for your team."
+          sub="Outmail extends your placement cell beyond campus drives: structured recruiter outreach, resume-matched openings and mentorship for every student, with full visibility for your team."
         >
           <div className="flex flex-col sm:flex-row items-start gap-4">
             <BookCallDialog />

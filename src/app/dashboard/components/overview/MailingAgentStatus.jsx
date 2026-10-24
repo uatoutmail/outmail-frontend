@@ -139,8 +139,8 @@ const MailingAgentStatus = () => {
               ) : (
                 <>
                   <p className="text-[10px] text-white/40 text-center">
-                    Already have the app open? Click &ldquo;Sign in with Google&rdquo; there instead
-                    — simplest, no code needed.
+                    Already have the app open? Click &ldquo;Sign in with Google&rdquo; there
+                    instead, simplest, no code needed.
                   </p>
                   <button
                     onClick={generateLinkCode}

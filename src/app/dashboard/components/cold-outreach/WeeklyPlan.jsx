@@ -165,7 +165,7 @@ const WeeklyPlan = () => {
             (weekApproved ? (
               <span className="flex items-center gap-2 px-4 py-2 rounded-lg bg-green-500/10 border border-green-500/20 text-green-400 text-sm font-semibold">
                 <CheckCircle2 size={16} />{" "}
-                {plan.status === "auto" ? "Auto mode — sends automatically" : "Week approved"}
+                {plan.status === "auto" ? "Auto mode, sends automatically" : "Week approved"}
               </span>
             ) : mode !== "daily" ? (
               <button

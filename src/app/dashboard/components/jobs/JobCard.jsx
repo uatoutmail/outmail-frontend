@@ -55,7 +55,7 @@ const JobCard = ({
     setReportState("sending");
     try {
       const { data } = await api.post(`/api/jobs/${job.id}/report`, { reason });
-      setReportMessage(data?.message || "Thanks — flagged for review.");
+      setReportMessage(data?.message || "Thanks, flagged for review.");
       setReportState("done");
       setReportOpen(false);
     } catch {

@@ -759,7 +759,7 @@ const SettingsTab = () => {
                   <div className="p-3 rounded-lg bg-blue-500/10 border border-blue-500/20 mb-4">
                     <p className="text-[10px] text-blue-300 leading-relaxed">
                       Emails are sent by the <strong>Outmail desktop app</strong> from your own
-                      computer. Your Gmail app password is stored only on your machine — it never
+                      computer. Your Gmail app password is stored only on your machine, it never
                       touches Outmail&apos;s servers.
                     </p>
                     {canOpenAgentSettings ? (
@@ -815,7 +815,7 @@ const SettingsTab = () => {
                         </div>
                         <p className="text-[10px] text-gray-500 mt-2 leading-relaxed">
                           Your daily limit starts small and grows automatically as you send
-                          consistently — this protects your Gmail account&apos;s reputation.
+                          consistently, protecting your Gmail account&apos;s reputation.
                         </p>
                       </div>
                     </div>
@@ -858,7 +858,7 @@ const SettingsTab = () => {
                 </span>
                 <p className="text-xs text-white/40 mt-1">
                   {user?.currentPlan
-                    ? "One placement year — see Billing for your end date"
+                    ? "One placement year. See Billing for your end date"
                     : `${user?.trial?.remaining ?? 3} free sends left · choose a plan to keep going`}
                 </p>
               </div>

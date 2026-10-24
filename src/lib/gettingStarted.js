@@ -34,7 +34,7 @@ export const STEPS = [
     icon: "key",
     t: "Connect your Gmail",
     pill: "5 minutes · the fiddly one",
-    d: "Google does not let an outside program sign in with your normal password. Instead it issues an app password — a 16-character code that works for one application and nothing else. It cannot be used to read your email, change your password, or sign in to your Google account.",
+    d: "Google does not let an outside program sign in with your normal password. Instead it issues an app password, a 16-character code that works for one application and nothing else. It cannot be used to read your email, change your password, or sign in to your Google account.",
     points: [
       "Turn on 2-Step Verification at myaccount.google.com/security",
       "Create an app password named “Outmail” at myaccount.google.com/apppasswords",
@@ -50,10 +50,10 @@ export const STEPS = [
     pill: "2 minutes",
     d: "This is what actually sends your email, and it is the reason your password never leaves your machine. It runs quietly in the background and sends on the schedule you approve.",
     points: [
-      "macOS: it isn't actually damaged — the app just isn't code-signed yet, so macOS blocks it harder than usual and won't offer an “Open Anyway” button in Settings. Open Terminal and run: xattr -cr ~/Downloads/Outmail.app (drag the app into the Terminal window after typing “xattr -cr ” to fill in the path automatically), then open the app normally",
+      "macOS: it isn't actually damaged, the app just isn't code-signed yet, so macOS blocks it harder than usual and won't offer an “Open Anyway” button in Settings. Open Terminal and run: xattr -cr ~/Downloads/Outmail.app (drag the app into the Terminal window after typing “xattr -cr ” to fill in the path automatically), then open the app normally",
       "Windows: choose “More info”, then “Run anyway”",
-      "macOS may ask for your Mac login password at some point (often right after you paste your Gmail app password) to let Outmail use your Mac's Keychain — that's the mechanism that stores the app password securely on your device and is exactly why it's never sent to Outmail's servers. This is expected; enter your normal Mac password to allow it",
-      "Open it and click “Sign in with Google” — the same account you use for Outmail. That's what links this device to your account; your dashboard's “Link Desktop Agent” code is only a fallback if sign-in doesn't work",
+      "macOS may ask for your Mac login password at some point (often right after you paste your Gmail app password) to let Outmail use your Mac's Keychain. That's the mechanism that stores the app password securely on your device and is exactly why it's never sent to Outmail's servers. This is expected; enter your normal Mac password to allow it",
+      "Open it and click “Sign in with Google”, the same account you use for Outmail. That's what links this device to your account; your dashboard's “Link Desktop Agent” code is only a fallback if sign-in doesn't work",
       "Scheduled mail goes out only while your computer is awake",
     ],
   },
@@ -101,15 +101,15 @@ export const AFTER_SETUP = [
 export const TROUBLESHOOTING = [
   {
     q: "macOS says “Outmail is damaged and can't be opened”",
-    a: "It isn't actually damaged — the app isn't code-signed yet, so macOS blocks it harder than usual and skips the normal “Open Anyway” button in Settings. Click Cancel (never “Move to Bin”), open Terminal, and run: xattr -cr ~/Downloads/Outmail.app — drag the app into the Terminal window right after typing “xattr -cr ” to fill in the exact path. Then open the app as usual.",
+    a: "It isn't actually damaged, the app isn't code-signed yet, so macOS blocks it harder than usual and skips the normal “Open Anyway” button in Settings. Click Cancel (never “Move to Bin”), open Terminal, and run: xattr -cr ~/Downloads/Outmail.app. Drag the app into the Terminal window right after typing “xattr -cr ” to fill in the exact path, then open the app as usual.",
   },
   {
     q: "Windows: “More info” doesn't appear on the blue warning screen",
-    a: 'Rare, but if it happens: open PowerShell, run Unblock-File -Path "$env:USERPROFILE\\Downloads\\Outmail-win-setup.exe", then run the installer again. The normal Windows path (“More info” → “Run anyway”) works for almost everyone — try that first.',
+    a: 'Rare, but if it happens: open PowerShell, run Unblock-File -Path "$env:USERPROFILE\\Downloads\\Outmail-win-setup.exe", then run the installer again. The normal Windows path (“More info” → “Run anyway”) works for almost everyone, try that first.',
   },
   {
     q: "macOS is asking for my Mac login password while I'm setting up Outmail",
-    a: "That's expected — it's macOS asking permission for Outmail to use your Mac's Keychain, which is exactly what stores your Gmail app password securely on your own device (and why it never reaches Outmail's servers). It usually appears right after you paste the app password. Enter your normal Mac login password to allow it.",
+    a: "That's expected. It's macOS asking permission for Outmail to use your Mac's Keychain, which is exactly what stores your Gmail app password securely on your own device (and why it never reaches Outmail's servers). It usually appears right after you paste the app password. Enter your normal Mac login password to allow it.",
   },
   {
     q: "“App passwords” is not in my Google account",
@@ -121,7 +121,7 @@ export const TROUBLESHOOTING = [
   },
   {
     q: "My dashboard shows the agent as disconnected, even though it worked before",
-    a: "Click “Reconnect Gmail” on your dashboard's Mailing Agent card. It reopens the desktop app and reconnects using the password already saved on your computer — you won't need to type it again unless you disconnected it yourself or signed in with a different Google account.",
+    a: "Click “Reconnect Gmail” on your dashboard's Mailing Agent card. It reopens the desktop app and reconnects using the password already saved on your computer, you won't need to type it again unless you disconnected it yourself or signed in with a different Google account.",
   },
   {
     q: "Nothing has sent",
