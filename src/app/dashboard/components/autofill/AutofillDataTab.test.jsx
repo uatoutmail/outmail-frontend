@@ -273,6 +273,37 @@ describe("failure states", () => {
     );
   });
 
+  it("shows a real error with a retry button on a non-403 load failure, instead of spinning forever (found 2026-10-24 as a user-reported black screen)", async () => {
+    api.get.mockRejectedValue({ response: { status: 500 } });
+    render(<AutofillDataTab />);
+    await waitFor(() =>
+      expect(
+        screen.getByRole("heading", { name: /could not load your autofill data/i })
+      ).toBeInTheDocument()
+    );
+    expect(screen.getByRole("button", { name: /try again/i })).toBeInTheDocument();
+  });
+
+  it("names rate limiting specifically, since that's the real cause this was found from", async () => {
+    api.get.mockRejectedValue({ response: { status: 429 } });
+    render(<AutofillDataTab />);
+    await waitFor(() => expect(screen.getByText(/too many requests/i)).toBeInTheDocument());
+  });
+
+  it("retrying after a failure actually re-fetches and recovers", async () => {
+    api.get.mockRejectedValueOnce({ response: { status: 500 } });
+    api.get.mockRejectedValueOnce({ response: { status: 500 } });
+    render(<AutofillDataTab />);
+    await waitFor(() =>
+      expect(screen.getByRole("button", { name: /try again/i })).toBeInTheDocument()
+    );
+
+    mountOk();
+    await userEvent.click(screen.getByRole("button", { name: /try again/i }));
+
+    await waitFor(() => expect(screen.getByLabelText(/first name/i)).toBeInTheDocument());
+  });
+
   it("surfaces a save failure without losing what was typed", async () => {
     mountOk();
     api.put.mockRejectedValue({
