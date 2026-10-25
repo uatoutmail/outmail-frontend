@@ -14,7 +14,8 @@ const COUNTRIES = [
 const REMOTE_OPTS = ["any", "remote", "hybrid", "onsite"];
 const SEEKING_OPTS = [
   { value: "internship_only", label: "Internships only" },
-  { value: "internship_and_fresher", label: "Internships + entry-level full-time roles" },
+  { value: "fulltime_only", label: "Full-time roles only" },
+  { value: "internship_and_fresher", label: "Both — internships and full-time roles" },
 ];
 
 // OUT-36: job-hunt intent + preferences. Reads/writes the candidate profile
