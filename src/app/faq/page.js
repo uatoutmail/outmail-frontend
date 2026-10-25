@@ -6,16 +6,16 @@ import { FAQS } from "@/lib/faqs";
 import { JsonLd, faqSchema, breadcrumbSchema } from "@/lib/structuredData";
 
 export const metadata = {
-  title: "FAQ | Outmail - Personalized Cold Outreach",
+  title: "FAQ | Outmail",
   description:
-    "Frequently asked questions about Outmail. Learn how our personalized cold outreach and recruiter search at scale can help your career growth.",
+    "Frequently asked questions about Outmail. Learn how personalized outreach, curated job openings, and autofill can help your placement year.",
   alternates: {
     canonical: "https://outmail.in/faq",
   },
   openGraph: {
-    title: "FAQ | Outmail - Personalized Cold Outreach",
+    title: "FAQ | Outmail",
     description:
-      "Frequently asked questions about Outmail. Learn how our personalized cold outreach and recruiter search at scale can help your career growth.",
+      "Frequently asked questions about Outmail. Learn how personalized outreach, curated job openings, and autofill can help your placement year.",
     url: "https://outmail.in/faq",
     type: "website",
   },

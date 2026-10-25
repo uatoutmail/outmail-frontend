@@ -11,16 +11,16 @@ import Story from "@/component/landing/Story";
 import Validation from "@/component/landing/Validation";
 import Navbar from "@/component/Navbar";
 export const metadata = {
-  title: "Outmail | Personalized Cold Outreach & Recruiter Search at Scale",
+  title: "Outmail | Jobs, Outreach, and Autofill. One Placement Year.",
   description:
-    "Automate your career growth with Outmail. Send personalized recruiter emails, track opens, and get noticed by top companies using professional cold outreach.",
+    "Outmail helps students through placement season: personalized recruiter outreach, curated job openings, and one-click application autofill, all in one place.",
   alternates: {
     canonical: "https://outmail.in",
   },
   openGraph: {
-    title: "Outmail | Personalized Cold Outreach & Recruiter Search at Scale",
+    title: "Outmail | Jobs, Outreach, and Autofill. One Placement Year.",
     description:
-      "Automate your career growth with Outmail. Send personalized recruiter emails, track opens, and get noticed by top companies using cold outreach.",
+      "Outmail helps students through placement season: personalized recruiter outreach, curated job openings, and one-click application autofill, all in one place.",
     url: "https://outmail.in",
     type: "website",
     images: [
@@ -28,15 +28,15 @@ export const metadata = {
         url: "/image.png",
         width: 1536,
         height: 1024,
-        alt: "Outmail - Personalized Cold Outreach at Scale",
+        alt: "Outmail - Jobs, Outreach, and Autofill",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Outmail | Personalized Cold Outreach & Recruiter Search at Scale",
+    title: "Outmail | Jobs, Outreach, and Autofill. One Placement Year.",
     description:
-      "Automate your career growth with Outmail. Send personalized recruiter emails, track opens, and get noticed by top companies using cold outreach.",
+      "Outmail helps students through placement season: personalized recruiter outreach, curated job openings, and one-click application autofill, all in one place.",
     images: ["/image.png"],
   },
 };
@@ -48,7 +48,7 @@ const organizationSchema = {
   url: "https://outmail.in",
   logo: "https://outmail.in/Logo_Outmail.png",
   description:
-    "Outmail is a personalized cold outreach platform helping students and professionals reach recruiters at scale.",
+    "Outmail helps students through placement season with personalized recruiter outreach, curated job openings, and application autofill.",
   sameAs: [],
   contactPoint: {
     "@type": "ContactPoint",
@@ -65,7 +65,7 @@ const softwareApplicationSchema = {
   applicationCategory: "BusinessApplication",
   url: "https://outmail.in",
   description:
-    "Automate personalized recruiter outreach, track email opens, and get noticed by top companies using Outmail's cold outreach platform.",
+    "Outmail combines personalized recruiter outreach, curated job openings, and one-click application autofill to help students through their placement year.",
   // Structured data is machine-readable and is what search engines surface, so a
   // stale price here is a public claim we cannot honour. It advertised a free
   // plan at $9/month in USD; we sell one placement year for ₹999 in INR, and
