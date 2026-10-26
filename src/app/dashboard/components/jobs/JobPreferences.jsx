@@ -14,8 +14,7 @@ const COUNTRIES = [
 const REMOTE_OPTS = ["any", "remote", "hybrid", "onsite"];
 const SEEKING_OPTS = [
   { value: "internship_only", label: "Internships only" },
-  { value: "fulltime_only", label: "Full-time roles only" },
-  { value: "internship_and_fresher", label: "Both — internships and full-time roles" },
+  { value: "internship_and_fresher", label: "Internships + entry-level full-time roles" },
 ];
 
 // OUT-36: job-hunt intent + preferences. Reads/writes the candidate profile
@@ -88,7 +87,7 @@ const JobPreferences = ({ onSaved, forceOpen = false }) => {
         <div className="flex items-center gap-3">
           <SlidersHorizontal size={18} className="text-purple-400" />
           <span className="text-sm font-bold text-white">What are you looking for?</span>
-          <span className="text-white/30 text-xs hidden sm:inline">tune your matches</span>
+          <span className="text-white/30 text-xs hidden sm:inline">— tune your matches</span>
         </div>
         {open ? (
           <ChevronUp size={18} className="text-white/40" />
@@ -138,7 +137,7 @@ const JobPreferences = ({ onSaved, forceOpen = false }) => {
                   ))}
                 </div>
                 <p className="text-white/25 text-[11px] mt-1.5">
-                  Determines which roles you can see at all, not just how they&apos;re ranked. e.g.
+                  Determines which roles you can see at all — not just how they&apos;re ranked. e.g.
                   picking &quot;Internships only&quot; hides fresher full-time roles too, not just
                   senior ones.
                 </p>
@@ -160,7 +159,7 @@ const JobPreferences = ({ onSaved, forceOpen = false }) => {
                   className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm text-white placeholder:text-white/25 focus:outline-none focus:border-purple-500/50"
                 />
                 <p className="text-white/25 text-[11px] mt-1.5">
-                  Tells matching what you want next, weighted alongside your resume.
+                  Tells matching what you want next — weighted alongside your resume.
                 </p>
               </div>
 
@@ -238,7 +237,7 @@ const JobPreferences = ({ onSaved, forceOpen = false }) => {
                     className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-sm text-white placeholder:text-white/25 focus:outline-none focus:border-purple-500/50"
                   />
                   <p className="text-[11px] text-white/35 mt-1.5 leading-relaxed">
-                    Full-time work only, exclude internships. This decides which roles you&apos;re
+                    Full-time work only — exclude internships. This decides which roles you&apos;re
                     shown, so setting it yourself beats our estimate. Leave blank to keep using the
                     estimate.
                   </p>

@@ -1,7 +1,7 @@
 export const metadata = {
-  title: "Contact Outmail | Get in Touch with Our Team",
+  title: "Contact Outmail | Get in Touch with Our Outreach Experts",
   description:
-    "Have questions about job openings, outreach, or autofill? Contact Outmail to learn how we can help with your placement year.",
+    "Have questions about cold outreach? Contact Outmail to learn how we can help your career or organization scale personalized recruiter engagement.",
   keywords: [
     "contact outmail",
     "cold outreach support",
@@ -10,14 +10,12 @@ export const metadata = {
     "outmail customer support",
     "outreach platform contact",
     "student outreach assistance",
-    "job search support",
-    "autofill support",
   ],
   alternates: {
     canonical: "https://outmail.in/contactus",
   },
   openGraph: {
-    title: "Contact Us | Outmail",
+    title: "Contact Us | Personalized Cold Outreach Support",
     description: "Get in touch for support, partnerships, or more information about Outmail.",
     url: "https://outmail.in/contactus",
     type: "website",
@@ -26,13 +24,13 @@ export const metadata = {
         url: "/image.png",
         width: 1536,
         height: 1024,
-        alt: "Contact Outmail - Get in Touch with Our Team",
+        alt: "Contact Outmail - Get in Touch with Our Outreach Experts",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Contact Us | Outmail",
+    title: "Contact Us | Personalized Cold Outreach Support",
     description: "Get in touch for support, partnerships, or more information about Outmail.",
     images: ["/image.png"],
   },

@@ -32,7 +32,6 @@ const LINKS = [
   { href: "/", label: "Home" },
   { href: "/features", label: "Features" },
   { href: "/pricing", label: "Pricing" },
-  { href: "/download", label: "Download" },
   { href: "/contactus", label: "Contact" },
   { href: "/partnership", label: "Partnership" },
 ];

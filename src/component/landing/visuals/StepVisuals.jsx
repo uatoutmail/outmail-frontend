@@ -115,7 +115,7 @@ function Interface({ kind }) {
           <span className="font-mono text-[9px] text-emerald-300">09:14</span>
         </div>
         <div className="px-3 py-2.5">
-          <p className="text-[11px] text-white/70 truncate">Backend intern: payments tooling</p>
+          <p className="text-[11px] text-white/70 truncate">Backend intern — payments tooling</p>
           <p className="text-[10px] text-white/35 truncate">to talent@—————.com · resume.pdf</p>
         </div>
       </Box>
@@ -177,7 +177,7 @@ function Interface({ kind }) {
         <span className="font-mono text-[9px] text-primary">Sat 11:00</span>
       </div>
       <div className="px-3 py-2.5">
-        <p className="text-[11px] text-white/70">Interview loops: what they actually ask</p>
+        <p className="text-[11px] text-white/70">Interview loops — what they actually ask</p>
         <p className="text-[10px] text-white/35 mt-0.5">
           18 of 25 seats · questions open till Friday
         </p>

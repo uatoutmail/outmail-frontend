@@ -184,7 +184,7 @@ const MentorshipTab = () => {
               </button>
               <button
                 onClick={() =>
-                  openOrNotice(session.bookingLink, "Slot booking opens soon, we'll notify you.")
+                  openOrNotice(session.bookingLink, "Slot booking opens soon — we'll notify you.")
                 }
                 className="flex-1 bg-purple-600 hover:bg-purple-700 text-white font-medium py-2 px-4 rounded-lg transition-colors flex items-center justify-center gap-2 text-sm"
               >
@@ -212,8 +212,7 @@ const MentorshipTab = () => {
         <div>
           <h1 className="text-2xl sm:text-3xl font-bold mb-1 mt-10 text-white">Mentorship</h1>
           <p className="text-white/60 text-sm sm:text-base">
-            Learn from leaders at companies actively hiring, and sharpen your edge before you reach
-            out
+            Learn from leaders at companies actively hiring — sharpen your edge before you reach out
           </p>
         </div>
       </div>

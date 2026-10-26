@@ -1,7 +1,7 @@
 export const metadata = {
   title: "Privacy Policy",
   description:
-    "How Outmail, operated by PrimeWork Labs LLP, collects, uses and protects personal data under India's DPDP Act 2023, including resumes, Gmail access and recruiter contact data.",
+    "How Outmail, operated by PrimeWork Labs LLP, collects, uses and protects personal data under India's DPDP Act 2023 — including resumes, Gmail access and recruiter contact data.",
   alternates: { canonical: "https://outmail.in/privacy-policy" },
   openGraph: {
     title: "Privacy Policy | Outmail",
@@ -34,7 +34,6 @@ export default function PrivacyPolicy() {
           <p className="text-accent-light font-semibold tracking-wide text-sm md:text-base uppercase">
             Effective Date: 31st August 2026
           </p>
-          <p className="text-sm text-slate-500">Last updated: 16th October 2026</p>
         </div>
 
         <div className="prose prose-slate max-w-none space-y-12 text-slate-700 leading-relaxed font-geist">
@@ -75,7 +74,7 @@ export default function PrivacyPolicy() {
               <p>
                 Customer care: <A href="mailto:support@outmail.in">support@outmail.in</A>
               </p>
-              <p>Phone: +91 90570 26464</p>
+              <p>Phone: +91 94108 54417</p>
             </div>
           </Section>
 
@@ -121,7 +120,7 @@ export default function PrivacyPolicy() {
               </p>
               <p>
                 To send email as you, our desktop application needs a Gmail{" "}
-                <strong className="text-slate-900">app password</strong>, a credential you generate
+                <strong className="text-slate-900">app password</strong> — a credential you generate
                 in your own Google account and can revoke at any time.
               </p>
               <p>
@@ -130,7 +129,7 @@ export default function PrivacyPolicy() {
                   is never transmitted to Outmail, never stored on our servers, and never visible to
                   our staff.
                 </strong>{" "}
-                Our servers receive only the outcome of a send: whether it succeeded, and when.
+                Our servers receive only the outcome of a send — whether it succeeded, and when.
               </p>
               <p>
                 Revoking the app password in your Google account immediately and permanently stops
@@ -163,37 +162,37 @@ export default function PrivacyPolicy() {
                       "Your consent, given when you upload it",
                     ],
                     [
-                      "Profile details you add: phone, LinkedIn, GitHub, portfolio, location, job preferences",
+                      "Profile details you add — phone, LinkedIn, GitHub, portfolio, location, job preferences",
                       "To improve matching and to include in your outreach where relevant",
                       "Your consent",
                     ],
                     [
-                      "A record of every email sent on your behalf: recipient, subject, body, time, outcome",
+                      "A record of every email sent on your behalf — recipient, subject, body, time, outcome",
                       "So you can see your history, and so the same recruiter is not contacted twice",
                       "You gave it to us for this purpose",
                     ],
                     [
-                      "Autofill profile, the answers application forms ask for: contact details, addresses, education and marks, work history, notice period, and current and expected salary",
+                      "Autofill profile — the answers application forms ask for: contact details, addresses, education and marks, work history, notice period, and current and expected salary",
                       "To fill job application forms on your instruction, and only on the page you are looking at",
                       "Your consent",
                     ],
                     [
-                      "Diversity and EEO answers: gender, disability status and category, where you choose to provide them",
+                      "Diversity and EEO answers — gender, disability status and category, where you choose to provide them",
                       "Only to fill the equivalent question on an application form, and only after you switch this on. It is off by default, and never used for matching, scoring or any decision of ours",
                       "Your explicit consent, given by switching it on",
                     ],
                     [
-                      "The text of questions on forms you open with the extension, the labels, not your answers",
+                      "The text of questions on forms you open with the extension — the labels, not your answers",
                       "To work out which of your saved answers belongs in which box, once per form rather than once per person",
                       "Necessary to provide the service you asked for",
                     ],
                     [
-                      "Payment records: plan, amount, date, Razorpay reference",
+                      "Payment records — plan, amount, date, Razorpay reference",
                       "To give you access, issue receipts and meet accounting obligations",
                       "Required of us by law",
                     ],
                     [
-                      "Technical data: IP address, browser and device type, session tokens",
+                      "Technical data — IP address, browser and device type, session tokens",
                       "To keep your account secure and to detect abuse",
                       "Necessary to provide the service you asked for",
                     ],
@@ -225,7 +224,7 @@ export default function PrivacyPolicy() {
               On lawful grounds: the DPDP Act allows personal data to be processed with your
               consent, or where you have voluntarily provided it for a specified purpose and have
               not withdrawn it, or where the law requires us to keep it. The right-hand column above
-              says which applies. Where we rely on consent you may withdraw it at any time, see
+              says which applies. Where we rely on consent you may withdraw it at any time — see
               section 9.
             </p>
           </Section>
@@ -242,8 +241,8 @@ export default function PrivacyPolicy() {
                 The Autofill extension uses the same service for one narrow job: working out which
                 of your saved answers belongs in which box on an application form. When a form asks
                 something we have not seen before, the{" "}
-                <strong className="text-slate-900">wording of that question</strong>, not your
-                answer to it, is sent to Gemini so we can map it to the right field. The result is
+                <strong className="text-slate-900">wording of that question</strong> — not your
+                answer to it — is sent to Gemini so we can map it to the right field. The result is
                 stored against the form rather than against you, so a question is only ever worked
                 out once, however many people apply.
               </p>
@@ -263,31 +262,6 @@ export default function PrivacyPolicy() {
               <p>
                 No decision with a legal or similarly significant effect on you is made solely by
                 automated means. Matching and drafting are suggestions; you decide whether to send.
-              </p>
-              <h3 id="autofill-extension" className="pt-2 text-lg font-semibold text-slate-900">
-                The Outmail Autofill browser extension
-              </h3>
-              <p>
-                Before the extension connects to your account it shows you what it does with data,
-                and it connects only after you click &ldquo;Agree and connect&rdquo;. Nothing is
-                sent to Outmail before that. Once connected, it acts only on a page where you click
-                Fill. On that page it downloads your saved profile and resume from your account,
-                reads the form, and sends the wording of any question it does not recognise to
-                Outmail so the right saved answer can be found. If you type an answer into one of
-                those questions, it is saved to your account so it can be filled next time. The
-                extension does not record your browsing history, does not read pages you have not
-                asked it to fill, and never submits a form.
-              </p>
-              <p>
-                <strong className="text-slate-900">Limited Use.</strong> The use of information
-                received through the Outmail Autofill extension adheres to the{" "}
-                <A href="https://developer.chrome.com/docs/webstore/program-policies/limited-use">
-                  Chrome Web Store User Data Policy
-                </A>
-                , including the Limited Use requirements. We use that information only to fill job
-                applications for you, we do not sell it or use it for advertising, and we do not
-                transfer it to anyone except as needed to provide that feature, to comply with the
-                law, or to keep the service secure.
               </p>
             </div>
           </Section>
@@ -313,7 +287,7 @@ export default function PrivacyPolicy() {
               </p>
               <ul className="list-disc pl-6 space-y-3">
                 <li>
-                  <strong className="text-slate-900">Publicly available sources</strong>: company
+                  <strong className="text-slate-900">Publicly available sources</strong> — company
                   careers and contact pages, job advertisements, and public professional profiles
                   such as LinkedIn.
                 </li>
@@ -324,13 +298,13 @@ export default function PrivacyPolicy() {
                 <li>
                   <strong className="text-slate-900">
                     Recruiting and hiring contact lists circulated publicly
-                  </strong>
-                  , meaning lists of hiring contacts published or shared openly by people in the
-                  recruiting and careers community.
+                  </strong>{" "}
+                  — for example, lists of hiring contacts published or shared openly by people in
+                  the recruiting and careers community.
                 </li>
               </ul>
               <p>
-                These lists largely gather together addresses that are already published elsewhere,
+                These lists largely gather together addresses that are already published elsewhere —
                 a careers page, a job advertisement, a public profile. We are not able to verify
                 that for every individual entry, and we do not claim to. Where an address is one we
                 could not trace to a public source, the commitments below still apply in full.
@@ -364,16 +338,16 @@ export default function PrivacyPolicy() {
               </p>
               <ul className="list-disc pl-6 space-y-3">
                 <li>
-                  we hold <strong className="text-slate-900">business contact details only</strong>:
-                  work email, name, job title and employer. Never a personal address, personal phone
-                  number, or anything about your private life;
+                  we hold <strong className="text-slate-900">business contact details only</strong>{" "}
+                  — work email, name, job title and employer. Never a personal address, personal
+                  phone number, or anything about your private life;
                 </li>
                 <li>
-                  we honour <strong className="text-slate-900">every right</strong> in section 9,
-                  access, correction, erasure and grievance redressal, for recruiters exactly as we
+                  we honour <strong className="text-slate-900">every right</strong> in section 9 —
+                  access, correction, erasure and grievance redressal — for recruiters exactly as we
                   do for our own account holders, and we do not ask you to prove the Act obliges us;
                 </li>
-                <li>one message stops it permanently, across every user, forever, see below;</li>
+                <li>one message stops it permanently, across every user, forever — see below;</li>
                 <li>
                   we cap how many students may contact any one recruiter in a week, and no student
                   may contact the same recruiter twice.
@@ -394,8 +368,8 @@ export default function PrivacyPolicy() {
                 <p>
                   Email <A href="mailto:support@outmail.in">support@outmail.in</A> and we will
                   remove you and confirm. We do not include an automated unsubscribe link in these
-                  messages, because each one is sent by an individual student from their own inbox,
-                  the same as if they had written to you directly, rather than from a platform
+                  messages, because each one is sent by an individual student from their own inbox —
+                  the same as if they had written to you directly — rather than from a platform
                   mailing list.
                 </p>
                 <p>
@@ -491,26 +465,27 @@ export default function PrivacyPolicy() {
               </p>
               <ul className="list-disc pl-6 space-y-3">
                 <li>
-                  <strong className="text-slate-900">Your resume and profile</strong>: kept while
+                  <strong className="text-slate-900">Your resume and profile</strong> — kept while
                   your account is open. Deleted within 30 days of you deleting your account or
                   asking us to remove them.
                 </li>
                 <li>
-                  <strong className="text-slate-900">Your outreach history</strong>: kept while your
-                  account is open, so you can see what you sent and we can avoid repeat contacts.
+                  <strong className="text-slate-900">Your outreach history</strong> — kept while
+                  your account is open, so you can see what you sent and we can avoid repeat
+                  contacts.
                 </li>
                 <li>
-                  <strong className="text-slate-900">Payment records</strong>: kept for eight years,
-                  as required by Indian accounting and tax law. This is the one category we cannot
-                  delete on request.
+                  <strong className="text-slate-900">Payment records</strong> — kept for eight
+                  years, as required by Indian accounting and tax law. This is the one category we
+                  cannot delete on request.
                 </li>
                 <li>
-                  <strong className="text-slate-900">Unsubscribe records</strong>: kept
+                  <strong className="text-slate-900">Unsubscribe records</strong> — kept
                   indefinitely, in minimal form. If we deleted these we would be unable to keep
                   honouring the unsubscribe.
                 </li>
                 <li>
-                  <strong className="text-slate-900">Technical logs</strong>: up to 30 days.
+                  <strong className="text-slate-900">Technical logs</strong> — up to 30 days.
                 </li>
               </ul>
             </div>
@@ -523,7 +498,7 @@ export default function PrivacyPolicy() {
               <li>Ask what personal data we hold about you and get a copy of it.</li>
               <li>Have inaccurate or incomplete data corrected or completed.</li>
               <li>
-                Have your data erased, except where we must keep it by law, see the retention table
+                Have your data erased, except where we must keep it by law — see the retention table
                 above.
               </li>
               <li>
@@ -531,7 +506,7 @@ export default function PrivacyPolicy() {
                 to use your resume means we can no longer generate outreach for you.
               </li>
               <li>Nominate someone to exercise your rights if you die or become incapacitated.</li>
-              <li>Raise a grievance with us, and escalate it, see section 10.</li>
+              <li>Raise a grievance with us, and escalate it — see section 10.</li>
             </ul>
             <p>
               To exercise any of these, email{" "}
@@ -554,7 +529,7 @@ export default function PrivacyPolicy() {
               <p>
                 Email: <A href="mailto:admin@outmail.in">admin@outmail.in</A>
               </p>
-              <p>Phone: +91 90570 26464</p>
+              <p>Phone: +91 63751 19988</p>
               <p>1/400, UIT, Bhiwadi, Alwar, Rajasthan 301019, India</p>
             </div>
             <p>
@@ -574,7 +549,7 @@ export default function PrivacyPolicy() {
                 managed secret storage rather than in code.
               </li>
               <li>
-                Your Gmail app password is not part of any of this, because we never hold it, see
+                Your Gmail app password is not part of any of this, because we never hold it — see
                 section 3.
               </li>
             </ul>

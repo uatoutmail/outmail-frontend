@@ -31,11 +31,11 @@ const syne = Syne({
 export const metadata = {
   metadataBase: new URL("https://outmail.in"),
   title: {
-    default: "Outmail | Jobs, Outreach, and Autofill. One Placement Year.",
+    default: "Outmail | Personalized Cold Outreach & Recruiter Search at Scale",
     template: "%s | Outmail",
   },
   description:
-    "Outmail helps students through placement season: personalized recruiter outreach, curated job openings, and one-click application autofill, all in one place.",
+    "Automate your career growth with Outmail. Send personalized recruiter emails, track opens, and get noticed by top companies using professional cold outreach.",
   keywords: [
     "cold outreach",
     "personalized recruiter emails",
@@ -44,9 +44,6 @@ export const metadata = {
     "career growth automation",
     "university placement software",
     "cold email platform",
-    "job search platform",
-    "application autofill",
-    "placement year",
     "outmail",
   ],
   authors: [{ name: "Outmail", url: "https://outmail.in" }],
@@ -69,9 +66,9 @@ export const metadata = {
     apple: "/apple-touch-icon.png",
   },
   openGraph: {
-    title: "Outmail | Jobs, Outreach, and Autofill. One Placement Year.",
+    title: "Outmail | Personalized Cold Outreach at Scale",
     description:
-      "Outmail helps students through placement season: personalized recruiter outreach, curated job openings, and one-click application autofill, all in one place.",
+      "Automate your career growth with Outmail. Send personalized recruiter emails, track opens, and get noticed by top companies using professional cold outreach.",
     url: "https://outmail.in",
     siteName: "Outmail",
     images: [
@@ -79,7 +76,7 @@ export const metadata = {
         url: "/image.png",
         width: 1536,
         height: 1024,
-        alt: "Outmail - Jobs, Outreach, and Autofill",
+        alt: "Outmail - Personalized Cold Outreach at Scale",
       },
     ],
     locale: "en_US",
@@ -87,9 +84,9 @@ export const metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Outmail | Jobs, Outreach, and Autofill. One Placement Year.",
+    title: "Outmail | Personalized Cold Outreach & Recruiter Search at Scale",
     description:
-      "Outmail helps students through placement season: personalized recruiter outreach, curated job openings, and one-click application autofill, all in one place.",
+      "Automate your career growth with Outmail. Send personalized recruiter emails, track opens, and get noticed by top companies using professional cold outreach.",
     images: ["/image.png"],
     creator: "@outmail_in",
     site: "@outmail_in",

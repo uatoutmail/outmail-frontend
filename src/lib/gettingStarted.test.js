@@ -69,6 +69,6 @@ describe("troubleshooting", () => {
   it("ends with a route to a human", () => {
     const last = TROUBLESHOOTING.at(-1).a;
     expect(last).toContain("support@outmail.in");
-    expect(last).toContain("+91 90570 26464");
+    expect(last).toContain("+91 94108 54417");
   });
 });

@@ -198,7 +198,7 @@ const ColdOutreachTab = () => {
                 <strong>
                   {user.trial.remaining} of {user.trial.allowance} free sends
                 </strong>{" "}
-                left, enough to reach real recruiters and see how it works.
+                left — enough to reach real recruiters and see how it works.
               </>
             ) : (
               <>
@@ -242,7 +242,7 @@ const ColdOutreachTab = () => {
           </span>
         )}
         {[0, 6].includes(new Date().getDay()) && (
-          <span className="text-blue-300">Weekend, sending resumes Monday</span>
+          <span className="text-blue-300">Weekend — sending resumes Monday</span>
         )}
         {!agentStatus?.online && (
           <span className="text-gray-400">
@@ -334,8 +334,8 @@ const ColdOutreachTab = () => {
                 <div>
                   <h4 className="text-yellow-400 font-semibold mb-1">Gmail Connection Required</h4>
                   <p className="text-sm text-yellow-400/80">
-                    Connect your Gmail in the Outmail desktop app before sending outreach emails.
-                    Your app password stays on your own computer.
+                    Connect your Gmail in the Outmail desktop app before sending outreach emails —
+                    your app password stays on your own computer.
                   </p>
                   {typeof window !== "undefined" &&
                     typeof window.outmail?.openAgentSettings === "function" && (
@@ -560,7 +560,7 @@ const ColdOutreachTab = () => {
               <div>
                 <h2 className="text-xl font-bold text-white">My Outreach</h2>
                 <p className="text-sm text-gray-400 mt-1">
-                  Every email you&apos;ve queued, including custom ones, and what happened to it.
+                  Every email you&apos;ve queued — including custom ones — and what happened to it.
                   Queued emails are sent by your desktop app.
                 </p>
               </div>

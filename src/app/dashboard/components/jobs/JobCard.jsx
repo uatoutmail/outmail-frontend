@@ -9,10 +9,8 @@ import {
   X,
   ChevronDown,
   ChevronUp,
-  AlertTriangle,
 } from "lucide-react";
 import React, { useState } from "react";
-import { api } from "@/lib/api";
 
 // Job details/qualifications are admin-authored HTML. Sanitize before rendering
 // so stored markup can never execute script (these blocks only render client-side
@@ -42,26 +40,6 @@ const JobCard = ({
   const onApply = () => {
     handleOpenJob(applyUrl);
     handleApply(job.id);
-  };
-
-  // Reporting a dead job. The student clicking through is the only check that
-  // runs against every live job every day — a link that rotted this morning
-  // reaches us here long before the next verification sweep would catch it.
-  const [reportOpen, setReportOpen] = useState(false);
-  const [reportState, setReportState] = useState("idle"); // idle | sending | done | error
-  const [reportMessage, setReportMessage] = useState("");
-
-  const submitReport = async (reason) => {
-    setReportState("sending");
-    try {
-      const { data } = await api.post(`/api/jobs/${job.id}/report`, { reason });
-      setReportMessage(data?.message || "Thanks, flagged for review.");
-      setReportState("done");
-      setReportOpen(false);
-    } catch {
-      setReportMessage("Could not send that just now. Please try again.");
-      setReportState("error");
-    }
   };
 
   return (
@@ -206,38 +184,6 @@ const JobCard = ({
         </div>
       )}
 
-      {reportState === "done" && <p className="mt-3 text-sm text-amber-300/90">{reportMessage}</p>}
-      {reportState === "error" && <p className="mt-3 text-sm text-red-300/90">{reportMessage}</p>}
-
-      {reportOpen && (
-        <div className="mt-4 rounded-xl border border-amber-500/25 bg-amber-500/5 p-4">
-          <p className="text-sm text-white/70 mb-3">What&apos;s wrong with this one?</p>
-          <div className="flex flex-wrap gap-2">
-            {[
-              ["LINK_BROKEN", "Link is broken"],
-              ["NOT_ACCEPTING", "No longer accepting applications"],
-              ["WRONG_ROLE", "Not the role it says"],
-              ["OTHER", "Something else"],
-            ].map(([reason, label]) => (
-              <button
-                key={reason}
-                onClick={() => submitReport(reason)}
-                disabled={reportState === "sending"}
-                className="px-3 py-1.5 rounded-lg text-xs font-semibold bg-white/5 hover:bg-white/10 text-white/75 border border-white/10 transition-colors disabled:opacity-50"
-              >
-                {label}
-              </button>
-            ))}
-            <button
-              onClick={() => setReportOpen(false)}
-              className="px-3 py-1.5 rounded-lg text-xs text-white/40 hover:text-white/70"
-            >
-              Cancel
-            </button>
-          </div>
-        </div>
-      )}
-
       <div className="flex flex-wrap gap-3 mt-4">
         {isNew ? (
           <>
@@ -246,13 +192,6 @@ const JobCard = ({
               className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-6 py-2.5 bg-green-600 hover:bg-green-500 text-white font-bold rounded-xl transition-all active:scale-95 text-sm shadow-lg shadow-green-900/20"
             >
               <CheckCircle size={18} /> Apply Now
-            </button>
-            <button
-              onClick={() => setReportOpen((v) => !v)}
-              title="Tell us this job is closed or the link is broken"
-              className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-4 py-2.5 bg-white/5 hover:bg-amber-500/20 hover:text-amber-300 text-white/60 font-semibold rounded-xl border border-white/10 transition-all active:scale-95 text-sm"
-            >
-              <AlertTriangle size={16} /> Report
             </button>
             <button
               onClick={() => handleDiscard(job.id)}

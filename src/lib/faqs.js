@@ -30,7 +30,7 @@ export const FAQS = [
   {
     cat: "Money",
     q: "What happens when my year ends?",
-    a: "Outreach stops and job openings are no longer shown, and we remind you before that happens. Nothing is deleted, your resume, history and saved answers stay exactly where they are and come back the moment you renew. Renewing early adds to the days you have left rather than replacing them.",
+    a: "Outreach stops and job openings are no longer shown, and we remind you before that happens. Nothing is deleted — your resume, history and saved answers stay exactly where they are and come back the moment you renew. Renewing early adds to the days you have left rather than replacing them.",
   },
   {
     cat: "Privacy",
@@ -45,7 +45,7 @@ export const FAQS = [
   {
     cat: "Product",
     q: "Will this get my Gmail account banned?",
-    a: "Your daily limit starts at five and grows slowly, only if you are actually sending. That warm-up is deliberate, it is what keeps your account inside normal sending behaviour rather than looking like bulk mail.",
+    a: "Your daily limit starts at five and grows slowly, only if you are actually sending. That warm-up is deliberate — it is what keeps your account inside normal sending behaviour rather than looking like bulk mail.",
   },
   {
     cat: "Product",
@@ -55,7 +55,7 @@ export const FAQS = [
   {
     cat: "Product",
     q: "What roles does Outmail support right now?",
-    a: "Software, data and IT roles for students graduating into their first job, including DevOps, QA and cybersecurity. That is where our matching, outreach and mentorship are strongest, and we would rather do that well than do everything at once. More fields are on the roadmap as the team grows.",
+    a: "Software, data and IT roles for students graduating into their first job — including DevOps, QA and cybersecurity. That is where our matching, outreach and mentorship are strongest, and we would rather do that well than do everything at once. More fields are on the roadmap as the team grows.",
   },
 ];
 

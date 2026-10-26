@@ -21,7 +21,7 @@ export const STORY = [
     problem: "She applied to 180 openings. Four replied.",
     detail:
       "Every one went into an ATS behind 250 other applications. Nobody read hers, because nobody read most of them.",
-    fix: "Outmail writes to the person doing the hiring instead, from Ananya's own Gmail, personalised from her resume, so it arrives as a message rather than a submission.",
+    fix: "Outmail writes to the person doing the hiring instead — from Ananya's own Gmail, personalised from her resume, so it arrives as a message rather than a submission.",
     offering: "Cold outreach",
     I: Mail,
     visual: "send",
@@ -33,7 +33,7 @@ export const STORY = [
     problem: "She was applying to whatever LinkedIn showed her.",
     detail:
       "Most of it was senior, or the wrong stack, or closed weeks ago. She spent more time filtering than applying.",
-    fix: "Outmail aggregates openings from across job boards and company sites, scores each against her resume, and shows the reasoning, so effort goes where she has a real chance.",
+    fix: "Outmail aggregates openings from across job boards and company sites, scores each against her resume, and shows the reasoning — so effort goes where she has a real chance.",
     offering: "Job aggregation",
     I: Briefcase,
     visual: "match",
@@ -45,7 +45,7 @@ export const STORY = [
     problem: "Each application took twenty minutes of retyping.",
     detail:
       "Same name, same notice period, same 'why do you want to work here', typed again into a slightly different form.",
-    fix: "Outmail's extension fills them in one click from answers she wrote once, so twenty minutes goes into the ten applications that matter, not the first one.",
+    fix: "Outmail's extension fills them in one click from answers she wrote once — so twenty minutes goes into the ten applications that matter, not the first one.",
     offering: "One-click autofill",
     I: Zap,
     visual: "fill",
@@ -57,7 +57,7 @@ export const STORY = [
     problem: "Then a recruiter replied, and she had nobody to ask.",
     detail:
       "No seniors at that company, no alumni she knew, no idea what the loop looked like or what they would ask.",
-    fix: "Bi-weekly mentorship with people who have already been through it, for the part where getting the interview stops being the hard bit.",
+    fix: "Bi-weekly mentorship with people who have already been through it — for the part where getting the interview stops being the hard bit.",
     offering: "Mentorship",
     I: MessageSquare,
     visual: "mentor",

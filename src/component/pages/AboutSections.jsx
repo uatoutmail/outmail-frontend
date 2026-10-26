@@ -86,7 +86,7 @@ export function ProblemSplit() {
           </p>
           <p className="text-sm text-white/50 leading-relaxed">
             applications per opening. A recruiter reads perhaps twelve of them. Applying harder does
-            not move you into the twelve, being reachable does.
+            not move you into the twelve — being reachable does.
           </p>
         </Reveal>
       </div>

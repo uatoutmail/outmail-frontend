@@ -47,7 +47,7 @@ export default function GettingStartedPage() {
         <PageHeader
           kicker="Setup"
           lines={["Five steps,", "about ten minutes."]}
-          sub="Do them in order, each one depends on the last. Step two is the only genuinely fiddly part, and it is worth understanding why before you start: Outmail sends from your Gmail, not from ours, so Google has to grant permission through an app password rather than a normal login."
+          sub="Do them in order — each one depends on the last. Step two is the only genuinely fiddly part, and it is worth understanding why before you start: Outmail sends from your Gmail, not from ours, so Google has to grant permission through an app password rather than a normal login."
         >
           <Cta label="Start at step one" href="#resume" />
         </PageHeader>

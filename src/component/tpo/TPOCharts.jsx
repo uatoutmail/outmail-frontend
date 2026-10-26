@@ -16,7 +16,7 @@ export default function TPOCharts({ stats }) {
     <div className="space-y-6">
       <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm">
         <div className="flex items-center justify-between mb-1">
-          <h3 className="text-sm font-semibold text-gray-900">Email Activity: Last 7 Days</h3>
+          <h3 className="text-sm font-semibold text-gray-900">Email Activity — Last 7 Days</h3>
           <span className="text-xs text-gray-400 bg-gray-50 border border-gray-200 px-2 py-1 rounded-md">
             Last 7 Days
           </span>

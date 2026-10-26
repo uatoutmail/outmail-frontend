@@ -98,28 +98,9 @@ export async function pingExtension() {
   };
 }
 
-/**
- * What the extension does with data, shown before connecting and agreed to
- * with one click (Chrome Web Store "prominent disclosure and consent"). The
- * extension popup shows the same four points, word for word, for anyone who
- * connects with a code instead. Change both together.
- */
-export const EXTENSION_DATA_DISCLOSURE = [
-  "Downloads your saved profile and resume from your Outmail account",
-  "Reads the form on the page you asked it to fill, and only that page",
-  "Sends the wording of questions it does not recognise to Outmail to find your saved answer. Outmail uses Google Gemini for this. Your answers are not sent to Gemini",
-  "Saves answers you type into those questions to your Outmail account, so they fill next time",
-];
-
-/**
- * Hands a link code to the extension. The token stays on its side.
- *
- * `consent` must be true: the extension refuses to link unless the user has
- * just agreed to EXTENSION_DATA_DISCLOSURE. Only pass it from the click on the
- * "Agree and connect" button, never automatically.
- */
-export async function pairExtension(code, { consent = false } = {}) {
-  return request("pair", { code, consent: consent === true });
+/** Hands a link code to the extension. The token stays on its side. */
+export async function pairExtension(code) {
+  return request("pair", { code });
 }
 
 /**
@@ -139,8 +120,6 @@ export function describeFailure(reason) {
       return "The extension is installed but isn't responding. Reload this page, or restart your browser.";
     case "missing_code":
       return "Something went wrong generating your connect code. Try again.";
-    case "consent_required":
-      return "The extension needs your agreement before it connects. Click Agree and connect.";
     default:
       return reason || "Connecting failed. Try again, and tell us if it keeps happening.";
   }

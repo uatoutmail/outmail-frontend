@@ -178,11 +178,11 @@ export default function ZPricing() {
             className="font-syne text-4xl md:text-5xl font-bold tracking-tight leading-[1.05]"
           />
           <p className="text-white/45 mt-4 max-w-lg">
-            The only difference is mentorship. One payment either way, nothing renews. For
+            The only difference is mentorship. One payment either way — nothing renews. For
             comparison, LinkedIn Premium is ₹1,400–2,800 <em>per month</em> in India.
           </p>
           <p className="text-white/30 text-xs mt-3 max-w-lg">
-            Built for software, data and IT roles right now, that is where our job matching is
+            Built for software, data and IT roles right now — that is where our job matching is
             strongest.
           </p>
         </Reveal>
@@ -251,7 +251,7 @@ export default function ZPricing() {
                   role="status"
                 >
                   {couponState.valid
-                    ? `Applied, ${formatPaise(couponState.finalAmount)} instead${
+                    ? `Applied — ${formatPaise(couponState.finalAmount)} instead${
                         couponState.spotsLeft != null ? `, ${couponState.spotsLeft} spots left` : ""
                       }`
                     : couponState.error || "That code is not valid."}
@@ -265,7 +265,7 @@ export default function ZPricing() {
                 checkout is drip pricing, which the CCPA's 2023 dark-patterns
                 guidelines name directly — so the all-in claim is stated, not
                 implied (OUT-235). */}
-            Prices in INR, inclusive of all taxes. What you see is what you pay, no fees added at
+            Prices in INR, inclusive of all taxes. What you see is what you pay — no fees added at
             checkout. Not right for you?{" "}
             <Link href="/refund-and-cancellation" className="underline hover:text-white/70">
               Full refund within 7 days

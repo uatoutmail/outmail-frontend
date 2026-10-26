@@ -151,7 +151,7 @@ export default function JobsPage() {
         <div className="lg:col-span-2 bg-white rounded-xl border border-gray-200 p-6 shadow-sm flex flex-col gap-4">
           <div>
             <h3 className="text-sm font-semibold text-gray-900 mb-1">
-              Outmail Score: How It Works
+              Outmail Score — How It Works
             </h3>
             <p className="text-xs text-gray-400">
               Scores rank each job by how urgently students should reach out

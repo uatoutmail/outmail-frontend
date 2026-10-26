@@ -18,7 +18,7 @@ export const OFFERINGS = [
     t: "Cold outreach",
     I: Mail,
     pill: "Reach",
-    d: "Personalised emails to verified recruiters, sent from your own Gmail, never from us. Warm-up starts at five a day and grows only while you are actually sending.",
+    d: "Personalised emails to verified recruiters, sent from your own Gmail — never from us. Warm-up starts at five a day and grows only while you are actually sending.",
     points: [
       "Verified recruiter and company discovery",
       "Written from your resume, not a template",
@@ -42,7 +42,7 @@ export const OFFERINGS = [
     t: "One-click autofill",
     I: Zap,
     pill: "Apply",
-    d: "A browser extension that completes applications from answers you wrote once, so twenty minutes goes into the tenth application, not the first.",
+    d: "A browser extension that completes applications from answers you wrote once — so twenty minutes goes into the tenth application, not the first.",
     points: [
       "Answers saved once, reused everywhere",
       "Works on the ATS forms students actually hit",
@@ -94,8 +94,8 @@ function Mock({ kind }) {
       <div className={base}>
         <p className="text-[11px] text-white/35 mb-3">To: priya.sharma@razorpay.com</p>
         <p className="text-sm text-white/75 leading-relaxed mb-4">
-          Hi Priya, I saw Razorpay is hiring backend interns. I built a payments reconciliation tool
-          in college that handled…
+          Hi Priya — I saw Razorpay is hiring backend interns. I built a payments reconciliation
+          tool in college that handled…
         </p>
         <div className="flex gap-1.5">
           <span className="text-[9px] px-2 py-0.5 rounded-full bg-emerald-500/15 text-emerald-300 border border-emerald-500/25">

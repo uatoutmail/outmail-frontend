@@ -5,7 +5,6 @@ import { toast } from "sonner";
 import { api } from "@/lib/api";
 import {
   describeFailure,
-  EXTENSION_DATA_DISCLOSURE,
   isExtensionInstalled,
   pairExtension,
   pingExtension,
@@ -48,16 +47,12 @@ const AutofillExtensionCard = () => {
     };
   }, []);
 
-  /**
-   * One click: mint a code, hand it to the extension, never show it. The click
-   * is on "Agree and connect", directly under the data disclosure, so it is
-   * also the user's agreement (Chrome Web Store prominent disclosure).
-   */
+  /** One click: mint a code, hand it to the extension, never show it. */
   const connect = async () => {
     setLoading(true);
     try {
       const { data } = await api.post("/api/autofill/link/code");
-      const result = await pairExtension(data.code, { consent: true });
+      const result = await pairExtension(data.code);
       if (result.ok) {
         setLinked(true);
         setCode("");
@@ -116,36 +111,18 @@ const AutofillExtensionCard = () => {
         <>
           <p className="text-xs text-white/50 mb-4 leading-relaxed">
             {detected
-              ? "The extension is installed in this browser. One click connects it to your account. There is nothing to copy."
+              ? "The extension is installed in this browser. One click connects it to your account — there is nothing to copy."
               : "Install the Outmail Autofill extension, then connect it here to fill job applications from your profile."}
           </p>
 
           {detected ? (
-            <>
-              <div className="mb-4 rounded-lg border border-white/10 bg-white/5 p-3">
-                <p className="text-xs font-semibold text-white/80">
-                  When you connect it and click Fill, the extension:
-                </p>
-                <ul className="mt-2 list-disc space-y-1 pl-4 text-[11px] leading-relaxed text-white/60">
-                  {EXTENSION_DATA_DISCLOSURE.map((point) => (
-                    <li key={point}>{point}</li>
-                  ))}
-                </ul>
-                <p className="mt-2 text-[11px] text-white/40">
-                  It never submits a form and does not track your browsing.{" "}
-                  <a href="/privacy-policy" className="text-purple-300 hover:underline">
-                    Privacy policy
-                  </a>
-                </p>
-              </div>
-              <button
-                onClick={connect}
-                disabled={loading}
-                className="w-full py-2 rounded-lg bg-purple-600 text-white text-sm font-semibold hover:bg-purple-500 transition-colors disabled:bg-purple-800"
-              >
-                {loading ? "Connecting…" : "Agree and connect"}
-              </button>
-            </>
+            <button
+              onClick={connect}
+              disabled={loading}
+              className="w-full py-2 rounded-lg bg-purple-600 text-white text-sm font-semibold hover:bg-purple-500 transition-colors disabled:bg-purple-800"
+            >
+              {loading ? "Connecting…" : "Connect extension"}
+            </button>
           ) : null}
 
           {code && expiresIn > 0 ? (
@@ -183,7 +160,7 @@ const AutofillExtensionCard = () => {
               }
             >
               {detected
-                ? "The extension is in another browser, show me a code"
+                ? "The extension is in another browser — show me a code"
                 : loading
                   ? "Generating…"
                   : "Generate Link Code"}

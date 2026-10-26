@@ -89,7 +89,7 @@ function KeychainNote() {
         abcd efgh ijkl mnop
       </div>
       <p className="text-[13px] text-white/45 leading-relaxed">
-        In your own computer&apos;s keychain, macOS Keychain or Windows Credential Manager. It is
+        In your own computer&apos;s keychain — macOS Keychain or Windows Credential Manager. It is
         never sent to our servers and we cannot read it. Revoking it in your Google account stops
         all sending immediately.
       </p>

@@ -91,7 +91,7 @@ export default function AnalyticsPage() {
       <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm mb-6">
         <div className="flex items-center justify-between mb-1">
           <h3 className="text-sm font-semibold text-gray-900">
-            Student Engagement Trend, Aug 2025 to Mar 2026
+            Student Engagement Trend — Aug 2025 to Mar 2026
           </h3>
           <span className="flex items-center gap-1 text-xs text-purple-600 font-medium bg-purple-50 px-2 py-1 rounded-md">
             <TrendingUp size={11} /> Real-time engagement

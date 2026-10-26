@@ -115,10 +115,10 @@ describe("JobPreferences — seeking-type (required, hard-gates eligibility)", (
     await waitFor(() =>
       expect(screen.getByRole("radio", { name: /internships only/i })).toBeChecked()
     );
-    expect(screen.getByRole("radio", { name: /both/i })).not.toBeChecked();
+    expect(screen.getByRole("radio", { name: /internships \+ entry-level/i })).not.toBeChecked();
   });
 
-  it("selecting the full-time-only option and saving sends the exact value", async () => {
+  it("selecting a seeking-type option and saving sends the exact value", async () => {
     api.put.mockResolvedValue({});
     render(<JobPreferences />);
     await userEvent.click(screen.getByRole("button", { name: /what are you looking for/i }));
@@ -126,26 +126,7 @@ describe("JobPreferences — seeking-type (required, hard-gates eligibility)", (
       expect(screen.getByDisplayValue("Backend roles at startups")).toBeInTheDocument()
     );
 
-    await userEvent.click(screen.getByRole("radio", { name: /full-time roles only/i }));
-    await userEvent.click(screen.getByRole("button", { name: /save & refresh matches/i }));
-
-    await waitFor(() =>
-      expect(api.put).toHaveBeenCalledWith(
-        "/api/profile",
-        expect.objectContaining({ seekingType: "fulltime_only" })
-      )
-    );
-  });
-
-  it("selecting the both option and saving sends the exact value", async () => {
-    api.put.mockResolvedValue({});
-    render(<JobPreferences />);
-    await userEvent.click(screen.getByRole("button", { name: /what are you looking for/i }));
-    await waitFor(() =>
-      expect(screen.getByDisplayValue("Backend roles at startups")).toBeInTheDocument()
-    );
-
-    await userEvent.click(screen.getByRole("radio", { name: /both/i }));
+    await userEvent.click(screen.getByRole("radio", { name: /internships \+ entry-level/i }));
     await userEvent.click(screen.getByRole("button", { name: /save & refresh matches/i }));
 
     await waitFor(() =>

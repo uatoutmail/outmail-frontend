@@ -31,7 +31,7 @@ export default function ContactPage() {
         <PageHeader
           kicker="Contact & support"
           lines={["Have a question?", "A person replies."]}
-          sub="Whether you're a student with a question, a recruiter curious about partnerships, or a placement officer exploring campus plans, we reply within 24 hours."
+          sub="Whether you're a student with a question, a recruiter curious about partnerships, or a placement officer exploring campus plans — we reply within 24 hours."
         >
           <Cta label="Send us a message" href="#contact-us" />
         </PageHeader>

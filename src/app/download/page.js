@@ -7,14 +7,14 @@ import { JsonLd, breadcrumbSchema } from "@/lib/structuredData";
 export const metadata = {
   title: "Download the Desktop App | Outmail",
   description:
-    "Download the Outmail desktop app. It sends your personalized cold outreach from your own Gmail account, on your own machine.",
+    "Download the Outmail desktop app — sends your personalized cold outreach from your own Gmail account, on your own machine.",
   alternates: {
     canonical: "https://outmail.in/download",
   },
   openGraph: {
     title: "Download the Desktop App | Outmail",
     description:
-      "Download the Outmail desktop app. It sends your personalized cold outreach from your own Gmail account, on your own machine.",
+      "Download the Outmail desktop app — sends your personalized cold outreach from your own Gmail account, on your own machine.",
     url: "https://outmail.in/download",
     type: "website",
   },
@@ -34,7 +34,7 @@ export default function DownloadPage() {
         <PageHeader
           kicker="Desktop app"
           lines={["Your outreach, sent from", "your own inbox."]}
-          sub="A small always-on app that sends this week's plan from your own Gmail account, on your own machine. Nothing routes through Outmail's servers."
+          sub="A small always-on app that sends this week's plan from your own Gmail account, on your own machine — nothing routes through Outmail's servers."
         >
           <DownloadCard />
         </PageHeader>

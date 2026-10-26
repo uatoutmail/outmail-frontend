@@ -9,7 +9,7 @@ export const metadata = {
   openGraph: {
     title: "Getting started | Outmail",
     description:
-      "Five steps, about ten minutes, including why Gmail needs an app password and where that password is stored.",
+      "Five steps, about ten minutes — including why Gmail needs an app password and where that password is stored.",
     url: "https://outmail.in/getting-started",
     siteName: "Outmail",
     type: "article",

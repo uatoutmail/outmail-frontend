@@ -2,7 +2,7 @@
 // two objects, so this never needs to change across app versions. The repo
 // itself is private (its GitHub Release assets 404 for anyone without repo
 // access), so S3 is the actual public download surface. Single source of
-// truth, shared by the dashboard's MailingAgentStatus and the public
+// truth, shared by the dashboard's MailingAgentPanel and the public
 // /download page — previously duplicated in the panel alone, which is how
 // the backend's separate `${FRONTEND_URL}/download` fallback went stale
 // with no page behind it at all.

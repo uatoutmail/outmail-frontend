@@ -116,17 +116,8 @@ export default function Page() {
     }
   }, [isAuthenticated, loading]);
 
-  // Show the loading screen while checking auth, and also while we have a
-  // stored token but the live check hasn't (yet) confirmed it — e.g. a
-  // transient /api/user/me failure (a 429, a network blip) that flips
-  // isAuthenticated to false without the user actually being signed out.
-  // DashboardLayout below reads user.name/user.role/etc. unguarded, so
-  // rendering it with a null user here would just trade a blank screen for
-  // a crash; a real `isAuthenticated` is the only state this page can
-  // safely render against. The window-focus re-check in AuthContext retries
-  // checkAuth and clears this. This exact gate blanked a logged-in
-  // dashboard when the rate limiter on /me was too tight (2026-10-25).
-  if (loading || (!isAuthenticated && hasStoredToken())) {
+  // Show loading screen while checking auth
+  if (loading) {
     return (
       <div className="flex items-center justify-center min-h-screen bg-gradient-to-l from-black via-primary to-black">
         <div className="text-white text-center">
@@ -137,8 +128,7 @@ export default function Page() {
     );
   }
 
-  // Don't render if not authenticated and no stored token — a genuinely
-  // signed-out visitor. The effect above already redirects this case to "/".
+  // Don't render if not authenticated
   if (!isAuthenticated) {
     return null;
   }
@@ -175,7 +165,7 @@ export default function Page() {
               Your {justActivated.name} plan is active.
             </p>
             <p className="text-sm text-emerald-200/80 mt-1">
-              Your placement year has started and everything is unlocked. You have not been charged
+              Your placement year has started — everything is unlocked. You have not been charged
               twice.
             </p>
           </div>
@@ -256,7 +246,7 @@ function ExpiryNotice({ user, onGoToBilling }) {
         </p>
         <p className={`text-sm mt-1 ${expired ? "text-red-200/80" : "text-amber-200/80"}`}>
           {expired
-            ? "Sending is paused and job openings are hidden. Nothing has been deleted, renew and everything comes back."
+            ? "Sending is paused and job openings are hidden. Nothing has been deleted — renew and everything comes back."
             : "Renewing early adds to the days you have left rather than replacing them."}
         </p>
       </div>

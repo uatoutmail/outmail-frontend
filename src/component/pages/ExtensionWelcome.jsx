@@ -3,12 +3,9 @@
 // The connect screen for the Autofill extension.
 //
 // It opens by itself the moment the extension is installed, and it is what the
-// popup's "Connect to Outmail" button opens. A student who has just installed
-// the extension types nothing: if they are signed in and the extension is
-// present, this page shows what the extension does with their data and
-// connects on one click of "Agree and connect". That click is required by the
-// Chrome Web Store (prominent disclosure and consent), and the extension
-// refuses to link without it, so it must never be automated away.
+// popup's "Connect to Outmail" button opens. The entire design goal is that a
+// student who has just installed the extension does nothing at all: if they
+// are signed in and the extension is present, this page pairs them and says so.
 //
 // Every other outcome is a named state with its own sentence and its own next
 // action — not signed in, extension missing, already connected, browser
@@ -30,7 +27,6 @@ import { useAuth } from "@/context/AuthContext";
 import { api } from "@/lib/api";
 import {
   describeFailure,
-  EXTENSION_DATA_DISCLOSURE,
   isExtensionInstalled,
   pairExtension,
   pingExtension,
@@ -64,7 +60,7 @@ export default function ExtensionWelcome() {
     setError("");
     try {
       const { data } = await api.post("/api/autofill/link/code");
-      const result = await pairExtension(data.code, { consent: true });
+      const result = await pairExtension(data.code);
       if (result.ok) {
         setState(STATE.CONNECTED);
         return;
@@ -85,8 +81,8 @@ export default function ExtensionWelcome() {
     }
   }, []);
 
-  // Decide what this visit is. The happy path stops at READY, which shows the
-  // data disclosure and waits for "Agree and connect".
+  // Decide what this visit is, then act. The happy path connects with no click
+  // at all — which is the point of the page.
   useEffect(() => {
     if (authLoading) return;
 
@@ -111,12 +107,13 @@ export default function ExtensionWelcome() {
         return;
       }
       setState(STATE.READY);
+      connect();
     })();
 
     return () => {
       cancelled = true;
     };
-  }, [authLoading, isAuthenticated]);
+  }, [authLoading, isAuthenticated, connect]);
 
   return (
     <main className="min-h-screen bg-surface-page px-5 py-16 font-sans">
@@ -127,7 +124,6 @@ export default function ExtensionWelcome() {
             state={state}
             error={error}
             email={user?.email}
-            onConnect={connect}
             onRetry={connect}
             showFallback={showFallback}
             onToggleFallback={() => setShowFallback((v) => !v)}
@@ -153,26 +149,16 @@ function Header() {
   );
 }
 
-function Body({ state, error, email, onConnect, onRetry, showFallback, onToggleFallback }) {
+function Body({ state, error, email, onRetry, showFallback, onToggleFallback }) {
   switch (state) {
     case STATE.CHECKING:
-      return (
-        <Status
-          icon={<Loader2 className="animate-spin" size={20} aria-hidden="true" />}
-          title="Checking…"
-          detail="Looking for the extension in this browser."
-        />
-      );
-
     case STATE.READY:
-      return <Disclosure email={email} onConnect={onConnect} />;
-
     case STATE.CONNECTING:
       return (
         <Status
           icon={<Loader2 className="animate-spin" size={20} aria-hidden="true" />}
           title="Connecting…"
-          detail="This takes a second."
+          detail="This takes a second. You don't need to do anything."
         />
       );
 
@@ -221,7 +207,7 @@ function Body({ state, error, email, onConnect, onRetry, showFallback, onToggleF
         <Status
           icon={<MonitorDown size={20} aria-hidden="true" />}
           title="We can't see the extension"
-          detail="This browser doesn't have the Outmail Autofill extension installed, or it was just installed and this tab hasn't caught up yet."
+          detail="This browser doesn't have the Outmail Autofill extension installed — or it was just installed and this tab hasn't caught up yet."
           action={
             <button
               type="button"
@@ -259,46 +245,6 @@ function Body({ state, error, email, onConnect, onRetry, showFallback, onToggleF
     default:
       return null;
   }
-}
-
-/**
- * What the extension does with data, and the one click that agrees to it.
- * The same four points appear in the extension popup for anyone connecting
- * with a code.
- */
-function Disclosure({ email, onConnect }) {
-  return (
-    <div aria-live="polite">
-      <div className="flex items-center gap-2 text-primary">
-        <ShieldCheck size={20} aria-hidden="true" />
-        <h2 className="text-lg font-semibold">Before you connect</h2>
-      </div>
-      <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
-        The extension fills applications from your Outmail account
-        {email ? ` (${email})` : ""}. When you connect it and click Fill, it:
-      </p>
-      <ul className="mt-3 list-disc space-y-2 pl-5 text-sm leading-relaxed text-foreground">
-        {EXTENSION_DATA_DISCLOSURE.map((point) => (
-          <li key={point}>{point}</li>
-        ))}
-      </ul>
-      <p className="mt-4 text-xs leading-relaxed text-muted-foreground">
-        It never submits a form and does not track your browsing. Demographic answers are used only
-        if you switch them on. Read the{" "}
-        <Link href="/privacy-policy" className="text-primary hover:underline">
-          privacy policy
-        </Link>
-        .
-      </p>
-      <button
-        type="button"
-        onClick={onConnect}
-        className="mt-5 inline-flex items-center justify-center rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground transition-colors hover:bg-primary-hover"
-      >
-        Agree and connect
-      </button>
-    </div>
-  );
 }
 
 /**
@@ -354,8 +300,8 @@ function NextSteps() {
       </p>
       <ul className="mt-3 space-y-2 text-sm text-muted-foreground">
         <li>Open any job application and the extension offers to fill it.</li>
-        <li>Your resume attaches wherever the form asks for one.</li>
-        <li>Nothing is ever submitted for you. You always press the button.</li>
+        <li>Your résumé attaches wherever the form asks for one.</li>
+        <li>Nothing is ever submitted for you — you always press the button.</li>
       </ul>
       <Link
         href="/dashboard?tab=autofillData"

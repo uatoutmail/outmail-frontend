@@ -75,7 +75,7 @@ export default function RefundAndCancellation() {
               <li>
                 All prices are in Indian Rupees (INR) and are{" "}
                 <strong className="text-slate-900">inclusive of all applicable taxes</strong>. The
-                price shown is the total you pay, nothing is added at checkout.
+                price shown is the total you pay — nothing is added at checkout.
               </li>
               <li>
                 Payments are processed by Razorpay. We do not receive or store your card details.
@@ -95,7 +95,7 @@ export default function RefundAndCancellation() {
               </p>
               <p>
                 If you no longer want to use Outmail, you can stop at any time. Within the first 7
-                days you may also request a full refund, see section 3.
+                days you may also request a full refund — see section 3.
               </p>
               <p>No cancellation fee is charged, because there is nothing to cancel.</p>
             </div>
@@ -250,7 +250,7 @@ export default function RefundAndCancellation() {
               </p>
               <p>
                 Where a plan is offered at a launch price, that price is a genuine discount against
-                the standard price shown alongside it, and it applies for a stated reason, for
+                the standard price shown alongside it, and it applies for a stated reason — for
                 example, to our first group of students. It is not a permanent “sale”.
               </p>
               <p>

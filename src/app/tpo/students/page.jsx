@@ -240,7 +240,7 @@ export default function StudentsPage() {
         {selected && (
           <div className="border-t border-purple-100 bg-purple-50/40 px-6 py-5">
             <p className="text-sm font-semibold text-gray-800 mb-3">
-              {selected.name || selected.display_name}: Activity Breakdown
+              {selected.name || selected.display_name} — Activity Breakdown
             </p>
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
               {[

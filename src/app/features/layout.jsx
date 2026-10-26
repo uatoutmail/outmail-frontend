@@ -6,7 +6,7 @@ export const metadata = {
   openGraph: {
     title: "Features | Outmail",
     description:
-      "AI-personalized cold outreach, resume-matched jobs, one-click Autofill, and mentorship, all in one place.",
+      "AI-personalized cold outreach, resume-matched jobs, one-click Autofill, and mentorship — all in one place.",
     url: "https://outmail.in/features",
     siteName: "Outmail",
     type: "website",

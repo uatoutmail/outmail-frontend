@@ -69,7 +69,7 @@ export function message(outcome) {
       return {
         tone: "success",
         title: "You already have this plan",
-        body: "Your existing plan is still active. You have not been charged again.",
+        body: "Your existing plan is still active — you have not been charged again.",
       };
     case OUTCOME.SOLD_OUT:
       return {

@@ -1,6 +1,6 @@
 export default function manifest() {
   return {
-    name: "Outmail: Cold Outreach, Jobs & Mentorship",
+    name: "Outmail — Cold Outreach, Jobs & Mentorship",
     short_name: "Outmail",
     description:
       "AI-personalized cold outreach from your own inbox, resume-matched job intelligence, one-click Autofill, and mentorship.",
