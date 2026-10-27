@@ -118,6 +118,25 @@ describe("JobCard — a job with an existing userAction (not new)", () => {
 // A student clicking through is the only check that runs against every live
 // job every day — the fastest way we learn a link rotted since the last
 // verification sweep.
+describe("JobCard — autofill readiness badge (OUT-275)", () => {
+  it("shows 'Autofill ready' when the backend says autofillReady: true", () => {
+    render(<JobCard job={{ ...newJob, autofillReady: true }} {...makeHandlers()} />);
+    expect(screen.getByText("Autofill ready")).toBeInTheDocument();
+    expect(screen.queryByText("Fill manually")).not.toBeInTheDocument();
+  });
+
+  it("shows 'Fill manually' when autofillReady is explicitly false", () => {
+    render(<JobCard job={{ ...newJob, autofillReady: false }} {...makeHandlers()} />);
+    expect(screen.getByText("Fill manually")).toBeInTheDocument();
+  });
+
+  it("defaults to 'Fill manually' when the field is missing (older cached payload)", () => {
+    const { autofillReady, ...jobWithoutField } = newJob;
+    render(<JobCard job={jobWithoutField} {...makeHandlers()} />);
+    expect(screen.getByText("Fill manually")).toBeInTheDocument();
+  });
+});
+
 describe("JobCard — reporting a dead job", () => {
   beforeEach(() => vi.clearAllMocks());
 
