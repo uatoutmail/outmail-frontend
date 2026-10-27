@@ -10,6 +10,7 @@ import {
   ChevronDown,
   ChevronUp,
   AlertTriangle,
+  Wand2,
 } from "lucide-react";
 import React, { useState } from "react";
 import { api } from "@/lib/api";
@@ -85,6 +86,24 @@ const JobCard = ({
                 {job.seniority}
               </span>
             )}
+            {/* Never gates whether a job shows up — purely so a student whose
+                extension doesn't fill this one knows Outmail hasn't confirmed
+                it yet, rather than assuming the extension is broken (OUT-275). */}
+            <span
+              title={
+                job.autofillReady
+                  ? "Outmail's extension has a confirmed mapping for this application form."
+                  : "Outmail hasn't confirmed the extension can fill this form yet — fill it by hand."
+              }
+              className={`flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-semibold border ${
+                job.autofillReady
+                  ? "bg-green-500/10 text-green-300 border-green-500/20"
+                  : "bg-white/5 text-white/40 border-white/10"
+              }`}
+            >
+              <Wand2 size={11} className="shrink-0" />
+              {job.autofillReady ? "Autofill ready" : "Fill manually"}
+            </span>
           </div>
 
           <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-sm text-white/60">
