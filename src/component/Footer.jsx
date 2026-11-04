@@ -198,7 +198,7 @@ export default function Footer({ variant = "dark" }) {
               regardless, so withholding it would cost compliance and hide
               nothing. */}
           <p>
-            © {new Date().getFullYear()} Outmail · PrimeWork Labs LLP · LLPIN ADB-2168 ·{" "}
+            © {new Date().getFullYear()} Outmail · PRIMEWORK LABS LLP · LLPIN ADB-2168 ·{" "}
             <Link href="/terms-and-conditions" className="hover:text-white/60 transition-colors">
               registered with limited liability
             </Link>

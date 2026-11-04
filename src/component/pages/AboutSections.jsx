@@ -100,7 +100,7 @@ export function EntityLetter() {
       <Reveal>
         <Kicker className="mb-5">Who runs Outmail</Kicker>
         <div className="space-y-4 text-[15px] text-white/60 leading-relaxed">
-          <p>We are a small team at PrimeWork Labs LLP.</p>
+          <p>We are a small team at PRIMEWORK LABS LLP.</p>
           <p>
             Small is why support is a person and not a ticket queue, and why mentorship is capped at
             twenty-five seats instead of sold to everyone who asks. It is also why we would rather
@@ -116,7 +116,7 @@ export function EntityLetter() {
             published in the Terms and the Privacy Policy rather than repeated
             across the site. */}
         <p className="mt-7 text-sm text-white/35">
-          PrimeWork Labs LLP · LLPIN ADB-2168
+          PRIMEWORK LABS LLP · LLPIN ADB-2168
           <br />
           <a href="mailto:support@outmail.in" className="text-primary hover:underline">
             support@outmail.in

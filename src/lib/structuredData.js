@@ -17,7 +17,7 @@ export const organizationSchema = {
   "@context": "https://schema.org",
   "@type": "Organization",
   name: "Outmail",
-  legalName: "PrimeWork Labs LLP",
+  legalName: "PRIMEWORK LABS LLP",
   url: SITE,
   logo: `${SITE}/Logo_Outmail.png`,
   description:

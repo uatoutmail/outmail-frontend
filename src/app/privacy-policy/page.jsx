@@ -1,7 +1,7 @@
 export const metadata = {
   title: "Privacy Policy",
   description:
-    "How Outmail, operated by PrimeWork Labs LLP, collects, uses and protects personal data under India's DPDP Act 2023, including resumes, Gmail access and recruiter contact data.",
+    "How Outmail, operated by PRIMEWORK LABS LLP, collects, uses and protects personal data under India's DPDP Act 2023, including resumes, Gmail access and recruiter contact data.",
   alternates: { canonical: "https://outmail.in/privacy-policy" },
   openGraph: {
     title: "Privacy Policy | Outmail",
@@ -65,8 +65,8 @@ export default function PrivacyPolicy() {
             <div className="space-y-2">
               <p>
                 Outmail is operated by{" "}
-                <strong className="text-slate-900">PrimeWork Labs LLP</strong>, a limited liability
-                partnership registered in India. For the purposes of the DPDP Act, PrimeWork Labs
+                <strong className="text-slate-900">PRIMEWORK LABS LLP</strong>, a limited liability
+                partnership registered in India. For the purposes of the DPDP Act, PRIMEWORK LABS
                 LLP is the <strong className="text-slate-900">Data Fiduciary</strong>.
               </p>
               <p className="pt-2">LLPIN: ADB-2168</p>
@@ -550,7 +550,7 @@ export default function PrivacyPolicy() {
               <p className="pt-2">
                 <strong className="text-slate-900">Vishu Tomer</strong>
               </p>
-              <p>Designated Partner, PrimeWork Labs LLP</p>
+              <p>Designated Partner, PRIMEWORK LABS LLP</p>
               <p>
                 Email: <A href="mailto:admin@outmail.in">admin@outmail.in</A>
               </p>
