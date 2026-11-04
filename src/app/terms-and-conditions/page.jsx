@@ -1,7 +1,7 @@
 export const metadata = {
   title: "Terms and Conditions",
   description:
-    "The terms governing your use of Outmail, operated by PrimeWork Labs LLP: one placement year of recruiter outreach, matched jobs and optional mentorship.",
+    "The terms governing your use of Outmail, operated by PRIMEWORK LABS LLP: one placement year of recruiter outreach, matched jobs and optional mentorship.",
   alternates: { canonical: "https://outmail.in/terms-and-conditions" },
   openGraph: {
     title: "Terms and Conditions | Outmail",
@@ -40,10 +40,10 @@ export default function TermsAndConditions() {
           <Section>
             <p className="text-lg text-slate-800">
               These terms are the agreement between you and{" "}
-              <strong className="text-slate-900">PrimeWork Labs LLP</strong> (LLPIN ADB-2168), which
+              <strong className="text-slate-900">PRIMEWORK LABS LLP</strong> (LLPIN ADB-2168), which
               operates Outmail at <A href="https://outmail.in">https://outmail.in</A> (“Outmail”,
               “we”, “our”, “us”). Registered office: 1/400, UIT, Bhiwadi, Alwar, Rajasthan 301019,
-              India. PrimeWork Labs LLP is{" "}
+              India. PRIMEWORK LABS LLP is{" "}
               <strong className="text-slate-900">registered with limited liability</strong> under
               the Limited Liability Partnership Act, 2008.
             </p>
@@ -260,7 +260,7 @@ export default function TermsAndConditions() {
             <H2>9. Our intellectual property</H2>
             <p>
               Outmail, its name, branding, software, matching system and recruiter database are
-              owned by PrimeWork Labs LLP and protected by law. Nothing in these terms transfers any
+              owned by PRIMEWORK LABS LLP and protected by law. Nothing in these terms transfers any
               of it to you. You receive a right to use the service, not a right to its underlying
               assets.
             </p>
@@ -389,7 +389,7 @@ export default function TermsAndConditions() {
                 Designated Partner, <A href="mailto:admin@outmail.in">admin@outmail.in</A>, +91
                 90570 26464
               </p>
-              <p>PrimeWork Labs LLP, 1/400, UIT, Bhiwadi, Alwar, Rajasthan 301019, India</p>
+              <p>PRIMEWORK LABS LLP, 1/400, UIT, Bhiwadi, Alwar, Rajasthan 301019, India</p>
               <p>
                 We acknowledge grievances within 48 hours and aim to resolve them within 30 days.
               </p>
