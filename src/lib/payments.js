@@ -43,8 +43,13 @@ export const validateCoupon = async ({ code, planId }) => {
 // plan or coupon and rejects a body that tries to set it, because any paid
 // order — at any amount — grants the paid send-cap tier. Passing them here
 // would be silently ignored at best and read as tampering at worst.
-const createPaymentOrder = async ({ planId, couponCode }) => {
-  const response = await api.post("/api/payments/orders", { planId, couponCode });
+//
+// `billingState` IS required (2026-11-05, GST went live): the backend uses it
+// to split CGST+SGST from IGST on the receipt and rejects a request without
+// one — see BillingStateModal, which is what collects it before this is ever
+// called.
+const createPaymentOrder = async ({ planId, couponCode, billingState }) => {
+  const response = await api.post("/api/payments/orders", { planId, couponCode, billingState });
   return response.data; // { orderId, razorpayOrderId, amount, currency, keyId }
 };
 
@@ -81,12 +86,19 @@ const loadRazorpayScript = () =>
  * "payment went wrong" and word the message accordingly.
  *
  * `prefill` is optional { name, email } to save the user retyping.
+ * `billingState` is required — see createPaymentOrder's comment.
  */
-export const startCheckout = async ({ planId, couponCode, prefill = {}, onModalClosed } = {}) => {
+export const startCheckout = async ({
+  planId,
+  couponCode,
+  billingState,
+  prefill = {},
+  onModalClosed,
+} = {}) => {
   const ok = await loadRazorpayScript();
   if (!ok) throw new Error("Failed to load Razorpay. Check your connection.");
 
-  const order = await createPaymentOrder({ planId, couponCode });
+  const order = await createPaymentOrder({ planId, couponCode, billingState });
 
   return new Promise((resolve, reject) => {
     const rzp = new window.Razorpay({

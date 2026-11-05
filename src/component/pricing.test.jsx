@@ -100,13 +100,43 @@ describe("pricing — who can buy", () => {
   });
 });
 
-describe("pricing — one click, one charge", () => {
-  it("passes the plan the user actually clicked", async () => {
+// Clicks the nth "Get it" button, then fills and submits the billing-state
+// modal that now gates checkout (GST, live 2026-11-05) — the one extra step
+// every one-click-charge test has to go through before startCheckout fires.
+async function clickBuyAndPickState(index = 0, state = "Rajasthan") {
+  const buy = (await screen.findAllByRole("button", { name: /^get it$/i }))[index];
+  await userEvent.click(buy);
+  await userEvent.selectOptions(await screen.findByLabelText(/billing state/i), state);
+  await userEvent.click(screen.getByRole("button", { name: /continue to payment/i }));
+}
+
+describe("pricing — the billing-state gate", () => {
+  it("does not call startCheckout until a state is picked and confirmed", async () => {
     render(<Pricing />);
     const buy = (await screen.findAllByRole("button", { name: /^get it$/i }))[0];
     await userEvent.click(buy);
+    expect(await screen.findByLabelText(/billing state/i)).toBeInTheDocument();
+    expect(startCheckout).not.toHaveBeenCalled();
+  });
+
+  it("cancelling the modal never opens checkout", async () => {
+    render(<Pricing />);
+    const buy = (await screen.findAllByRole("button", { name: /^get it$/i }))[0];
+    await userEvent.click(buy);
+    await userEvent.click(await screen.findByRole("button", { name: /^cancel$/i }));
+    expect(screen.queryByLabelText(/billing state/i)).not.toBeInTheDocument();
+    expect(startCheckout).not.toHaveBeenCalled();
+  });
+});
+
+describe("pricing — one click, one charge", () => {
+  it("passes the plan the user actually clicked, and the state they picked", async () => {
+    render(<Pricing />);
+    await clickBuyAndPickState(0, "Rajasthan");
     await waitFor(() =>
-      expect(startCheckout).toHaveBeenCalledWith(expect.objectContaining({ planId: "pa" }))
+      expect(startCheckout).toHaveBeenCalledWith(
+        expect.objectContaining({ planId: "pa", billingState: "Rajasthan" })
+      )
     );
   });
 
@@ -122,8 +152,8 @@ describe("pricing — one click, one charge", () => {
         })
     );
     render(<Pricing />);
+    await clickBuyAndPickState();
     const buy = (await screen.findAllByRole("button", { name: /^get it$/i }))[0];
-    await userEvent.click(buy);
     await waitFor(() => expect(buy).toBeDisabled());
     for (const b of screen.getAllByRole("button")) {
       if (/get it|take a seat|fully subscribed/i.test(b.textContent)) expect(b).toBeDisabled();
@@ -134,8 +164,7 @@ describe("pricing — one click, one charge", () => {
   it("tells the user which phase it is in, so a pause is not read as a hang", async () => {
     startCheckout.mockImplementation(() => new Promise(() => {}));
     render(<Pricing />);
-    const buy = (await screen.findAllByRole("button", { name: /^get it$/i }))[0];
-    await userEvent.click(buy);
+    await clickBuyAndPickState();
     expect(await screen.findByRole("button", { name: /opening/i })).toBeInTheDocument();
   });
 });
