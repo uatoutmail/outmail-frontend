@@ -140,7 +140,6 @@ export default function ZPricing() {
   };
 
   const planA = plans.find((p) => p.code === "PLAN_A");
-  const planB = plans.find((p) => p.code === "PLAN_B");
 
   // One CTA renderer for both columns: the label carries every state the
   // button can be in, so a disabled button always says why it is disabled.
@@ -219,12 +218,7 @@ export default function ZPricing() {
           {!loading && !loadError && (
             <>
               <LaunchBanner plan={planA} />
-              <PlanLedger
-                a={planA}
-                b={planB}
-                renderCtaA={(p) => cta(p, true)}
-                renderCtaB={(p) => cta(p, false)}
-              />
+              <PlanLedger plans={plans} renderCta={(p, { index }) => cta(p, index === 0)} />
             </>
           )}
 

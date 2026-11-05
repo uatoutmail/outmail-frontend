@@ -7,26 +7,72 @@ import { formatPaise } from "@/lib/paymentOutcome";
 /**
  * The plan ledger — the agreed pricing layout, shared by the landing section
  * and the pricing page so the two can never disagree about what a plan
- * includes. Purely presentational: it is handed plans and a CTA renderer, and
- * knows nothing about checkout.
+ * includes. Purely presentational: it is handed the full plans array and a
+ * CTA renderer, and knows nothing about checkout.
  *
- * A ledger rather than cards because the plans differ by exactly one thing.
- * The mentorship-only rows are tinted so that difference reads as a block.
+ * Generalized 2026-11-06 (found live: a disabled plan kept showing a stuck
+ * "calculating" price instead of disappearing) to render 1-3 columns from
+ * whichever of PLAN_CODES are actually present in `plans` — a plan absent
+ * from the array gets NO column at all, never a skeleton. "Still loading"
+ * is a separate, explicit `loading` prop; it is never inferred from a plan
+ * simply being missing, which is exactly how the original bug happened.
  *
  * Feature copy lives here because it is presentation. Every NUMBER comes from
  * the plan objects, which come from /api/payments/plans — this site once
  * advertised "$0 free forever" for a plan the backend charged ₹499 for
  * (OUT-232), and hardcoded copy carrying numbers is how that happens.
  */
-export const MATRIX = [
-  { label: "Cold outreach to verified recruiters", a: true, b: true },
-  { label: "Resume-matched job feed with an explainable score", a: true, b: true },
-  { label: "One-click application autofill", a: true, b: true },
-  { label: "Send scheduling, hiring-signal targeting, analytics", a: true, b: true },
-  { label: "Bi-weekly mentorship sessions", a: false, b: true },
-  { label: "Mentor Q&A and session recordings", a: false, b: true },
-  { label: "Priority support", a: false, b: true },
-];
+export const PLAN_CODES = ["PLAN_A", "PLAN_B", "PLAN_C"];
+
+// A map, not the old {a, b} booleans, so a 3rd code can get its own row data
+// without restructuring this file again. PLAN_A/PLAN_B's content is exactly
+// what it was before this supported more than two columns — "the plans
+// differ by exactly one thing" (mentorship) is still true for those two.
+//
+// PLAN_C has no row data: it isn't live today (retired, see
+// outmail-backend's seedPlans.js) and there's no real feature set to write
+// for a plan that doesn't exist yet. Add it here, as its own object, once a
+// real 3rd plan is activated — a content task, not a code task.
+export const MATRIX_BY_CODE = {
+  PLAN_A: {
+    "Cold outreach to verified recruiters": true,
+    "Resume-matched job feed with an explainable score": true,
+    "One-click application autofill": true,
+    "Send scheduling, hiring-signal targeting, analytics": true,
+    "Bi-weekly mentorship sessions": false,
+    "Mentor Q&A and session recordings": false,
+    "Priority support": false,
+  },
+  PLAN_B: {
+    "Cold outreach to verified recruiters": true,
+    "Resume-matched job feed with an explainable score": true,
+    "One-click application autofill": true,
+    "Send scheduling, hiring-signal targeting, analytics": true,
+    "Bi-weekly mentorship sessions": true,
+    "Mentor Q&A and session recordings": true,
+    "Priority support": true,
+  },
+};
+
+const COLUMN_LABEL = { PLAN_A: "Outreach & Jobs", PLAN_B: "+ Mentorship", PLAN_C: "Plan C" };
+const COLUMN_ACCENT = { PLAN_A: "text-primary", PLAN_B: "text-accent-light", PLAN_C: "text-white" };
+
+// Tailwind's compiler scans for literal class strings, not computed ones —
+// a lookup keyed by column count, not string interpolation.
+const HEADER_LABEL_SPAN = { 1: "col-span-6", 2: "col-span-6", 3: "col-span-3" };
+const HEADER_COL_SPAN = { 1: "col-span-6", 2: "col-span-3", 3: "col-span-3" };
+const ROW_LABEL_SPAN = { 1: "col-span-6", 2: "col-span-6", 3: "col-span-3" };
+const ROW_COL_SPAN = { 1: "col-span-6", 2: "col-span-3", 3: "col-span-3" };
+const FOOT_LABEL_SPAN = {
+  1: "col-span-12 sm:col-span-6",
+  2: "col-span-12 sm:col-span-6",
+  3: "col-span-12 sm:col-span-3",
+};
+const FOOT_COL_SPAN = {
+  1: "col-span-12 sm:col-span-6",
+  2: "col-span-6 sm:col-span-3",
+  3: "col-span-4 sm:col-span-3",
+};
 
 /**
  * The launch offer.
@@ -80,8 +126,8 @@ export function LaunchBanner({ plan }) {
   );
 }
 
-function PriceCell({ plan, accent }) {
-  if (!plan)
+function PriceCell({ plan, accent, skeleton }) {
+  if (skeleton)
     return (
       <span
         className="inline-block w-20 h-7 rounded bg-white/10 animate-pulse align-middle"
@@ -110,59 +156,84 @@ function PriceCell({ plan, accent }) {
   );
 }
 
-export default function PlanLedger({ a, b, renderCtaA, renderCtaB, footNote }) {
+/**
+ * @param plans  the full array from /api/payments/plans (or null/undefined
+ *               while loading) — NOT pre-filtered by the caller. A code not
+ *               present here simply gets no column.
+ * @param loading  explicit "still fetching" signal. While true, renders a
+ *               fixed 2-skeleton-column placeholder regardless of what
+ *               `plans` holds — the real column count is only known once
+ *               loading is false.
+ * @param renderCta(plan, { code, index })  one CTA renderer for every column.
+ */
+export default function PlanLedger({ plans, loading, renderCta, footNote }) {
+  const columns = loading
+    ? [
+        { code: "PLAN_A", plan: null, skeleton: true },
+        { code: "PLAN_B", plan: null, skeleton: true },
+      ]
+    : PLAN_CODES.map((code) => ({ code, plan: plans?.find((p) => p.code === code) })).filter(
+        (c) => c.plan
+      );
+
+  if (columns.length === 0) return null;
+
+  const count = Math.min(columns.length, 3);
+  const matrixRows = [
+    ...new Set(columns.flatMap(({ code }) => Object.keys(MATRIX_BY_CODE[code] || {}))),
+  ];
+
   return (
     <Reveal delay={0.1}>
       <div className="rounded-2xl border border-white/10 overflow-hidden text-left">
         <div className="grid grid-cols-12 gap-3 px-5 sm:px-6 py-6 border-b border-white/10 bg-white/[0.02] items-end">
-          <div className="col-span-6" />
-          <div className="col-span-3 text-center">
-            <p className="text-[10px] uppercase tracking-[2px] text-primary mb-1.5">
-              Outreach &amp; Jobs
-            </p>
-            <PriceCell plan={a} accent="text-primary" />
-          </div>
-          <div className="col-span-3 text-center">
-            <p className="text-[10px] uppercase tracking-[2px] text-accent-light mb-1.5">
-              + Mentorship
-            </p>
-            <PriceCell plan={b} accent="text-accent-light" />
-          </div>
+          <div className={HEADER_LABEL_SPAN[count]} />
+          {columns.map(({ code, plan, skeleton }) => (
+            <div key={code} className={`${HEADER_COL_SPAN[count]} text-center`}>
+              <p className={`text-[10px] uppercase tracking-[2px] mb-1.5 ${COLUMN_ACCENT[code]}`}>
+                {COLUMN_LABEL[code] || code}
+              </p>
+              <PriceCell plan={plan} accent={COLUMN_ACCENT[code]} skeleton={skeleton} />
+            </div>
+          ))}
         </div>
 
-        {MATRIX.map((r, i) => (
-          <Reveal key={r.label} delay={i * 0.03}>
-            <div
-              className={`grid grid-cols-12 gap-3 px-5 sm:px-6 py-4 items-center border-b border-white/[0.06] ${!r.a ? "bg-accent-light/[0.05]" : ""}`}
-            >
-              <span className="col-span-6 text-[13px] sm:text-sm text-white/60 leading-snug">
-                {r.label}
+        {matrixRows.map((label, i) => (
+          <Reveal key={label} delay={i * 0.03}>
+            <div className="grid grid-cols-12 gap-3 px-5 sm:px-6 py-4 items-center border-b border-white/[0.06]">
+              <span
+                className={`${ROW_LABEL_SPAN[count]} text-[13px] sm:text-sm text-white/60 leading-snug`}
+              >
+                {label}
               </span>
-              <span className="col-span-3 flex justify-center">
-                {r.a ? (
-                  <Check size={16} className="text-primary" aria-label="included" />
-                ) : (
-                  <Minus size={16} className="text-white/15" aria-label="not included" />
-                )}
-              </span>
-              <span className="col-span-3 flex justify-center">
-                {r.b ? (
-                  <Check size={16} className="text-accent-light" aria-label="included" />
-                ) : (
-                  <Minus size={16} className="text-white/15" aria-label="not included" />
-                )}
-              </span>
+              {columns.map(({ code }) => {
+                const included = MATRIX_BY_CODE[code]?.[label];
+                return (
+                  <span key={code} className={`${ROW_COL_SPAN[count]} flex justify-center`}>
+                    {included ? (
+                      <Check size={16} className={COLUMN_ACCENT[code]} aria-label="included" />
+                    ) : (
+                      <Minus size={16} className="text-white/15" aria-label="not included" />
+                    )}
+                  </span>
+                );
+              })}
             </div>
           </Reveal>
         ))}
 
         <div className="grid grid-cols-12 gap-3 px-5 sm:px-6 py-6 items-center bg-white/[0.02]">
-          <span className="col-span-12 sm:col-span-6 text-[11px] text-white/30 leading-relaxed mb-3 sm:mb-0">
+          <span
+            className={`${FOOT_LABEL_SPAN[count]} text-[11px] text-white/30 leading-relaxed mb-3 sm:mb-0`}
+          >
             {footNote ??
               "One payment. Twelve months. Nothing renews. All taxes included. Full refund within 7 days."}
           </span>
-          <div className="col-span-6 sm:col-span-3 flex justify-center">{renderCtaA?.(a)}</div>
-          <div className="col-span-6 sm:col-span-3 flex justify-center">{renderCtaB?.(b)}</div>
+          {columns.map(({ code, plan }, index) => (
+            <div key={code} className={`${FOOT_COL_SPAN[count]} flex justify-center`}>
+              {renderCta?.(plan, { code, index })}
+            </div>
+          ))}
         </div>
       </div>
     </Reveal>
