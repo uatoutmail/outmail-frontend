@@ -32,7 +32,6 @@ export default function PricingLedger() {
   }, []);
 
   const a = plans?.find((p) => p.code === "PLAN_A");
-  const b = plans?.find((p) => p.code === "PLAN_B");
 
   return (
     <section id="pricing" className="max-w-4xl mx-auto px-6 py-28">
@@ -66,11 +65,12 @@ export default function PricingLedger() {
           <>
             <LaunchBanner plan={a} />
             <PlanLedger
-              a={a}
-              b={b}
-              renderCtaA={() => <Cta label="Get it" href="/pricing" />}
-              renderCtaB={(p) =>
-                p?.comingSoon ? (
+              plans={plans}
+              loading={plans == null}
+              renderCta={(p, { index }) =>
+                index === 0 ? (
+                  <Cta label="Get it" href="/pricing" />
+                ) : p?.comingSoon ? (
                   <ComingSoonCta plan={p} primary={false} />
                 ) : (
                   <Link
