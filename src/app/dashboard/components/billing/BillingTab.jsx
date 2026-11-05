@@ -1,5 +1,6 @@
 "use client";
 import React, { useEffect, useState } from "react";
+import BillingStateModal from "@/component/payments/BillingStateModal";
 import { useAuth } from "@/context/AuthContext";
 import { api } from "@/lib/api";
 import { formatPaise } from "@/lib/paymentOutcome";
@@ -30,6 +31,9 @@ export default function BillingTab() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
   const [renewing, setRenewing] = useState(false);
+  // true while the billing-state modal is showing, gating the actual renew
+  // call (GST, live 2026-11-05 — see BillingStateModal).
+  const [stateGate, setStateGate] = useState(false);
 
   useEffect(() => {
     let alive = true;
@@ -51,12 +55,12 @@ export default function BillingTab() {
   const days = daysUntilExpiry(user);
   const expired = days != null && days < 0;
 
-  const renew = async () => {
+  const renew = async (billingState) => {
     const target = plans.find((p) => p.code === plan?.code) || plans[0];
     if (!target) return;
     setRenewing(true);
     try {
-      await startCheckout({ planId: target.id });
+      await startCheckout({ planId: target.id, billingState });
       await refreshUser();
       const res = await api.get("/api/payments/orders");
       setOrders(res.data || []);
@@ -73,13 +77,28 @@ export default function BillingTab() {
 
   return (
     <div className="space-y-8 max-w-3xl">
-      <PlanStatus plan={plan} days={days} expired={expired} onRenew={renew} renewing={renewing} />
+      <PlanStatus
+        plan={plan}
+        days={days}
+        expired={expired}
+        onRenew={() => setStateGate(true)}
+        renewing={renewing}
+      />
       {error ? (
         <p className="text-white/50">We could not load your payment history just now.</p>
       ) : (
         <PaymentHistory orders={orders} />
       )}
       <RefundNotice orders={orders} />
+
+      <BillingStateModal
+        open={stateGate}
+        onConfirm={(billingState) => {
+          setStateGate(false);
+          renew(billingState);
+        }}
+        onCancel={() => setStateGate(false)}
+      />
     </div>
   );
 }
