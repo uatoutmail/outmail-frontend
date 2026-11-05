@@ -4,6 +4,7 @@ import React, { useCallback, useEffect, useRef, useState } from "react";
 import ComingSoonCta from "@/component/ComingSoonCta";
 import PlanLedger, { LaunchBanner } from "@/component/landing/PlanLedger";
 import { Reveal, MaskLines, Kicker } from "@/component/motion/kit";
+import BillingStateModal from "@/component/payments/BillingStateModal";
 import { useAuth } from "@/context/AuthContext";
 import { rememberIntent, takeIntent } from "@/lib/checkoutIntent";
 import { OUTCOME, classify, message, formatPaise } from "@/lib/paymentOutcome";
@@ -36,6 +37,9 @@ export default function ZPricing() {
   const [outcome, setOutcome] = useState(null);
   const [coupon, setCoupon] = useState("");
   const [couponState, setCouponState] = useState(null);
+  // The plan waiting on a billing-state pick before checkout actually opens
+  // (GST, live 2026-11-05) — null means no modal is showing.
+  const [stateGate, setStateGate] = useState(null);
 
   useEffect(() => {
     let alive = true;
@@ -58,7 +62,7 @@ export default function ZPricing() {
   }, []);
 
   const buy = useCallback(
-    async (plan) => {
+    async (plan, billingState) => {
       setOutcome(null);
       setBusyPlan(plan.id);
       setPhase("opening");
@@ -68,6 +72,7 @@ export default function ZPricing() {
         const result = await startCheckout({
           planId: plan.id,
           couponCode: couponState?.valid ? couponState.code : undefined,
+          billingState,
           onModalClosed: () => setPhase("verifying"),
         });
         // isRepeatPurchase, NOT wasAlreadyPaid. Both confirmation paths race on
@@ -92,14 +97,16 @@ export default function ZPricing() {
     (plan) => {
       if (!isAuthenticated) {
         // Carry the choice through Google sign-in so it is not discarded at the
-        // highest-intent moment in the funnel (OUT-227).
+        // highest-intent moment in the funnel (OUT-227). The billing state is
+        // asked for after sign-in completes, not before — see the resume
+        // effect below, which opens the same gate this does.
         rememberIntent(plan.id, plan.code);
         window.location.href = `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/auth/google`;
         return;
       }
-      buy(plan);
+      setStateGate(plan);
     },
-    [isAuthenticated, buy]
+    [isAuthenticated]
   );
 
   // Resume a checkout the user started before signing in (OUT-227).
@@ -117,8 +124,8 @@ export default function ZPricing() {
     const plan = plans.find((p) => p.id === intent.planId || p.code === intent.planCode);
     if (!plan || isSoldOut(plan)) return;
     resumedRef.current = true;
-    queueMicrotask(() => buy(plan));
-  }, [isAuthenticated, loading, plans, buy]);
+    queueMicrotask(() => setStateGate(plan));
+  }, [isAuthenticated, loading, plans]);
 
   const applyCoupon = async () => {
     const code = coupon.trim();
@@ -274,6 +281,16 @@ export default function ZPricing() {
           </p>
         </div>
       </div>
+
+      <BillingStateModal
+        open={Boolean(stateGate)}
+        onConfirm={(billingState) => {
+          const plan = stateGate;
+          setStateGate(null);
+          buy(plan, billingState);
+        }}
+        onCancel={() => setStateGate(null)}
+      />
     </div>
   );
 }
