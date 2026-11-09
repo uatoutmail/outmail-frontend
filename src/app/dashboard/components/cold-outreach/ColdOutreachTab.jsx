@@ -251,6 +251,21 @@ const ColdOutreachTab = () => {
         )}
       </div>
 
+      {/* Why nothing's going out, even while the agent reports online —
+          "online" only means it's checking in, not that the server is
+          handing it work. A separate banner, not folded into the strip
+          above, since this message can run longer than one line. */}
+      {agentStatus?.breaker && (
+        <div className="flex items-start gap-2 mb-6 px-4 py-3 rounded-xl bg-amber-500/10 border border-amber-400/20 text-xs text-amber-200">
+          <AlertTriangle size={14} className="mt-0.5 flex-shrink-0 text-amber-400" />
+          <span>
+            {agentStatus.breaker.message}
+            {agentStatus.breaker.resumesAt &&
+              ` Sending resumes automatically around ${new Date(agentStatus.breaker.resumesAt).toLocaleTimeString("en-IN", { hour: "numeric", minute: "2-digit" })}.`}
+          </span>
+        </div>
+      )}
+
       {/* Sub-Tabs Switcher */}
       <div className="flex border-b border-white/10 mb-8 gap-6">
         <button
