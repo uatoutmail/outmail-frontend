@@ -110,3 +110,43 @@ describe("MailingAgentStatus — previously connected, Gmail disconnected", () =
     expect(screen.queryByRole("link", { name: /reconnect gmail/i })).not.toBeInTheDocument();
   });
 });
+
+// 2026-11-09: a student had no way to tell WHY nothing was sending — the
+// agent can be online (checking in normally) while the server has it paused.
+describe("MailingAgentStatus — why nothing's sending", () => {
+  it("shows the pause reason even while the agent reports online", async () => {
+    const lastSeen = new Date(Date.now() - 5 * 60 * 1000).toISOString();
+    api.get.mockResolvedValue({
+      data: {
+        online: true,
+        lastSeen,
+        breaker: { reason: "policy_cooldown", message: "Gmail flagged this account." },
+      },
+    });
+    render(<MailingAgentStatus />);
+    await waitFor(() => expect(screen.getByText("Online")).toBeInTheDocument());
+    expect(screen.getByText(/gmail flagged this account/i)).toBeInTheDocument();
+  });
+
+  it("includes a local resume time when resumesAt is present", async () => {
+    const lastSeen = new Date(Date.now() - 5 * 60 * 1000).toISOString();
+    const resumesAt = new Date("2026-11-09T22:47:40.757Z").toISOString();
+    api.get.mockResolvedValue({
+      data: {
+        online: true,
+        lastSeen,
+        breaker: { reason: "policy_cooldown", message: "Paused.", resumesAt },
+      },
+    });
+    render(<MailingAgentStatus />);
+    await waitFor(() => expect(screen.getByText(/resumes ~/i)).toBeInTheDocument());
+  });
+
+  it("shows nothing extra when breaker is null", async () => {
+    const lastSeen = new Date(Date.now() - 5 * 60 * 1000).toISOString();
+    api.get.mockResolvedValue({ data: { online: true, lastSeen, breaker: null } });
+    render(<MailingAgentStatus />);
+    await waitFor(() => expect(screen.getByText("Online")).toBeInTheDocument());
+    expect(screen.queryByText(/resumes ~/i)).not.toBeInTheDocument();
+  });
+});
