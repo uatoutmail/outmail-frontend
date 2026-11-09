@@ -1,5 +1,5 @@
 "use client";
-import { Monitor, KeyRound, Download, RefreshCw } from "lucide-react";
+import { Monitor, KeyRound, Download, RefreshCw, AlertTriangle } from "lucide-react";
 import React, { useCallback, useState } from "react";
 import { useNow } from "@/hooks/useNow";
 import { usePolling } from "@/hooks/usePolling";
@@ -16,6 +16,14 @@ function timeAgo(isoString) {
   if (diff < 3600) return `${Math.floor(diff / 60)}m ago`;
   if (diff < 86400) return `${Math.floor(diff / 3600)}h ago`;
   return `${Math.floor(diff / 86400)}d ago`;
+}
+
+/** A local clock-time label for "resumes around X" — not a countdown, since
+ * the exact second doesn't matter and a countdown would need its own ticking
+ * state just for this one line. */
+function resumeTimeLabel(isoString) {
+  if (!isoString) return "";
+  return new Date(isoString).toLocaleTimeString("en-IN", { hour: "numeric", minute: "2-digit" });
 }
 
 // A deliberately loud status light (not the quiet corner badge
@@ -97,6 +105,21 @@ const MailingAgentStatus = () => {
           <p className="text-[11px] text-white/45">
             {status?.lastSeen ? `Last check-in ${timeAgo(status.lastSeen)}` : "Never connected"}
           </p>
+
+          {/* Why nothing's going out, even while the agent itself is
+              online — "online" only means it's checking in, not that the
+              server is handing it work. Shown regardless of online/offline
+              since a paused agent still heartbeats normally. */}
+          {status?.breaker && (
+            <p className="text-[10px] text-amber-300 flex items-start gap-1">
+              <AlertTriangle size={11} className="mt-0.5 flex-shrink-0" />
+              <span>
+                {status.breaker.message}
+                {status.breaker.resumesAt &&
+                  ` Resumes ~${resumeTimeLabel(status.breaker.resumesAt)}.`}
+              </span>
+            </p>
+          )}
 
           {/* OUT-173: the agent is installed (it has checked in before) but
               Gmail itself got disconnected — a different situation from

@@ -160,3 +160,69 @@ describe("ColdOutreachTab — agent status strip", () => {
     await waitFor(() => expect(screen.getByText(/desktop app offline/i)).toBeInTheDocument());
   });
 });
+
+// 2026-11-09: a student had no way to tell WHY nothing was sending — the
+// agent can be online (checking in normally) while the server has it paused.
+describe("ColdOutreachTab — why nothing's sending", () => {
+  it("shows a banner with the pause reason even while the agent reports online", async () => {
+    api.get.mockImplementation((url) => {
+      if (url === "/api/resumes") return Promise.resolve({ data: [{ id: "r1" }] });
+      if (url === "/api/outreach/companies")
+        return Promise.resolve({
+          data: { companies: [company], pagination: { total: 1, totalPages: 1 } },
+        });
+      if (url === "/api/agent/status")
+        return Promise.resolve({
+          data: {
+            online: true,
+            breaker: { reason: "policy_cooldown", message: "Gmail flagged this account." },
+          },
+        });
+      return Promise.resolve({ data: {} });
+    });
+    render(<ColdOutreachTab />);
+    await waitFor(() =>
+      expect(screen.getByText(/gmail flagged this account/i)).toBeInTheDocument()
+    );
+    expect(screen.getByText(/desktop app online/i)).toBeInTheDocument();
+  });
+
+  it("includes a local resume time when resumesAt is present", async () => {
+    const resumesAt = new Date("2026-11-09T22:47:40.757Z").toISOString();
+    api.get.mockImplementation((url) => {
+      if (url === "/api/resumes") return Promise.resolve({ data: [{ id: "r1" }] });
+      if (url === "/api/outreach/companies")
+        return Promise.resolve({
+          data: { companies: [company], pagination: { total: 1, totalPages: 1 } },
+        });
+      if (url === "/api/agent/status")
+        return Promise.resolve({
+          data: {
+            online: true,
+            breaker: { reason: "policy_cooldown", message: "Paused.", resumesAt },
+          },
+        });
+      return Promise.resolve({ data: {} });
+    });
+    render(<ColdOutreachTab />);
+    await waitFor(() =>
+      expect(screen.getByText(/resumes automatically around/i)).toBeInTheDocument()
+    );
+  });
+
+  it("shows no banner when breaker is null", async () => {
+    api.get.mockImplementation((url) => {
+      if (url === "/api/resumes") return Promise.resolve({ data: [{ id: "r1" }] });
+      if (url === "/api/outreach/companies")
+        return Promise.resolve({
+          data: { companies: [company], pagination: { total: 1, totalPages: 1 } },
+        });
+      if (url === "/api/agent/status")
+        return Promise.resolve({ data: { online: true, breaker: null } });
+      return Promise.resolve({ data: {} });
+    });
+    render(<ColdOutreachTab />);
+    await waitFor(() => expect(screen.getByText("Acme Corp")).toBeInTheDocument());
+    expect(screen.queryByText(/resumes automatically around/i)).not.toBeInTheDocument();
+  });
+});
