@@ -13,6 +13,7 @@ import {
   Wand2,
 } from "lucide-react";
 import React, { useState } from "react";
+import { toast } from "sonner";
 import { api } from "@/lib/api";
 
 // Job details/qualifications are admin-authored HTML. Sanitize before rendering
@@ -30,6 +31,7 @@ const JobCard = ({
   handleDiscard,
   handleResetStatus,
   handleApply,
+  handleJobReported,
 }) => {
   const [isExpanded, setIsExpanded] = useState(false);
   const tier = getPriorityTier(job.matchScore);
@@ -49,16 +51,21 @@ const JobCard = ({
   // runs against every live job every day — a link that rotted this morning
   // reaches us here long before the next verification sweep would catch it.
   const [reportOpen, setReportOpen] = useState(false);
-  const [reportState, setReportState] = useState("idle"); // idle | sending | done | error
+  const [reportState, setReportState] = useState("idle"); // idle | sending | error — a successful report removes this card entirely, so there's no "done" state to render
   const [reportMessage, setReportMessage] = useState("");
 
   const submitReport = async (reason) => {
     setReportState("sending");
     try {
       const { data } = await api.post(`/api/jobs/${job.id}/report`, { reason });
-      setReportMessage(data?.message || "Thanks, flagged for review.");
-      setReportState("done");
       setReportOpen(false);
+      // The card is about to be removed from the list, so the confirmation
+      // has to be a toast, not the inline message below (which would never
+      // be seen). The job isn't gone globally — other students may still see
+      // it until admin reviews the report — this only stops showing it to
+      // the person who just told us it's broken.
+      toast(data?.message || "Thanks, flagged for review — removed from your list.");
+      handleJobReported(job.id);
     } catch {
       setReportMessage("Could not send that just now. Please try again.");
       setReportState("error");
@@ -225,7 +232,6 @@ const JobCard = ({
         </div>
       )}
 
-      {reportState === "done" && <p className="mt-3 text-sm text-amber-300/90">{reportMessage}</p>}
       {reportState === "error" && <p className="mt-3 text-sm text-red-300/90">{reportMessage}</p>}
 
       {reportOpen && (
