@@ -98,6 +98,30 @@ function KeychainNote() {
 }
 
 /**
+ * A couple of `points` strings name a bare Google URL (e.g.
+ * "myaccount.google.com/apppasswords") rather than linking it — this turns
+ * that substring into a real link without needing the data file to carry JSX.
+ */
+function linkifyGoogleUrl(text) {
+  const parts = text.split(/(myaccount\.google\.com\/\S+)/g);
+  return parts.map((part, i) =>
+    /^myaccount\.google\.com\//.test(part) ? (
+      <a
+        key={i}
+        href={`https://${part}`}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="underline decoration-primary/50 underline-offset-2 hover:text-primary"
+      >
+        {part}
+      </a>
+    ) : (
+      part
+    )
+  );
+}
+
+/**
  * The five steps as numbered chapters — the same treatment /features uses, so
  * the guide reads as part of the site rather than a help doc bolted on.
  */
@@ -121,7 +145,7 @@ export function SetupChapters() {
                   {s.points.map((point) => (
                     <span key={point} className="flex gap-2.5 text-sm text-white/55">
                       <Check size={14} className="text-primary shrink-0 mt-0.5" />
-                      {point}
+                      {linkifyGoogleUrl(point)}
                     </span>
                   ))}
                 </div>
