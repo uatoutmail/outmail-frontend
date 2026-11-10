@@ -128,6 +128,28 @@ describe("JobOpeningsTab — job actions", () => {
     expect(screen.getByText("Frontend Engineer")).toBeInTheDocument();
   });
 
+  // Regression (found 2026-11-10): reporting a job used to leave it sitting
+  // in the list — the student had to keep seeing (and could keep applying
+  // to) a job they'd just told us was broken. This only proves the removal
+  // is per-user/local (JobOpeningsTab's own state); it is NOT a claim that
+  // the job is pulled from anyone else's feed — that's the backend's
+  // two-report corroboration threshold, a separate, deliberately higher bar.
+  it("reports a job and removes it from this student's own list on success, without discarding it", async () => {
+    api.get.mockResolvedValue(jobsResponse([strongJob, goodJob]));
+    api.post.mockResolvedValue({ data: { message: "Thanks — flagged for review." } });
+    render(<JobOpeningsTab />);
+    await waitFor(() => expect(screen.getByText("Backend Engineer")).toBeInTheDocument());
+
+    await userEvent.click(screen.getAllByRole("button", { name: /report/i })[0]);
+    await userEvent.click(screen.getByRole("button", { name: /link is broken/i }));
+
+    expect(api.post).toHaveBeenCalledWith("/api/jobs/j1/report", { reason: "LINK_BROKEN" });
+    await waitFor(() => expect(screen.queryByText("Backend Engineer")).not.toBeInTheDocument());
+    expect(screen.getByText("Frontend Engineer")).toBeInTheDocument();
+    const { toast } = await import("sonner");
+    expect(toast).toHaveBeenCalledWith("Thanks — flagged for review.");
+  });
+
   it("resets an applied job's status back to pending", async () => {
     api.get.mockResolvedValue(jobsResponse([{ ...strongJob, userAction: "applied" }]));
     api.patch.mockResolvedValue({});

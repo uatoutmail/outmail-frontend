@@ -1,10 +1,12 @@
-import { render, screen } from "@testing-library/react";
+import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
+import { toast } from "sonner";
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import JobCard from "./JobCard";
 import { api } from "@/lib/api";
 
 vi.mock("@/lib/api", () => ({ api: { post: vi.fn() } }));
+vi.mock("sonner", () => ({ toast: vi.fn() }));
 
 const getPriorityTier = (score) =>
   score >= 70
@@ -24,6 +26,7 @@ function makeHandlers() {
     handleDiscard: vi.fn(),
     handleResetStatus: vi.fn(),
     handleApply: vi.fn(),
+    handleJobReported: vi.fn(),
   };
 }
 
@@ -149,15 +152,35 @@ describe("JobCard — reporting a dead job", () => {
     expect(screen.getByRole("button", { name: /link is broken/i })).toBeInTheDocument();
   });
 
-  it("sends the reason and tells the user what their report did", async () => {
+  // Regression (found 2026-11-10): a successful report used to leave the
+  // card exactly where it was — the student had to keep seeing (and could
+  // keep re-applying to) a job they just told us was broken, until some
+  // unrelated full refetch happened to drop it. Reporting is per-user, not
+  // global (that's what the two-report corroboration threshold is for), so
+  // this only has to stop showing it to the one person who reported it.
+  it("sends the reason, toasts the server's message, and removes the card via handleJobReported — not just a DOM message left on a card that's about to vanish", async () => {
     api.post.mockResolvedValue({ data: { message: "Thanks — flagged for review." } });
-    render(<JobCard job={newJob} {...makeHandlers()} />);
+    const handlers = makeHandlers();
+    render(<JobCard job={newJob} {...handlers} />);
 
     await userEvent.click(screen.getByRole("button", { name: /report/i }));
     await userEvent.click(screen.getByRole("button", { name: /no longer accepting/i }));
 
     expect(api.post).toHaveBeenCalledWith("/api/jobs/j1/report", { reason: "NOT_ACCEPTING" });
-    expect(await screen.findByText(/flagged for review/i)).toBeInTheDocument();
+    await waitFor(() => expect(handlers.handleJobReported).toHaveBeenCalledWith("j1"));
+    expect(toast).toHaveBeenCalledWith("Thanks — flagged for review.");
+  });
+
+  it("falls back to a generic toast message when the server doesn't send one", async () => {
+    api.post.mockResolvedValue({ data: {} });
+    const handlers = makeHandlers();
+    render(<JobCard job={newJob} {...handlers} />);
+
+    await userEvent.click(screen.getByRole("button", { name: /report/i }));
+    await userEvent.click(screen.getByRole("button", { name: /link is broken/i }));
+
+    await waitFor(() => expect(handlers.handleJobReported).toHaveBeenCalledWith("j1"));
+    expect(toast).toHaveBeenCalledWith(expect.stringMatching(/flagged for review/i));
   });
 
   it("says so when the report could not be sent, instead of silently swallowing it", async () => {
