@@ -163,6 +163,15 @@ const JobOpeningsTab = () => {
     }
   };
 
+  // A student reporting a job (JobCard's submitReport, already succeeded by
+  // the time this is called) is as strong a signal as discarding it — the
+  // posting stays on OUR side (admin's review desk still needs to see it to
+  // confirm/dismiss the report), but there is no reason to keep showing it
+  // to the one person who just told us it's broken.
+  const handleJobReported = (jobId) => {
+    setJobOpenings((prev) => prev.filter((j) => j.id !== jobId));
+  };
+
   const handleResetStatus = async (jobId) => {
     try {
       await api.patch(`/api/jobs/${jobId}/status`, { status: "pending" });
@@ -251,6 +260,7 @@ const JobOpeningsTab = () => {
     handleDiscard,
     handleResetStatus,
     handleApply,
+    handleJobReported,
   };
 
   return (
