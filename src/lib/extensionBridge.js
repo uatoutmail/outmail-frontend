@@ -18,6 +18,10 @@ const CHANNEL = "outmail-pair";
 const FROM_PAGE = "outmail-web";
 const FROM_EXTENSION = "outmail-extension";
 
+/** The one real install link — kept here so every "go install it" surface points at the same place. */
+export const EXTENSION_STORE_URL =
+  "https://chromewebstore.google.com/detail/outmail-autofill/kjdgcenkameamgoclddbkmdhdehebipi";
+
 /** Hard ceiling on how long we wait for an extension that may not be there. */
 const REPLY_TIMEOUT_MS = 2500;
 
