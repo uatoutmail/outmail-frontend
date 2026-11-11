@@ -66,6 +66,7 @@ export const STEPS = [
     pill: "Optional · 1 minute",
     d: "Optional, but it saves the most time. It fills application forms from answers you write once, and you review everything before it submits. Nothing is sent without you clicking.",
     points: ["Answers written once, reused everywhere", "You review before anything submits"],
+    note: "extension",
   },
   {
     n: "05",

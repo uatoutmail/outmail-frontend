@@ -6,6 +6,7 @@ import { api } from "@/lib/api";
 import {
   describeFailure,
   EXTENSION_DATA_DISCLOSURE,
+  EXTENSION_STORE_URL,
   isExtensionInstalled,
   pairExtension,
   pingExtension,
@@ -119,6 +120,17 @@ const AutofillExtensionCard = () => {
               ? "The extension is installed in this browser. One click connects it to your account. There is nothing to copy."
               : "Install the Outmail Autofill extension, then connect it here to fill job applications from your profile."}
           </p>
+
+          {!detected && (
+            <a
+              href={EXTENSION_STORE_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="mb-3 inline-flex w-full items-center justify-center rounded-lg bg-purple-600 py-2 text-sm font-semibold text-white transition-colors hover:bg-purple-500"
+            >
+              Install the extension
+            </a>
+          )}
 
           {detected ? (
             <>

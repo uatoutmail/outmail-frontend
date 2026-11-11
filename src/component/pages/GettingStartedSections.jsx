@@ -13,6 +13,7 @@ import {
 import React from "react";
 import DownloadCard from "@/component/download/DownloadCard";
 import { Reveal, MaskLines, Kicker, EASE_OUT } from "@/component/motion/kit";
+import { EXTENSION_STORE_URL } from "@/lib/extensionBridge";
 import { STEPS, AFTER_SETUP, TROUBLESHOOTING } from "@/lib/gettingStarted";
 
 /**
@@ -98,6 +99,21 @@ function KeychainNote() {
   );
 }
 
+/** Step 4's install link — same Chrome Web Store listing the dashboard's extension card links. */
+function ExtensionInstallCta() {
+  return (
+    <a
+      href={EXTENSION_STORE_URL}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="inline-flex items-center justify-center gap-2 text-sm font-semibold text-white bg-[var(--brand-primary)] hover:bg-[var(--brand-primary-hover)] rounded-lg px-6 py-3 transition-colors max-w-xs"
+    >
+      <Puzzle size={16} />
+      Add to Chrome
+    </a>
+  );
+}
+
 /**
  * A couple of `points` strings name a bare Google URL (e.g.
  * "myaccount.google.com/apppasswords") rather than linking it — this turns
@@ -156,6 +172,7 @@ export function SetupChapters() {
                     <DownloadCard />
                   </div>
                 )}
+                {s.note === "extension" && <ExtensionInstallCta />}
               </div>
             </div>
           </Reveal>
