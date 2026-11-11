@@ -24,6 +24,13 @@ export default function sitemap() {
       priority: 0.9,
     },
     {
+      // Has its own canonical tag and metadata but was never added here —
+      // found during the launch-day SEO check (2026-11-11).
+      path: "/download",
+      changeFrequency: "weekly",
+      priority: 0.9,
+    },
+    {
       // Was missing entirely: /faq exists, is linked from the footer and
       // every page, and answers the questions people search for by name.
       path: "/faq",
