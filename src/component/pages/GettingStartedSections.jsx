@@ -11,6 +11,7 @@ import {
   ShieldCheck,
 } from "lucide-react";
 import React from "react";
+import DownloadCard from "@/component/download/DownloadCard";
 import { Reveal, MaskLines, Kicker, EASE_OUT } from "@/component/motion/kit";
 import { STEPS, AFTER_SETUP, TROUBLESHOOTING } from "@/lib/gettingStarted";
 
@@ -150,6 +151,11 @@ export function SetupChapters() {
                   ))}
                 </div>
                 {s.note === "keychain" && <KeychainNote />}
+                {s.note === "download" && (
+                  <div className="max-w-md">
+                    <DownloadCard />
+                  </div>
+                )}
               </div>
             </div>
           </Reveal>

@@ -56,6 +56,7 @@ export const STEPS = [
       "Open it and click “Sign in with Google”, the same account you use for Outmail. That's what links this device to your account; your dashboard's “Link Desktop Agent” code is only a fallback if sign-in doesn't work",
       "Scheduled mail goes out only while your computer is awake",
     ],
+    note: "download",
   },
   {
     n: "04",
