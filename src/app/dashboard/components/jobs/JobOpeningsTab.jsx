@@ -1,4 +1,4 @@
-import { Briefcase, UploadCloud, Loader2, FileText } from "lucide-react";
+import { Briefcase, UploadCloud, Loader2, FileText, ChevronDown, ChevronUp } from "lucide-react";
 import React, { useState, useEffect, useRef } from "react";
 import { toast } from "sonner";
 import JobCard from "./JobCard";
@@ -90,11 +90,95 @@ const TierHeader = ({ label, color, dot, count }) => (
   </div>
 );
 
+// A student who skips a few days comes back to a flat, growing pile with no
+// way to tell what's actually new — this is the toggle for the "already
+// shown" half of that split (see the unseen/seen split in the render below).
+// Collapsed by default; the count stays visible either way.
+const AlreadyShownToggle = ({ count, expanded, onToggle }) => (
+  <button
+    onClick={onToggle}
+    className="flex items-center gap-2 text-white/40 hover:text-white/70 text-xs font-bold uppercase tracking-widest transition-colors my-4 group"
+  >
+    {expanded ? (
+      <ChevronUp size={14} className="group-hover:-translate-y-0.5 transition-transform" />
+    ) : (
+      <ChevronDown size={14} className="group-hover:translate-y-0.5 transition-transform" />
+    )}
+    Already shown ({count})
+  </button>
+);
+
+// One match tier (Strong/Good/Possible), split into jobs new to this student
+// (always expanded) and jobs already shown before (collapsed behind
+// AlreadyShownToggle). Hoisted for the same reason as TierHeader —
+// react-hooks/static-components.
+const TierSection = ({
+  tierKey,
+  label,
+  color,
+  dot,
+  jobs,
+  cardProps,
+  expandedSeen,
+  onToggleSeen,
+  animClass,
+}) => {
+  if (jobs.length === 0) return null;
+  const unseen = jobs.filter((j) => !j.seenBefore);
+  const seen = jobs.filter((j) => j.seenBefore);
+  const seenExpanded = !!expandedSeen[tierKey];
+  return (
+    <div className={animClass}>
+      <TierHeader label={label} color={color} dot={dot} count={jobs.length} />
+      {unseen.length > 0 && (
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+          {unseen.map((job) => (
+            <JobCard key={job.id} job={job} {...cardProps} />
+          ))}
+        </div>
+      )}
+      {seen.length > 0 && (
+        <>
+          <AlreadyShownToggle
+            count={seen.length}
+            expanded={seenExpanded}
+            onToggle={() => onToggleSeen(tierKey)}
+          />
+          {seenExpanded && (
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+              {seen.map((job) => (
+                <JobCard key={job.id} job={job} {...cardProps} />
+              ))}
+            </div>
+          )}
+        </>
+      )}
+    </div>
+  );
+};
+
 const JobOpeningsTab = () => {
   const [jobOpenings, setJobOpenings] = useState([]);
   const [loading, setLoading] = useState(false);
   const [filter, setFilter] = useState("all");
   const [pagination, setPagination] = useState({ page: 1, limit: 10, total: 0, totalPages: 1 });
+  // The Applied tab is a durable query of its own (GET /api/jobs/applied),
+  // NOT a client-side filter over the ranked feed above — an applied job can
+  // get outranked and fall off page 1 of "all" entirely, so filtering
+  // jobOpenings would silently lose it. Kept as separate state so switching
+  // back to "All" doesn't need a refetch.
+  const [appliedJobs, setAppliedJobs] = useState([]);
+  const [appliedLoading, setAppliedLoading] = useState(false);
+  const [appliedPagination, setAppliedPagination] = useState({
+    page: 1,
+    limit: 10,
+    total: 0,
+    totalPages: 1,
+  });
+  const [appliedLoaded, setAppliedLoaded] = useState(false);
+  // Per-tier collapse state for the "already shown" split below — keyed by
+  // tier label, default collapsed.
+  const [expandedSeen, setExpandedSeen] = useState({});
   // { missing: ['resume'|'seekingType', ...] } when /api/jobs 403s on an
   // incomplete prerequisite, null once cleared. Distinct from a plain fetch
   // error — this isn't "something went wrong", it's "one more step".
@@ -133,6 +217,27 @@ const JobOpeningsTab = () => {
     fetchJobs(1);
   }, []);
 
+  const fetchAppliedJobs = async (page = 1) => {
+    setAppliedLoading(true);
+    try {
+      const { data } = await api.get("/api/jobs/applied", { params: { page, limit: 10 } });
+      if (data.success) {
+        setAppliedJobs(data.data);
+        setAppliedPagination(data.pagination);
+        setAppliedLoaded(true);
+      }
+    } catch (error) {
+      logger.error("Error fetching applied jobs:", error);
+    } finally {
+      setAppliedLoading(false);
+    }
+  };
+
+  const handleFilterChange = (next) => {
+    setFilter(next);
+    if (next === "applied" && !appliedLoaded) fetchAppliedJobs(1);
+  };
+
   // Throws on failure so callers can surface a real error instead of updating
   // the UI as if the server recorded the action.
   const recordAction = async (jobId, action) => {
@@ -145,6 +250,10 @@ const JobOpeningsTab = () => {
       setJobOpenings((prev) =>
         prev.map((j) => (j.id === jobId ? { ...j, userAction: "applied" } : j))
       );
+      // The Applied tab's own list is now stale — it won't include this job
+      // until refetched. Forcing a refetch next time it's opened, rather than
+      // trying to splice a feed-shaped job into the applied-shaped list here.
+      setAppliedLoaded(false);
       toast.success("Marked as applied.");
     } catch (e) {
       logger.error("Failed to record action:", e);
@@ -176,6 +285,11 @@ const JobOpeningsTab = () => {
     try {
       await api.patch(`/api/jobs/${jobId}/status`, { status: "pending" });
       setJobOpenings((prev) => prev.map((j) => (j.id === jobId ? { ...j, userAction: null } : j)));
+      // Resetting clears the backend's 'applied' JobInteraction row too (see
+      // updateJobStatus), so this job genuinely leaves the applied list —
+      // drop it here instead of waiting on a refetch, since the user is very
+      // likely looking at the Applied tab right now when they click this.
+      setAppliedJobs((prev) => prev.filter((j) => j.id !== jobId));
       toast("Status reset.");
     } catch (e) {
       logger.error("Failed to reset status:", e);
@@ -244,12 +358,20 @@ const JobOpeningsTab = () => {
     return "text-blue-300";
   };
 
-  const visibleJobs = jobOpenings.filter((j) =>
-    filter === "all" ? true : j.userAction === filter
-  );
-  const highPriority = visibleJobs.filter((j) => j.matchScore >= 70);
-  const mediumPriority = visibleJobs.filter((j) => j.matchScore >= 55 && j.matchScore < 70);
-  const standard = visibleJobs.filter((j) => j.matchScore < 55);
+  const isAppliedTab = filter === "applied";
+  // "All" is still inclusive of applied/saved jobs (badge + Reset Status) —
+  // that part was never broken. The Applied tab is a wholly separate,
+  // durably-fetched list (appliedJobs), not a filter over jobOpenings.
+  const visibleJobs = isAppliedTab ? appliedJobs : jobOpenings;
+  const highPriority = isAppliedTab ? [] : visibleJobs.filter((j) => j.matchScore >= 70);
+  const mediumPriority = isAppliedTab
+    ? []
+    : visibleJobs.filter((j) => j.matchScore >= 55 && j.matchScore < 70);
+  const standard = isAppliedTab ? [] : visibleJobs.filter((j) => j.matchScore < 55);
+  const activeLoading = isAppliedTab ? appliedLoading : loading;
+  const activePagination = isAppliedTab ? appliedPagination : pagination;
+  const toggleSeen = (tierKey) =>
+    setExpandedSeen((prev) => ({ ...prev, [tierKey]: !prev[tierKey] }));
 
   const cardProps = {
     getPriorityTier,
@@ -271,9 +393,9 @@ const JobOpeningsTab = () => {
             <h1 className="text-3xl sm:text-4xl font-black text-white tracking-tight">
               Job Openings
             </h1>
-            {!loading && pagination.total > 0 && (
+            {!activeLoading && activePagination.total > 0 && (
               <span className="px-3 py-1 bg-white/10 rounded-full text-xs font-bold text-white/50 border border-white/10 uppercase tracking-widest">
-                {pagination.total} Matched
+                {activePagination.total} {isAppliedTab ? "Applied" : "Matched"}
               </span>
             )}
           </div>
@@ -287,7 +409,7 @@ const JobOpeningsTab = () => {
           {["all", "applied"].map((filterType) => (
             <button
               key={filterType}
-              onClick={() => setFilter(filterType)}
+              onClick={() => handleFilterChange(filterType)}
               className={`flex-1 sm:flex-none px-6 py-2.5 rounded-xl text-xs font-bold transition-all capitalize tracking-widest ${
                 filter === filterType
                   ? "bg-purple-600 text-white shadow-lg shadow-purple-900/40"
@@ -310,14 +432,14 @@ const JobOpeningsTab = () => {
         <>
           <JobPreferences onSaved={() => fetchJobs(1)} />
 
-          {loading ? (
+          {activeLoading ? (
             <div className="flex flex-col items-center justify-center h-96 gap-4">
               <div className="relative">
                 <div className="w-12 h-12 rounded-full border-2 border-purple-500/20"></div>
                 <div className="absolute top-0 left-0 w-12 h-12 rounded-full border-t-2 border-purple-500 animate-spin"></div>
               </div>
               <p className="text-white/30 text-xs font-bold uppercase tracking-widest animate-pulse">
-                Analyzing Opportunities...
+                {isAppliedTab ? "Loading your applications..." : "Analyzing Opportunities..."}
               </p>
             </div>
           ) : visibleJobs.length === 0 ? (
@@ -325,67 +447,71 @@ const JobOpeningsTab = () => {
               <div className="w-16 h-16 bg-white/5 rounded-2xl flex items-center justify-center mb-6">
                 <Briefcase size={32} className="text-white/20" />
               </div>
-              <p className="text-white/50 text-xl font-bold mb-2">No matches yet</p>
-              <p className="text-white/20 text-sm uppercase tracking-widest font-bold">
-                Add a resume & job-hunt intent, or check back later
+              <p className="text-white/50 text-xl font-bold mb-2">
+                {isAppliedTab ? "No applications yet" : "No matches yet"}
               </p>
+              <p className="text-white/20 text-sm uppercase tracking-widest font-bold">
+                {isAppliedTab
+                  ? "Jobs you apply to will show up here"
+                  : "Add a resume & job-hunt intent, or check back later"}
+              </p>
+            </div>
+          ) : isAppliedTab ? (
+            // Application history, most-recently-applied first — never
+            // re-ranked by match score, so no tiers here.
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+              {visibleJobs.map((job) => (
+                <JobCard key={job.id} job={job} {...cardProps} />
+              ))}
             </div>
           ) : (
             <div className="space-y-4">
-              {highPriority.length > 0 && (
-                <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
-                  <TierHeader
-                    label="Strong Match"
-                    color="text-green-400"
-                    dot="bg-green-400"
-                    count={highPriority.length}
-                  />
-                  <div className="grid gap-4">
-                    {highPriority.map((job) => (
-                      <JobCard key={job.id} job={job} {...cardProps} />
-                    ))}
-                  </div>
-                </div>
-              )}
-              {mediumPriority.length > 0 && (
-                <div className="animate-in fade-in slide-in-from-bottom-4 duration-700">
-                  <TierHeader
-                    label="Good Match"
-                    color="text-yellow-400"
-                    dot="bg-yellow-400"
-                    count={mediumPriority.length}
-                  />
-                  <div className="grid gap-4">
-                    {mediumPriority.map((job) => (
-                      <JobCard key={job.id} job={job} {...cardProps} />
-                    ))}
-                  </div>
-                </div>
-              )}
-              {standard.length > 0 && (
-                <div className="animate-in fade-in slide-in-from-bottom-4 duration-1000">
-                  <TierHeader
-                    label="Possible Match"
-                    color="text-blue-400"
-                    dot="bg-blue-400"
-                    count={standard.length}
-                  />
-                  <div className="grid gap-4">
-                    {standard.map((job) => (
-                      <JobCard key={job.id} job={job} {...cardProps} />
-                    ))}
-                  </div>
-                </div>
-              )}
+              <TierSection
+                tierKey="strong"
+                label="Strong Match"
+                color="text-green-400"
+                dot="bg-green-400"
+                jobs={highPriority}
+                cardProps={cardProps}
+                expandedSeen={expandedSeen}
+                onToggleSeen={toggleSeen}
+                animClass="animate-in fade-in slide-in-from-bottom-4 duration-500"
+              />
+              <TierSection
+                tierKey="good"
+                label="Good Match"
+                color="text-yellow-400"
+                dot="bg-yellow-400"
+                jobs={mediumPriority}
+                cardProps={cardProps}
+                expandedSeen={expandedSeen}
+                onToggleSeen={toggleSeen}
+                animClass="animate-in fade-in slide-in-from-bottom-4 duration-700"
+              />
+              <TierSection
+                tierKey="possible"
+                label="Possible Match"
+                color="text-blue-400"
+                dot="bg-blue-400"
+                jobs={standard}
+                cardProps={cardProps}
+                expandedSeen={expandedSeen}
+                onToggleSeen={toggleSeen}
+                animClass="animate-in fade-in slide-in-from-bottom-4 duration-1000"
+              />
             </div>
           )}
 
           {/* Pagination Controls */}
-          {!loading && pagination.totalPages > 1 && (
+          {!activeLoading && activePagination.totalPages > 1 && (
             <div className="flex justify-center items-center gap-6 mt-16 p-4 bg-white/5 rounded-2xl border border-white/10 w-fit mx-auto">
               <button
-                disabled={pagination.page === 1}
-                onClick={() => fetchJobs(pagination.page - 1)}
+                disabled={activePagination.page === 1}
+                onClick={() =>
+                  isAppliedTab
+                    ? fetchAppliedJobs(activePagination.page - 1)
+                    : fetchJobs(activePagination.page - 1)
+                }
                 className="flex items-center gap-2 px-6 py-2.5 bg-white/5 hover:bg-white/10 disabled:opacity-30 disabled:cursor-not-allowed text-white text-xs font-bold uppercase tracking-widest rounded-xl transition-all"
               >
                 Prev
@@ -395,12 +521,16 @@ const JobOpeningsTab = () => {
                   Page
                 </span>
                 <span className="text-white font-bold">
-                  {pagination.page} / {pagination.totalPages}
+                  {activePagination.page} / {activePagination.totalPages}
                 </span>
               </div>
               <button
-                disabled={pagination.page === pagination.totalPages}
-                onClick={() => fetchJobs(pagination.page + 1)}
+                disabled={activePagination.page === activePagination.totalPages}
+                onClick={() =>
+                  isAppliedTab
+                    ? fetchAppliedJobs(activePagination.page + 1)
+                    : fetchJobs(activePagination.page + 1)
+                }
                 className="flex items-center gap-2 px-6 py-2.5 bg-white/5 hover:bg-white/10 disabled:opacity-30 disabled:cursor-not-allowed text-white text-xs font-bold uppercase tracking-widest rounded-xl transition-all"
               >
                 Next

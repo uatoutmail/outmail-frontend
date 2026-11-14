@@ -167,17 +167,6 @@ describe("JobOpeningsTab — job actions", () => {
 });
 
 describe("JobOpeningsTab — filter and pagination", () => {
-  it("filters to only applied jobs", async () => {
-    api.get.mockResolvedValue(jobsResponse([strongJob, { ...goodJob, userAction: "applied" }]));
-    render(<JobOpeningsTab />);
-    await waitFor(() => expect(screen.getByText("Backend Engineer")).toBeInTheDocument());
-
-    await userEvent.click(screen.getByRole("button", { name: /^applied$/i }));
-
-    expect(screen.queryByText("Backend Engineer")).not.toBeInTheDocument();
-    expect(screen.getByText("Frontend Engineer")).toBeInTheDocument();
-  });
-
   it("paginates: Next fetches the next page", async () => {
     api.get.mockResolvedValueOnce(jobsResponse([strongJob], { page: 1, totalPages: 2 }));
     render(<JobOpeningsTab />);
@@ -190,5 +179,114 @@ describe("JobOpeningsTab — filter and pagination", () => {
       expect(api.get).toHaveBeenCalledWith("/api/jobs", { params: { page: 2, limit: 10 } })
     );
     await waitFor(() => expect(screen.getByText("Frontend Engineer")).toBeInTheDocument());
+  });
+});
+
+// Regression (found 2026-11-14): the Applied tab used to just filter
+// whatever page of the ranked feed was already loaded — an applied job
+// could silently vanish once newer postings outranked it off page 1. It is
+// now its own durable fetch against GET /api/jobs/applied, never a client
+// filter over jobOpenings.
+describe("JobOpeningsTab — the Applied tab is its own durable fetch, not a filter over the ranked feed", () => {
+  it("fetches from /api/jobs/applied (not the ranked feed) the first time the Applied tab is opened", async () => {
+    api.get.mockImplementation(async (url) => {
+      if (url === "/api/jobs/applied") return jobsResponse([{ ...goodJob, userAction: "applied" }]);
+      return jobsResponse([strongJob]); // the ranked "all" feed — unrelated, must not leak into Applied
+    });
+    render(<JobOpeningsTab />);
+    await waitFor(() => expect(screen.getByText("Backend Engineer")).toBeInTheDocument());
+
+    await userEvent.click(screen.getByRole("button", { name: /^applied$/i }));
+
+    await waitFor(() =>
+      expect(api.get).toHaveBeenCalledWith("/api/jobs/applied", { params: { page: 1, limit: 10 } })
+    );
+    expect(await screen.findByText("Frontend Engineer")).toBeInTheDocument();
+    expect(screen.queryByText("Backend Engineer")).not.toBeInTheDocument();
+  });
+
+  it("does not show a match-score tier header on the Applied tab, since this list is never re-ranked", async () => {
+    api.get.mockImplementation(async (url) => {
+      if (url === "/api/jobs/applied")
+        return jobsResponse([{ ...goodJob, matchScore: null, userAction: "applied" }]);
+      return jobsResponse([strongJob]);
+    });
+    render(<JobOpeningsTab />);
+    await waitFor(() => expect(screen.getByText("Backend Engineer")).toBeInTheDocument());
+
+    await userEvent.click(screen.getByRole("button", { name: /^applied$/i }));
+
+    expect(await screen.findByText("Frontend Engineer")).toBeInTheDocument();
+    expect(screen.queryByText("Good Match")).not.toBeInTheDocument();
+    expect(screen.queryByText("Outmail Score")).not.toBeInTheDocument();
+  });
+
+  it("does not refetch on a second click to the Applied tab — the loaded list is reused", async () => {
+    api.get.mockImplementation(async (url) => {
+      if (url === "/api/jobs/applied") return jobsResponse([{ ...goodJob, userAction: "applied" }]);
+      return jobsResponse([strongJob]);
+    });
+    render(<JobOpeningsTab />);
+    await waitFor(() => expect(screen.getByText("Backend Engineer")).toBeInTheDocument());
+
+    await userEvent.click(screen.getByRole("button", { name: /^applied$/i }));
+    await screen.findByText("Frontend Engineer");
+    const callCountAfterFirstOpen = api.get.mock.calls.filter(
+      (c) => c[0] === "/api/jobs/applied"
+    ).length;
+
+    await userEvent.click(screen.getByRole("button", { name: /^all$/i }));
+    await userEvent.click(screen.getByRole("button", { name: /^applied$/i }));
+
+    expect(api.get.mock.calls.filter((c) => c[0] === "/api/jobs/applied")).toHaveLength(
+      callCountAfterFirstOpen
+    );
+  });
+
+  it("still shows an applied job that has fallen off the ranked feed's page 1 entirely — the whole point of the fix", async () => {
+    // Deliberately does NOT include the applied job anywhere in the "all"
+    // feed response, simulating it having been outranked off page 1.
+    api.get.mockImplementation(async (url) => {
+      if (url === "/api/jobs/applied") return jobsResponse([{ ...goodJob, userAction: "applied" }]);
+      return jobsResponse([strongJob, possibleJob]);
+    });
+    render(<JobOpeningsTab />);
+    await waitFor(() => expect(screen.getByText("Backend Engineer")).toBeInTheDocument());
+    expect(screen.queryByText("Frontend Engineer")).not.toBeInTheDocument(); // not on page 1 of "all"
+
+    await userEvent.click(screen.getByRole("button", { name: /^applied$/i }));
+
+    expect(await screen.findByText("Frontend Engineer")).toBeInTheDocument();
+  });
+});
+
+describe("JobOpeningsTab — already-shown jobs collapse into an accordion (seenBefore)", () => {
+  it("renders a job seen before behind a collapsed 'Already shown' toggle, not expanded by default", async () => {
+    api.get.mockResolvedValue(jobsResponse([strongJob, { ...goodJob, seenBefore: true }]));
+    render(<JobOpeningsTab />);
+    await waitFor(() => expect(screen.getByText("Backend Engineer")).toBeInTheDocument());
+
+    expect(screen.getByText(/already shown \(1\)/i)).toBeInTheDocument();
+    expect(screen.queryByText("Frontend Engineer")).not.toBeInTheDocument();
+  });
+
+  it("reveals the already-shown job on clicking the toggle, and hides it again on a second click", async () => {
+    api.get.mockResolvedValue(jobsResponse([strongJob, { ...goodJob, seenBefore: true }]));
+    render(<JobOpeningsTab />);
+    await waitFor(() => expect(screen.getByText("Backend Engineer")).toBeInTheDocument());
+
+    await userEvent.click(screen.getByText(/already shown \(1\)/i));
+    expect(screen.getByText("Frontend Engineer")).toBeInTheDocument();
+
+    await userEvent.click(screen.getByText(/already shown \(1\)/i));
+    expect(screen.queryByText("Frontend Engineer")).not.toBeInTheDocument();
+  });
+
+  it("never gates a job never served before (seenBefore:false or absent) behind the toggle — it is always expanded", async () => {
+    api.get.mockResolvedValue(jobsResponse([strongJob])); // no seenBefore field at all
+    render(<JobOpeningsTab />);
+    await waitFor(() => expect(screen.getByText("Backend Engineer")).toBeInTheDocument());
+
+    expect(screen.queryByText(/already shown/i)).not.toBeInTheDocument();
   });
 });

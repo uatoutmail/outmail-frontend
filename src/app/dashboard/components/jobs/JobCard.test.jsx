@@ -43,8 +43,6 @@ const newJob = {
   signals: ["Python", "Django"],
   applyLink: "https://apply.example.com/j1",
   url: "https://source.example.com/j1",
-  details: "<p>Build backend services.</p>",
-  qualifications: "<p>3+ years experience.</p>",
 };
 
 beforeEach(() => {
@@ -78,28 +76,26 @@ describe("JobCard — a new (no userAction) job", () => {
     expect(screen.queryByRole("button", { name: /reset status/i })).not.toBeInTheDocument();
   });
 
-  it("expands to show sanitized job details and qualifications", async () => {
-    render(<JobCard job={newJob} {...makeHandlers()} />);
+  // Regression guard (removed 2026-11-14): the card used to have a "Show Job
+  // Details" accordion rendering admin/source-authored description HTML
+  // verbatim — which on Telegram-sourced postings carried along the
+  // original channel's own spam ("join our WhatsApp group", etc). Removed
+  // entirely rather than cleaned, so this asserts there is nothing left to
+  // expand, even when a job payload still carries the old details/
+  // qualifications fields (an older cached response, or a slow rollout).
+  it("never renders a details/qualifications accordion, even if the job payload still carries those fields", () => {
+    render(
+      <JobCard
+        job={{
+          ...newJob,
+          details: "<p>Build backend services.</p>",
+          qualifications: "<p>3+ years.</p>",
+        }}
+        {...makeHandlers()}
+      />
+    );
+    expect(screen.queryByRole("button", { name: /show job details/i })).not.toBeInTheDocument();
     expect(screen.queryByText("Build backend services.")).not.toBeInTheDocument();
-
-    await userEvent.click(screen.getByRole("button", { name: /show job details/i }));
-    expect(screen.getByText("Build backend services.")).toBeInTheDocument();
-    expect(screen.getByText("3+ years experience.")).toBeInTheDocument();
-
-    await userEvent.click(screen.getByRole("button", { name: /hide details/i }));
-    expect(screen.queryByText("Build backend services.")).not.toBeInTheDocument();
-  });
-
-  it("strips a script tag out of admin-authored job details before rendering", async () => {
-    const jobWithScript = {
-      ...newJob,
-      details: "<p>Safe text</p><script>window.pwned = true;</script>",
-    };
-    render(<JobCard job={jobWithScript} {...makeHandlers()} />);
-    await userEvent.click(screen.getByRole("button", { name: /show job details/i }));
-
-    expect(screen.getByText("Safe text")).toBeInTheDocument();
-    expect(document.querySelector("script")).not.toBeInTheDocument();
   });
 });
 
