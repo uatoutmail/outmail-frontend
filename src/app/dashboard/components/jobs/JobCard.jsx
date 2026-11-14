@@ -1,4 +1,3 @@
-import DOMPurify from "dompurify";
 import {
   Briefcase,
   Building,
@@ -7,19 +6,12 @@ import {
   Sparkles,
   CheckCircle,
   X,
-  ChevronDown,
-  ChevronUp,
   AlertTriangle,
   Wand2,
 } from "lucide-react";
 import React, { useState } from "react";
 import { toast } from "sonner";
 import { api } from "@/lib/api";
-
-// Job details/qualifications are admin-authored HTML. Sanitize before rendering
-// so stored markup can never execute script (these blocks only render client-side
-// on expand). Guard for the no-DOM case just in case.
-const cleanHtml = (html) => (typeof window === "undefined" ? "" : DOMPurify.sanitize(html || ""));
 
 const JobCard = ({
   job,
@@ -33,7 +25,6 @@ const JobCard = ({
   handleApply,
   handleJobReported,
 }) => {
-  const [isExpanded, setIsExpanded] = useState(false);
   const tier = getPriorityTier(job.matchScore);
   const isNew = !job.userAction; // no per-user action yet
 
@@ -74,7 +65,7 @@ const JobCard = ({
 
   return (
     <div
-      className={`bg-white/10 backdrop-blur-md rounded-2xl p-5 sm:p-6 border ${tier.border} hover:border-white/30 transition-all duration-300`}
+      className={`bg-white/10 backdrop-blur-md rounded-2xl p-4 sm:p-5 border ${tier.border} hover:border-white/30 transition-all duration-300`}
     >
       <div className="flex flex-col md:flex-row justify-between items-start gap-4 mb-4">
         <div className="flex-1 min-w-0">
@@ -139,16 +130,18 @@ const JobCard = ({
           </div>
         </div>
 
-        <div className="flex items-center bg-white/5 rounded-xl px-4 py-3 border border-white/10 shrink-0 self-start md:self-center">
-          <div className="flex flex-col items-center">
-            <span className={`text-2xl font-bold ${getPriorityScoreColor(job.matchScore)}`}>
-              {job.matchScore}
-            </span>
-            <span className="text-white/40 text-[10px] uppercase tracking-wider font-bold">
-              Outmail Score
-            </span>
+        {job.matchScore != null && (
+          <div className="flex items-center bg-white/5 rounded-xl px-4 py-3 border border-white/10 shrink-0 self-start md:self-center">
+            <div className="flex flex-col items-center">
+              <span className={`text-2xl font-bold ${getPriorityScoreColor(job.matchScore)}`}>
+                {job.matchScore}
+              </span>
+              <span className="text-white/40 text-[10px] uppercase tracking-wider font-bold">
+                Outmail Score
+              </span>
+            </div>
           </div>
-        </div>
+        )}
       </div>
 
       {/* Why matched (OUT-27 reasons) */}
@@ -175,60 +168,6 @@ const JobCard = ({
               {signal}
             </span>
           ))}
-        </div>
-      )}
-
-      {(job.details || job.qualifications) && (
-        <div className="border-t border-white/5 pt-4 mt-2">
-          <button
-            onClick={() => setIsExpanded(!isExpanded)}
-            className="flex items-center gap-2 text-white/50 hover:text-white text-xs font-bold uppercase tracking-widest transition-colors mb-4 group"
-          >
-            {isExpanded ? (
-              <>
-                <ChevronUp
-                  size={14}
-                  className="group-hover:-translate-y-0.5 transition-transform"
-                />{" "}
-                Hide Details
-              </>
-            ) : (
-              <>
-                <ChevronDown
-                  size={14}
-                  className="group-hover:translate-y-0.5 transition-transform"
-                />{" "}
-                Show Job Details
-              </>
-            )}
-          </button>
-
-          {isExpanded && (
-            <div className="space-y-4 animate-in fade-in slide-in-from-top-2 duration-300">
-              {job.details && (
-                <div className="bg-white/5 rounded-xl p-4 border border-white/5">
-                  <h4 className="text-xs font-bold uppercase tracking-wider text-white/40 mb-3">
-                    Job Description
-                  </h4>
-                  <div
-                    className="text-white/70 text-sm prose prose-invert max-w-none prose-p:leading-relaxed prose-li:my-1"
-                    dangerouslySetInnerHTML={{ __html: cleanHtml(job.details) }}
-                  />
-                </div>
-              )}
-              {job.qualifications && (
-                <div className="bg-purple-500/5 rounded-xl p-4 border border-purple-500/10">
-                  <h4 className="text-xs font-bold uppercase tracking-wider text-purple-300/60 mb-3">
-                    Qualifications
-                  </h4>
-                  <div
-                    className="text-white/70 text-sm prose prose-invert max-w-none prose-p:leading-relaxed prose-li:my-1"
-                    dangerouslySetInnerHTML={{ __html: cleanHtml(job.qualifications) }}
-                  />
-                </div>
-              )}
-            </div>
-          )}
         </div>
       )}
 
