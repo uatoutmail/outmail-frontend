@@ -100,7 +100,7 @@ const AlreadyShownToggle = ({ count, expanded, onToggle }) => (
   <button
     onClick={onToggle}
     aria-expanded={expanded}
-    className="w-full flex items-center justify-between gap-3 px-4 py-3 my-3 rounded-xl border border-white/10 bg-gradient-to-br from-surface-panel to-surface-deep backdrop-blur-sm hover:border-white/20 transition-all text-left"
+    className="w-full flex items-center justify-between gap-3 px-4 py-3 my-3 rounded-xl border border-white/10 bg-gradient-to-br from-surface-panel/60 to-surface-deep/75 backdrop-blur-xl hover:border-white/20 transition-all text-left"
   >
     <span className="text-sm font-bold text-white/70">
       Already shown <span className="text-white/40 font-semibold">({count})</span>
@@ -140,7 +140,7 @@ const TierSection = ({
     <div className={animClass}>
       <TierHeader label={label} color={color} dot={dot} count={jobs.length} />
       {unseen.length > 0 && (
-        <div className="grid grid-cols-1 gap-4">
+        <div className="grid grid-cols-1 gap-3">
           {unseen.map((job) => (
             <JobCard key={job.id} job={job} {...cardProps} />
           ))}
@@ -154,7 +154,7 @@ const TierSection = ({
             onToggle={() => onToggleSeen(tierKey)}
           />
           {seenExpanded && (
-            <div className="grid grid-cols-1 gap-4">
+            <div className="grid grid-cols-1 gap-3">
               {seen.map((job) => (
                 <JobCard key={job.id} job={job} {...cardProps} />
               ))}
@@ -586,7 +586,7 @@ const JobOpeningsTab = () => {
           ) : isHistoryTab ? (
             // Application/discard history, most recent first — never
             // re-ranked by match score, so no tiers here.
-            <div className="grid grid-cols-1 gap-4">
+            <div className="grid grid-cols-1 gap-3">
               {visibleJobs.map((job) => (
                 <JobCard key={job.id} job={job} {...cardProps} />
               ))}
