@@ -35,6 +35,19 @@ const possibleJob = {
   signals: [],
 };
 
+// Filler jobs to push a tier's TOTAL count past the 10-job cap — the
+// accordion only engages once there's genuinely a lot on the page.
+function fillerJobs(n, idPrefix = "filler") {
+  return Array.from({ length: n }, (_, i) => ({
+    id: `${idPrefix}-${i}`,
+    title: `Filler Role ${idPrefix}-${i}`,
+    company: "FillerCo",
+    matchScore: 82,
+    reasons: [],
+    signals: [],
+  }));
+}
+
 function jobsResponse(jobs, overrides = {}) {
   return {
     data: {
@@ -354,33 +367,63 @@ describe("JobOpeningsTab — the Discarded tab is its own durable fetch", () => 
   });
 });
 
-describe("JobOpeningsTab — already-shown jobs collapse into an accordion (seenBefore)", () => {
-  it("renders a job seen before behind a collapsed 'Already shown' toggle, not expanded by default", async () => {
-    api.get.mockResolvedValue(jobsResponse([strongJob, { ...goodJob, seenBefore: true }]));
+describe("JobOpeningsTab — already-shown jobs collapse into an accordion (seenBefore), only past the 10-job cap", () => {
+  it("renders a job seen before behind a collapsed 'Already shown' toggle once the total exceeds 10", async () => {
+    api.get.mockResolvedValue(
+      jobsResponse([...fillerJobs(10), strongJob, { ...goodJob, seenBefore: true }])
+    );
     render(<JobOpeningsTab />);
     await waitFor(() => expect(screen.getByText("Backend Engineer")).toBeInTheDocument());
 
-    expect(screen.getByText(/already shown \(1\)/i)).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /already shown \(1\)/i })).toBeInTheDocument();
     expect(screen.queryByText("Frontend Engineer")).not.toBeInTheDocument();
   });
 
   it("reveals the already-shown job on clicking the toggle, and hides it again on a second click", async () => {
-    api.get.mockResolvedValue(jobsResponse([strongJob, { ...goodJob, seenBefore: true }]));
+    api.get.mockResolvedValue(
+      jobsResponse([...fillerJobs(10), strongJob, { ...goodJob, seenBefore: true }])
+    );
     render(<JobOpeningsTab />);
     await waitFor(() => expect(screen.getByText("Backend Engineer")).toBeInTheDocument());
 
-    await userEvent.click(screen.getByText(/already shown \(1\)/i));
+    const toggle = screen.getByRole("button", { name: /already shown \(1\)/i });
+    await userEvent.click(toggle);
     expect(screen.getByText("Frontend Engineer")).toBeInTheDocument();
 
-    await userEvent.click(screen.getByText(/already shown \(1\)/i));
+    await userEvent.click(toggle);
     expect(screen.queryByText("Frontend Engineer")).not.toBeInTheDocument();
   });
 
-  it("never gates a job never served before (seenBefore:false or absent) behind the toggle — it is always expanded", async () => {
-    api.get.mockResolvedValue(jobsResponse([strongJob])); // no seenBefore field at all
+  it("never gates an unseen job behind the toggle even when the accordion is active (>10 total)", async () => {
+    api.get.mockResolvedValue(jobsResponse([...fillerJobs(11)])); // 11 total, none seenBefore
     render(<JobOpeningsTab />);
-    await waitFor(() => expect(screen.getByText("Backend Engineer")).toBeInTheDocument());
+    await waitFor(() => expect(screen.getByText("Filler Role filler-0")).toBeInTheDocument());
 
-    expect(screen.queryByText(/already shown/i)).not.toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: /already shown/i })).not.toBeInTheDocument();
+    expect(screen.getByText("Filler Role filler-10")).toBeInTheDocument(); // the 11th, still expanded
+  });
+
+  // Regression/clarification (2026-11-15): a student with a short, easily
+  // scannable list shouldn't have anything hidden behind a click just
+  // because it happens to not be brand new — the editorial layout shows
+  // everything plainly once there are 10 or fewer jobs on the page.
+  it("shows a previously-seen job plainly, with no accordion at all, when the TOTAL across every tier is 10 or fewer", async () => {
+    api.get.mockResolvedValue(
+      jobsResponse([...fillerJobs(9), { ...goodJob, seenBefore: true }]) // 10 total
+    );
+    render(<JobOpeningsTab />);
+    await waitFor(() => expect(screen.getByText("Frontend Engineer")).toBeInTheDocument());
+
+    expect(screen.queryByRole("button", { name: /already shown/i })).not.toBeInTheDocument();
+  });
+
+  it("switches the accordion on as soon as the total crosses from 10 to 11", async () => {
+    api.get.mockResolvedValue(
+      jobsResponse([...fillerJobs(10), { ...goodJob, seenBefore: true }]) // 11 total
+    );
+    render(<JobOpeningsTab />);
+    await waitFor(() => expect(screen.getByText("Filler Role filler-0")).toBeInTheDocument());
+
+    expect(screen.getByRole("button", { name: /already shown \(1\)/i })).toBeInTheDocument();
   });
 });

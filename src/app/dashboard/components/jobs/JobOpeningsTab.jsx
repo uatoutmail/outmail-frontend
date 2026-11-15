@@ -93,25 +93,33 @@ const TierHeader = ({ label, color, dot, count }) => (
 // A student who skips a few days comes back to a flat, growing pile with no
 // way to tell what's actually new — this is the toggle for the "already
 // shown" half of that split (see the unseen/seen split in the render below).
-// Collapsed by default; the count stays visible either way.
+// Collapsed by default; the count stays visible either way. Styled as an
+// unmistakable disclosure panel (boxed, bordered, its own chevron badge) —
+// a plain text link read as decoration, not something to click (2026-11-15).
 const AlreadyShownToggle = ({ count, expanded, onToggle }) => (
   <button
     onClick={onToggle}
-    className="flex items-center gap-2 text-white/40 hover:text-white/70 text-xs font-bold uppercase tracking-widest transition-colors my-4 group"
+    aria-expanded={expanded}
+    className="w-full flex items-center justify-between gap-3 px-4 py-3 my-3 rounded-xl border border-white/10 bg-white/[0.04] hover:bg-white/[0.07] hover:border-white/20 transition-all text-left"
   >
-    {expanded ? (
-      <ChevronUp size={14} className="group-hover:-translate-y-0.5 transition-transform" />
-    ) : (
-      <ChevronDown size={14} className="group-hover:translate-y-0.5 transition-transform" />
-    )}
-    Already shown ({count})
+    <span className="text-sm font-bold text-white/70">
+      Already shown <span className="text-white/40 font-semibold">({count})</span>
+    </span>
+    <span className="flex items-center justify-center w-6 h-6 rounded-full bg-white/10 text-white/60 shrink-0">
+      {expanded ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
+    </span>
   </button>
 );
 
 // One match tier (Strong/Good/Possible), split into jobs new to this student
 // (always expanded) and jobs already shown before (collapsed behind
-// AlreadyShownToggle). Hoisted for the same reason as TierHeader —
-// react-hooks/static-components.
+// AlreadyShownToggle) — UNLESS useAccordion is false, in which case every
+// job in the tier renders expanded regardless of seenBefore. useAccordion is
+// driven by the TOTAL job count across every tier combined (computed by the
+// caller): with 10 or fewer jobs total, hiding anything behind a toggle just
+// adds a click for no real decluttering benefit, so everything shows in the
+// plain editorial layout; past that the accordion earns its keep. Hoisted
+// for the same reason as TierHeader — react-hooks/static-components.
 const TierSection = ({
   tierKey,
   label,
@@ -122,10 +130,11 @@ const TierSection = ({
   expandedSeen,
   onToggleSeen,
   animClass,
+  useAccordion,
 }) => {
   if (jobs.length === 0) return null;
-  const unseen = jobs.filter((j) => !j.seenBefore);
-  const seen = jobs.filter((j) => j.seenBefore);
+  const unseen = useAccordion ? jobs.filter((j) => !j.seenBefore) : jobs;
+  const seen = useAccordion ? jobs.filter((j) => j.seenBefore) : [];
   const seenExpanded = !!expandedSeen[tierKey];
   return (
     <div className={animClass}>
@@ -449,6 +458,10 @@ const JobOpeningsTab = () => {
     ? []
     : visibleJobs.filter((j) => j.matchScore >= 55 && j.matchScore < 70);
   const standard = isHistoryTab ? [] : visibleJobs.filter((j) => j.matchScore < 55);
+  // Total across ALL tiers combined, not per tier — the cap is about how
+  // much is on the page at once, not any one tier's own size.
+  const totalVisibleCount = highPriority.length + mediumPriority.length + standard.length;
+  const useAccordion = totalVisibleCount > 10;
   const activeLoading = active.loading;
   const activePagination = active.pagination;
   const toggleSeen = (tierKey) =>
@@ -552,6 +565,7 @@ const JobOpeningsTab = () => {
                 cardProps={cardProps}
                 expandedSeen={expandedSeen}
                 onToggleSeen={toggleSeen}
+                useAccordion={useAccordion}
                 animClass="animate-in fade-in slide-in-from-bottom-4 duration-500"
               />
               <TierSection
@@ -563,6 +577,7 @@ const JobOpeningsTab = () => {
                 cardProps={cardProps}
                 expandedSeen={expandedSeen}
                 onToggleSeen={toggleSeen}
+                useAccordion={useAccordion}
                 animClass="animate-in fade-in slide-in-from-bottom-4 duration-700"
               />
               <TierSection
@@ -574,6 +589,7 @@ const JobOpeningsTab = () => {
                 cardProps={cardProps}
                 expandedSeen={expandedSeen}
                 onToggleSeen={toggleSeen}
+                useAccordion={useAccordion}
                 animClass="animate-in fade-in slide-in-from-bottom-4 duration-1000"
               />
             </div>
