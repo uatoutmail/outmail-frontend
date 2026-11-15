@@ -100,7 +100,7 @@ const AlreadyShownToggle = ({ count, expanded, onToggle }) => (
   <button
     onClick={onToggle}
     aria-expanded={expanded}
-    className="w-full flex items-center justify-between gap-3 px-4 py-3 my-3 rounded-xl border border-white/10 bg-[#15121e]/95 backdrop-blur-sm hover:bg-[#1c1829] hover:border-white/20 transition-all text-left"
+    className="w-full flex items-center justify-between gap-3 px-4 py-3 my-3 rounded-xl border border-white/10 bg-gradient-to-br from-surface-panel to-surface-deep backdrop-blur-sm hover:border-white/20 transition-all text-left"
   >
     <span className="text-sm font-bold text-white/70">
       Already shown <span className="text-white/40 font-semibold">({count})</span>
@@ -533,7 +533,7 @@ const JobOpeningsTab = () => {
       {!isHistoryTab && !activeLoading && activePagination.total > 0 && (
         <div className="flex items-center gap-10 pb-6 mb-6 border-b border-white/10">
           <div>
-            <div className="text-3xl sm:text-4xl font-extrabold text-amber-300 leading-none">
+            <div className="text-3xl sm:text-4xl font-extrabold text-accent-light leading-none">
               {newCount}
             </div>
             <div className="text-xs text-white/45 mt-1.5">new openings</div>

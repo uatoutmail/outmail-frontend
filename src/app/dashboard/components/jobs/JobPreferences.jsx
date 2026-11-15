@@ -1,5 +1,5 @@
 import { SlidersHorizontal, ChevronDown, ChevronUp, Check, Loader2 } from "lucide-react";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { api } from "@/lib/api";
 import { logger } from "@/lib/logger";
 
@@ -34,6 +34,12 @@ const JobPreferences = ({ onSaved, forceOpen = false }) => {
   const [statedYears, setStatedYears] = useState("");
   const [inferredYears, setInferredYears] = useState(null);
   const [seekingType, setSeekingType] = useState("");
+  // A student who changed their mind (internship-only -> anything) had to
+  // save, then separately remember to collapse this themselves — easy to
+  // leave it open and assume nothing happened. Auto-closes a beat after a
+  // successful save instead, long enough to still see "Saved".
+  const collapseTimer = useRef(null);
+  useEffect(() => () => clearTimeout(collapseTimer.current), []);
 
   useEffect(() => {
     (async () => {
@@ -72,6 +78,8 @@ const JobPreferences = ({ onSaved, forceOpen = false }) => {
       });
       setSavedAt(Date.now());
       if (onSaved) onSaved();
+      clearTimeout(collapseTimer.current);
+      collapseTimer.current = setTimeout(() => setOpen(false), 900);
     } catch (e) {
       logger.error("Failed to save preferences:", e);
     } finally {

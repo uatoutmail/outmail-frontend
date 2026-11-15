@@ -76,11 +76,12 @@ const JobCard = ({
   return (
     // A translucent white overlay (bg-white/X) lightens whatever sits behind
     // it — against this page's actual violet gradient shell that produces a
-    // lavender card, not the dark editorial surface it was designed against.
-    // A near-opaque dark fill dominates the backdrop instead of blending
-    // with it, so the card reads the same regardless of what's behind it.
+    // washed-out lavender card, not a dark surface. surface-panel/surface-deep
+    // are this app's own violet-black design tokens (globals.css) — opaque
+    // enough to dominate the backdrop regardless of what's behind it, and on
+    //-brand rather than a plain near-black invented for this one component.
     <div
-      className={`${fraunces.variable} bg-[#15121e]/95 backdrop-blur-sm rounded-lg border-l-[3px] ${accentBorder} p-5`}
+      className={`${fraunces.variable} bg-gradient-to-br from-surface-panel to-surface-deep backdrop-blur-sm rounded-lg border-l-[3px] ${accentBorder} p-5`}
     >
       <div className="flex justify-between items-start gap-4">
         <div className="min-w-0 flex-1">
@@ -238,7 +239,7 @@ const JobCard = ({
               </button>
               <button
                 onClick={onApply}
-                className="flex items-center justify-center gap-1.5 px-5 py-2 rounded-full bg-amber-300 hover:bg-amber-200 text-[#1a1408] font-extrabold text-xs transition-all active:scale-95"
+                className="flex items-center justify-center gap-1.5 px-5 py-2 rounded-full bg-primary hover:bg-primary-hover text-primary-foreground font-extrabold text-xs transition-all active:scale-95"
               >
                 <CheckCircle size={14} /> Apply Now
               </button>
