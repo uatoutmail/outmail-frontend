@@ -162,11 +162,12 @@ const JobOpeningsTab = () => {
   const [loading, setLoading] = useState(false);
   const [filter, setFilter] = useState("all");
   const [pagination, setPagination] = useState({ page: 1, limit: 10, total: 0, totalPages: 1 });
-  // The Applied tab is a durable query of its own (GET /api/jobs/applied),
-  // NOT a client-side filter over the ranked feed above — an applied job can
-  // get outranked and fall off page 1 of "all" entirely, so filtering
-  // jobOpenings would silently lose it. Kept as separate state so switching
-  // back to "All" doesn't need a refetch.
+  // Applied and Discarded are each a durable query of their own
+  // (GET /api/jobs/applied / /discarded), NOT a client-side filter over the
+  // ranked feed above — an applied/discarded job is excluded from the ranked
+  // pool entirely on the next fresh fetch (backend), so filtering jobOpenings
+  // client-side would just show an empty result once that happens. Kept as
+  // separate state so switching back to "All" doesn't need a refetch.
   const [appliedJobs, setAppliedJobs] = useState([]);
   const [appliedLoading, setAppliedLoading] = useState(false);
   const [appliedPagination, setAppliedPagination] = useState({
@@ -176,6 +177,15 @@ const JobOpeningsTab = () => {
     totalPages: 1,
   });
   const [appliedLoaded, setAppliedLoaded] = useState(false);
+  const [discardedJobs, setDiscardedJobs] = useState([]);
+  const [discardedLoading, setDiscardedLoading] = useState(false);
+  const [discardedPagination, setDiscardedPagination] = useState({
+    page: 1,
+    limit: 10,
+    total: 0,
+    totalPages: 1,
+  });
+  const [discardedLoaded, setDiscardedLoaded] = useState(false);
   // Per-tier collapse state for the "already shown" split below — keyed by
   // tier label, default collapsed.
   const [expandedSeen, setExpandedSeen] = useState({});
@@ -233,9 +243,26 @@ const JobOpeningsTab = () => {
     }
   };
 
+  const fetchDiscardedJobs = async (page = 1) => {
+    setDiscardedLoading(true);
+    try {
+      const { data } = await api.get("/api/jobs/discarded", { params: { page, limit: 10 } });
+      if (data.success) {
+        setDiscardedJobs(data.data);
+        setDiscardedPagination(data.pagination);
+        setDiscardedLoaded(true);
+      }
+    } catch (error) {
+      logger.error("Error fetching discarded jobs:", error);
+    } finally {
+      setDiscardedLoading(false);
+    }
+  };
+
   const handleFilterChange = (next) => {
     setFilter(next);
     if (next === "applied" && !appliedLoaded) fetchAppliedJobs(1);
+    else if (next === "discarded" && !discardedLoaded) fetchDiscardedJobs(1);
   };
 
   // Throws on failure so callers can surface a real error instead of updating
@@ -264,7 +291,17 @@ const JobOpeningsTab = () => {
   const handleDiscard = async (jobId) => {
     try {
       await recordAction(jobId, "discarded");
-      setJobOpenings((prev) => prev.filter((j) => j.id !== jobId));
+      // Same "don't vanish mid-session" treatment as Apply: a discard click
+      // might be a mis-click or a change of mind, so the card stays in All
+      // (badge flips to Discarded, Reset Status appears) rather than
+      // disappearing instantly — it only actually leaves "All" on the next
+      // fresh fetch, once the backend's ranked pool excludes it.
+      setJobOpenings((prev) =>
+        prev.map((j) => (j.id === jobId ? { ...j, userAction: "discarded" } : j))
+      );
+      // The Discarded tab's own list is now stale, same reasoning as
+      // appliedLoaded below.
+      setDiscardedLoaded(false);
       toast("Job discarded.");
     } catch (e) {
       logger.error("Failed to record action:", e);
@@ -285,11 +322,13 @@ const JobOpeningsTab = () => {
     try {
       await api.patch(`/api/jobs/${jobId}/status`, { status: "pending" });
       setJobOpenings((prev) => prev.map((j) => (j.id === jobId ? { ...j, userAction: null } : j)));
-      // Resetting clears the backend's 'applied' JobInteraction row too (see
-      // updateJobStatus), so this job genuinely leaves the applied list —
-      // drop it here instead of waiting on a refetch, since the user is very
-      // likely looking at the Applied tab right now when they click this.
+      // Resetting clears the backend's applied/discarded JobInteraction row
+      // too (see updateJobStatus), so this job genuinely leaves whichever
+      // history list it was in — drop it here instead of waiting on a
+      // refetch, since the user is very likely looking at that exact tab
+      // right now when they click this.
       setAppliedJobs((prev) => prev.filter((j) => j.id !== jobId));
+      setDiscardedJobs((prev) => prev.filter((j) => j.id !== jobId));
       toast("Status reset.");
     } catch (e) {
       logger.error("Failed to reset status:", e);
@@ -312,6 +351,8 @@ const JobOpeningsTab = () => {
         return "text-green-400";
       case "saved":
         return "text-yellow-400";
+      case "discarded":
+        return "text-red-400";
       default:
         return "text-blue-400";
     }
@@ -323,6 +364,8 @@ const JobOpeningsTab = () => {
         return "Applied";
       case "saved":
         return "Saved";
+      case "discarded":
+        return "Discarded";
       default:
         return "New";
     }
@@ -358,18 +401,56 @@ const JobOpeningsTab = () => {
     return "text-blue-300";
   };
 
-  const isAppliedTab = filter === "applied";
-  // "All" is still inclusive of applied/saved jobs (badge + Reset Status) —
-  // that part was never broken. The Applied tab is a wholly separate,
-  // durably-fetched list (appliedJobs), not a filter over jobOpenings.
-  const visibleJobs = isAppliedTab ? appliedJobs : jobOpenings;
-  const highPriority = isAppliedTab ? [] : visibleJobs.filter((j) => j.matchScore >= 70);
-  const mediumPriority = isAppliedTab
+  // "All" stays inclusive of applied/discarded/saved jobs FOR THE REST OF
+  // THIS SESSION (badge + Reset Status in place) — a student who just
+  // clicked Apply/Discard to see what a posting was shouldn't have it
+  // vanish from their feed before they've actually decided. It only
+  // actually leaves "All" on the next fresh fetch, once the backend's
+  // ranked pool excludes it (see outmail-backend's matchingService.js).
+  // Applied/Discarded are each a wholly separate, durably-fetched list, not
+  // a filter over jobOpenings.
+  const isHistoryTab = filter === "applied" || filter === "discarded";
+  const TAB_CONFIG = {
+    all: {
+      jobs: jobOpenings,
+      loading,
+      pagination,
+      fetch: fetchJobs,
+      label: "Matched",
+      loadingCopy: "Analyzing Opportunities...",
+      emptyTitle: "No matches yet",
+      emptyBody: "Add a resume & job-hunt intent, or check back later",
+    },
+    applied: {
+      jobs: appliedJobs,
+      loading: appliedLoading,
+      pagination: appliedPagination,
+      fetch: fetchAppliedJobs,
+      label: "Applied",
+      loadingCopy: "Loading your applications...",
+      emptyTitle: "No applications yet",
+      emptyBody: "Jobs you apply to will show up here",
+    },
+    discarded: {
+      jobs: discardedJobs,
+      loading: discardedLoading,
+      pagination: discardedPagination,
+      fetch: fetchDiscardedJobs,
+      label: "Discarded",
+      loadingCopy: "Loading discarded jobs...",
+      emptyTitle: "No discarded jobs",
+      emptyBody: "Jobs you discard will show up here",
+    },
+  };
+  const active = TAB_CONFIG[filter];
+  const visibleJobs = active.jobs;
+  const highPriority = isHistoryTab ? [] : visibleJobs.filter((j) => j.matchScore >= 70);
+  const mediumPriority = isHistoryTab
     ? []
     : visibleJobs.filter((j) => j.matchScore >= 55 && j.matchScore < 70);
-  const standard = isAppliedTab ? [] : visibleJobs.filter((j) => j.matchScore < 55);
-  const activeLoading = isAppliedTab ? appliedLoading : loading;
-  const activePagination = isAppliedTab ? appliedPagination : pagination;
+  const standard = isHistoryTab ? [] : visibleJobs.filter((j) => j.matchScore < 55);
+  const activeLoading = active.loading;
+  const activePagination = active.pagination;
   const toggleSeen = (tierKey) =>
     setExpandedSeen((prev) => ({ ...prev, [tierKey]: !prev[tierKey] }));
 
@@ -395,7 +476,7 @@ const JobOpeningsTab = () => {
             </h1>
             {!activeLoading && activePagination.total > 0 && (
               <span className="px-3 py-1 bg-white/10 rounded-full text-xs font-bold text-white/50 border border-white/10 uppercase tracking-widest">
-                {activePagination.total} {isAppliedTab ? "Applied" : "Matched"}
+                {activePagination.total} {active.label}
               </span>
             )}
           </div>
@@ -406,7 +487,7 @@ const JobOpeningsTab = () => {
         </div>
 
         <div className="flex bg-white/5 backdrop-blur-sm rounded-2xl p-1.5 border border-white/10 w-full sm:w-auto">
-          {["all", "applied"].map((filterType) => (
+          {["all", "applied", "discarded"].map((filterType) => (
             <button
               key={filterType}
               onClick={() => handleFilterChange(filterType)}
@@ -439,7 +520,7 @@ const JobOpeningsTab = () => {
                 <div className="absolute top-0 left-0 w-12 h-12 rounded-full border-t-2 border-purple-500 animate-spin"></div>
               </div>
               <p className="text-white/30 text-xs font-bold uppercase tracking-widest animate-pulse">
-                {isAppliedTab ? "Loading your applications..." : "Analyzing Opportunities..."}
+                {active.loadingCopy}
               </p>
             </div>
           ) : visibleJobs.length === 0 ? (
@@ -447,17 +528,13 @@ const JobOpeningsTab = () => {
               <div className="w-16 h-16 bg-white/5 rounded-2xl flex items-center justify-center mb-6">
                 <Briefcase size={32} className="text-white/20" />
               </div>
-              <p className="text-white/50 text-xl font-bold mb-2">
-                {isAppliedTab ? "No applications yet" : "No matches yet"}
-              </p>
+              <p className="text-white/50 text-xl font-bold mb-2">{active.emptyTitle}</p>
               <p className="text-white/20 text-sm uppercase tracking-widest font-bold">
-                {isAppliedTab
-                  ? "Jobs you apply to will show up here"
-                  : "Add a resume & job-hunt intent, or check back later"}
+                {active.emptyBody}
               </p>
             </div>
-          ) : isAppliedTab ? (
-            // Application history, most-recently-applied first — never
+          ) : isHistoryTab ? (
+            // Application/discard history, most recent first — never
             // re-ranked by match score, so no tiers here.
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
               {visibleJobs.map((job) => (
@@ -507,11 +584,7 @@ const JobOpeningsTab = () => {
             <div className="flex justify-center items-center gap-6 mt-16 p-4 bg-white/5 rounded-2xl border border-white/10 w-fit mx-auto">
               <button
                 disabled={activePagination.page === 1}
-                onClick={() =>
-                  isAppliedTab
-                    ? fetchAppliedJobs(activePagination.page - 1)
-                    : fetchJobs(activePagination.page - 1)
-                }
+                onClick={() => active.fetch(activePagination.page - 1)}
                 className="flex items-center gap-2 px-6 py-2.5 bg-white/5 hover:bg-white/10 disabled:opacity-30 disabled:cursor-not-allowed text-white text-xs font-bold uppercase tracking-widest rounded-xl transition-all"
               >
                 Prev
@@ -526,11 +599,7 @@ const JobOpeningsTab = () => {
               </div>
               <button
                 disabled={activePagination.page === activePagination.totalPages}
-                onClick={() =>
-                  isAppliedTab
-                    ? fetchAppliedJobs(activePagination.page + 1)
-                    : fetchJobs(activePagination.page + 1)
-                }
+                onClick={() => active.fetch(activePagination.page + 1)}
                 className="flex items-center gap-2 px-6 py-2.5 bg-white/5 hover:bg-white/10 disabled:opacity-30 disabled:cursor-not-allowed text-white text-xs font-bold uppercase tracking-widest rounded-xl transition-all"
               >
                 Next
