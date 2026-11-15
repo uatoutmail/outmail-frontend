@@ -100,7 +100,7 @@ const AlreadyShownToggle = ({ count, expanded, onToggle }) => (
   <button
     onClick={onToggle}
     aria-expanded={expanded}
-    className="w-full flex items-center justify-between gap-3 px-4 py-3 my-3 rounded-xl border border-white/10 bg-white/[0.04] hover:bg-white/[0.07] hover:border-white/20 transition-all text-left"
+    className="w-full flex items-center justify-between gap-3 px-4 py-3 my-3 rounded-xl border border-white/10 bg-[#15121e]/95 backdrop-blur-sm hover:bg-[#1c1829] hover:border-white/20 transition-all text-left"
   >
     <span className="text-sm font-bold text-white/70">
       Already shown <span className="text-white/40 font-semibold">({count})</span>
@@ -140,7 +140,7 @@ const TierSection = ({
     <div className={animClass}>
       <TierHeader label={label} color={color} dot={dot} count={jobs.length} />
       {unseen.length > 0 && (
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 gap-4">
           {unseen.map((job) => (
             <JobCard key={job.id} job={job} {...cardProps} />
           ))}
@@ -154,7 +154,7 @@ const TierSection = ({
             onToggle={() => onToggleSeen(tierKey)}
           />
           {seenExpanded && (
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 gap-4">
               {seen.map((job) => (
                 <JobCard key={job.id} job={job} {...cardProps} />
               ))}
@@ -459,9 +459,17 @@ const JobOpeningsTab = () => {
     : visibleJobs.filter((j) => j.matchScore >= 55 && j.matchScore < 70);
   const standard = isHistoryTab ? [] : visibleJobs.filter((j) => j.matchScore < 55);
   // Total across ALL tiers combined, not per tier — the cap is about how
-  // much is on the page at once, not any one tier's own size.
+  // much is on the CURRENT PAGE at once (the accordion's own job), not a
+  // claim about the full matched set.
   const totalVisibleCount = highPriority.length + mediumPriority.length + standard.length;
   const useAccordion = totalVisibleCount > 10;
+  // The summary row's own numbers, unlike totalVisibleCount above, come
+  // straight from the backend (pagination.newCount/shownCount) rather than
+  // being derived from whatever page is loaded — deriving them client-side
+  // would silently cap at one page's worth once there's more than `limit`
+  // matches (see outmail-backend#245).
+  const newCount = active.pagination.newCount ?? 0;
+  const shownCount = active.pagination.shownCount ?? 0;
   const activeLoading = active.loading;
   const activePagination = active.pagination;
   const toggleSeen = (tierKey) =>
@@ -487,7 +495,10 @@ const JobOpeningsTab = () => {
             <h1 className="text-3xl sm:text-4xl font-black text-white tracking-tight">
               Job Openings
             </h1>
-            {!activeLoading && activePagination.total > 0 && (
+            {/* Applied/Discarded have no new-vs-shown split, so they keep the
+                plain count pill — the big-number row below is specific to
+                the live ranked feed. */}
+            {isHistoryTab && !activeLoading && activePagination.total > 0 && (
               <span className="px-3 py-1 bg-white/10 rounded-full text-xs font-bold text-white/50 border border-white/10 uppercase tracking-widest">
                 {activePagination.total} {active.label}
               </span>
@@ -515,6 +526,32 @@ const JobOpeningsTab = () => {
           ))}
         </div>
       </div>
+
+      {/* Big-number summary — the editorial card design's own stat row
+          (new/matched/already-shown), not a generic "X Matched" badge.
+          Only meaningful on the live ranked feed. */}
+      {!isHistoryTab && !activeLoading && activePagination.total > 0 && (
+        <div className="flex items-center gap-10 pb-6 mb-6 border-b border-white/10">
+          <div>
+            <div className="text-3xl sm:text-4xl font-extrabold text-amber-300 leading-none">
+              {newCount}
+            </div>
+            <div className="text-xs text-white/45 mt-1.5">new openings</div>
+          </div>
+          <div>
+            <div className="text-3xl sm:text-4xl font-extrabold text-white leading-none">
+              {activePagination.total}
+            </div>
+            <div className="text-xs text-white/45 mt-1.5">matched to you</div>
+          </div>
+          <div>
+            <div className="text-3xl sm:text-4xl font-extrabold text-white/40 leading-none">
+              {shownCount}
+            </div>
+            <div className="text-xs text-white/45 mt-1.5">already shown</div>
+          </div>
+        </div>
+      )}
 
       {prerequisiteBlock ? (
         <JobPrerequisiteGate
@@ -549,7 +586,7 @@ const JobOpeningsTab = () => {
           ) : isHistoryTab ? (
             // Application/discard history, most recent first — never
             // re-ranked by match score, so no tiers here.
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 gap-4">
               {visibleJobs.map((job) => (
                 <JobCard key={job.id} job={job} {...cardProps} />
               ))}

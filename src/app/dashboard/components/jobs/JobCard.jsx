@@ -74,8 +74,13 @@ const JobCard = ({
   };
 
   return (
+    // A translucent white overlay (bg-white/X) lightens whatever sits behind
+    // it — against this page's actual violet gradient shell that produces a
+    // lavender card, not the dark editorial surface it was designed against.
+    // A near-opaque dark fill dominates the backdrop instead of blending
+    // with it, so the card reads the same regardless of what's behind it.
     <div
-      className={`${fraunces.variable} bg-white/[0.03] rounded-lg border-l-[3px] ${accentBorder} p-5`}
+      className={`${fraunces.variable} bg-[#15121e]/95 backdrop-blur-sm rounded-lg border-l-[3px] ${accentBorder} p-5`}
     >
       <div className="flex justify-between items-start gap-4">
         <div className="min-w-0 flex-1">
