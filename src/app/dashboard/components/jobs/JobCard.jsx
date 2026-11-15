@@ -12,7 +12,7 @@ import { api } from "@/lib/api";
 // downloads on pages that actually render a job card.
 const fraunces = Fraunces({
   subsets: ["latin"],
-  weight: ["600", "700"],
+  weight: ["600", "700", "800"],
   variable: "--font-fraunces-var",
   display: "swap",
 });
@@ -74,16 +74,17 @@ const JobCard = ({
   };
 
   return (
-    // A translucent white overlay (bg-white/X) lightens whatever sits behind
-    // it — against this page's actual violet gradient shell that produces a
-    // washed-out lavender card, not a dark surface. surface-panel/surface-deep
-    // are this app's own violet-black design tokens (globals.css) — opaque
-    // enough to dominate the backdrop regardless of what's behind it, and on
-    //-brand rather than a plain near-black invented for this one component.
+    // A translucent WHITE overlay (bg-white/X) lightens whatever sits behind
+    // it — against this page's violet gradient shell that produced a washed-
+    // out lavender card. surface-panel/surface-deep are this app's own
+    // violet-black tokens (globals.css), so a translucent layer of THOSE
+    // blends toward more of the same dark violet instead of an off-brand
+    // tint — genuinely glassy (backdrop-blur-xl lets the page show through)
+    // without the earlier contrast bug, and lighter than a fully opaque fill.
     <div
-      className={`${fraunces.variable} bg-gradient-to-br from-surface-panel to-surface-deep backdrop-blur-sm rounded-lg border-l-[3px] ${accentBorder} p-5`}
+      className={`${fraunces.variable} bg-gradient-to-br from-surface-panel/60 to-surface-deep/75 backdrop-blur-xl rounded-lg border-l-[3px] ${accentBorder} p-4`}
     >
-      <div className="flex justify-between items-start gap-4">
+      <div className="flex justify-between items-start gap-3">
         <div className="min-w-0 flex-1">
           <div className="flex items-center gap-2">
             <div className="w-7 h-7 rounded-md bg-white/10 flex items-center justify-center text-xs font-extrabold text-purple-300 shrink-0">
@@ -97,13 +98,13 @@ const JobCard = ({
           </div>
 
           <h3
-            className="text-xl sm:text-2xl font-bold text-white leading-tight mt-2.5"
+            className="text-xl sm:text-2xl font-extrabold text-white leading-tight mt-2"
             style={{ fontFamily: "var(--font-fraunces-var)" }}
           >
             {job.title}
           </h3>
 
-          <div className="flex flex-wrap items-center gap-2 mt-2.5">
+          <div className="flex flex-wrap items-center gap-2 mt-2">
             <span
               className={`text-xs font-medium px-2 py-0.5 rounded-full bg-white/5 ${getStatusColor(job.userAction)}`}
             >
@@ -143,7 +144,7 @@ const JobCard = ({
             >
               {job.matchScore}
             </div>
-            <div className="text-[9.5px] text-white/40 uppercase tracking-wide mt-1.5 whitespace-nowrap">
+            <div className="text-[9.5px] text-white/40 uppercase tracking-wide mt-1 whitespace-nowrap">
               Outmail Score
             </div>
           </div>
@@ -154,12 +155,12 @@ const JobCard = ({
           main editorial voice; any extras fall back to the old chip style
           rather than competing for the same spotlight. */}
       {leadReason && (
-        <p className="mt-4 text-[15px] leading-relaxed text-white/80 italic">
+        <p className="mt-3 text-[15px] leading-snug text-white/80 italic">
           &ldquo;{leadReason.detail}&rdquo;
         </p>
       )}
       {restReasons.length > 0 && (
-        <div className="flex flex-wrap gap-2 mt-2.5">
+        <div className="flex flex-wrap gap-2 mt-2">
           {restReasons.map((r, i) => (
             <span
               key={i}
@@ -172,7 +173,7 @@ const JobCard = ({
       )}
 
       {skills.length > 0 && (
-        <div className="flex flex-wrap gap-2 mt-3">
+        <div className="flex flex-wrap gap-2 mt-2">
           {skills.map((signal, i) => (
             <span
               key={i}
@@ -215,7 +216,7 @@ const JobCard = ({
         </div>
       )}
 
-      <div className="flex flex-wrap justify-between items-center gap-3 mt-4">
+      <div className="flex flex-wrap justify-between items-center gap-3 mt-3">
         {job.compensation ? (
           <span className="text-sm text-white/55">{job.compensation}</span>
         ) : (
