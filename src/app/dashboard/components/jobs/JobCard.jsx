@@ -1,17 +1,21 @@
-import {
-  Briefcase,
-  Building,
-  MapPin,
-  DollarSign,
-  Sparkles,
-  CheckCircle,
-  X,
-  AlertTriangle,
-  Wand2,
-} from "lucide-react";
+import { Sparkles, CheckCircle, X, AlertTriangle, Wand2 } from "lucide-react";
+import { Fraunces } from "next/font/google";
 import React, { useState } from "react";
 import { toast } from "sonner";
 import { api } from "@/lib/api";
+
+// Scoped here (not in the root layout) rather than next/font's own usage
+// guidance of "import once, use everywhere" — this repo deliberately
+// consolidated every other typeface onto Syne after three unused families
+// were found loading on every page load (see layout.js). Importing it in
+// this leaf component keeps the same discipline: Fraunces's woff2 only
+// downloads on pages that actually render a job card.
+const fraunces = Fraunces({
+  subsets: ["latin"],
+  weight: ["600", "700"],
+  variable: "--font-fraunces-var",
+  display: "swap",
+});
 
 const JobCard = ({
   job,
@@ -27,11 +31,17 @@ const JobCard = ({
 }) => {
   const tier = getPriorityTier(job.matchScore);
   const isNew = !job.userAction; // no per-user action yet
+  // A history-list card (Applied/Discarded tabs) carries no live score —
+  // tier's own fallback would otherwise paint it as a blue "Possible Match"
+  // accent, which is misleading once there's no score behind it at all.
+  const accentBorder = job.matchScore == null ? "border-white/15" : tier.border;
 
   // Accept either backend field shape (applyLink/url or applyUrl/sourceUrl) so
   // links work regardless of which backend version is deployed.
   const applyUrl = job.applyLink || job.applyUrl || job.url || job.sourceUrl;
   const skills = job.signals || job.skills || [];
+  const [leadReason, ...restReasons] = job.reasons || [];
+  const initial = (job.company || "?").trim().charAt(0).toUpperCase();
 
   const onApply = () => {
     handleOpenJob(applyUrl);
@@ -65,15 +75,29 @@ const JobCard = ({
 
   return (
     <div
-      className={`bg-white/10 backdrop-blur-md rounded-2xl p-4 sm:p-5 border ${tier.border} hover:border-white/30 transition-all duration-300`}
+      className={`${fraunces.variable} bg-white/[0.03] rounded-lg border-l-[3px] ${accentBorder} p-5`}
     >
-      <div className="flex flex-col md:flex-row justify-between items-start gap-4 mb-4">
-        <div className="flex-1 min-w-0">
-          <div className="flex flex-wrap items-center gap-2 mb-2">
-            <span className="w-7 h-7 rounded-full bg-white/20 flex items-center justify-center mr-1">
-              <Briefcase size={18} className="text-primary" />
+      <div className="flex justify-between items-start gap-4">
+        <div className="min-w-0 flex-1">
+          <div className="flex items-center gap-2">
+            <div className="w-7 h-7 rounded-md bg-white/10 flex items-center justify-center text-xs font-extrabold text-purple-300 shrink-0">
+              {initial}
+            </div>
+            <span className="text-xs font-semibold text-white/55 truncate">
+              {job.company}
+              {job.location && ` · ${job.location}`}
+              {job.workType && ` · ${job.workType}`}
             </span>
-            <h3 className="text-lg font-bold text-white leading-tight">{job.title}</h3>
+          </div>
+
+          <h3
+            className="text-xl sm:text-2xl font-bold text-white leading-tight mt-2.5"
+            style={{ fontFamily: "var(--font-fraunces-var)" }}
+          >
+            {job.title}
+          </h3>
+
+          <div className="flex flex-wrap items-center gap-2 mt-2.5">
             <span
               className={`text-xs font-medium px-2 py-0.5 rounded-full bg-white/5 ${getStatusColor(job.userAction)}`}
             >
@@ -103,51 +127,34 @@ const JobCard = ({
               {job.autofillReady ? "Autofill ready" : "Fill manually"}
             </span>
           </div>
-
-          <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-sm text-white/60">
-            <div className="flex items-center gap-1.5">
-              <Building size={14} className="text-purple-400 shrink-0" />
-              <span className="truncate max-w-[150px]">{job.company}</span>
-            </div>
-            {job.location && (
-              <div className="flex items-center gap-1.5">
-                <MapPin size={14} className="text-purple-400 shrink-0" />
-                <span>{job.location}</span>
-              </div>
-            )}
-            {job.workType && (
-              <div className="flex items-center gap-1.5">
-                <Briefcase size={14} className="text-purple-400 shrink-0" />
-                <span>{job.workType}</span>
-              </div>
-            )}
-            {job.compensation && (
-              <div className="flex items-center gap-1.5">
-                <DollarSign size={14} className="text-purple-400 shrink-0" />
-                <span>{job.compensation}</span>
-              </div>
-            )}
-          </div>
         </div>
 
         {job.matchScore != null && (
-          <div className="flex items-center bg-white/5 rounded-xl px-4 py-3 border border-white/10 shrink-0 self-start md:self-center">
-            <div className="flex flex-col items-center">
-              <span className={`text-2xl font-bold ${getPriorityScoreColor(job.matchScore)}`}>
-                {job.matchScore}
-              </span>
-              <span className="text-white/40 text-[10px] uppercase tracking-wider font-bold">
-                Outmail Score
-              </span>
+          <div className="text-right shrink-0">
+            <div
+              className={`text-3xl font-bold leading-none ${getPriorityScoreColor(job.matchScore)}`}
+              style={{ fontFamily: "var(--font-fraunces-var)" }}
+            >
+              {job.matchScore}
+            </div>
+            <div className="text-[9.5px] text-white/40 uppercase tracking-wide mt-1.5 whitespace-nowrap">
+              Outmail Score
             </div>
           </div>
         )}
       </div>
 
-      {/* Why matched (OUT-27 reasons) */}
-      {job.reasons && job.reasons.length > 0 && (
-        <div className="flex flex-wrap gap-2 mb-4">
-          {job.reasons.map((r, i) => (
+      {/* Why matched (OUT-27 reasons) — the lead reason carries the card's
+          main editorial voice; any extras fall back to the old chip style
+          rather than competing for the same spotlight. */}
+      {leadReason && (
+        <p className="mt-4 text-[15px] leading-relaxed text-white/80 italic">
+          &ldquo;{leadReason.detail}&rdquo;
+        </p>
+      )}
+      {restReasons.length > 0 && (
+        <div className="flex flex-wrap gap-2 mt-2.5">
+          {restReasons.map((r, i) => (
             <span
               key={i}
               className="flex items-center gap-1 px-2.5 py-1 bg-green-500/10 border border-green-500/20 text-green-200 rounded-md text-[11px] font-medium"
@@ -159,7 +166,7 @@ const JobCard = ({
       )}
 
       {skills.length > 0 && (
-        <div className="flex flex-wrap gap-2 mb-4">
+        <div className="flex flex-wrap gap-2 mt-3">
           {skills.map((signal, i) => (
             <span
               key={i}
@@ -202,37 +209,44 @@ const JobCard = ({
         </div>
       )}
 
-      <div className="flex flex-wrap gap-3 mt-4">
-        {isNew ? (
-          <>
-            <button
-              onClick={onApply}
-              className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-6 py-2.5 bg-green-600 hover:bg-green-500 text-white font-bold rounded-xl transition-all active:scale-95 text-sm shadow-lg shadow-green-900/20"
-            >
-              <CheckCircle size={18} /> Apply Now
-            </button>
-            <button
-              onClick={() => setReportOpen((v) => !v)}
-              title="Tell us this job is closed or the link is broken"
-              className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-4 py-2.5 bg-white/5 hover:bg-amber-500/20 hover:text-amber-300 text-white/60 font-semibold rounded-xl border border-white/10 transition-all active:scale-95 text-sm"
-            >
-              <AlertTriangle size={16} /> Report
-            </button>
-            <button
-              onClick={() => handleDiscard(job.id)}
-              className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-6 py-2.5 bg-white/5 hover:bg-red-500/20 hover:text-red-400 text-white/70 font-bold rounded-xl border border-white/10 transition-all active:scale-95 text-sm"
-            >
-              <X size={18} /> Discard
-            </button>
-          </>
+      <div className="flex flex-wrap justify-between items-center gap-3 mt-4">
+        {job.compensation ? (
+          <span className="text-sm text-white/55">{job.compensation}</span>
         ) : (
-          <button
-            onClick={() => handleResetStatus(job.id)}
-            className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-6 py-2.5 bg-white/5 hover:bg-white/10 text-white font-bold rounded-xl border border-white/10 transition-all active:scale-95 text-sm"
-          >
-            Reset Status
-          </button>
+          <span />
         )}
+        <div className="flex flex-wrap gap-2">
+          {isNew ? (
+            <>
+              <button
+                onClick={() => handleDiscard(job.id)}
+                className="flex items-center justify-center gap-1.5 px-3.5 py-2 rounded-full border border-white/15 text-white/65 hover:text-white hover:border-white/30 font-bold text-xs transition-all active:scale-95"
+              >
+                <X size={14} /> Discard
+              </button>
+              <button
+                onClick={() => setReportOpen((v) => !v)}
+                title="Tell us this job is closed or the link is broken"
+                className="flex items-center justify-center gap-1.5 px-3.5 py-2 rounded-full border border-white/15 text-white/65 hover:text-amber-300 hover:border-amber-500/40 font-bold text-xs transition-all active:scale-95"
+              >
+                <AlertTriangle size={14} /> Report
+              </button>
+              <button
+                onClick={onApply}
+                className="flex items-center justify-center gap-1.5 px-5 py-2 rounded-full bg-amber-300 hover:bg-amber-200 text-[#1a1408] font-extrabold text-xs transition-all active:scale-95"
+              >
+                <CheckCircle size={14} /> Apply Now
+              </button>
+            </>
+          ) : (
+            <button
+              onClick={() => handleResetStatus(job.id)}
+              className="flex items-center justify-center gap-1.5 px-5 py-2 rounded-full border border-white/15 text-white hover:border-white/30 font-bold text-xs transition-all active:scale-95"
+            >
+              Reset Status
+            </button>
+          )}
+        </div>
       </div>
     </div>
   );

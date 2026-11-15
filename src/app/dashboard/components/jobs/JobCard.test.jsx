@@ -53,12 +53,14 @@ describe("JobCard — a new (no userAction) job", () => {
   it("renders job facts and the priority score", () => {
     render(<JobCard job={newJob} {...makeHandlers()} />);
     expect(screen.getByText("Backend Engineer")).toBeInTheDocument();
-    expect(screen.getByText("Acme Corp")).toBeInTheDocument();
-    expect(screen.getByText("Bangalore")).toBeInTheDocument();
-    expect(screen.getByText("Hybrid")).toBeInTheDocument();
+    // Company/location/work-type render as one editorial meta line now,
+    // not three separate text nodes with their own icons.
+    expect(screen.getByText("Acme Corp · Bangalore · Hybrid")).toBeInTheDocument();
     expect(screen.getByText("₹15L–20L")).toBeInTheDocument();
     expect(screen.getByText("82")).toBeInTheDocument();
-    expect(screen.getByText("Matches your Python skills")).toBeInTheDocument();
+    // The lead reason renders as a quoted line (curly quotes included), so
+    // match on the substring rather than the exact unquoted string.
+    expect(screen.getByText(/Matches your Python skills/)).toBeInTheDocument();
     expect(screen.getByText("Python")).toBeInTheDocument();
   });
 

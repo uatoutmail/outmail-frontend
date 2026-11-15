@@ -46,6 +46,9 @@ export default defineConfig({
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),
+      // See src/test/mocks/nextFontGoogle.js — the real package needs
+      // Next's build-time loader, which Vitest doesn't run.
+      "next/font/google": path.resolve(__dirname, "./src/test/mocks/nextFontGoogle.js"),
     },
   },
 });
