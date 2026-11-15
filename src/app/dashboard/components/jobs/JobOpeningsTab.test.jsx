@@ -106,7 +106,7 @@ describe("JobOpeningsTab — job actions", () => {
     render(<JobOpeningsTab />);
     await waitFor(() => expect(screen.getByText("Backend Engineer")).toBeInTheDocument());
 
-    await userEvent.click(screen.getByRole("button", { name: /discard/i }));
+    await userEvent.click(screen.getByRole("button", { name: /^discard$/i }));
 
     const { toast } = await import("sonner");
     await waitFor(() =>
@@ -116,16 +116,28 @@ describe("JobOpeningsTab — job actions", () => {
     expect(screen.getByText("Backend Engineer")).toBeInTheDocument();
   });
 
-  it("discards a job and removes it from the list on success", async () => {
+  // Regression (2026-11-15): discard used to remove the card from "All"
+  // instantly — but a discard click might be a mis-click or "just checking,"
+  // and losing it from view before the student has really decided means it
+  // never gets a second look. It now stays in place for the rest of this
+  // session (badge flips to Discarded, Reset Status appears); only the next
+  // fresh fetch actually drops it from "All" (backend's job, not this file's).
+  it("discards a job: records the action and flips it to Discarded in place, without removing it from the list", async () => {
     api.get.mockResolvedValue(jobsResponse([strongJob, goodJob]));
     api.post.mockResolvedValue({});
     render(<JobOpeningsTab />);
     await waitFor(() => expect(screen.getByText("Backend Engineer")).toBeInTheDocument());
 
-    await userEvent.click(screen.getAllByRole("button", { name: /discard/i })[0]);
+    await userEvent.click(screen.getAllByRole("button", { name: /^discard$/i })[0]);
 
-    await waitFor(() => expect(screen.queryByText("Backend Engineer")).not.toBeInTheDocument());
+    await waitFor(() =>
+      expect(api.post).toHaveBeenCalledWith("/api/jobs/j1/interactions", { action: "discarded" })
+    );
+    // Still on the page — not removed.
+    expect(screen.getByText("Backend Engineer")).toBeInTheDocument();
     expect(screen.getByText("Frontend Engineer")).toBeInTheDocument();
+    await waitFor(() => expect(screen.getByText("Discarded")).toBeInTheDocument());
+    expect(screen.getAllByRole("button", { name: /reset status/i })).toHaveLength(1);
   });
 
   // Regression (found 2026-11-10): reporting a job used to leave it sitting
@@ -257,6 +269,88 @@ describe("JobOpeningsTab — the Applied tab is its own durable fetch, not a fil
     await userEvent.click(screen.getByRole("button", { name: /^applied$/i }));
 
     expect(await screen.findByText("Frontend Engineer")).toBeInTheDocument();
+  });
+});
+
+// Symmetric to the Applied tab above — same durable-fetch reasoning, same
+// "stay in place this session, settle on next refresh" behavior.
+describe("JobOpeningsTab — the Discarded tab is its own durable fetch", () => {
+  it("fetches from /api/jobs/discarded the first time the Discarded tab is opened", async () => {
+    api.get.mockImplementation(async (url) => {
+      if (url === "/api/jobs/discarded")
+        return jobsResponse([{ ...goodJob, userAction: "discarded" }]);
+      return jobsResponse([strongJob]);
+    });
+    render(<JobOpeningsTab />);
+    await waitFor(() => expect(screen.getByText("Backend Engineer")).toBeInTheDocument());
+
+    await userEvent.click(screen.getByRole("button", { name: /^discarded$/i }));
+
+    await waitFor(() =>
+      expect(api.get).toHaveBeenCalledWith("/api/jobs/discarded", {
+        params: { page: 1, limit: 10 },
+      })
+    );
+    expect(await screen.findByText("Frontend Engineer")).toBeInTheDocument();
+    expect(screen.queryByText("Backend Engineer")).not.toBeInTheDocument();
+  });
+
+  it("shows the empty-state copy specific to Discarded when nothing has been discarded", async () => {
+    api.get.mockImplementation(async (url) => {
+      if (url === "/api/jobs/discarded") return jobsResponse([], { total: 0 });
+      return jobsResponse([strongJob]);
+    });
+    render(<JobOpeningsTab />);
+    await waitFor(() => expect(screen.getByText("Backend Engineer")).toBeInTheDocument());
+
+    await userEvent.click(screen.getByRole("button", { name: /^discarded$/i }));
+
+    expect(await screen.findByText(/no discarded jobs/i)).toBeInTheDocument();
+  });
+
+  it("refetches the Discarded tab after a new discard happens elsewhere, instead of showing a stale cached list", async () => {
+    api.get.mockImplementation(async (url) => {
+      if (url === "/api/jobs/discarded") return jobsResponse([]);
+      return jobsResponse([strongJob]);
+    });
+    api.post.mockResolvedValue({});
+    render(<JobOpeningsTab />);
+    await waitFor(() => expect(screen.getByText("Backend Engineer")).toBeInTheDocument());
+
+    // Load the Discarded tab once (empty), then go back to All and discard a job.
+    await userEvent.click(screen.getByRole("button", { name: /^discarded$/i }));
+    await screen.findByText(/no discarded jobs/i);
+    await userEvent.click(screen.getByRole("button", { name: /^all$/i }));
+    await userEvent.click(screen.getByRole("button", { name: /^discard$/i }));
+    await waitFor(() => expect(api.post).toHaveBeenCalled());
+
+    api.get.mockImplementation(async (url) => {
+      if (url === "/api/jobs/discarded")
+        return jobsResponse([{ ...strongJob, userAction: "discarded" }]);
+      return jobsResponse([{ ...strongJob, userAction: "discarded" }]);
+    });
+    await userEvent.click(screen.getByRole("button", { name: /^discarded$/i }));
+
+    expect(await screen.findByText("Backend Engineer")).toBeInTheDocument();
+    expect(screen.queryByText(/no discarded jobs/i)).not.toBeInTheDocument();
+  });
+
+  it("resets a discarded job's status back to pending from the Discarded tab", async () => {
+    api.get.mockImplementation(async (url) => {
+      if (url === "/api/jobs/discarded")
+        return jobsResponse([{ ...strongJob, userAction: "discarded" }]);
+      return jobsResponse([]);
+    });
+    api.patch.mockResolvedValue({});
+    render(<JobOpeningsTab />);
+    await waitFor(() => expect(screen.getByText(/no matches yet/i)).toBeInTheDocument());
+
+    await userEvent.click(screen.getByRole("button", { name: /^discarded$/i }));
+    await userEvent.click(await screen.findByRole("button", { name: /reset status/i }));
+
+    await waitFor(() =>
+      expect(api.patch).toHaveBeenCalledWith("/api/jobs/j1/status", { status: "pending" })
+    );
   });
 });
 
