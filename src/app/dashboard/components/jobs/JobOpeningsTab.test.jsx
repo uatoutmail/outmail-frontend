@@ -53,7 +53,15 @@ function jobsResponse(jobs, overrides = {}) {
     data: {
       success: true,
       data: jobs,
-      pagination: { page: 1, limit: 10, total: jobs.length, totalPages: 1, ...overrides },
+      pagination: {
+        page: 1,
+        limit: 10,
+        total: jobs.length,
+        totalPages: 1,
+        newCount: jobs.filter((j) => !j.seenBefore).length,
+        shownCount: jobs.filter((j) => j.seenBefore).length,
+        ...overrides,
+      },
     },
   };
 }
@@ -72,7 +80,21 @@ describe("JobOpeningsTab — loading and tiering", () => {
     expect(screen.getByText("Strong Match")).toBeInTheDocument();
     expect(screen.getByText("Good Match")).toBeInTheDocument();
     expect(screen.getByText("Possible Match")).toBeInTheDocument();
-    expect(screen.getByText("3 Matched")).toBeInTheDocument();
+    // The editorial summary row — from pagination.newCount/shownCount
+    // (backend-computed, full-match-set totals), not derived client-side.
+    expect(screen.getByText("new openings")).toBeInTheDocument();
+    expect(screen.getByText("matched to you")).toBeInTheDocument();
+    expect(screen.getByText("already shown")).toBeInTheDocument();
+  });
+
+  it("shows the summary row's numbers straight from pagination.newCount/shownCount, not derived from the loaded page", async () => {
+    api.get.mockResolvedValue(jobsResponse([strongJob], { total: 9, newCount: 7, shownCount: 2 }));
+    render(<JobOpeningsTab />);
+    await waitFor(() => expect(screen.getByText("Backend Engineer")).toBeInTheDocument());
+
+    expect(screen.getByText("7")).toBeInTheDocument();
+    expect(screen.getByText("9")).toBeInTheDocument();
+    expect(screen.getByText("2")).toBeInTheDocument();
   });
 
   it("shows an empty state when there are no jobs", async () => {
