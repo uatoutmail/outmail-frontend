@@ -89,6 +89,46 @@ describe("JobPreferences — saving", () => {
     );
   });
 
+  // Regression (2026-11-15): a student who changed their mind (e.g.
+  // internship-only -> both) and saved had to separately remember to
+  // collapse this panel themselves — easy to leave it open and assume
+  // nothing happened.
+  it("auto-collapses a beat after a successful save, having shown the confirmation first", async () => {
+    api.put.mockResolvedValue({});
+    render(<JobPreferences />);
+    await userEvent.click(screen.getByRole("button", { name: /what are you looking for/i }));
+    await waitFor(() =>
+      expect(screen.getByDisplayValue("Backend roles at startups")).toBeInTheDocument()
+    );
+
+    await userEvent.click(screen.getByRole("button", { name: /save & refresh matches/i }));
+    await waitFor(() => expect(screen.getByText(/saved/i)).toBeInTheDocument());
+    // Still open right after saving — the confirmation is meant to be seen.
+    expect(screen.getByDisplayValue("Backend roles at startups")).toBeInTheDocument();
+
+    await waitFor(
+      () => expect(screen.queryByDisplayValue("Backend roles at startups")).not.toBeInTheDocument(),
+      { timeout: 2000 }
+    );
+  });
+
+  it("does not auto-collapse when the save fails, so the error/inputs stay visible", async () => {
+    api.put.mockRejectedValue(new Error("offline"));
+    render(<JobPreferences />);
+    await userEvent.click(screen.getByRole("button", { name: /what are you looking for/i }));
+    await waitFor(() =>
+      expect(screen.getByDisplayValue("Backend roles at startups")).toBeInTheDocument()
+    );
+
+    await userEvent.click(screen.getByRole("button", { name: /save & refresh matches/i }));
+    await waitFor(() => expect(api.put).toHaveBeenCalled());
+
+    // Give the (never-scheduled, on failure) collapse timer a real chance to
+    // have fired if it incorrectly had been set.
+    await new Promise((r) => setTimeout(r, 1000));
+    expect(screen.getByDisplayValue("Backend roles at startups")).toBeInTheDocument();
+  });
+
   it("does not blow up when there is no onSaved callback", async () => {
     api.put.mockResolvedValue({});
     render(<JobPreferences />);
