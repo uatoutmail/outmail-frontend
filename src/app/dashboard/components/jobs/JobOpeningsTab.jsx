@@ -171,6 +171,15 @@ const JobOpeningsTab = () => {
   const [loading, setLoading] = useState(false);
   const [filter, setFilter] = useState("all");
   const [pagination, setPagination] = useState({ page: 1, limit: 10, total: 0, totalPages: 1 });
+  // Annual job-visibility cap (TPO campus GTM, 2026-11-19) — annualCap is
+  // null for an uncapped plan (e.g. Pro), a number for a capped one (e.g.
+  // the free campus plan's 500/year). Only meaningful on the live feed, not
+  // the applied/discarded history tabs.
+  const [annualCapInfo, setAnnualCapInfo] = useState({
+    annualJobsShown: 0,
+    annualCap: null,
+    atAnnualCap: false,
+  });
   // Applied and Discarded are each a durable query of their own
   // (GET /api/jobs/applied / /discarded), NOT a client-side filter over the
   // ranked feed above — an applied/discarded job is excluded from the ranked
@@ -213,6 +222,11 @@ const JobOpeningsTab = () => {
         setPrerequisiteBlock(null);
         setJobOpenings(data.data);
         setPagination(data.pagination);
+        setAnnualCapInfo({
+          annualJobsShown: data.annualJobsShown ?? 0,
+          annualCap: data.annualCap ?? null,
+          atAnnualCap: Boolean(data.atAnnualCap),
+        });
       }
     } catch (error) {
       if (
@@ -526,6 +540,44 @@ const JobOpeningsTab = () => {
           ))}
         </div>
       </div>
+
+      {/* Annual job-visibility cap (TPO campus GTM, 2026-11-19) — free campus
+          plans are capped; nothing already shown is ever hidden, the feed
+          just stops introducing new jobs once the cap is hit. */}
+      {!isHistoryTab && annualCapInfo.annualCap !== null && (
+        <div
+          className={`mb-6 rounded-xl border px-4 py-3 flex flex-wrap items-center justify-between gap-3 text-sm ${
+            annualCapInfo.atAnnualCap
+              ? "border-amber-500/40 bg-amber-500/10 text-amber-200"
+              : "border-white/10 bg-white/5 text-white/60"
+          }`}
+        >
+          <span>
+            {annualCapInfo.atAnnualCap ? (
+              <>
+                You&apos;ve seen your free plan&apos;s{" "}
+                <strong>{annualCapInfo.annualCap} jobs this year</strong> — everything you&apos;ve
+                already viewed is still here, upgrade to unlock the rest.
+              </>
+            ) : (
+              <>
+                <strong>
+                  {annualCapInfo.annualJobsShown} of {annualCapInfo.annualCap}
+                </strong>{" "}
+                jobs viewed this year on your free plan.
+              </>
+            )}
+          </span>
+          {annualCapInfo.atAnnualCap && (
+            <a
+              href="/pricing"
+              className="shrink-0 bg-white text-black font-bold py-1.5 px-4 rounded-full text-xs hover:bg-gray-100"
+            >
+              See plans
+            </a>
+          )}
+        </div>
+      )}
 
       {/* Big-number summary — the editorial card design's own stat row
           (new/matched/already-shown), not a generic "X Matched" badge.
