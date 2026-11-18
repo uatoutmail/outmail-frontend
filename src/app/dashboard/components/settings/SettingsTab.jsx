@@ -30,7 +30,37 @@ import { logger } from "@/lib/logger";
 import { openExternal } from "@/lib/safeUrl";
 
 const SettingsTab = () => {
-  const { user, updateUser } = useAuth();
+  const { user, updateUser, refreshUser } = useAuth();
+
+  // Typed-code fallback for joining an institution (TPO campus onboarding,
+  // 2026-11-19) — the primary path is a one-click join link shared in a
+  // TPO's Zoom session, but a student joining later without that link needs
+  // somewhere to type the code in by hand.
+  const [joinCodeInput, setJoinCodeInput] = useState("");
+  const [joiningInstitution, setJoiningInstitution] = useState(false);
+  const [joinInstitutionMessage, setJoinInstitutionMessage] = useState(null); // { type: 'success'|'error', text }
+
+  const handleJoinInstitution = async () => {
+    const code = joinCodeInput.trim();
+    if (!code) return;
+    setJoiningInstitution(true);
+    setJoinInstitutionMessage(null);
+    try {
+      const { data } = await api.put("/api/user/join", { institutionCode: code });
+      await refreshUser();
+      setJoinInstitutionMessage({ type: "success", text: data.message || "Joined successfully!" });
+      setJoinCodeInput("");
+    } catch (error) {
+      setJoinInstitutionMessage({
+        type: "error",
+        text:
+          error.response?.data?.error ||
+          "Couldn't join with that code — double check it and try again.",
+      });
+    } finally {
+      setJoiningInstitution(false);
+    }
+  };
 
   const [profileSettings, setProfileSettings] = useState({
     name: user?.display_name || user?.name || "",
@@ -614,10 +644,38 @@ const SettingsTab = () => {
                     </div>
                   </div>
                 ) : (
-                  <div className="p-4 rounded-xl bg-white/5 border border-white/10 text-center">
-                    <p className="text-sm text-white/40">
+                  <div className="p-4 rounded-xl bg-white/5 border border-white/10">
+                    <p className="text-sm text-white/40 text-center mb-4">
                       You haven&apos;t joined an institution yet.
                     </p>
+                    <div className="flex flex-col sm:flex-row gap-2">
+                      <input
+                        type="text"
+                        value={joinCodeInput}
+                        onChange={(e) => setJoinCodeInput(e.target.value)}
+                        onKeyDown={(e) => e.key === "Enter" && handleJoinInstitution()}
+                        placeholder="e.g. PESU-A1B2"
+                        className="flex-1 px-3 py-2 rounded-lg bg-white/5 border border-white/10 text-white text-sm placeholder:text-white/25 focus:border-emerald-500/50 outline-none"
+                      />
+                      <button
+                        onClick={handleJoinInstitution}
+                        disabled={joiningInstitution || !joinCodeInput.trim()}
+                        className="px-4 py-2 rounded-lg bg-emerald-500/15 text-emerald-300 text-sm font-semibold hover:bg-emerald-500/25 disabled:opacity-40 shrink-0"
+                      >
+                        {joiningInstitution ? "Joining…" : "Join"}
+                      </button>
+                    </div>
+                    {joinInstitutionMessage && (
+                      <p
+                        className={`text-xs mt-2 ${
+                          joinInstitutionMessage.type === "success"
+                            ? "text-emerald-400"
+                            : "text-red-400"
+                        }`}
+                      >
+                        {joinInstitutionMessage.text}
+                      </p>
+                    )}
                   </div>
                 )}
               </div>

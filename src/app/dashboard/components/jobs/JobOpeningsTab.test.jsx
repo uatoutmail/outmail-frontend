@@ -48,7 +48,7 @@ function fillerJobs(n, idPrefix = "filler") {
   }));
 }
 
-function jobsResponse(jobs, overrides = {}) {
+function jobsResponse(jobs, overrides = {}, topLevelOverrides = {}) {
   return {
     data: {
       success: true,
@@ -62,6 +62,10 @@ function jobsResponse(jobs, overrides = {}) {
         shownCount: jobs.filter((j) => j.seenBefore).length,
         ...overrides,
       },
+      annualJobsShown: 0,
+      annualCap: null,
+      atAnnualCap: false,
+      ...topLevelOverrides,
     },
   };
 }
@@ -447,5 +451,56 @@ describe("JobOpeningsTab — already-shown jobs collapse into an accordion (seen
     await waitFor(() => expect(screen.getByText("Filler Role filler-0")).toBeInTheDocument());
 
     expect(screen.getByRole("button", { name: /already shown \(1\)/i })).toBeInTheDocument();
+  });
+});
+
+describe("JobOpeningsTab — annual job-visibility cap (TPO campus GTM, 2026-11-19)", () => {
+  it("shows nothing extra when the plan is uncapped (annualCap is null)", async () => {
+    api.get.mockResolvedValue(jobsResponse([strongJob], {}, { annualCap: null }));
+    render(<JobOpeningsTab />);
+    await waitFor(() => expect(screen.getByText("Backend Engineer")).toBeInTheDocument());
+
+    expect(screen.queryByText(/jobs viewed this year/i)).not.toBeInTheDocument();
+    expect(screen.queryByText(/you've seen your free plan/i)).not.toBeInTheDocument();
+  });
+
+  it("shows a low-key progress indicator when capped but not yet at the cap", async () => {
+    api.get.mockResolvedValue(
+      jobsResponse([strongJob], {}, { annualCap: 500, annualJobsShown: 320, atAnnualCap: false })
+    );
+    render(<JobOpeningsTab />);
+    await waitFor(() => expect(screen.getByText(/320 of 500/i)).toBeInTheDocument());
+
+    expect(screen.queryByRole("link", { name: /see plans/i })).not.toBeInTheDocument();
+  });
+
+  it("shows the upgrade banner with a See plans link once atAnnualCap is true", async () => {
+    api.get.mockResolvedValue(
+      jobsResponse([strongJob], {}, { annualCap: 500, annualJobsShown: 500, atAnnualCap: true })
+    );
+    render(<JobOpeningsTab />);
+    await waitFor(() =>
+      expect(screen.getByText(/you've seen your free plan/i)).toBeInTheDocument()
+    );
+
+    const upgradeLink = screen.getByRole("link", { name: /see plans/i });
+    expect(upgradeLink).toHaveAttribute("href", "/pricing");
+  });
+
+  it("never shows the annual-cap banner on the Applied/Discarded history tabs", async () => {
+    api.get.mockResolvedValue(
+      jobsResponse([strongJob], {}, { annualCap: 500, annualJobsShown: 500, atAnnualCap: true })
+    );
+    render(<JobOpeningsTab />);
+    await waitFor(() =>
+      expect(screen.getByText(/you've seen your free plan/i)).toBeInTheDocument()
+    );
+
+    api.get.mockResolvedValue(jobsResponse([]));
+    await userEvent.click(screen.getByRole("button", { name: /applied/i }));
+
+    await waitFor(() =>
+      expect(screen.queryByText(/you've seen your free plan/i)).not.toBeInTheDocument()
+    );
   });
 });

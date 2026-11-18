@@ -5,7 +5,9 @@ import SettingsTab from "./SettingsTab";
 import { useAuth } from "@/context/AuthContext";
 import { api } from "@/lib/api";
 
-vi.mock("@/lib/api", () => ({ api: { get: vi.fn(), post: vi.fn(), delete: vi.fn() } }));
+vi.mock("@/lib/api", () => ({
+  api: { get: vi.fn(), post: vi.fn(), put: vi.fn(), delete: vi.fn() },
+}));
 vi.mock("@/context/AuthContext", () => ({ useAuth: vi.fn() }));
 vi.mock("sonner", () => ({ toast: { success: vi.fn(), error: vi.fn(), warning: vi.fn() } }));
 // AutofillExtensionCard has its own dedicated test file.
@@ -30,11 +32,18 @@ function mockGetImpl({ gmailConnected = false, emailUsage = null, resumes = [] }
 }
 
 let updateUserMock;
+let refreshUserMock;
 
 beforeEach(() => {
   vi.resetAllMocks();
   updateUserMock = vi.fn().mockResolvedValue({ success: true });
-  useAuth.mockReturnValue({ user: baseUser, updateUser: updateUserMock, checkAuth: vi.fn() });
+  refreshUserMock = vi.fn().mockResolvedValue();
+  useAuth.mockReturnValue({
+    user: baseUser,
+    updateUser: updateUserMock,
+    refreshUser: refreshUserMock,
+    checkAuth: vi.fn(),
+  });
   mockGetImpl();
 });
 
@@ -291,6 +300,40 @@ describe("SettingsTab — institution", () => {
     await waitFor(() =>
       expect(screen.getByText(/haven.t joined an institution yet/i)).toBeInTheDocument()
     );
+  });
+
+  it("joins by typed code, refreshes the user, and shows the success message", async () => {
+    api.put.mockResolvedValue({
+      data: { success: true, message: "Successfully joined Big University" },
+    });
+    render(<SettingsTab />);
+    await waitFor(() => expect(screen.getByPlaceholderText(/e.g. pesu-a1b2/i)).toBeInTheDocument());
+
+    await userEvent.type(screen.getByPlaceholderText(/e.g. pesu-a1b2/i), "PESU-A1B2");
+    await userEvent.click(screen.getByRole("button", { name: /^join$/i }));
+
+    await waitFor(() =>
+      expect(api.put).toHaveBeenCalledWith("/api/user/join", { institutionCode: "PESU-A1B2" })
+    );
+    await waitFor(() => expect(refreshUserMock).toHaveBeenCalled());
+    expect(await screen.findByText("Successfully joined Big University")).toBeInTheDocument();
+  });
+
+  it("shows an inline error for an invalid code without crashing", async () => {
+    api.put.mockRejectedValue({
+      response: { data: { error: "Institution not found with that ID" } },
+    });
+    render(<SettingsTab />);
+    await userEvent.type(screen.getByPlaceholderText(/e.g. pesu-a1b2/i), "NOPE");
+    await userEvent.click(screen.getByRole("button", { name: /^join$/i }));
+
+    expect(await screen.findByText("Institution not found with that ID")).toBeInTheDocument();
+    expect(refreshUserMock).not.toHaveBeenCalled();
+  });
+
+  it("the Join button is disabled until something is typed", async () => {
+    render(<SettingsTab />);
+    await waitFor(() => expect(screen.getByRole("button", { name: /^join$/i })).toBeDisabled());
   });
 });
 
