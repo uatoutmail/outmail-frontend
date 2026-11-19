@@ -2,7 +2,7 @@ import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { toast } from "sonner";
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import JobCard from "./JobCard";
+import JobCard, { getDeadlineLabel } from "./JobCard";
 import { api } from "@/lib/api";
 
 vi.mock("@/lib/api", () => ({ api: { post: vi.fn() } }));
@@ -198,5 +198,65 @@ describe("JobCard — reporting a dead job", () => {
     await userEvent.click(screen.getByRole("button", { name: /report/i }));
 
     expect(handlers.handleDiscard).not.toHaveBeenCalled();
+  });
+});
+
+describe("JobCard — reviewer-noted application deadline (2026-11-20)", () => {
+  it("renders nothing extra when applicationDeadline is absent", () => {
+    render(<JobCard job={newJob} {...makeHandlers()} />);
+    expect(screen.queryByText(/closes in/i)).not.toBeInTheDocument();
+  });
+
+  it("renders nothing extra when the deadline has already passed — never a negative countdown", () => {
+    const job = { ...newJob, applicationDeadline: new Date(Date.now() - 60_000).toISOString() };
+    render(<JobCard job={job} {...makeHandlers()} />);
+    expect(screen.queryByText(/closes in/i)).not.toBeInTheDocument();
+  });
+
+  it("shows an hours-based badge when under a day remains", () => {
+    const job = {
+      ...newJob,
+      applicationDeadline: new Date(Date.now() + 18 * 3_600_000).toISOString(),
+    };
+    render(<JobCard job={job} {...makeHandlers()} />);
+    expect(screen.getByText(/closes in 18 hours?/i)).toBeInTheDocument();
+  });
+
+  it("shows a days-based badge once at least a day remains", () => {
+    const job = {
+      ...newJob,
+      applicationDeadline: new Date(Date.now() + 3 * 86_400_000).toISOString(),
+    };
+    render(<JobCard job={job} {...makeHandlers()} />);
+    expect(screen.getByText(/closes in 3 days/i)).toBeInTheDocument();
+  });
+});
+
+describe("getDeadlineLabel — the hours-vs-days boundary", () => {
+  it("returns null for a missing deadline", () => {
+    expect(getDeadlineLabel(null)).toBeNull();
+    expect(getDeadlineLabel(undefined)).toBeNull();
+  });
+
+  it("returns null once the deadline is in the past", () => {
+    expect(getDeadlineLabel(new Date(Date.now() - 1000).toISOString())).toBeNull();
+  });
+
+  it("uses hours just under the 24h boundary", () => {
+    expect(getDeadlineLabel(new Date(Date.now() + 23 * 3_600_000).toISOString())).toBe(
+      "Closes in 23 hours"
+    );
+  });
+
+  it("uses days once 24h or more remains", () => {
+    expect(getDeadlineLabel(new Date(Date.now() + 25 * 3_600_000).toISOString())).toBe(
+      "Closes in 1 day"
+    );
+  });
+
+  it("singular hour/day when exactly 1 remains", () => {
+    expect(getDeadlineLabel(new Date(Date.now() + 1 * 3_600_000 + 1000).toISOString())).toBe(
+      "Closes in 1 hour"
+    );
   });
 });
