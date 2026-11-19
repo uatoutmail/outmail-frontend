@@ -1,8 +1,25 @@
-import { Sparkles, CheckCircle, X, AlertTriangle, Wand2 } from "lucide-react";
+import { Sparkles, CheckCircle, X, AlertTriangle, Wand2, Clock } from "lucide-react";
 import { Fraunces } from "next/font/google";
 import React, { useState } from "react";
 import { toast } from "sonner";
 import { api } from "@/lib/api";
+
+// A reviewer sometimes reads a real deadline off the posting itself (e.g.
+// "closes in 3 days") and logs it on approval — applicationDeadline is that
+// ISO timestamp, never a pre-formatted string, so the label stays accurate
+// however long this card sits open rather than going stale/negative.
+export function getDeadlineLabel(applicationDeadline) {
+  if (!applicationDeadline) return null;
+  const diffMs = new Date(applicationDeadline).getTime() - Date.now();
+  if (diffMs <= 0) return null;
+  const hours = diffMs / 3_600_000;
+  if (hours < 24) {
+    const n = Math.max(1, Math.round(hours));
+    return `Closes in ${n} hour${n === 1 ? "" : "s"}`;
+  }
+  const days = Math.round(diffMs / 86_400_000);
+  return `Closes in ${days} day${days === 1 ? "" : "s"}`;
+}
 
 // Scoped here (not in the root layout) rather than next/font's own usage
 // guidance of "import once, use everywhere" — this repo deliberately
@@ -42,6 +59,7 @@ const JobCard = ({
   const skills = job.signals || job.skills || [];
   const [leadReason, ...restReasons] = job.reasons || [];
   const initial = (job.company || "?").trim().charAt(0).toUpperCase();
+  const deadlineLabel = getDeadlineLabel(job.applicationDeadline);
 
   const onApply = () => {
     handleOpenJob(applyUrl);
@@ -113,6 +131,15 @@ const JobCard = ({
             {job.seniority && (
               <span className="px-2 py-0.5 bg-white/5 text-white/50 border border-white/10 rounded-full text-xs font-semibold capitalize">
                 {job.seniority}
+              </span>
+            )}
+            {deadlineLabel && (
+              <span
+                title="A reviewer confirmed this deadline directly from the posting"
+                className="flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-semibold border bg-amber-500/10 text-amber-300 border-amber-500/20"
+              >
+                <Clock size={11} className="shrink-0" />
+                {deadlineLabel}
               </span>
             )}
             {/* Never gates whether a job shows up — purely so a student whose
