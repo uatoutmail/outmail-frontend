@@ -2,6 +2,7 @@
 import { motion, useReducedMotion } from "framer-motion";
 import React from "react";
 import HeroVisual from "./HeroVisual";
+import WatchDemo from "./WatchDemo";
 import { Reveal, MaskLines, Tilt, Cta, Kicker, EASE_OUT } from "@/component/motion/kit";
 import { HERO } from "@/content/landing";
 
@@ -57,8 +58,9 @@ export default function Hero({ copy = HERO[0], Visual = HeroVisual }) {
           <Reveal delay={1.5}>
             <div className="flex flex-wrap items-center gap-4">
               <Cta label={copy.cta} />
-              <span className="text-sm text-white/35">{copy.micro}</span>
+              <WatchDemo />
             </div>
+            <p className="text-sm text-white/35 mt-4">{copy.micro}</p>
           </Reveal>
         </Tilt>
 
