@@ -218,3 +218,26 @@ export const CLOSING = [
     cta: "Start your year",
   },
 ];
+
+/**
+ * The product demo behind the hero's "Watch demo" button.
+ *
+ * The MP4 lives on S3, not in /public: it is ~35 MB, which would bloat the
+ * repo and count against Vercel bandwidth on every play. It must use the
+ * PATH-style URL — the bucket name has a dot ("outmail.in"), so the
+ * virtual-hosted form (outmail.in.s3.…) fails Amazon's TLS wildcard cert.
+ * The bucket only serves prefixes its policy makes public (marketing/ here).
+ * Poster and captions are small, so they ship with the site (same origin, no
+ * CORS needed for the <track>).
+ *
+ * New cut of the video → upload under a NEW file name and change `src`, so no
+ * browser or CDN keeps serving the old one.
+ */
+export const DEMO_VIDEO = {
+  src: "https://s3.ap-south-1.amazonaws.com/outmail.in/marketing/outmail-demo-v3-1080p.mp4",
+  poster: "/demo/outmail-demo-poster.jpg",
+  captions: "/demo/outmail-demo-en.vtt",
+  title: "Outmail in 72 seconds",
+  button: "Watch demo",
+  length: "1:12",
+};
