@@ -27,7 +27,7 @@ import { ConfirmDialog } from "@/component/ui/alert-dialog";
 import { useAuth } from "@/context/AuthContext";
 import { api } from "@/lib/api";
 import { logger } from "@/lib/logger";
-import { openExternal } from "@/lib/safeUrl";
+import { openResume } from "@/lib/resumeFile";
 
 const SettingsTab = () => {
   const { user, updateUser, refreshUser } = useAuth();
@@ -143,7 +143,6 @@ const SettingsTab = () => {
               uploadDate: item.uploaded_at
                 ? new Date(item.uploaded_at).toISOString().slice(0, 10)
                 : new Date().toISOString().slice(0, 10),
-              url: item.s3_path,
               uploaded: true,
             };
           });
@@ -196,7 +195,6 @@ const SettingsTab = () => {
         type: file.type || "application/pdf",
         size: formattedSize,
         uploadDate: new Date().toISOString().slice(0, 10),
-        url: result.s3Url || result.s3_path || "",
         file: null,
         uploaded: true,
       };
@@ -238,17 +236,16 @@ const SettingsTab = () => {
     setAttachmentToDelete(null);
   };
 
-  const handleViewAttachment = (attachment) => {
-    if (!attachment) {
+  const handleViewAttachment = async (attachment) => {
+    if (!attachment?.id) {
       toast.error("Attachment data not found.");
       return;
     }
-    if (attachment.url) {
-      if (!openExternal(attachment.url)) {
-        toast.error("That file link looks invalid, so we did not open it.");
-      }
-    } else {
-      toast.error("File URL not available. Please check console for details or contact support.");
+    try {
+      await openResume(attachment.id);
+    } catch (err) {
+      logger.error("Failed to open resume", err);
+      toast.error("We could not open that resume. Please try again.");
     }
   };
 
