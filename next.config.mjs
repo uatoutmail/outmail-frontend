@@ -3,7 +3,7 @@ const cspHeader = `
     default-src 'self';
     script-src 'self' 'unsafe-inline' https://www.googletagmanager.com https://www.google-analytics.com https://checkout.razorpay.com;
     style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;
-    img-src 'self' blob: data: https://images.unsplash.com https://lh3.googleusercontent.com https://res.cloudinary.com https://outmail.in.s3.ap-south-1.amazonaws.com;
+    img-src 'self' blob: data: https://images.unsplash.com https://lh3.googleusercontent.com https://res.cloudinary.com;
     font-src 'self' https://fonts.gstatic.com;
     media-src 'self' https://s3.ap-south-1.amazonaws.com/outmail.in/marketing/;
     connect-src 'self' ${process.env.NEXT_PUBLIC_API_BASE_URL || ""} https://www.google-analytics.com https://api.razorpay.com https://*.ingest.sentry.io https://*.ingest.us.sentry.io https://*.ingest.de.sentry.io;
@@ -33,6 +33,11 @@ const cspHeader = `
  *                       injected script cannot either.
  *  Strict-Transport-Security  Removes the first-request downgrade window.
  *                       Vercel sets this too; being explicit costs nothing.
+ *
+ * img-src no longer lists outmail.in.s3.ap-south-1.amazonaws.com (OUT-246):
+ * nothing loads images from S3, and that virtual-hosted host fails TLS anyway
+ * because the bucket name contains a dot. Resumes reach the browser through
+ * GET /api/resumes/:id/file, never by S3 URL.
  *
  * media-src is limited to the one S3 prefix that holds the hero demo video
  * (see DEMO_VIDEO in src/content/landing.js), path-style because the dotted
@@ -77,10 +82,6 @@ const nextConfig = {
       {
         protocol: "https",
         hostname: "res.cloudinary.com",
-      },
-      {
-        protocol: "https",
-        hostname: "outmail.in.s3.ap-south-1.amazonaws.com",
       },
     ],
   },

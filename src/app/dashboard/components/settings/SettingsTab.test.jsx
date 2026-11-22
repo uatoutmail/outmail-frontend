@@ -1,9 +1,11 @@
 import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
+import { toast } from "sonner";
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import SettingsTab from "./SettingsTab";
 import { useAuth } from "@/context/AuthContext";
 import { api } from "@/lib/api";
+import { openResume } from "@/lib/resumeFile";
 
 vi.mock("@/lib/api", () => ({
   api: { get: vi.fn(), post: vi.fn(), put: vi.fn(), delete: vi.fn() },
@@ -12,6 +14,8 @@ vi.mock("@/context/AuthContext", () => ({ useAuth: vi.fn() }));
 vi.mock("sonner", () => ({ toast: { success: vi.fn(), error: vi.fn(), warning: vi.fn() } }));
 // AutofillExtensionCard has its own dedicated test file.
 vi.mock("./AutofillExtensionCard", () => ({ default: () => <div>Autofill Extension Stub</div> }));
+// openResume has its own test file (src/lib/resumeFile.test.js).
+vi.mock("@/lib/resumeFile", () => ({ openResume: vi.fn() }));
 
 const baseUser = {
   id: "u1",
@@ -201,22 +205,41 @@ describe("SettingsTab — resume management", () => {
     await waitFor(() => expect(screen.queryByText("resume.pdf")).not.toBeInTheDocument());
   });
 
-  it("opens the attachment URL when viewing, and errors when there is none", async () => {
+  // OUT-246: "View" used to window.open(s3_path), which can never load (private
+  // prefix, and the dotted bucket name breaks the stored URL's TLS). It now
+  // fetches the file through the owner-checked API.
+  it("opens the resume through the API by id, never the stored S3 URL", async () => {
     mockGetImpl({
-      resumes: [{ id: "r1", filename: "resume.pdf", s3_path: "https://s3.example.com/resume.pdf" }],
+      resumes: [
+        {
+          id: "r1",
+          filename: "resume.pdf",
+          s3_path: "https://outmail.in.s3.ap-south-1.amazonaws.com/attachments/u/r.pdf",
+        },
+      ],
     });
     const openSpy = vi.fn();
     vi.stubGlobal("open", openSpy);
+    openResume.mockResolvedValueOnce(undefined);
     render(<SettingsTab />);
     await waitFor(() => expect(screen.getByText("resume.pdf")).toBeInTheDocument());
 
     await userEvent.click(screen.getByTitle("View Resume"));
-    expect(openSpy).toHaveBeenCalledWith(
-      "https://s3.example.com/resume.pdf",
-      "_blank",
-      "noopener,noreferrer"
-    );
+    expect(openResume).toHaveBeenCalledWith("r1");
+    expect(openSpy).not.toHaveBeenCalled();
     vi.unstubAllGlobals();
+  });
+
+  it("tells the user when the resume could not be opened", async () => {
+    mockGetImpl({ resumes: [{ id: "r1", filename: "resume.pdf" }] });
+    openResume.mockRejectedValueOnce(new Error("502"));
+    render(<SettingsTab />);
+    await waitFor(() => expect(screen.getByText("resume.pdf")).toBeInTheDocument());
+
+    await userEvent.click(screen.getByTitle("View Resume"));
+    await waitFor(() =>
+      expect(toast.error).toHaveBeenCalledWith("We could not open that resume. Please try again.")
+    );
   });
 });
 
