@@ -90,4 +90,13 @@ describe("PlanLedger — the actual bug fix", () => {
     expect(within(row).getByLabelText("not included")).toBeInTheDocument();
     expect(within(row).getByLabelText("included")).toBeInTheDocument();
   });
+
+  // Priority support extended to the ₹999 plan (2026-11-23) — both columns
+  // show it included now, not just the ₹4,999 mentorship tier.
+  it("marks Priority support included for both PLAN_A and PLAN_B", () => {
+    render(<PlanLedger plans={[PLAN_A, PLAN_B]} renderCta={noopCta} />);
+    const row = screen.getByText("Priority support").closest("div");
+    expect(within(row).queryByLabelText("not included")).not.toBeInTheDocument();
+    expect(within(row).getAllByLabelText("included")).toHaveLength(2);
+  });
 });

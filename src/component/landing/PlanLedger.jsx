@@ -41,7 +41,7 @@ export const MATRIX_BY_CODE = {
     "Send scheduling, hiring-signal targeting, analytics": true,
     "Bi-weekly mentorship sessions": false,
     "Mentor Q&A and session recordings": false,
-    "Priority support": false,
+    "Priority support": true,
   },
   PLAN_B: {
     "Cold outreach to verified recruiters": true,
