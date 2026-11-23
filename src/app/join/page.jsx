@@ -86,9 +86,17 @@ export default function JoinInstitutionPage() {
       try {
         const { data } = await api.put("/api/user/join", { institutionCode: code });
         await refreshUser();
-        setMessage(data.message || `You're now part of ${institution.name} on Outmail!`);
+        // A college that runs campus sessions gives free access only to
+        // students who attended; until their attendance is uploaded, say so
+        // plainly instead of dropping them on a dashboard with nothing in it.
+        const waiting = data.campusAccess === "pending_attendance";
+        setMessage(
+          waiting
+            ? `You've joined ${institution.name}. Your free access switches on once your session attendance is confirmed, usually within a few hours of the session. Register for the session with this same Google account.`
+            : data.message || `You're now part of ${institution.name} on Outmail!`
+        );
         setStatus("success");
-        setTimeout(() => router.replace("/dashboard"), 1500);
+        setTimeout(() => router.replace("/dashboard"), waiting ? 8000 : 1500);
       } catch (err) {
         setStatus("error");
         setMessage(
