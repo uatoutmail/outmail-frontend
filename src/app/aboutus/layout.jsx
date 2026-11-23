@@ -22,9 +22,9 @@ export const metadata = {
     type: "website",
     images: [
       {
-        url: "/image.png",
-        width: 1536,
-        height: 1024,
+        url: "/og.jpg",
+        width: 1200,
+        height: 630,
         alt: "About Outmail - Direct Line to Hiring Managers",
       },
     ],
@@ -34,7 +34,7 @@ export const metadata = {
     title: "About Outmail | The Unfair Advantage You Deserve",
     description:
       "Built to give every student and early-career professional a direct line to hiring managers.",
-    images: ["/image.png"],
+    images: ["/og.jpg"],
   },
 };
 
