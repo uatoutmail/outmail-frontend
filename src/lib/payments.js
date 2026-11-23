@@ -1,5 +1,6 @@
 import { api } from "./api";
 import { PlansSchema, parseOrReport } from "./contracts";
+import { getAttribution } from "@/lib/attribution";
 
 /**
  * Razorpay Checkout client for the customer-facing site.
@@ -49,7 +50,14 @@ export const validateCoupon = async ({ code, planId }) => {
 // one — see BillingStateModal, which is what collects it before this is ever
 // called.
 const createPaymentOrder = async ({ planId, couponCode, billingState }) => {
-  const response = await api.post("/api/payments/orders", { planId, couponCode, billingState });
+  // Where the buyer came from, for reporting only; the backend cleans it.
+  const attribution = getAttribution() || undefined;
+  const response = await api.post("/api/payments/orders", {
+    planId,
+    couponCode,
+    billingState,
+    attribution,
+  });
   return response.data; // { orderId, razorpayOrderId, amount, currency, keyId }
 };
 
@@ -123,7 +131,14 @@ export const startCheckout = async ({
             razorpay_payment_id: response.razorpay_payment_id,
             razorpay_signature: response.razorpay_signature,
           });
-          resolve(result);
+          // The charged amount and order id travel back with the result so the
+          // purchase can be reported to analytics with the real numbers.
+          resolve({
+            ...result,
+            razorpayOrderId: order.razorpayOrderId,
+            amount: order.amount,
+            currency: order.currency,
+          });
         } catch (err) {
           reject(err);
         }

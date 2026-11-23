@@ -85,6 +85,25 @@ describe("JoinInstitutionPage", () => {
     );
   });
 
+  it("tells a student whose free access waits on session attendance, instead of a plain success", async () => {
+    api.get.mockResolvedValue({ data: { name: "KIET", location: "Ghaziabad" } });
+    api.put.mockResolvedValue({ data: { success: true, campusAccess: "pending_attendance" } });
+    useAuth.mockReturnValue({
+      isAuthenticated: true,
+      loading: false,
+      refreshUser: vi.fn().mockResolvedValue(),
+    });
+    render(<JoinInstitutionPage />);
+    await waitFor(() =>
+      expect(
+        screen.getByText(/free access switches on once your session attendance is confirmed/i)
+      ).toBeInTheDocument()
+    );
+    expect(
+      screen.getByText(/register for the session with this same google account/i)
+    ).toBeInTheDocument();
+  });
+
   it("shows an inline error if the join call itself fails, without redirecting anywhere", async () => {
     api.get.mockResolvedValue({ data: { name: "PES University", location: "Bangalore" } });
     api.put.mockRejectedValue({

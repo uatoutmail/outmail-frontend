@@ -25,9 +25,9 @@ export const metadata = {
     type: "website",
     images: [
       {
-        url: "/image.png",
-        width: 1536,
-        height: 1024,
+        url: "/og.jpg",
+        width: 1200,
+        height: 630,
         alt: "Outmail - Jobs, Outreach, and Autofill",
       },
     ],
@@ -37,7 +37,7 @@ export const metadata = {
     title: "Outmail | Jobs, Outreach, and Autofill. One Placement Year.",
     description:
       "Outmail helps students through placement season: personalized recruiter outreach, curated job openings, and one-click application autofill, all in one place.",
-    images: ["/image.png"],
+    images: ["/og.jpg"],
   },
 };
 

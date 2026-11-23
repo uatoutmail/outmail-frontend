@@ -1,6 +1,7 @@
 import { Geist, Geist_Mono, Syne } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "sonner";
+import AttributionTracker from "@/component/analytics/AttributionTracker";
 import SmoothScrollWrapper from "@/component/SmoothScrollWrapper";
 import { AuthProvider } from "@/context/AuthContext";
 import { ServiceStatusProvider } from "@/context/ServiceStatusContext";
@@ -76,9 +77,9 @@ export const metadata = {
     siteName: "Outmail",
     images: [
       {
-        url: "/image.png",
-        width: 1536,
-        height: 1024,
+        url: "/og.jpg",
+        width: 1200,
+        height: 630,
         alt: "Outmail - Jobs, Outreach, and Autofill",
       },
     ],
@@ -90,7 +91,7 @@ export const metadata = {
     title: "Outmail | Jobs, Outreach, and Autofill. One Placement Year.",
     description:
       "Outmail helps students through placement season: personalized recruiter outreach, curated job openings, and one-click application autofill, all in one place.",
-    images: ["/image.png"],
+    images: ["/og.jpg"],
     creator: "@outmail_in",
     site: "@outmail_in",
   },
@@ -130,6 +131,7 @@ export default function RootLayout({ children }) {
       <body className={`${geistSans.variable} ${geistMono.variable} ${syne.variable} antialiased`}>
         <ServiceStatusProvider>
           <AuthProvider>
+            <AttributionTracker />
             <SmoothScrollWrapper>
               <Toaster position="top-center" richColors />
               <div>{children}</div>

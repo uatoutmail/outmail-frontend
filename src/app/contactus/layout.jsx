@@ -23,9 +23,9 @@ export const metadata = {
     type: "website",
     images: [
       {
-        url: "/image.png",
-        width: 1536,
-        height: 1024,
+        url: "/og.jpg",
+        width: 1200,
+        height: 630,
         alt: "Contact Outmail - Get in Touch with Our Team",
       },
     ],
@@ -34,7 +34,7 @@ export const metadata = {
     card: "summary_large_image",
     title: "Contact Us | Outmail",
     description: "Get in touch for support, partnerships, or more information about Outmail.",
-    images: ["/image.png"],
+    images: ["/og.jpg"],
   },
 };
 

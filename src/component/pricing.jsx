@@ -6,6 +6,7 @@ import PlanLedger, { LaunchBanner } from "@/component/landing/PlanLedger";
 import { Reveal, MaskLines, Kicker } from "@/component/motion/kit";
 import BillingStateModal from "@/component/payments/BillingStateModal";
 import { useAuth } from "@/context/AuthContext";
+import { track, checkoutParams } from "@/lib/analytics";
 import { rememberIntent, takeIntent } from "@/lib/checkoutIntent";
 import { OUTCOME, classify, message, formatPaise } from "@/lib/paymentOutcome";
 import { getPlans, startCheckout, validateCoupon } from "@/lib/payments";
@@ -26,6 +27,21 @@ import { getPlans, startCheckout, validateCoupon } from "@/lib/payments";
 // Feature copy moved to PlanLedger's MATRIX when this page adopted the ledger
 // layout — it is presentation, and keeping one copy is what stops the landing
 // page and the pricing page from disagreeing about what a plan includes.
+
+const LINK_CODE_KEY = "outmail.collegeCode";
+
+// "Applied: ₹999 · 18 of 30 founding seats left for KIET". The seat numbers
+// are the backend's live count (paid plus checkouts in progress), so the cap a
+// session announces is exactly what the student sees here.
+export function couponMessage(state) {
+  const price = `Applied: ${formatPaise(state.finalAmount)}`;
+  if (state.spotsLeft == null) return price;
+  if (state.maxUses) {
+    const where = state.institutionName ? ` for ${state.institutionName}` : "";
+    return `${price} · ${state.spotsLeft} of ${state.maxUses} founding seats left${where}`;
+  }
+  return `${price} · ${state.spotsLeft} seats left`;
+}
 
 export default function ZPricing() {
   const { isAuthenticated, refreshUser } = useAuth();
@@ -66,6 +82,15 @@ export default function ZPricing() {
       setOutcome(null);
       setBusyPlan(plan.id);
       setPhase("opening");
+      const coupon = couponState?.valid ? couponState.code : undefined;
+      track(
+        "begin_checkout",
+        checkoutParams({
+          plan,
+          amount: couponState?.valid ? couponState.finalAmount : plan.amount,
+          coupon,
+        })
+      );
       try {
         // The modal is Razorpay's; once it closes we are waiting on our own
         // /verify call, and that gap needs its own state or people click twice.
@@ -82,6 +107,17 @@ export default function ZPricing() {
         // moments after they bought it, which reads as a double charge.
         // isRepeatPurchase is true only when the order was paid long ago.
         setOutcome(result?.isRepeatPurchase ? OUTCOME.ALREADY : OUTCOME.SUCCESS);
+        if (!result?.isRepeatPurchase) {
+          track(
+            "purchase",
+            checkoutParams({
+              plan,
+              amount: result?.amount,
+              coupon,
+              transactionId: result?.razorpayOrderId,
+            })
+          );
+        }
         await refreshUser();
       } catch (err) {
         setOutcome(classify(err));
@@ -127,8 +163,30 @@ export default function ZPricing() {
     queueMicrotask(() => setStateGate(plan));
   }, [isAuthenticated, loading, plans]);
 
-  const applyCoupon = async () => {
-    const code = coupon.trim();
+  // A college's session link carries its code (/pricing?code=KIET999). Fill it
+  // in, keep it across the Google sign-in round trip, and check it as soon as
+  // the student is signed in, so they see the real seats left straight away.
+  const [linkCode, setLinkCode] = useState(null);
+  useEffect(() => {
+    let code = null;
+    try {
+      code = new URLSearchParams(window.location.search).get("code");
+      if (code) sessionStorage.setItem(LINK_CODE_KEY, code.trim().toUpperCase());
+      else code = sessionStorage.getItem(LINK_CODE_KEY);
+    } catch {
+      // storage blocked: the code still works when typed in
+    }
+    if (code) {
+      const clean = code.trim().toUpperCase();
+      queueMicrotask(() => {
+        setCoupon(clean);
+        setLinkCode(clean);
+      });
+    }
+  }, []);
+
+  const applyCoupon = async (override) => {
+    const code = (typeof override === "string" ? override : coupon).trim();
     if (!code) return;
     setCouponState({ checking: true });
     try {
@@ -138,6 +196,15 @@ export default function ZPricing() {
       setCouponState({ valid: false, error: "We could not check that code. Try again." });
     }
   };
+
+  const autoAppliedRef = useRef(false);
+  useEffect(() => {
+    if (!linkCode || autoAppliedRef.current || !isAuthenticated || loading || !plans.length) return;
+    autoAppliedRef.current = true;
+    queueMicrotask(() => applyCoupon(linkCode));
+    // applyCoupon is recreated every render; linkCode/auth/plans are the real triggers
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [linkCode, isAuthenticated, loading, plans]);
 
   const planA = plans.find((p) => p.code === "PLAN_A");
 
@@ -240,21 +307,24 @@ export default function ZPricing() {
                 />
                 <button
                   type="button"
-                  onClick={applyCoupon}
+                  onClick={() => applyCoupon()}
                   className="px-5 py-2.5 rounded-btn border border-white/20 text-sm font-syne font-semibold hover:border-primary hover:text-primary transition-colors"
                 >
                   Apply
                 </button>
               </div>
+              {linkCode && !isAuthenticated && (
+                <p className="mt-2 text-sm text-white/45">
+                  Sign in to see how many seats are left with {linkCode}.
+                </p>
+              )}
               {couponState && !couponState.checking && (
                 <p
                   className={`mt-2 text-sm ${couponState.valid ? "text-emerald-400" : "text-white/45"}`}
                   role="status"
                 >
                   {couponState.valid
-                    ? `Applied, ${formatPaise(couponState.finalAmount)} instead${
-                        couponState.spotsLeft != null ? `, ${couponState.spotsLeft} spots left` : ""
-                      }`
+                    ? couponMessage(couponState)
                     : couponState.error || "That code is not valid."}
                 </p>
               )}

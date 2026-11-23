@@ -21,10 +21,12 @@ vi.mock("@/context/AuthContext", () => ({ useAuth: vi.fn() }));
 vi.mock("@/lib/api", () => ({ api: { post: vi.fn() } }));
 vi.mock("sonner", () => ({ toast: { success: vi.fn(), error: vi.fn() } }));
 
-const { getPlans, startCheckout } = await import("@/lib/payments");
+const { getPlans, startCheckout, validateCoupon } = await import("@/lib/payments");
 const { api } = await import("@/lib/api");
 const { useAuth } = await import("@/context/AuthContext");
-const Pricing = (await import("./pricing")).default;
+const pricingModule = await import("./pricing");
+const Pricing = pricingModule.default;
+const { couponMessage } = pricingModule;
 
 const PLAN_A = {
   id: "pa",
@@ -226,5 +228,87 @@ describe("pricing — a coming-soon plan", () => {
       expect.anything()
     );
     expect(startCheckout).not.toHaveBeenCalled();
+  });
+});
+
+// Campus GTM (2026-11-23): a session shares /pricing?code=KIET999. The code
+// must fill itself in, survive Google sign-in, and show the live seat count,
+// so the "first 30 students" cap is something students can see, not a claim.
+describe("pricing — a college's founding-cohort code", () => {
+  const setSearch = (search) => window.history.replaceState({}, "", `/pricing${search}`);
+  beforeEach(() => {
+    sessionStorage.clear();
+    setSearch("");
+  });
+
+  it("states the live seat count and the college", () => {
+    expect(
+      couponMessage({ finalAmount: 99900, spotsLeft: 18, maxUses: 30, institutionName: "KIET" })
+    ).toBe("Applied: ₹999 · 18 of 30 founding seats left for KIET");
+    expect(couponMessage({ finalAmount: 99900, spotsLeft: null })).toBe("Applied: ₹999");
+  });
+
+  it("fills in and checks the code from the link for a signed-in student", async () => {
+    setSearch("?code=kiet999");
+    validateCoupon.mockResolvedValue({
+      valid: true,
+      finalAmount: 99900,
+      spotsLeft: 18,
+      maxUses: 30,
+      institutionName: "KIET",
+    });
+    render(<Pricing />);
+    await waitFor(() =>
+      expect(validateCoupon).toHaveBeenCalledWith({ code: "KIET999", planId: "pa" })
+    );
+    expect(
+      await screen.findByText("Applied: ₹999 · 18 of 30 founding seats left for KIET")
+    ).toBeInTheDocument();
+    expect(screen.getByLabelText(/have a college code/i)).toHaveValue("KIET999");
+  });
+
+  it("keeps the code through sign-in, and only checks it once signed in", async () => {
+    setSearch("?code=KIET999");
+    useAuth.mockReturnValue({ isAuthenticated: false, refreshUser: vi.fn() });
+    const { unmount } = render(<Pricing />);
+    expect(
+      await screen.findByText("Sign in to see how many seats are left with KIET999.")
+    ).toBeInTheDocument();
+    expect(validateCoupon).not.toHaveBeenCalled();
+    unmount();
+
+    // back from Google: no ?code= in the URL any more
+    setSearch("");
+    useAuth.mockReturnValue({ isAuthenticated: true, refreshUser: vi.fn() });
+    validateCoupon.mockResolvedValue({
+      valid: true,
+      finalAmount: 99900,
+      spotsLeft: 30,
+      maxUses: 30,
+    });
+    render(<Pricing />);
+    await waitFor(() =>
+      expect(validateCoupon).toHaveBeenCalledWith({ code: "KIET999", planId: "pa" })
+    );
+  });
+
+  it("reports begin_checkout and purchase to analytics with the real amount", async () => {
+    window.gtag = vi.fn();
+    startCheckout.mockResolvedValue({ ok: true, amount: 99900, razorpayOrderId: "order_9" });
+    render(<Pricing />);
+    await clickBuyAndPickState(0, "Rajasthan");
+    await waitFor(() =>
+      expect(window.gtag).toHaveBeenCalledWith(
+        "event",
+        "purchase",
+        expect.objectContaining({ value: 999, transaction_id: "order_9", currency: "INR" })
+      )
+    );
+    expect(window.gtag).toHaveBeenCalledWith(
+      "event",
+      "begin_checkout",
+      expect.objectContaining({ value: 999 })
+    );
+    delete window.gtag;
   });
 });

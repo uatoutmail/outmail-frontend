@@ -15,9 +15,9 @@ export const metadata = {
     type: "article",
     images: [
       {
-        url: "/image.png",
-        width: 1536,
-        height: 1024,
+        url: "/og.jpg",
+        width: 1200,
+        height: 630,
         alt: "Setting up Outmail",
       },
     ],
